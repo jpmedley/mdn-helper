@@ -41,6 +41,9 @@ function getCreationMaster(args) {
         creationMaster.constructor = new Object();
         creationMaster.constructor.type = "constructor";
         break;
+      case 'o':
+        creationMaster.overview = new Object();
+        creationMaster.overview.type = "overview";
       case 'a':
         let memberName;
         argMembers.forEach((element, index) => {

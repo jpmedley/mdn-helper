@@ -1,3 +1,8 @@
+# Dev/Use
+in/
+out/
+.DS_Store
+
 # Logs
 logs
 *.log
