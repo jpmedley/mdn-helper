@@ -1,0 +1,15 @@
+{
+  "name": "mdn-helper",
+  "version": "1.0.0",
+  "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "MDN",
+    "contributing"
+  ],
+  "author": "Joseph Medley",
+  "license": "MPL-2.0"
+}
