@@ -12,16 +12,22 @@ switch (process.argv[2]) {
 		process.argv.shift();
 		// Ask if user needs an interface page. If no, remove from args.
 		// Later merge with walker and ping the interface for the answer.
-
 		getCreationMaster(process.argv);
-		break;
-	case 'list':
-		//
+    collectQuestions();
 		break;
 	case 'help':
   default:
 		console.log('Syntax: node mdn.js create [-i interface] [-c] [[-a memberName pageType]n]');
 		break;
+}
+
+function collectQuestions() {
+  // Add throw error.
+  if (!creationMaster) { return; }
+  const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
+  for (let m in creationMaster) {
+    console.log(creationMaster[m].type);
+  }
 }
 
 function getCreationMaster(args) {
