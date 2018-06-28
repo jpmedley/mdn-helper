@@ -16,6 +16,9 @@ const TEMPLATES = 'templates/';
 const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
 
 switch (process.argv[2]) {
+  case 'clean':
+    cleanOutput();
+    break;
 	case 'create':
 		process.argv.shift();
 		process.argv.shift();
@@ -28,9 +31,6 @@ switch (process.argv[2]) {
     askQuestions()
     .then(() => { writeFiles(); })
 		break;
-  case 'clean':
-    cleanOutput();
-    break;
 	case 'help':
   default:
     console.log('Basic usage:');

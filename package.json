@@ -1,10 +1,12 @@
 {
   "name": "mdn-helper",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "clean": "node index.js clean",
+    "create": "node index.js create",
+    "help": "node index.js help"
   },
   "keywords": [
     "MDN",
