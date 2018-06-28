@@ -1,172 +1,158 @@
 {
-  "question_templates":[
-    {
-      "question":"Does this interface have a constructor? Yes or No?",
-      "type":"boolean",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"Yes",
-      "required":true,
-      "before":"",
-      "tag":"constructor"
+  "question_templates": {
+    "constructor": {
+      "question": "Does this interface have a constructor? Yes or No?",
+      "type": "boolean",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "Yes",
+      "required": true,
+      "before": ""
     },
-    {
-      "question":"What is the description of data.member?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"description"
+    "description": {
+      "question": "What is the description of data.member?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": ""
     },
-    {
-      "question":"What does this event inherit from?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"event-inh"
+    "event-inh": {
+      "question": "What does this event inherit from?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "question":"Does this interface have any event handlers? Please enter a comma-separated list.",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"eventHandlers"
+    "eventHandlers": {
+      "question": "Does this interface have any event handlers? Please enter a comma-separated list.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "question":"Is member read only? Yes or No?",
-      "type":"boolean",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"readOnly"
+    "formalAPIName": {
+      "question": "What is the API name as it should appear on an Overview page?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "question":"What is the name of this property?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"member"
+    "mdnAPIRef": {
+      "question": "What is the API name as it should be used in the APIRef() macro.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": ""
     },
-    {
-      "question":"What is the path anchor for this item in the spec?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"memberLink"
+    "mdnSpecName": {
+      "description": "What's the name that will be passed to the MDN SpecName() and spec2() macros?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "question":"Does this interface have any methods? Please enter a comma-separated list.",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"methods"
+    "member": {
+      "question": "What is the name of this property?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": ""
     },
-    {
-      "question":"Does this interface have any properties? Please enter a comma-separated list.",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"properties"
+    "memberLink": {
+      "question": "What is the path anchor for this item in the spec?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "question":"What is the return vale for member? Enter a value or hit enter for void.",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"return"
+    "methods": {
+      "question": "Does this interface have any methods? Please enter a comma-separated list.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "question":"What is the API name as it should be used in the APIRef() macro.",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"mdnAPIRef"
+    "properties": {
+      "question": "Does this interface have any properties? Please enter a comma-separated list.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "description":"What's the name that will be passed to the MDN SpecName() and spec2() macros?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"mdnSpecName"
+    "readOnly": {
+      "question": "Is member read only? Yes or No?",
+      "type": "boolean",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": ""
     },
-    {
-      "question":"What is the API name as it should appear on an Overview page?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"formalAPIName"
+    "return": {
+      "question": "What is the return vale for member? Enter a value or hit enter for void.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
     },
-    {
-      "question":"What is the syntax for member?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"syntax"
+    "syntax": {
+      "question": "What is the syntax for member?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": ""
     }
-  ]
+  }
 }

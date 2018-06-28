@@ -27,8 +27,10 @@ switch (process.argv[2]) {
 
 function askQuestions() {
   console.log(dataManager);
+  console.log("==================================================");
+  console.log(questionTemplates);
   for (let q in dataManager.shared) {
-    // console.log(q);
+    console.log(q);
   }
 }
 
