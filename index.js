@@ -1,5 +1,4 @@
 'use strict';
-// mdn create [-i interface] [-c] [-a memberName pageType]
 
 const fs = require('fs');
 const readline = require('readline');
@@ -36,7 +35,7 @@ switch (process.argv[2]) {
     console.log('Basic usage:');
     console.log('\tnode index.js [command] [arguments]');
     console.log('Commands:');
-    console.log('\tcreate [-i interface] [-c] [[-a memberName pageType]n]');
+    console.log('\tcreate [-i interface] [-c] [-o]  [-a[memberName pageType]]');
     console.log('\tclean');
     console.log('\thelp');
 		break;

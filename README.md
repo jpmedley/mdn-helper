@@ -13,14 +13,26 @@ Removes repetitive work of creating MDN boilerplate markup and text.
 
 ## Usage
 
-Basic usage:
-
   `node index.js [command] [arguments]`
 
-Commands:
+## Commands
 
-  `create [-i interface] [-c] [[-a memberName pageType]n]`
-  
-  `clean`
-  
-  `help`
+### create
+
+Creates MDN pages based on the submitted flags and arguments.
+
+**Syntax:** `create [-i interface] [-c] [-o] [-a[memberName pageType]]`
+**Flags:**
+
+* `-i`: The name of the parent interface for the pages you are creating.
+* `-c`: Indicates that a *constructor* page should be created.
+* `-o`: Indicates that an *overview* page should be created.
+* `-a`: Indicates the name and page type of an interface member. The arguments to this flag may be repeated as many times as needed.
+
+### clean
+
+Empties the `out/` directory.
+
+### help
+
+Prints help text to the console.
