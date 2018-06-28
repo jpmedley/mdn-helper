@@ -22,6 +22,7 @@ Removes repetitive work of creating MDN boilerplate markup and text.
 Creates MDN pages based on the submitted flags and arguments.
 
 **Syntax:** `create [-i interface] [-c] [-o] [-a[memberName pageType]]`
+
 **Flags:**
 
 * `-i`: The name of the parent interface for the pages you are creating.
