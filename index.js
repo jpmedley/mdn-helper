@@ -47,7 +47,7 @@ function collectTokens() {
     let matches = templateContents.toString().match(QUESTION_RE);
     for (let q in matches) {
       let key;
-      if (matches[q].startsWith('[[Shared:')) {
+      if (matches[q].startsWith('[[shared:')) {
         let pieces = matches[q].split(':');
         key = pieces[1].slice(0,-2);
         if (!(key in dataManager.shared)) {

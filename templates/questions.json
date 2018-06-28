@@ -22,7 +22,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"Description"
+      "tag":"description"
     },
     {
       "question":"What does this event inherit from?",
@@ -46,7 +46,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"EventHandlers"
+      "tag":"eventHandlers"
     },
     {
       "question":"Is member read only? Yes or No?",
@@ -58,7 +58,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"ReadOnly"
+      "tag":"readOnly"
     },
     {
       "question":"What is the name of this property?",
@@ -70,7 +70,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"Member"
+      "tag":"member"
     },
     {
       "question":"What is the path anchor for this item in the spec?",
@@ -82,7 +82,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"MemberLink"
+      "tag":"memberLink"
     },
     {
       "question":"Does this interface have any methods? Please enter a comma-separated list.",
@@ -94,7 +94,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"Methods"
+      "tag":"methods"
     },
     {
       "question":"Does this interface have any properties? Please enter a comma-separated list.",
@@ -106,7 +106,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"Properties"
+      "tag":"properties"
     },
     {
       "question":"What is the return vale for member? Enter a value or hit enter for void.",
@@ -118,7 +118,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"Return"
+      "tag":"return"
     },
     {
       "question":"What is the API name as it should be used in the APIRef() macro.",
@@ -130,7 +130,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"MDNAPIRef"
+      "tag":"mdnAPIRef"
     },
     {
       "description":"What's the name that will be passed to the MDN SpecName() and spec2() macros?",
@@ -142,7 +142,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"MDNSpecName"
+      "tag":"mdnSpecName"
     },
     {
       "question":"What is the API name as it should appear on an Overview page?",
@@ -154,7 +154,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"FormalAPIName"
+      "tag":"formalAPIName"
     },
     {
       "question":"What is the syntax for member?",
@@ -166,7 +166,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"Syntax"
+      "tag":"syntax"
     }
   ]
 }
