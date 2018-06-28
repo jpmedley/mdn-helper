@@ -12,7 +12,7 @@
     "MDN",
     "contributing"
   ],
-  "author": "Joseph Medley",
+  "author": "Joseph Medley <jmedley@google.com>",
   "license": "MPL-2.0",
   "dependencies": {
     "readline": "^1.3.0"
