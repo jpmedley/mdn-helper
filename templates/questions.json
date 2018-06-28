@@ -12,7 +12,7 @@
       "before": ""
     },
     "description": {
-      "question": "What is the description of data.member?",
+      "question": "What is the description of this item?",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -34,7 +34,7 @@
       "before": ""
     },
     "eventHandlers": {
-      "question": "Does this interface have any event handlers? Please enter a comma-separated list.",
+      "question": "Does this interface have any event handlers? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -89,7 +89,7 @@
       "before": ""
     },
     "memberLink": {
-      "question": "What is the path anchor for this item in the spec?",
+      "question": "What is the anchor for this item's location in the spec?",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -100,7 +100,7 @@
       "before": ""
     },
     "methods": {
-      "question": "Does this interface have any methods? Please enter a comma-separated list.",
+      "question": "Does this interface have any methods? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -111,7 +111,7 @@
       "before": ""
     },
     "properties": {
-      "question": "Does this interface have any properties? Please enter a comma-separated list.",
+      "question": "Does this interface have any properties? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -122,7 +122,7 @@
       "before": ""
     },
     "readOnly": {
-      "question": "Is member read only? Yes or No?",
+      "question": "Is this item read only? Yes or No?",
       "type": "boolean",
       "pattern": "",
       "message": "",
@@ -133,7 +133,7 @@
       "before": ""
     },
     "return": {
-      "question": "What is the return vale for member? Enter a value or hit enter for void.",
+      "question": "What is the return value for this item? Enter a value or hit enter for void.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -144,7 +144,7 @@
       "before": ""
     },
     "syntax": {
-      "question": "What is the syntax for member?",
+      "question": "What is the syntax for this item?",
       "type": "string",
       "pattern": "",
       "message": "",

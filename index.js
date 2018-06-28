@@ -11,7 +11,9 @@ const prompt = readline.createInterface({
 
 let dataManager;
 let questionTemplates
+const OUT = 'out/';
 const TEMPLATES = 'templates/';
+const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
 
 switch (process.argv[2]) {
 	case 'create':
@@ -23,7 +25,8 @@ switch (process.argv[2]) {
 		buildDataManager(process.argv);
     collectTokens();
     loadQuestionTemplates();
-    askQuestions();
+    askQuestions()
+    .then(() => { writeFiles(); })
 		break;
 	case 'help':
   default:
@@ -31,13 +34,27 @@ switch (process.argv[2]) {
 		break;
 }
 
-function askQuestion(question) {
-  question = "\n" + question + "\n";
-  return new Promise((resolve, reject) => {
-    prompt.question(question, (answer) => {
-      resolve(answer);
-    })
-  })
+function writeFiles() {
+  if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
+  for (let m in dataManager.members) {
+    let template = getTemplate(dataManager.members[m].type);
+    let matches = template.match(QUESTION_RE);
+    for (let match in matches) {
+      let token;
+      let answer;
+      if (matches[match].startsWith('[[shared:')) {
+        token = matches[match].slice(9, -2);
+        answer = dataManager.shared[token];
+        template = template.replace(matches[match], answer);
+      } else {
+        token = matches[match].slice(2, -2);
+        answer = dataManager.members[m][token];
+        template = template.replace(matches[match], answer);
+      }
+    }
+    let outPath = OUT + dataManager.shared.interface + "_" + m + ".html"
+    fs.writeFileSync(outPath, template);
+  }
 }
 
 async function askQuestions() {
@@ -65,11 +82,20 @@ async function askQuestions() {
         question = questionTemplates[q].question;
         // console.log(question);
         let answer = await askQuestion(question)
-        dataManager.shared[q]=answer;
+        dataManager.members[m][q]=answer;
       }
     }
   }
-  console.log(dataManager);
+  prompt.close();
+}
+
+function askQuestion(question) {
+  question = "\n" + question + "\n";
+  return new Promise((resolve, reject) => {
+    prompt.question(question, (answer) => {
+      resolve(answer);
+    })
+  })
 }
 
 function loadQuestionTemplates() {
@@ -80,11 +106,9 @@ function loadQuestionTemplates() {
 
 function collectTokens() {
   if (!dataManager) { return; }
-  const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
   for (let m in dataManager.members) {
-    let templatePath = TEMPLATES + dataManager.members[m].type + ".html"
-    let templateContents = fs.readFileSync(templatePath);
-    let matches = templateContents.toString().match(QUESTION_RE);
+    let template = getTemplate(dataManager.members[m].type);
+    let matches = template.match(QUESTION_RE);
     for (let q in matches) {
       let key;
       if (matches[q].startsWith('[[shared:')) {
@@ -96,10 +120,16 @@ function collectTokens() {
       } else {
         let subKey = matches[q].slice(2,-2);
         dataManager.members[m][subKey] = '';
-        console.log(m, ": ", subKey);
       }
     }
+    dataManager.members[m]['member'] = m;
   }
+}
+
+function getTemplate(named) {
+  let templatePath = TEMPLATES + named + ".html";
+  let templateContents = fs.readFileSync(templatePath);
+  return templateContents.toString();
 }
 
 function getRealArguments(args) {
