@@ -1,5 +1,5 @@
 {
-  "question_templates": {
+  "templates": {
     "constructor": {
       "question": "Does this interface have a constructor? Yes or No?",
       "type": "boolean",
@@ -56,7 +56,7 @@
       "before": ""
     },
     "mdnAPIRef": {
-      "question": "What is the API name as it should be used in the APIRef() macro.",
+      "question": "What is the API name as it should be used in the APIRef() macro?",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -67,7 +67,7 @@
       "before": ""
     },
     "mdnSpecName": {
-      "description": "What's the name that will be passed to the MDN SpecName() and spec2() macros?",
+      "question": "What's the name that will be passed to the MDN SpecName() and spec2() macros?",
       "type": "string",
       "pattern": "",
       "message": "",

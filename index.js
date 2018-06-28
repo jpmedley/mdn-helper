@@ -1,7 +1,13 @@
 'use strict';
 // mdn create [-i interface] [-c] [-a memberName pageType]
 
-let fs = require('fs');
+const fs = require('fs');
+const readline = require('readline');
+
+const prompt = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
 
 let dataManager;
 let questionTemplates
@@ -25,19 +31,51 @@ switch (process.argv[2]) {
 		break;
 }
 
-function askQuestions() {
-  console.log(dataManager);
-  console.log("==================================================");
-  console.log(questionTemplates);
-  for (let q in dataManager.shared) {
-    console.log(q);
+function askQuestion(question) {
+  question = "\n" + question + "\n";
+  return new Promise((resolve, reject) => {
+    prompt.question(question, (answer) => {
+      resolve(answer);
+    })
+  })
+}
+
+async function askQuestions() {
+  let question;
+  let q;
+  console.log("SHARED QUESTIONS");
+  console.log("=".repeat(80));
+  console.log("You will now be asked to provide answers that are shared among all the files to")
+  console.log("be created.\n");
+  for (q in dataManager.shared) {
+    if (dataManager.shared[q]=='') {
+      question = questionTemplates[q].question;
+      // console.log(question);
+      let answer = await askQuestion(question)
+      dataManager.shared[q]=answer;
+    }
   }
+
+  for (let m in dataManager.members) {
+    console.log("\nAnswers for", m);
+    console.log("-".repeat(80));
+    console.log("you will now be asked to provide answers for the", m, "page.\n");
+    for (q in dataManager.members[m]) {
+      if (dataManager.members[m][q]=='') {
+        question = questionTemplates[q].question;
+        // console.log(question);
+        let answer = await askQuestion(question)
+        dataManager.shared[q]=answer;
+      }
+    }
+  }
+  console.log(dataManager);
 }
 
 function loadQuestionTemplates() {
   const questionPath = TEMPLATES + "questions.json";
   const questionBuffer = fs.readFileSync(questionPath);
-  questionTemplates = JSON.parse(questionBuffer.toString());
+  questionTemplates = JSON.parse(questionBuffer.toString()).templates;
 }
 
 function collectTokens() {
