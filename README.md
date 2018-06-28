@@ -18,5 +18,7 @@ Basic usage:
 
 Commands:
   `create [-i interface] [-c] [[-a memberName pageType]n]`
+  
   `clean`
+  
   `help`
