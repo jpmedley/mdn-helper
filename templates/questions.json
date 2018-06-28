@@ -22,7 +22,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"description"
+      "tag":"Description"
     },
     {
       "question":"What does this event inherit from?",
@@ -46,7 +46,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"events"
+      "tag":"EventHandlers"
     },
     {
       "question":"Is member read only? Yes or No?",
@@ -58,7 +58,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"is_readonly"
+      "tag":"ReadOnly"
     },
     {
       "question":"What is the name of this property?",
@@ -70,7 +70,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"member"
+      "tag":"Member"
     },
     {
       "question":"What is the path anchor for this item in the spec?",
@@ -82,7 +82,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"member-link"
+      "tag":"MemberLink"
     },
     {
       "question":"Does this interface have any methods? Please enter a comma-separated list.",
@@ -94,7 +94,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"methods"
+      "tag":"Methods"
     },
     {
       "question":"Does this interface have any properties? Please enter a comma-separated list.",
@@ -106,7 +106,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"properties"
+      "tag":"Properties"
     },
     {
       "question":"What is the return vale for member? Enter a value or hit enter for void.",
@@ -118,10 +118,10 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"return"
+      "tag":"Return"
     },
     {
-      "question":"What is the API name?",
+      "question":"What is the API name as it should be used in the APIRef() macro.",
       "type":"string",
       "pattern":"",
       "message":"",
@@ -130,43 +130,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"shared.api-name"
-    },
-    {
-      "question":"Which version of Chrome will this ship in?",
-      "type":"number",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":false,
-      "before":"",
-      "tag":"shared.chrome-version"
-    },
-    {
-      "question":"What is the formal name of the interface?",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"shared.interface"
-    },
-    {
-      "question":"Please describe the shared.interface in one to two sentences.",
-      "type":"string",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"shared.interface-description"
+      "tag":"MDNAPIRef"
     },
     {
       "description":"What's the name that will be passed to the MDN SpecName() and spec2() macros?",
@@ -178,22 +142,10 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"shared.mdn-spec-name"
+      "tag":"MDNSpecName"
     },
     {
-      "question":"Which version of Opera will this ship in?",
-      "type":"number",
-      "pattern":"",
-      "message":"",
-      "hidden":false,
-      "replace":"*",
-      "default":"",
-      "required":true,
-      "before":"",
-      "tag":"shared.opera-version"
-    },
-    {
-      "question":"What is the slug of the MDN overview?",
+      "question":"What is the API name as it should appear on an Overview page?",
       "type":"string",
       "pattern":"",
       "message":"",
@@ -202,7 +154,7 @@
       "default":"",
       "required":false,
       "before":"",
-      "tag":"shared.overview-page-link"
+      "tag":"FormalAPIName"
     },
     {
       "question":"What is the syntax for member?",
@@ -214,7 +166,7 @@
       "default":"",
       "required":true,
       "before":"",
-      "tag":"syntax"
+      "tag":"Syntax"
     }
   ]
 }

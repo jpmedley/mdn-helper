@@ -4,6 +4,7 @@
 let fs = require('fs');
 
 let dataManager;
+let questionTemplates
 const TEMPLATES = 'templates/';
 
 switch (process.argv[2]) {
@@ -13,13 +14,28 @@ switch (process.argv[2]) {
 		process.argv.shift();
 		// Ask if user needs an interface page. If no, remove from args.
 		// Later merge with walker and ping the interface for the answer.
-		getDataManager(process.argv);
+		buildDataManager(process.argv);
     collectTokens();
+    loadQuestionTemplates();
+    askQuestions();
 		break;
 	case 'help':
   default:
 		console.log('Syntax: node mdn.js create [-i interface] [-c] [[-a memberName pageType]n]');
 		break;
+}
+
+function askQuestions() {
+  console.log(dataManager);
+  for (let q in dataManager.shared) {
+    // console.log(q);
+  }
+}
+
+function loadQuestionTemplates() {
+  const questionPath = TEMPLATES + "questions.json";
+  const questionBuffer = fs.readFileSync(questionPath);
+  questionTemplates = JSON.parse(questionBuffer.toString());
 }
 
 function collectTokens() {
@@ -44,8 +60,6 @@ function collectTokens() {
       }
     }
   }
-
-  console.log(dataManager);
 }
 
 function getRealArguments(args) {
@@ -60,7 +74,7 @@ function getRealArguments(args) {
   return realArgs;
 }
 
-function getDataManager(args) {
+function buildDataManager(args) {
   const realArgs = getRealArguments(args);
   dataManager = new Object();
   dataManager.shared = new Object();
@@ -71,7 +85,7 @@ function getDataManager(args) {
       case 'i':
         dataManager.shared.interface = argMembers[1];
         dataManager.members.interface = new Object();
-        dataManager.members.interface.type = "interface";
+        dataManager.members.interface.type = "Interface";
         break;
       case 'c':
         dataManager.members.constructor = new Object();
