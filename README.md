@@ -14,9 +14,11 @@ Removes repetitive work of creating MDN boilerplate markup and text.
 ## Usage
 
 Basic usage:
+
   `node index.js [command] [arguments]`
 
 Commands:
+
   `create [-i interface] [-c] [[-a memberName pageType]n]`
   
   `clean`
