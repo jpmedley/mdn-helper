@@ -28,10 +28,27 @@ switch (process.argv[2]) {
     askQuestions()
     .then(() => { writeFiles(); })
 		break;
+  case 'clean':
+    cleanOutput();
+    break;
 	case 'help':
   default:
-		console.log('Syntax: node mdn.js create [-i interface] [-c] [[-a memberName pageType]n]');
+    console.log('Basic usage:');
+    console.log('\tnode index.js [command] [arguments]');
+    console.log('Commands:');
+    console.log('\tcreate [-i interface] [-c] [[-a memberName pageType]n]');
+    console.log('\tclean');
+    console.log('\thelp');
 		break;
+}
+process.exit();
+
+function cleanOutput() {
+  fs.readdir(OUT, (e, files) => {
+    files.forEach(file => {
+      fs.unlinkSync(OUT + file);
+    })
+  })
 }
 
 function writeFiles() {
