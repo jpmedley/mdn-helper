@@ -1,6 +1,8 @@
 # mdn-helper
 Removes repetitive work of creating MDN boilerplate markup and text.
 
+The current version only handles JavaScript APIs.
+
 ## Installation
 
 1. Clone this repository.
