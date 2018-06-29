@@ -126,7 +126,8 @@ function _buildDataManager(args) {
         break;
       case 'p':
         dataManager.members.interface = new Object();
-        dataManager.members.interface.type = "Interface";
+        dataManager.members.interface.type = "interface";
+        break;
       case 'c':
         dataManager.members.constructor = new Object();
         dataManager.members.constructor.type = "constructor";

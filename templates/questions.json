@@ -133,13 +133,13 @@
       "before": ""
     },
     "return": {
-      "question": "What is the return value for this item? Enter a value or hit enter for void.",
+      "question": "What is the return value for this item?",
       "type": "string",
       "pattern": "",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "{{jsxref('undefined')}}",
       "required": false,
       "before": ""
     },
