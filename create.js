@@ -1,13 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-const readline = require('readline');
 const utils = require('./utils.js');
-
-const prompt = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-})
 
 let dataManager;
 let questionTemplates
@@ -60,7 +54,7 @@ async function _askQuestions() {
       }
     }
   }
-  prompt.close();
+  utils.prompt.close();
 }
 
 function _askQuestion(questionTemplate) {
@@ -70,13 +64,13 @@ function _askQuestion(questionTemplate) {
   }
   question =+ "\n";
   return new Promise((resolve, reject) => {
-    prompt.question(question, (answer) => {
+    utils.prompt.question(question, (answer) => {
       if (answer = '') {
         answer = questionTemplate.default;
       }
       resolve(answer);
-    })
-  })
+    });
+  });
 }
 
 function _loadQuestionTemplates() {

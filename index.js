@@ -5,8 +5,9 @@ const utils = require('./utils.js');
 
 switch (process.argv[2]) {
   case 'clean':
-    utils.cleanOutput();
-    process.exit();
+    utils.cleanOutput()
+    .then(() => { process.exit(); });
+    break;
 	case 'create':
     create.create(process.argv)
 		break;
