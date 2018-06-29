@@ -111,7 +111,7 @@
       "before": ""
     },
     "methods": {
-      "question": "Does this interface have any methods? Please enter a comma-separated list or press Enter.",
+      "question": "Does this interface have any methods (exclusing those that would be created for an iterable object)? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",
