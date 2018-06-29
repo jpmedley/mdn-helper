@@ -46,10 +46,7 @@ async function _askQuestions() {
   console.log("be created.\n");
   for (q in dataManager.shared) {
     if (dataManager.shared[q]=='') {
-      question = questionTemplates[q].question;
-      // console.log(question);
-      let answer = await askQuestion(question)
-      dataManager.shared[q]=answer;
+      dataManager.shared[q] = await _askQuestion(questionTemplates[q]);
     }
   }
 
@@ -59,20 +56,24 @@ async function _askQuestions() {
     console.log("you will now be asked to provide answers for the", m, "page.\n");
     for (q in dataManager.members[m]) {
       if (dataManager.members[m][q]=='') {
-        question = questionTemplates[q].question;
-        // console.log(question);
-        let answer = await askQuestion(question)
-        dataManager.members[m][q]=answer;
+        dataManager.members[m][q] = await _askQuestion(questionTemplates[q]);
       }
     }
   }
   prompt.close();
 }
 
-function askQuestion(question) {
-  question = "\n" + question + "\n";
+function _askQuestion(questionTemplate) {
+  let question = "\n" + questionTemplate.question;
+  if (questionTemplate.default != '') {
+    question += (" (" + questionTemplate.default + ")");
+  }
+  question =+ "\n";
   return new Promise((resolve, reject) => {
     prompt.question(question, (answer) => {
+      if (answer = '') {
+        answer = questionTemplate.default;
+      }
       resolve(answer);
     })
   })
