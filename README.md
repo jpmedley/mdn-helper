@@ -24,6 +24,7 @@ The current version only handles JavaScript APIs.
 Creates MDN pages based on the submitted flags and arguments.
 
 **Syntax:** `create [-i interface] [-c] [-o] [-a[memberName pageType]]`
+
 **Flags:**
 
 * `-i`: The name of the parent interface for the pages you are creating. This flag does not create an interface.
