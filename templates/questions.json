@@ -110,6 +110,17 @@
       "required": false,
       "before": ""
     },
+    "parameters": {
+      "question": "Does this method have any arguments? Please enter a comma-separated list or press Enter.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "None.",
+      "required": false,
+      "before": ""
+    },
     "properties": {
       "question": "Does this interface have any properties? Please enter a comma-separated list or press Enter.",
       "type": "string",
