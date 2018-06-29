@@ -35,7 +35,7 @@ switch (process.argv[2]) {
     console.log('Basic usage:');
     console.log('\tnode index.js [command] [arguments]');
     console.log('Commands:');
-    console.log('\tcreate [-i interface] [-c] [-o]  [-a[memberName pageType]]');
+    console.log('\tcreate [-i interface] [-p] [-c] [-o] [-a[memberName pageType]]');
     console.log('\tclean');
     console.log('\thelp');
 		break;
@@ -170,9 +170,10 @@ function buildDataManager(args) {
     switch (argMembers[0]) {
       case 'i':
         dataManager.shared.interface = argMembers[1];
+        break;
+      case 'p':
         dataManager.members.interface = new Object();
         dataManager.members.interface.type = "Interface";
-        break;
       case 'c':
         dataManager.members.constructor = new Object();
         dataManager.members.constructor.type = "constructor";
