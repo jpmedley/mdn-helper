@@ -45,13 +45,18 @@ async function _askQuestions() {
   }
 
   for (let m in dataManager.members) {
-    console.log("\nAnswers for", m);
-    console.log("-".repeat(80));
-    console.log("you will now be asked to provide answers for the", m, "page.\n");
-    for (q in dataManager.members[m]) {
-      if (dataManager.members[m][q]=='') {
-        dataManager.members[m][q] = await _askQuestion(questionTemplates[q]);
+    if (dataManager.members[m].hasQuestions()) {
+      console.log("\nQuestions for", m);
+      console.log("-".repeat(80));
+      console.log("you will now be asked to provide answers for the", m, "page.\n");
+      for (q in dataManager.members[m]) {
+        if (dataManager.members[m][q]=='') {
+          dataManager.members[m][q] = await _askQuestion(questionTemplates[q]);
+        }
       }
+    } else {
+      console.log("\nThere are no unanswered questions for", m);
+      console.log("-".repeat(80));
     }
   }
   utils.prompt.close();
@@ -62,7 +67,7 @@ function _askQuestion(questionTemplate) {
   if (questionTemplate.default != '') {
     question += (" (" + questionTemplate.default + ")");
   }
-  question =+ "\n";
+  question += "\n";
   return new Promise((resolve, reject) => {
     utils.prompt.question(question, (answer) => {
       if (answer = '') {
@@ -102,11 +107,19 @@ function _collectTokens() {
 }
 
 function getTemplate(named) {
-  let templatePath = TEMPLATES + named + ".html";
+  let templatePath = TEMPLATES + named.toLowerCase() + ".html";
   let templateContents = fs.readFileSync(templatePath);
   return templateContents.toString();
 }
 
+function _hasQuestions() {
+  for (let m in this) {
+    if (this[m] == '') {
+      return true;
+    }
+  }
+  return false;
+}
 
 function _buildDataManager(args) {
   const realArgs = utils.getRealArguments(args);
@@ -122,14 +135,18 @@ function _buildDataManager(args) {
       case 'p':
         dataManager.members.interface = new Object();
         dataManager.members.interface.type = "interface";
+        dataManager.members.interface.hasQuestions = _hasQuestions;
         break;
       case 'c':
         dataManager.members.constructor = new Object();
         dataManager.members.constructor.type = "constructor";
+        dataManager.members.constructor.hasQuestions = _hasQuestions;
         break;
       case 'o':
         dataManager.members.overview = new Object();
         dataManager.members.overview.type = "overview";
+        dataManager.members.overview.hasQuestions = _hasQuestions;
+        break;
       case 'a':
         let memberName;
         argMembers.forEach((element, index) => {
@@ -143,8 +160,18 @@ function _buildDataManager(args) {
                 dataManager.members[memberName] = new Object();
               } else {
                 dataManager.members[memberName].type = element;
+                dataManager.members[memberName].hasQuestions = _hasQuestions;
               }
           }
+        })
+        break;
+      case 'it':
+        const iterables = ['entries()', 'forEach()', 'keys()', 'values()'];
+        iterables.forEach(iterable => {
+          dataManager.members[iterable] = new Object();
+          let type = iterable.slice(0,-2);
+          dataManager.members[iterable].type = type;
+          dataManager.members[iterable].hasQuestions = _hasQuestions;
         })
         break;
     }

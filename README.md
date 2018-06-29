@@ -32,8 +32,11 @@ Creates MDN pages based on the submitted flags and arguments.
 * `-c`: Indicates that a *constructor* page should be created.
 * `-o`: Indicates that an *overview* page should be created.
 * `-a`: Indicates the name and page type of an interface member. The arguments to this flag may be repeated as many times as needed.
+* `-it`: Indicates the the interface implements `iterable`. This means pages will be created for methods named `entries()`, `forEach()`, `keys()`, and `values()`.
 
 **Supported page types**
+
+The following `pageTypes` are supported by the `-a` argument.
 
 * event
 * handler
@@ -63,6 +66,12 @@ Prints help text to the console.
 
 `npm run create -i Widget -a "make()" method`
 
-**Create  an interface page and two members**
+**Create an interface page and two members**
 
 `npm run create -i Widget -p -a "make()" method ready property`
+
+**Create iterable pages**
+
+The following command creates pages for methods named `entries()`, `forEach()`, `keys()`, and `values()`, but not an overview page.
+
+`npm run create -i Widget -it`

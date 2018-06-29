@@ -9,14 +9,14 @@ switch (process.argv[2]) {
     .then(() => { process.exit(); });
     break;
 	case 'create':
-    create.create(process.argv)
+    create.create(process.argv);
 		break;
 	case 'help':
   default:
     console.log('Basic usage:');
     console.log('\tnode index.js [command] [arguments]');
     console.log('Commands:');
-    console.log('\tcreate [-i interface] [-p] [-c] [-o] [-a[memberName pageType]]');
+    console.log('\tcreate [-i interface] [-p] [-c] [-o] [-a[memberName pageType]] [-it]');
     console.log('\tclean');
     console.log('\thelp');
 		process.exit();

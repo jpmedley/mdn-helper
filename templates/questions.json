@@ -55,6 +55,17 @@
       "required": false,
       "before": ""
     },
+    "iterableMemberLink": {
+      "question": "What is this interface's anchor for iterable in the spec?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": ""
+    },
     "mdnAPIRef": {
       "question": "What is the API name as it should be used in the APIRef() macro?",
       "type": "string",
