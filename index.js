@@ -1,5 +1,7 @@
 'use strict';
 
+// https://stackoverflow.com/questions/36712938/run-npm-scripts-synchronously
+
 const create = require('./create.js');
 const utils = require('./utils.js');
 

@@ -188,7 +188,7 @@ function create(args) {
   _collectTokens();
   _loadQuestionTemplates();
   _askQuestions()
-  .then(() => { _writeFiles(); })
+  _writeFiles();
 }
 
 module.exports.create = create;
