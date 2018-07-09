@@ -70,7 +70,7 @@ function _askQuestion(questionTemplate) {
   question += "\n";
   return new Promise((resolve, reject) => {
     utils.prompt.question(question, (answer) => {
-      if (answer = '') {
+      if (answer == '') {
         answer = questionTemplate.default;
       }
       resolve(answer);
@@ -178,7 +178,7 @@ function _buildDataManager(args) {
   });
 }
 
-function create(args) {
+async function create(args) {
 	args.shift();
 	args.shift();
 	args.shift();
@@ -187,7 +187,7 @@ function create(args) {
   _buildDataManager(args);
   _collectTokens();
   _loadQuestionTemplates();
-  _askQuestions()
+  await _askQuestions()
   _writeFiles();
 }
 
