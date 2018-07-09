@@ -56,22 +56,22 @@ Prints help text to the console.
 
 **Create an interface page only**
 
-`npm run create -i Widget -p`
+`node index.js create -i Widget -p`
 
 **Create an interface page and a constructor page**
 
-`npm run create -i Widget -p -c`
+`node index.js create -i Widget -p -c`
 
 **Create a method page without its interface**
 
-`npm run create -i Widget -a "make()" method`
+`node index.js create -i Widget -a "make()" method`
 
 **Create an interface page and two members**
 
-`npm run create -i Widget -p -a "make()" method ready property`
+`node index.js create -i Widget -p -a "make()" method ready property`
 
 **Create iterable pages**
 
 The following command creates pages for methods named `entries()`, `forEach()`, `keys()`, and `values()`, but not an overview page.
 
-`npm run create -i Widget -it`
+`node index.js create -i Widget -it`
