@@ -19,11 +19,11 @@ The current version only handles JavaScript APIs.
 
 From within the mdn-helper direcory:
 
-  `node index.js [command] [arguments]`
+  `node index.js <command> [<arguments>]`
   
 Using the optional bash alias:
 
-  `mdn-helper [command] [arguments]`
+  `mdn-helper <command> [<arguments>]`
 
 ## Commands
 
