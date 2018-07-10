@@ -17,13 +17,19 @@ The current version only handles JavaScript APIs.
 
 ## Usage
 
+From within the mdn-helper direcory:
+
   `node index.js [command] [arguments]`
+  
+Using the optional bash alias:
+
+  `mdn-helper [command] [arguments]`
 
 ## Commands
 
 ### create
 
-Creates MDN pages based on the submitted flags and arguments.
+Creates MDN pages based on the submitted flags and arguments. The results are written to the `*path/to*/mdn-helper/out` directory.
 
 **Syntax:** `create [-i interface] [-c] [-o] [-a[memberName pageType]]`
 
@@ -34,7 +40,7 @@ Creates MDN pages based on the submitted flags and arguments.
 * `-c`: Indicates that a *constructor* page should be created.
 * `-o`: Indicates that an *overview* page should be created.
 * `-a`: Indicates the name and page type of an interface member. The arguments to this flag may be repeated as many times as needed.
-* `-it`: Indicates the the interface implements `iterable`. This means pages will be created for methods named `entries()`, `forEach()`, `keys()`, and `values()`.
+* `-it`: Indicates that the interface implements [`iterable`](https://heycam.github.io/webidl/#idl-iterable). This means pages will be created for methods named `entries()`, `forEach()`, `keys()`, and `values()`. Since these pages use standard descriptions, you will not be prompted to provide them.
 
 **Supported page types**
 
@@ -48,7 +54,7 @@ The following `pageTypes` are supported by the `-a` argument.
 
 ### clean
 
-Empties the `out/` directory.
+Empties the `/out` directory.
 
 ### help
 
