@@ -31,7 +31,7 @@ Using the optional bash alias:
 
 Creates MDN pages based on the submitted flags and arguments. The results are written to the `*path/to*/mdn-helper/out` directory.
 
-**Syntax:** `create [-i interface] [-c] [-o] [-a memberName1 pageType [[memberName2 pageType] ... [memberNameN pageType]]]`
+**Syntax:** `create [-i interface] [-c] [-o] [-a memberName1 pageType [[memberName2 pageType] ... [memberNameN pageType]]] [-it]`
 
 **Flags:**
 
