@@ -1,5 +1,7 @@
 # mdn-helper
-Removes repetitive work of creating MDN boilerplate markup and text.
+Removes repetitive work of creating MDN markup and text. Much of the work of creating a new MDN reference page is in creating  boilerplate such as headings, specification tables, and standardized intro text. Once this is created API specific content must be added to the boilerplate. A significant portion of that content is duplicated between one or more pages of the API.
+
+This tool simplifies this process. First, it takes a command line indicating the interfaces and members to be created. It then prompts the answers to API specific content. It combines those answers with templates and writes nearly complete pages ready for pasting directly into the MDN page editor.
 
 The current version only handles JavaScript APIs.
 
@@ -15,15 +17,21 @@ The current version only handles JavaScript APIs.
 
 ## Usage
 
-  `node index.js [command] [arguments]`
+From within the mdn-helper direcory:
+
+  `node index.js <command> [<arguments>]`
+  
+Using the optional bash alias:
+
+  `mdn-helper <command> [<arguments>]`
 
 ## Commands
 
 ### create
 
-Creates MDN pages based on the submitted flags and arguments.
+Creates MDN pages based on the submitted flags and arguments. The results are written to the `*path/to*/mdn-helper/out` directory.
 
-**Syntax:** `create [-i interface] [-c] [-o] [-a[memberName pageType]]`
+**Syntax:** `create [-i interface] [-c] [-o] [-a memberName1 pageType [[memberName2 pageType] ... [memberNameN pageType]]] [-it]`
 
 **Flags:**
 
@@ -32,7 +40,7 @@ Creates MDN pages based on the submitted flags and arguments.
 * `-c`: Indicates that a *constructor* page should be created.
 * `-o`: Indicates that an *overview* page should be created.
 * `-a`: Indicates the name and page type of an interface member. The arguments to this flag may be repeated as many times as needed.
-* `-it`: Indicates the the interface implements `iterable`. This means pages will be created for methods named `entries()`, `forEach()`, `keys()`, and `values()`.
+* `-it`: Indicates that the interface implements [`iterable`](https://heycam.github.io/webidl/#idl-iterable). This means pages will be created for methods named `entries()`, `forEach()`, `keys()`, and `values()`. Since these pages use standard descriptions, you will not be prompted to provide them.
 
 **Supported page types**
 
@@ -46,7 +54,7 @@ The following `pageTypes` are supported by the `-a` argument.
 
 ### clean
 
-Empties the `out/` directory.
+Empties the `/out` directory.
 
 ### help
 
