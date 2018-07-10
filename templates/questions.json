@@ -44,6 +44,17 @@
       "required": false,
       "before": ""
     },
+    "forbidden-response": {
+      "question": "Is the response for this header forbitten?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "no",
+      "required": true,
+      "before": ""
+    },
     "formalAPIName": {
       "question": "What is the API name as it should appear on an Overview page?",
       "type": "string",
@@ -53,6 +64,17 @@
       "replace": "*",
       "default": "",
       "required": false,
+      "before": ""
+    },
+    "http-header": {
+      "question": "What is the name of the HTTP header?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
       "before": ""
     },
     "iterableMemberLink": {
@@ -167,6 +189,17 @@
     },
     "syntax": {
       "question": "What is the syntax for this item?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": ""
+    },
+    "syntax-explanation": {
+      "question": "Does the syntax for this header require explanation?",
       "type": "string",
       "pattern": "",
       "message": "",
