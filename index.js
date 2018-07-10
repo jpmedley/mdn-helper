@@ -5,12 +5,20 @@
 const create = require('./create.js');
 const utils = require('./utils.js');
 
-switch (process.argv[2]) {
+let command = process.argv[2];
+if (process.argv[3]) {
+  command += (" " + process.argv[3]);
+}
+
+switch (command) {
   case 'clean':
     utils.cleanOutput()
     .then(() => { process.exit(); });
     break;
-	case 'create':
+  case 'create -h':
+    create.create(process.argv);
+    break;
+  case 'create -i':
     create.create(process.argv);
 		break;
 	case 'help':

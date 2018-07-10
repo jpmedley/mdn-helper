@@ -28,8 +28,16 @@ function cleanOutput() {
 }
 
 function getRealArguments(args) {
+	args.shift();
+	args.shift();
+	args.shift();
+  for (let i = 0; i < args.length; i++) {
+    if (args[i].startsWith('-')) {
+      args[i] = args[i].replace('-', '@@');
+    }
+  }
   let argString = args.join();
-  let realArgs = argString.split('-');
+  let realArgs = argString.split('@@');
   if (realArgs[0]=='') { realArgs.shift(); }
   for (let arg in realArgs) {
     if (realArgs[arg].endsWith(',')) {

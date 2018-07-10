@@ -26,7 +26,7 @@ function _writeFiles() {
         template = template.replace(matches[match], answer);
       }
     }
-    let outPath = utils.OUT + dataManager.shared.interface + "_" + m + ".html"
+    let outPath = utils.OUT + dataManager.shared.identifier + "_" + m + ".html"
     fs.writeFileSync(outPath, template);
   }
 }
@@ -39,6 +39,7 @@ async function _askQuestions() {
   console.log("You will now be asked to provide answers that are shared among all the files to")
   console.log("be created.\n");
   for (q in dataManager.shared) {
+    if (q=='identifier') { continue; }
     if (dataManager.shared[q]=='') {
       dataManager.shared[q] = await _askQuestion(questionTemplates[q]);
     }
@@ -129,8 +130,16 @@ function _buildDataManager(args) {
   realArgs.forEach((element) => {
     let argMembers = element.split(',');
     switch (argMembers[0]) {
+      case 'h':
+        dataManager.shared.header = argMembers[1];
+        dataManager.shared.identifier = argMembers[1];
+        dataManager.members.header = new Object();
+        dataManager.members.header.type = "header";
+        dataManager.members.header.hasQuestions = _hasQuestions;
+        break;
       case 'i':
         dataManager.shared.interface = argMembers[1];
+        dataManager.shared.identifier = argMembers[1];
         break;
       case 'p':
         dataManager.members.interface = new Object();
@@ -179,9 +188,6 @@ function _buildDataManager(args) {
 }
 
 async function create(args) {
-	args.shift();
-	args.shift();
-	args.shift();
   // Ask if user needs an interface page. If no, remove from args.
   // Later merge with walker and ping the interface for the answer.
   _buildDataManager(args);

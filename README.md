@@ -24,18 +24,24 @@ The current version only handles JavaScript APIs.
 From within the mdn-helper direcory:
 
   `node index.js <command> [<arguments>]`
-  
+
 Using the optional bash alias:
 
   `mdn-helper <command> [<arguments>]`
 
 ## Commands
 
-### create
+### create -h
 
-Creates MDN pages based on the submitted flags and arguments. The results are written to the `*path/to*/mdn-helper/out` directory.
+Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-helper/out` directory.
 
-**Syntax:** `create [-i interface] [-c] [-o] [-a memberName1 pageType [[memberName2 pageType] ... [memberNameN pageType]]] [-it]`
+**Syntax:** `create -h headerName` 
+
+### create -i
+
+Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out` directory.
+
+**Syntax:** `create -i interface [-c] [-o] [-a memberName1 pageType [[memberName2 pageType] ... [memberNameN pageType]]] [-it]`
 
 **Flags:**
 
