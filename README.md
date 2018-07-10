@@ -7,9 +7,13 @@ The current version only handles JavaScript APIs.
 
 ## Installation
 
+1. Install [node.js](https://nodejs.org).
+
 1. Clone this repository.
 
    `git clone https://github.com/jpmedley/mdn-helper.git`
+   
+1. Change to the `mdn-helper` directory and run `npm install`.
 
 1. (Optional) Add an alias for it to your .bashrc file. For example:
 
