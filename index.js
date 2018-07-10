@@ -26,8 +26,9 @@ switch (command) {
     console.log('Basic usage:');
     console.log('\tnode index.js [command] [arguments]');
     console.log('Commands:');
-    console.log('\tcreate [-i interface] [-p] [-c] [-o] [-a[memberName pageType]] [-it]');
     console.log('\tclean');
+    console.log('\tcreate -h headerName');
+    console.log('\tcreate -i interface [-c] [-o] [-a memberName1 pageType \n\t\t[[memberName2 pageType] ... [memberNameN pageType]]] [-it]');
     console.log('\thelp');
 		process.exit();
 }

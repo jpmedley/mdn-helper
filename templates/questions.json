@@ -100,7 +100,7 @@
       "before": ""
     },
     "mdnSpecName": {
-      "question": "What's the name that will be passed to the MDN SpecName() and spec2() macros?",
+      "question": "What's the API name that will be passed to the MDN SpecName() and spec2() macros?",
       "type": "string",
       "pattern": "",
       "message": "",
