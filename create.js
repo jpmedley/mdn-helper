@@ -130,7 +130,11 @@ function _buildDataManager(args) {
   realArgs.forEach((element) => {
     let argMembers = element.split(',');
     switch (argMembers[0]) {
+      case 's':
+      case 'css':
+        console.log("CSS.");
       case 'h':
+      case 'header':
         dataManager.shared.header = argMembers[1];
         dataManager.shared.identifier = argMembers[1];
         dataManager.members.header = new Object();
@@ -138,6 +142,7 @@ function _buildDataManager(args) {
         dataManager.members.header.hasQuestions = _hasQuestions;
         break;
       case 'i':
+      case 'interface':
         dataManager.shared.interface = argMembers[1];
         dataManager.shared.identifier = argMembers[1];
         break;

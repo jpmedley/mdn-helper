@@ -12,7 +12,7 @@ The current version only handles JavaScript APIs.
 1. Clone this repository.
 
    `git clone https://github.com/jpmedley/mdn-helper.git`
-   
+
 1. Change to the `mdn-helper` directory and run `npm install`.
 
 1. (Optional) Add an alias for it to your .bashrc file. For example:
@@ -31,21 +31,29 @@ Using the optional bash alias:
 
 ## Commands
 
-### create -h
+### create -s or -css
 
-Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-helper/out` directory.
+Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `create -h headerName` 
+**Syntax:** `create -s selectorName`
+`create --css selectorName`
 
-### create -i
+### create -h or --header
 
-Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out` directory.
+Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-helper/out/` directory.
+
+**Syntax:** `create -h headerName`
+`create --header headerName`
+
+### create -i or --interface
+
+Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
 **Syntax:** `create -i interface [-c] [-o] [-a memberName1 pageType [[memberName2 pageType] ... [memberNameN pageType]]] [-it]`
 
 **Flags:**
 
-* `-i`: The name of the parent interface for the pages you are creating. This flag does not create an interface.
+* `-i` or `--interface`: The name of the parent interface for the pages you are creating. This flag does not create an interface.
 * `-p`: Indicates that an *interface* page should be created.
 * `-c`: Indicates that a *constructor* page should be created.
 * `-o`: Indicates that an *overview* page should be created.

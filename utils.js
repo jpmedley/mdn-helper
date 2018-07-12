@@ -32,6 +32,9 @@ function getRealArguments(args) {
 	args.shift();
 	args.shift();
   for (let i = 0; i < args.length; i++) {
+    if (args[i].startsWith('--')) {
+      args[i] = args[i].replace('--', '@@');
+    }
     if (args[i].startsWith('-')) {
       args[i] = args[i].replace('-', '@@');
     }

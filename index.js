@@ -16,9 +16,11 @@ switch (command) {
     .then(() => { process.exit(); });
     break;
   case 'create -h':
-    create.create(process.argv);
-    break;
+  case 'create --header':
   case 'create -i':
+  case 'create --interface':
+  case 'create -s':
+  case 'create --css':
     create.create(process.argv);
 		break;
 	case 'help':
