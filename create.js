@@ -35,7 +35,7 @@ async function _promptQuestions() {
   let question;
   let q;
 
-  const SHARED = `SHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers that are shared among all the files to\nbe created.\n`;
+  const SHARED = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers that are shared among all the files to\nbe created.\n`;
 
   await _askQuestions(dataManager.shared, SHARED);
   for (let m in dataManager.members) {
