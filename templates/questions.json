@@ -11,8 +11,8 @@
       "required": true,
       "before": ""
     },
-    "description": {
-      "question": "What is the description of this item?",
+    "css-example": {
+      "question": "Enter a complete sample rule.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -20,6 +20,28 @@
       "replace": "*",
       "default": "",
       "required": true,
+      "before": ""
+    },
+    "description": {
+      "question": "Describe this item.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": ""
+    },
+    "elaboration": {
+      "question": "Is there anything else to say about this item?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
       "before": ""
     },
     "event-inh": {
@@ -185,6 +207,17 @@
       "replace": "*",
       "default": "{{jsxref('undefined')}}",
       "required": false,
+      "before": ""
+    },
+    "selector": {
+      "question": "What is the name of the CSS selector?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
       "before": ""
     },
     "syntax": {
