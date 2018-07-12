@@ -31,36 +31,35 @@ function _writeFiles() {
   }
 }
 
-async function _askQuestions() {
+async function _promptQuestions() {
   let question;
   let q;
-  console.log("SHARED QUESTIONS");
-  console.log("=".repeat(80));
-  console.log("You will now be asked to provide answers that are shared among all the files to")
-  console.log("be created.\n");
-  for (q in dataManager.shared) {
-    if (q=='identifier') { continue; }
-    if (dataManager.shared[q]=='') {
-      dataManager.shared[q] = await _askQuestion(questionTemplates[q]);
-    }
-  }
 
+  const SHARED = `SHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers that are shared among all the files to\nbe created.\n`;
+
+  await _askQuestions(dataManager.shared, SHARED);
   for (let m in dataManager.members) {
-    if (dataManager.members[m].hasQuestions()) {
-      console.log("\nQuestions for", m);
-      console.log("-".repeat(80));
-      console.log("you will now be asked to provide answers for the", m, "page.\n");
-      for (q in dataManager.members[m]) {
-        if (dataManager.members[m][q]=='') {
-          dataManager.members[m][q] = await _askQuestion(questionTemplates[q]);
-        }
-      }
-    } else {
-      console.log("\nThere are no unanswered questions for", m);
-      console.log("-".repeat(80));
-    }
+    let NOT_SHARED = `\nQuestions for ${m}\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers for the ${m} page.\n`;
+    await _askQuestions(dataManager.members[m], NOT_SHARED);
   }
   utils.prompt.close();
+}
+
+async function _askQuestions(questions, intro) {
+  if (questions.hasQuestions()) {
+    // let item = questions.type;
+    console.log(intro);
+    for (let q in questions) {
+      if (q == 'identifier') { continue; }
+      if (questions[q] == '') {
+        questions[q] = await _askQuestion(questionTemplates[q])
+      }
+    }
+  } else {
+    console.log("\nThere are no unanswered questions for this item.");
+    console.log("-".repeat(80));
+  }
+
 }
 
 function _askQuestion(questionTemplate) {
@@ -134,6 +133,7 @@ function _buildDataManager(args) {
       case 'css':
         dataManager.shared.selector = argMembers[1];
         dataManager.shared.identifier = argMembers[1];
+        dataManager.shared.hasQuestions = _hasQuestions;
         dataManager.members.selector = new Object();
         dataManager.members.selector.type = "css";
         dataManager.members.selector.hasQuestions = _hasQuestions;
@@ -142,6 +142,7 @@ function _buildDataManager(args) {
       case 'header':
         dataManager.shared.header = argMembers[1];
         dataManager.shared.identifier = argMembers[1];
+        dataManager.shared.hasQuestions = _hasQuestions;
         dataManager.members.header = new Object();
         dataManager.members.header.type = "header";
         dataManager.members.header.hasQuestions = _hasQuestions;
@@ -150,6 +151,7 @@ function _buildDataManager(args) {
       case 'interface':
         dataManager.shared.interface = argMembers[1];
         dataManager.shared.identifier = argMembers[1];
+        dataManager.shared.hasQuestions = _hasQuestions;
         break;
       case 'p':
         dataManager.members.interface = new Object();
@@ -203,7 +205,7 @@ async function create(args) {
   _buildDataManager(args);
   _collectTokens();
   _loadQuestionTemplates();
-  await _askQuestions()
+  await _promptQuestions()
   _writeFiles();
 }
 
