@@ -132,7 +132,12 @@ function _buildDataManager(args) {
     switch (argMembers[0]) {
       case 's':
       case 'css':
-        console.log("CSS.");
+        dataManager.shared.selector = argMembers[1];
+        dataManager.shared.identifier = argMembers[1];
+        dataManager.members.selector = new Object();
+        dataManager.members.selector.type = "css";
+        dataManager.members.selector.hasQuestions = _hasQuestions;
+        break;
       case 'h':
       case 'header':
         dataManager.shared.header = argMembers[1];

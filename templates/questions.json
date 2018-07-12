@@ -166,7 +166,7 @@
       "before": ""
     },
     "parameters": {
-      "question": "Does this method have any arguments? Please enter a comma-separated list or press Enter.",
+      "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",
