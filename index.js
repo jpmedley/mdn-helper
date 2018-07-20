@@ -32,6 +32,7 @@ switch (command) {
     console.log('\tclean');
     console.log('\tcreate -h headerName');
     console.log('\tcreate -i interface [-c] [-o] [-a memberName1 pageType \n\t\t[[memberName2 pageType] ... [memberNameN pageType]]] [-it]');
+    console.log(('\tcreate -s cssSelectorName'));
     console.log('\thelp');
 		process.exit();
 }
