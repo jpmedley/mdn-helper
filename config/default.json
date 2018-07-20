@@ -1,0 +1,6 @@
+{
+  "Application": {
+    "outputDirectory": "out/",
+    "questionsFile": "questions.json"
+  }
+}

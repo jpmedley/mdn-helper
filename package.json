@@ -14,6 +14,7 @@
   "author": "Joseph Medley <jmedley@google.com>",
   "license": "MPL-2.0",
   "dependencies": {
+    "config": "^1.30.0",
     "readline": "^1.3.0"
   }
 }

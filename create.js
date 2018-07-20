@@ -1,5 +1,6 @@
 'use strict';
 
+const config = require('config');
 const fs = require('fs');
 const utils = require('./utils.js');
 
@@ -79,7 +80,9 @@ function _askQuestion(questionTemplate) {
 }
 
 function _loadQuestionTemplates() {
-  const questionPath = TEMPLATES + "questions.json";
+  const questionsFileName = config.get('Application.questionsFile');
+  // const questionPath = TEMPLATES + "questions.json";
+  const questionPath = TEMPLATES + questionsFileName
   const questionBuffer = fs.readFileSync(questionPath);
   questionTemplates = JSON.parse(questionBuffer.toString()).templates;
 }

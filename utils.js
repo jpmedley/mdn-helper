@@ -1,9 +1,11 @@
 'use strict';
 
+const config = require('config');
 const fs = require('fs');
 const readline = require('readline');
 
-const OUT = 'out/';
+// const OUT = 'out/';
+const OUT = config.get('Application.outputDirectory');
 
 const prompt = readline.createInterface({
   input: process.stdin,
