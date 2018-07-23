@@ -6,11 +6,19 @@ const readline = require('readline');
 
 // const OUT = 'out/';
 const OUT = config.get('Application.outputDirectory');
+if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
 const prompt = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 })
+
+function getConfig(parameter) {
+  if (config.has('User.' + parameter)) {
+    return config.get('User.' + parameter);
+  }
+  return config.get('Application.' + parameter);
+}
 
 function cleanOutput() {
   return new Promise((resolve, reject) => {
@@ -54,5 +62,6 @@ function getRealArguments(args) {
 
 module.exports.OUT = OUT;
 module.exports.cleanOutput = cleanOutput;
+module.exports.getConfig = getConfig;
 module.exports.getRealArguments = getRealArguments;
 module.exports.prompt = prompt;

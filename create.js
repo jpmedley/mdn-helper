@@ -1,16 +1,18 @@
 'use strict';
 
-const config = require('config');
+// const config = require('config');
 const fs = require('fs');
 const utils = require('./utils.js');
 
+const DONT_ASK = 'Don\'t ask.';
+const QUESTIONS_FILE = utils.getConfig('questionsFile');
+const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
+const TEMPLATES = 'templates/';
+
 let dataManager;
 let questionTemplates
-const TEMPLATES = 'templates/';
-const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
 
 function _writeFiles() {
-  if (!fs.existsSync(utils.OUT)) { fs.mkdirSync(utils.OUT); }
   for (let m in dataManager.members) {
     let template = getTemplate(dataManager.members[m].type);
     let matches = template.match(QUESTION_RE);
@@ -19,10 +21,12 @@ function _writeFiles() {
       let answer;
       if (matches[match].startsWith('[[shared:')) {
         token = matches[match].slice(9, -2);
+        if (dataManager.shared[token] == DONT_ASK) { continue; }
         answer = dataManager.shared[token];
         template = template.replace(matches[match], answer);
       } else {
         token = matches[match].slice(2, -2);
+        if (dataManager.members[m][token] == DONT_ASK) { continue; }
         answer = dataManager.members[m][token];
         template = template.replace(matches[match], answer);
       }
@@ -53,6 +57,10 @@ async function _askQuestions(questions, intro) {
     for (let q in questions) {
       if (q == 'identifier') { continue; }
       if (questions[q] == '') {
+        if (questionTemplates[q].skip) {
+          questions[q] = DONT_ASK;
+          continue;
+        }
         questions[q] = await _askQuestion(questionTemplates[q])
       }
     }
@@ -71,18 +79,16 @@ function _askQuestion(questionTemplate) {
   question += "\n";
   return new Promise((resolve, reject) => {
     utils.prompt.question(question, (answer) => {
-      if (answer == '') {
-        answer = questionTemplate.default;
-      }
+      if (answer == '') { answer = questionTemplate.default; }
       resolve(answer);
     });
   });
 }
 
 function _loadQuestionTemplates() {
-  const questionsFileName = config.get('Application.questionsFile');
+  // const questionsFileName = config.get('Application.questionsFile');
   // const questionPath = TEMPLATES + "questions.json";
-  const questionPath = TEMPLATES + questionsFileName
+  const questionPath = TEMPLATES + QUESTIONS_FILE
   const questionBuffer = fs.readFileSync(questionPath);
   questionTemplates = JSON.parse(questionBuffer.toString()).templates;
 }
