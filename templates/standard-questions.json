@@ -36,6 +36,18 @@
       "before": "",
       "skip": false
     },
+    "directive-values": {
+      "question": "What are the possible values for this directive? Please enter a comma-separated list or press Enter.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": "",
+      "skip": false
+    },
     "elaboration": {
       "question": "Is there anything else to say about this item?",
       "type": "string",
@@ -96,7 +108,7 @@
       "before": "",
       "skip": false
     },
-    "http-header": {
+    "header": {
       "question": "What is the name of the HTTP header?",
       "type": "string",
       "pattern": "",
@@ -193,7 +205,7 @@
       "skip": false
     },
     "properties": {
-      "question": "Does this interface have any properties? Please enter a comma-separated list or press Enter.",
+      "question": "Does this item have any properties? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",

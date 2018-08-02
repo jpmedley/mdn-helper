@@ -147,6 +147,15 @@ function _buildDataManager(args) {
         dataManager.members.selector.type = "css";
         dataManager.members.selector.hasQuestions = _hasQuestions;
         break;
+      case 'd':
+        let directiveName;
+        argMembers.forEach((element, index) => {
+          directiveName = element;
+          dataManager.members[directiveName] = new Object();
+          dataManager.members[directiveName].type = "directive";
+          dataManager.members[directiveName].hasQuestions = _hasQuestions;
+        });
+        break;
       case 'h':
       case 'header':
         dataManager.shared.header = argMembers[1];
@@ -193,7 +202,7 @@ function _buildDataManager(args) {
                 dataManager.members[memberName].hasQuestions = _hasQuestions;
               }
           }
-        })
+        });
         break;
       case 'it':
         const iterables = ['entries()', 'forEach()', 'keys()', 'values()'];
