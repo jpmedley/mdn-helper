@@ -31,44 +31,38 @@ Using the optional bash alias:
 
 ## Commands
 
-### create -s or -css
+### css
 
 Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `create -s selectorName`
-`create --css selectorName`
+**Syntax:** `css -n _selectorName_`
 
-### create -h or --header
+### header
 
 Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `create -h headerName`
-`create --header headerName`
+**Syntax:** `header -n _headerName_ [-h] [(-d | --directive) _directiveName_]`
 
-### create -i or --interface
+**Flags**
+
+* `-n`: The name of the header being documented. This flag provides the header\'s name for use in directive pages. It does not create an interface page.
+* `-h`: (Optional) Indicates that a *header* page should be created. If this flag is absent only directive pages will be created.
+* `-d` or `--directive`: (Optional) The name of a directive being documented. This flag may be repeated as needed.
+
+### interface
 
 Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `create -i interface [-c] [-o] [-a memberName1 pageType [[memberName2 pageType] ... [memberNameN pageType]]] [-it]`
+**Syntax:** `interface -n _interfaceName_ [-o] [-i] [-c] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]`
 
 **Flags:**
 
-* `-i` or `--interface`: The name of the parent interface for the pages you are creating. This flag does not create an interface.
-* `-p`: Indicates that an *interface* page should be created.
-* `-c`: Indicates that a *constructor* page should be created.
-* `-o`: Indicates that an *overview* page should be created.
-* `-a`: Indicates the name and page type of an interface member. The arguments to this flag may be repeated as many times as needed.
-* `-it`: Indicates that the interface implements [`iterable`](https://heycam.github.io/webidl/#idl-iterable). This means pages will be created for methods named `entries()`, `forEach()`, `keys()`, and `values()`. Since these pages use standard descriptions, you will not be prompted to provide them.
-
-**Supported page types**
-
-The following `pageTypes` are supported by the `-a` argument.
-
-* event
-* handler
-* method
-* onevent
-* property
+* `-n`: The name of the interface being documented. This flag provides the interface\'s name for use in member pages. It does not create an overview, interface, or constructor page.
+* `-o`: (Optional) Indicates that an *overview* page should be created.
+* `-i`: (Optional) Indicates that an *interface* page should be created.
+* `-c`: (Optional) Indicates that a *constructor* page should be created.
+* `-m` or `--method`: (Optional) Indicates *method* page should be created with the specified name. This flag may be repeated as needed.
+* `-p` or `--property`: (Optional) Indicates *property* page should be created with the specified name. This flag may be repeated as needed.
 
 ### clean
 
@@ -82,22 +76,16 @@ Prints help text to the console.
 
 **Create an interface page only**
 
-`node index.js create -i Widget -p`
+`node index.js interface -n Widget -i`
 
 **Create an interface page and a constructor page**
 
-`node index.js create -i Widget -p -c`
+`node index.js interface -n Widget -i -c`
 
 **Create a method page without its interface**
 
-`node index.js create -i Widget -a "make()" method`
+`node index.js interface -n Widget -m "doStuff()"`
 
 **Create an interface page and two members**
 
-`node index.js create -i Widget -p -a "make()" method ready property`
-
-**Create iterable pages**
-
-The following command creates pages for methods named `entries()`, `forEach()`, `keys()`, and `values()`, but not an overview page.
-
-`node index.js create -i Widget -it`
+`node index.js interface -n Widget -m "doStuff()" -p isReady`

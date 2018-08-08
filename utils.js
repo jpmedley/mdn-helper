@@ -102,14 +102,18 @@ function getRealArguments(args) {
 }
 
 function printHelp() {
-  console.log('Basic usage:');
-  console.log('\tnode index.js [command] [arguments]');
-  console.log('Commands:');
-  console.log('\tclean');
-  console.log('\tcreate -h headerName');
-  console.log('\tcreate -i interface [-c] [-o] [-a memberName1 pageType \n\t\t[[memberName2 pageType] ... [memberNameN pageType]]] [-it]');
-  console.log(('\tcreate -s cssSelectorName'));
-  console.log('\thelp');
+  let doc = '';
+  doc += 'Basic usage:\n';
+  doc += '\tnode index.js [command] [arguments]';
+  doc += `Commands:\n`;
+  doc += '\tclean\n';
+  doc += '\tcss -n _selectorName_\n';
+  doc += '\theader -n _headerName_ [-h] [(-d | --directive) _directiveName_]\n';
+  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n';
+  doc += '\thelp\n';
+  doc += 'See the README file for details.\n'
+
+  console.log(doc);
   process.exit();
 }
 
