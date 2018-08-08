@@ -36,6 +36,18 @@
       "before": "",
       "skip": false
     },
+    "directive": {
+      "question": "What is the name of the HTTP directive?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "skip": false
+    },
     "directive-values": {
       "question": "What are the possible values for this directive? Please enter a comma-separated list or press Enter.",
       "type": "string",

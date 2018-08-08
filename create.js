@@ -1,37 +1,54 @@
 'use strict';
 
-// const config = require('config');
 const fs = require('fs');
 const utils = require('./utils.js');
 
 const DONT_ASK = 'Don\'t ask.';
+const NO_ANSWER = '';
 const QUESTIONS_FILE = utils.getConfig('questionsFile');
 const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
 const TEMPLATES = 'templates/';
 
 let dataManager;
-let questionTemplates
+let questionTemplates;
+let pageData = new Array();
+let sharedQuestions = new Object();
+sharedQuestions.hasQuestions = _hasQuestions;
+
+function _css(args) {
+  create(args);
+}
+
+function _header(args) {
+  create(args);
+}
+
+function _interface(args) {
+  create(args);
+}
 
 function _writeFiles() {
-  for (let m in dataManager.members) {
-    let template = getTemplate(dataManager.members[m].type);
-    let matches = template.match(QUESTION_RE);
+  for (let page in pageData) {
+    let template = getTemplate(pageData[page].type);
+    const matches = template.match(QUESTION_RE);
     for (let match in matches) {
       let token;
       let answer;
       if (matches[match].startsWith('[[shared:')) {
         token = matches[match].slice(9, -2);
-        if (dataManager.shared[token] == DONT_ASK) { continue; }
-        answer = dataManager.shared[token];
+        if (sharedQuestions[token] == DONT_ASK) { continue; }
+        if (sharedQuestions[token] == NO_ANSWER) { continue; }
+        answer = sharedQuestions[token];
         template = template.replace(matches[match], answer);
       } else {
         token = matches[match].slice(2, -2);
-        if (dataManager.members[m][token] == DONT_ASK) { continue; }
-        answer = dataManager.members[m][token];
+        if (pageData[page].questions[token] == DONT_ASK) { continue; }
+        if (pageData[page].questions[token] == NO_ANSWER) { continue; }
+        answer = pageData[page].questions[token];
         template = template.replace(matches[match], answer);
       }
     }
-    let outPath = utils.OUT + dataManager.shared.identifier + "_" + m + ".html"
+    let outPath = utils.OUT + sharedQuestions.interface + "_" + pageData[page].name + "_" + pageData[page].type + ".html";
     fs.writeFileSync(outPath, template);
   }
 }
@@ -40,40 +57,44 @@ async function _promptQuestions() {
   let question;
   let q;
 
-  const SHARED = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers that are shared among all the files to\nbe created.\n`;
+  const SHARED = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
 
-  await _askQuestions(dataManager.shared, SHARED);
-  for (let m in dataManager.members) {
-    let NOT_SHARED = `\nQuestions for ${m}\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers for the ${m} page.\n`;
-    await _askQuestions(dataManager.members[m], NOT_SHARED);
+  // pageData
+  await _askQuestions(sharedQuestions, SHARED);
+  for (let m in pageData) {
+    const pageName = pageData[m].name + " " + pageData[m].type;
+    let NOT_SHARED = `\nQuestions for the ${pageName} page\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers for the ${pageName} page.\n`;
+    await _askQuestions(pageData[m].questions, NOT_SHARED);
   }
   utils.prompt.close();
 }
 
-async function _askQuestions(questions, intro) {
-  if (questions.hasQuestions()) {
-    // let item = questions.type;
+async function _askQuestions(questionSet, intro) {
+  if (questionSet.hasQuestions()) {
     console.log(intro);
-    for (let q in questions) {
-      if (q == 'identifier') { continue; }
-      if (questions[q] == '') {
-        if (questionTemplates[q].skip) {
-          questions[q] = DONT_ASK;
-          continue;
-        }
-        questions[q] = await _askQuestion(questionTemplates[q])
-      }
-    }
   } else {
-    console.log("\nThere are no unanswered questions for this item.");
+    console.log(intro);
+    console.log("\nThis page can be created with the answers alread provided. Moving on.");
     console.log("-".repeat(80));
+    return;
   }
+  for (let question in questionSet) {
+    if (questionSet[question] == _hasQuestions) { continue; }
+    if (questionSet[question] == 'identifer') { continue; }
 
+    if (questionSet[question] == NO_ANSWER) {
+      if (questionSet[question].skip) {
+        questionSet[question] = DONT_ASK;
+        continue;
+      }
+      questionSet[question] = await _askQuestion(questionTemplates[question]);
+    }
+  }
 }
 
 function _askQuestion(questionTemplate) {
   let question = "\n" + questionTemplate.question;
-  if (questionTemplate.default != '') {
+  if (questionTemplate.default != NO_ANSWER) {
     question += (" (" + questionTemplate.default + ")");
   }
   question += "\n";
@@ -94,24 +115,26 @@ function _loadQuestionTemplates() {
 }
 
 function _collectTokens() {
-  if (!dataManager) { return; }
-  for (let m in dataManager.members) {
-    let template = getTemplate(dataManager.members[m].type);
-    let matches = template.match(QUESTION_RE);
-    for (let q in matches) {
+  for (let p in pageData) {
+    let template = getTemplate(pageData[p].type);
+    let qTokens = template.match(QUESTION_RE);
+    pageData[p].questions = new Object();
+    pageData[p].questions.hasQuestions  = _hasQuestions;
+    for (let t in qTokens) {
       let key;
-      if (matches[q].startsWith('[[shared:')) {
-        let pieces = matches[q].split(':');
+      if (qTokens[t].startsWith('[[shared:')) {
+        let pieces = qTokens[t].split(':');
         key = pieces[1].slice(0,-2);
-        if (!(key in dataManager.shared)) {
-          dataManager.shared[key] = '';
+        if (!(key in sharedQuestions)) {
+          sharedQuestions[key] = '';
         }
       } else {
-        let subKey = matches[q].slice(2,-2);
-        dataManager.members[m][subKey] = '';
+        key = qTokens[t].slice(2,-2);
+        if (!(key in pageData[p].questions)) {
+          pageData[p].questions[key] = '';
+        }
       }
     }
-    dataManager.members[m]['member'] = m;
   }
 }
 
@@ -130,101 +153,44 @@ function _hasQuestions() {
   return false;
 }
 
-function _buildDataManager(args) {
-  const realArgs = utils.getRealArguments(args);
-  dataManager = new Object();
-  dataManager.shared = new Object();
-  dataManager.members = new Object();
-  realArgs.forEach((element) => {
-    let argMembers = element.split(',');
-    switch (argMembers[0]) {
-      case 's':
-      case 'css':
-        dataManager.shared.selector = argMembers[1];
-        dataManager.shared.identifier = argMembers[1];
-        dataManager.shared.hasQuestions = _hasQuestions;
-        dataManager.members.selector = new Object();
-        dataManager.members.selector.type = "css";
-        dataManager.members.selector.hasQuestions = _hasQuestions;
-        break;
-      case 'd':
-        let directiveName;
-        argMembers.forEach((element, index) => {
-          directiveName = element;
-          dataManager.members[directiveName] = new Object();
-          dataManager.members[directiveName].type = "directive";
-          dataManager.members[directiveName].hasQuestions = _hasQuestions;
-        });
-        break;
-      case 'h':
-      case 'header':
-        dataManager.shared.header = argMembers[1];
-        dataManager.shared.identifier = argMembers[1];
-        dataManager.shared.hasQuestions = _hasQuestions;
-        dataManager.members.header = new Object();
-        dataManager.members.header.type = "header";
-        dataManager.members.header.hasQuestions = _hasQuestions;
-        break;
-      case 'i':
-      case 'interface':
-        dataManager.shared.interface = argMembers[1];
-        dataManager.shared.identifier = argMembers[1];
-        dataManager.shared.hasQuestions = _hasQuestions;
-        break;
-      case 'p':
-        dataManager.members.interface = new Object();
-        dataManager.members.interface.type = "interface";
-        dataManager.members.interface.hasQuestions = _hasQuestions;
-        break;
-      case 'c':
-        dataManager.members.constructor = new Object();
-        dataManager.members.constructor.type = "constructor";
-        dataManager.members.constructor.hasQuestions = _hasQuestions;
-        break;
-      case 'o':
-        dataManager.members.overview = new Object();
-        dataManager.members.overview.type = "overview";
-        dataManager.members.overview.hasQuestions = _hasQuestions;
-        break;
-      case 'a':
-        let memberName;
-        argMembers.forEach((element, index) => {
-          switch (index) {
-            case 0:
-              break;
-            default:
-              let rem = index % 2;
-              if (rem > 0) {
-                memberName = element;
-                dataManager.members[memberName] = new Object();
-              } else {
-                dataManager.members[memberName].type = element;
-                dataManager.members[memberName].hasQuestions = _hasQuestions;
-              }
-          }
-        });
-        break;
-      case 'it':
-        const iterables = ['entries()', 'forEach()', 'keys()', 'values()'];
-        iterables.forEach(iterable => {
-          dataManager.members[iterable] = new Object();
-          let type = iterable.slice(0,-2);
-          dataManager.members[iterable].type = type;
-          dataManager.members[iterable].hasQuestions = _hasQuestions;
-        })
-        break;
-    }
+function _getPageDataObject(args) {
+  let parentPages = ["header","interface"];
+  let parentType = args[0];
+
+  // Add space for interface or header name to sharedQuestions,
+  //  and remove it from args.
+  sharedQuestions[parentType] = '';
+  args.shift();
+
+  // Add interface or header name to sharedQuestions,
+  //  and remove it from args.
+  let argMembers = args[0].split(',');
+  sharedQuestions[parentType] = argMembers[1];
+  args.shift();
+
+  // Process remaining arguments.
+  args.forEach((arg, index, args) => {
+    let argMembers = arg.split(',');
+    let page = new Object();
+    page.type = _resolveType(argMembers[0])
+    page.name = argMembers[1];
+    pageData.push(page);
   });
 }
 
+function _resolveType(type) {
+  let types = { "c":"constructor", "constructor":"constructor", "d": "directive", "directive": "directive", "h":"header", "header":"header", "i":"interface", "interface":"interface", "m":"method", "method":"method", "o":"overview", "overview":"overview", "p":"property", "property":"property", "s": "css", "css": "css"}
+  return types[type];
+}
+
 async function create(args) {
-  // Ask if user needs an interface page. If no, remove from args.
-  // Later merge with walker and ping the interface for the answer.
-  _buildDataManager(args);
+  _getPageDataObject(args);
   _collectTokens();
   _loadQuestionTemplates();
   await _promptQuestions()
   _writeFiles();
 }
 
-module.exports.create = create;
+module.exports.css = _css;
+module.exports.header = _header;
+module.exports.interface = _interface;
