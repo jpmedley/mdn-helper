@@ -87,7 +87,13 @@ async function _askQuestions(questionSet, intro) {
         questionSet[question] = DONT_ASK;
         continue;
       }
-      questionSet[question] = await _askQuestion(questionTemplates[question]);
+      let questionText = questionTemplates[question];
+      if (typeof questionText == 'undefined') {
+        const msg = `\n[ERROR] The questions file in use is missing a question for ${question}. Be sure to check all of them.\n`
+        console.error(msg);
+        process.exit(1);
+      }
+      questionSet[question] = await _askQuestion(questionText);
     }
   }
 }
@@ -118,8 +124,8 @@ function _collectTokens() {
   for (let p in pageData) {
     let template = getTemplate(pageData[p].type);
     let qTokens = template.match(QUESTION_RE);
-    pageData[p].questions = new Object();
-    pageData[p].questions.hasQuestions  = _hasQuestions;
+    // pageData[p].questions = new Object();
+    // pageData[p].questions.hasQuestions  = _hasQuestions;
     for (let t in qTokens) {
       let key;
       if (qTokens[t].startsWith('[[shared:')) {
@@ -172,8 +178,12 @@ function _getPageDataObject(args) {
   args.forEach((arg, index, args) => {
     let argMembers = arg.split(',');
     let page = new Object();
+    let _questions = new Object();
+    page.questions = _questions;
+    page.questions.hasQuestions = _hasQuestions;
     page.type = _resolveType(argMembers[0])
     page.name = argMembers[1];
+    page.questions[page.type] = argMembers[1];
     pageData.push(page);
   });
 }
