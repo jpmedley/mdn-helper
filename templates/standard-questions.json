@@ -180,18 +180,6 @@
       "before": "",
       "skip": false
     },
-    "member": {
-      "question": "What is the name of this property?",
-      "type": "string",
-      "pattern": "",
-      "message": "",
-      "hidden": false,
-      "replace": "*",
-      "default": "",
-      "required": true,
-      "before": "",
-      "skip": false
-    },
     "memberLink": {
       "question": "What is the anchor for this item's location in the spec?",
       "type": "string",
