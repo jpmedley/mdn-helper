@@ -41,19 +41,19 @@ Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn
 
 Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `header -n _headerName_ [-h] [(-d | --directive) _directiveName_]`
+**Syntax:** <code>header -n _headerName_ [-h] [(-d | --directive) _directiveName_]</code>
 
 **Flags**
 
 * `-n`: The name of the header being documented. This flag provides the header\'s name for use in directive pages. It does not create an interface page.
-* `-h`: (Optional) Indicates that a *header* page should be created. If this flag is absent only directive pages will be created.
+* `-h`: (Optional) Indicates that a header page *should be created*. If this flag is absent only directive pages will be created.
 * `-d` or `--directive`: (Optional) The name of a directive being documented. This flag may be repeated as needed.
 
 ### interface
 
 Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `interface -n _interfaceName_ [-o] [-i] [-c] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]`
+**Syntax:** <code>interface -n _interfaceName_ [-o] [-i] [-c] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]</code>
 
 **Flags:**
 
