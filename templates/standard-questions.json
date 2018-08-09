@@ -132,6 +132,18 @@
       "before": "",
       "skip": false
     },
+    "header-spec-version": {
+      "question": "What is the version number of the spec that defines this header or directive?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "skip": false
+    },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable in the spec?",
       "type": "string",
