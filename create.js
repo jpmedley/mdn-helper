@@ -10,7 +10,6 @@ const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
 const TEMPLATES = 'templates/';
 
 let dataManager;
-let questionTemplates;
 let pageData = new Array();
 let sharedQuestions = new Object();
 sharedQuestions.hasQuestions = _hasQuestions;
@@ -70,6 +69,7 @@ async function _promptQuestions() {
 }
 
 async function _askQuestions(questionSet, intro) {
+  let questionTemplates = _loadQuestionTemplates();
   if (questionSet.hasQuestions()) {
     console.log(intro);
   } else {
@@ -113,19 +113,15 @@ function _askQuestion(questionTemplate) {
 }
 
 function _loadQuestionTemplates() {
-  // const questionsFileName = config.get('Application.questionsFile');
-  // const questionPath = TEMPLATES + "questions.json";
   const questionPath = TEMPLATES + QUESTIONS_FILE
   const questionBuffer = fs.readFileSync(questionPath);
-  questionTemplates = JSON.parse(questionBuffer.toString()).templates;
+  return JSON.parse(questionBuffer.toString()).templates;
 }
 
 function _collectTokens() {
   for (let p in pageData) {
     let template = getTemplate(pageData[p].type);
     let qTokens = template.match(QUESTION_RE);
-    // pageData[p].questions = new Object();
-    // pageData[p].questions.hasQuestions  = _hasQuestions;
     for (let t in qTokens) {
       let key;
       if (qTokens[t].startsWith('[[shared:')) {
@@ -193,7 +189,6 @@ function _getPageDataObject(args) {
 async function create(args) {
   _getPageDataObject(args);
   _collectTokens();
-  _loadQuestionTemplates();
   await _promptQuestions()
   _writeFiles();
 }
