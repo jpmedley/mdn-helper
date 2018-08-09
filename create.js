@@ -48,7 +48,7 @@ function _writeFiles() {
         template = template.replace(matches[match], answer);
       }
     }
-    let outPath = utils.OUT + sharedQuestions.interface + "_" + pageData[page].name + "_" + pageData[page].type + ".html";
+    let outPath = utils.OUT + sharedQuestions.name + "_" + pageData[page].name + "_" + pageData[page].type + ".html";
     fs.writeFileSync(outPath, template);
   }
 }
@@ -166,12 +166,14 @@ function _getPageDataObject(args) {
   // Add space for interface or header name to sharedQuestions,
   //  and remove it from args.
   sharedQuestions[parentType] = '';
+  sharedQuestions.name = '';
   args.shift();
 
   // Add interface or header name to sharedQuestions,
   //  and remove it from args.
   let argMembers = args[0].split(',');
   sharedQuestions[parentType] = argMembers[1];
+  sharedQuestions.name = argMembers[1];
   args.shift();
 
   // Process remaining arguments.
