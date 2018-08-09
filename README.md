@@ -45,7 +45,9 @@ Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-he
 
 **Flags**
 
-* `-n`: The name of the header being documented. This flag provides the header\'s name for use in directive pages. It does not create an interface page.
+`-n`: The name of the header being documented. This flag provides the header\'s name for use in directive pages. It does not create an interface page.
+
+At least one of the following:
 * `-h`: (Optional) Indicates that a header page *should be created*. If this flag is absent only directive pages will be created.
 * `-d` or `--directive`: (Optional) The name of a directive being documented. This flag may be repeated as needed.
 
@@ -57,7 +59,9 @@ Creates pages for JavaScript platform APIs. The results are written to the `*pat
 
 **Flags:**
 
-* `-n`: The name of the interface being documented. This flag provides the interface\'s name for use in member pages. It does not create an overview, interface, or constructor page.
+`-n`: The name of the interface being documented. This flag provides the interface\'s name for use in member pages. It does not create an overview, interface, or constructor page.
+
+At least one of the following:
 * `-o`: (Optional) Indicates that an *overview* page should be created.
 * `-i`: (Optional) Indicates that an *interface* page should be created.
 * `-c`: (Optional) Indicates that a *constructor* page should be created.
