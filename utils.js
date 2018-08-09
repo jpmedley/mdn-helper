@@ -54,13 +54,13 @@ function getRealArguments(args) {
         newArgs.push(args[2]);
         break;
       // UNTESTED
-      case '-it':
-        const iterables = ['entries()', 'forEach()', 'keys()', 'values()'];
-        interables.forEach((iterable) => {
-          newArgs.push('-m');
-          newArgs.push(iterable);
-        });
-        break;
+      // case '-it':
+      //   const iterables = ['entries()', 'forEach()', 'keys()', 'values()'];
+      //   interables.forEach((iterable) => {
+      //     newArgs.push('-m');
+      //     newArgs.push(iterable);
+      //   });
+      //   break;
       case '-o':
       case '-overview':
         newArgs.push(arg)
