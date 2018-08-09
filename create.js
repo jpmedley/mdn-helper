@@ -183,16 +183,11 @@ function _getPageDataObject(args) {
     let _questions = new Object();
     page.questions = _questions;
     page.questions.hasQuestions = _hasQuestions;
-    page.type = _resolveType(argMembers[0])
+    page.type = argMembers[0];
     page.name = argMembers[1];
     page.questions[page.type] = argMembers[1];
     pageData.push(page);
   });
-}
-
-function _resolveType(type) {
-  let types = { "c":"constructor", "constructor":"constructor", "d": "directive", "directive": "directive", "h":"header", "header":"header", "i":"interface", "interface":"interface", "m":"method", "method":"method", "o":"overview", "overview":"overview", "p":"property", "property":"property", "s": "css", "css": "css"}
-  return types[type];
 }
 
 async function create(args) {

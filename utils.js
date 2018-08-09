@@ -45,11 +45,11 @@ function getRealArguments(args) {
   }
   let newArgs = new Array();
   args.forEach((arg, index, args) => {
+    arg = _normalizeArg(arg);
     switch (arg) {
-      case '-c':
       case '--constructor':
-      case '-h':
-      case '-i':
+      case '--header':
+      case '--interface':
         newArgs.push(arg);
         newArgs.push(args[2]);
         break;
@@ -61,8 +61,7 @@ function getRealArguments(args) {
       //     newArgs.push(iterable);
       //   });
       //   break;
-      case '-o':
-      case '-overview':
+      case '--overview':
         newArgs.push(arg)
         newArgs.push((args[0] + '_overview'));
         break;
@@ -80,9 +79,10 @@ function getRealArguments(args) {
     throw new Error("This command requires flags.");
     printHelp();
   }
+
   for (let i = 0; i < newArgs.length; i++) {
     if (newArgs[i].startsWith('--')) {
-      newArgs[i] = args[i].replace('--', '@@');
+      newArgs[i] = newArgs[i].replace('--', '@@');
     }
     if (newArgs[i].startsWith('-')) {
       newArgs[i] = newArgs[i].replace('-', '@@');
@@ -99,6 +99,15 @@ function getRealArguments(args) {
   }
   realArgs = realArgs.concat(argArray);
   return realArgs;
+}
+
+function _normalizeArg(arg) {
+  let args = { "-c":"--constructor", "--constructor":"--constructor", "-d": "--directive", "--directive": "--directive", "-h":"--header", "--header":"--header", "-i":"--interface", "--interface":"--interface", "-m":"--method", "--method":"--method", "-o":"--overview", "--overview":"--overview", "-p":"--property", "--property":"--property", "-s": "--css", "--css": "--css"}
+  if (arg in args) {
+    return args[arg];
+  } else {
+    return arg;
+  }
 }
 
 function printHelp() {
