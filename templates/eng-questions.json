@@ -97,7 +97,7 @@
       "skip": false
     },
     "forbidden-response": {
-      "question": "Is the response for this header forbitten?",
+      "question": "Is the response for this header forbitten? Yes or No?",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -122,6 +122,18 @@
     },
     "header-spec-version": {
       "question": "What is the version number of the spec that defines this header or directive?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "skip": false
+    },
+    "header-type": {
+      "question": "What is the this header's type? Valid values are Request, Response, General, and entity.",
       "type": "string",
       "pattern": "",
       "message": "",
