@@ -41,21 +41,21 @@ Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn
 
 Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** <code>header -n _headerName_ [-h] [(-d | --directive) _directiveName_]</code>
+**Syntax:** <code>header -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]</code>
 
 **Flags**
 
 `-n`: The name of the header being documented. This flag provides the header\'s name for use in directive pages. It does not create an interface page.
 
 At least one of the following:
-* `-h`: (Optional) Indicates that a header page *should be created*. If this flag is absent only directive pages will be created.
+* `-H` or `--header`: (Optional) Indicates that a header page *should be created*. If this flag is absent only directive pages will be created.
 * `-d` or `--directive`: (Optional) The name of a directive being documented. This flag may be repeated as needed.
 
 ### interface
 
 Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** <code>interface -n _interfaceName_ [-o] [-i] [-c] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]</code>
+**Syntax:** <code>interface -n _interfaceName_ [-o] [-i] [-c] [(-e | --event) _eventName_] [(-h | --handler) _handlerName_] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]</code>
 
 **Flags:**
 
@@ -65,8 +65,10 @@ At least one of the following:
 * `-o`: (Optional) Indicates that an *overview* page should be created.
 * `-i`: (Optional) Indicates that an *interface* page should be created.
 * `-c`: (Optional) Indicates that a *constructor* page should be created.
-* `-m` or `--method`: (Optional) Indicates *method* page should be created with the specified name. This flag may be repeated as needed.
-* `-p` or `--property`: (Optional) Indicates *property* page should be created with the specified name. This flag may be repeated as needed.
+* `-e` or `--event`: (Optional) Indicates that an *event* page should be created with the specified name. This flag may be repeated as needed.
+* `-h` or `--handler`: (Optional) Indicates that an *event handler* page should be created with the specified name. This flag may be repeated as needed.
+* `-m` or `--method`: (Optional) Indicates that a *method* page should be created with the specified name. This flag may be repeated as needed.
+* `-p` or `--property`: (Optional) Indicates that a *property* pages should be created with the specified name. This flag may be repeated as needed.
 
 ### clean
 

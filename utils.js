@@ -102,7 +102,7 @@ function getRealArguments(args) {
 }
 
 function _normalizeArg(arg) {
-  let args = { "-c":"--constructor", "--constructor":"--constructor", "-d": "--directive", "--directive": "--directive", "-h":"--header", "--header":"--header", "-i":"--interface", "--interface":"--interface", "-m":"--method", "--method":"--method", "-o":"--overview", "--overview":"--overview", "-p":"--property", "--property":"--property", "-s": "--css", "--css": "--css"}
+  let args = { "-c":"--constructor", "--constructor":"--constructor", "-d": "--directive", "--directive": "--directive", "-e":"--event", "--event":"--event", "-h":"--handler", "-H":"--header", "--handler":"--handler", "--header":"--header", "-i":"--interface", "--interface":"--interface", "-m":"--method", "--method":"--method", "-o":"--overview", "--overview":"--overview", "-p":"--property", "--property":"--property", "-s": "--css", "--css": "--css"}
   if (arg in args) {
     return args[arg];
   } else {
@@ -117,8 +117,10 @@ function printHelp() {
   doc += `Commands:\n`;
   doc += '\tclean\n';
   doc += '\tcss -n _selectorName_\n';
-  doc += '\theader -n _headerName_ [-h] [(-d | --directive) _directiveName_]\n';
-  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c]\n\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n';
+  doc += '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n';
+  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c]\n';
+  doc += '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n';
+  doc += '\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n';
   doc += '\thelp\n';
   doc += 'See the README file for details.\n'
 
