@@ -156,6 +156,18 @@
       "before": "",
       "skip": false
     },
+    "isStandard": {
+      "question": "Should this contain the {{SeeCompatTable}} macro?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "{{SeeCompatTable}}",
+      "required": true,
+      "before": "",
+      "skip": false
+    },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable in the spec?",
       "type": "string",
