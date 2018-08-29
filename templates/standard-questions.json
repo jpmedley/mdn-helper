@@ -1,5 +1,17 @@
 {
   "templates": {
+    "arguments": {
+      "question": "Does this constructor have any arguments? Please enter a comma-separated list or press Enter.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "None.",
+      "required": false,
+      "before": "",
+      "skip": false
+    },
     "constructor": {
       "question": "Does this interface have a constructor? Yes or No?",
       "type": "boolean",
