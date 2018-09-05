@@ -181,7 +181,7 @@
       "skip": false
     },
     "iterableMemberLink": {
-      "question": "What is this interface's anchor for iterable in the spec?",
+      "question": "What is this interface's anchor for iterable/maplike in the spec?",
       "type": "string",
       "pattern": "",
       "message": "",
