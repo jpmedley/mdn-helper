@@ -53,14 +53,20 @@ function getRealArguments(args) {
         newArgs.push(arg);
         newArgs.push(args[2]);
         break;
-      // UNTESTED
-      // case '-it':
-      //   const iterables = ['entries()', 'forEach()', 'keys()', 'values()'];
-      //   interables.forEach((iterable) => {
-      //     newArgs.push('-m');
-      //     newArgs.push(iterable);
-      //   });
-      //   break;
+      case '-it':
+        const iterables = ['entries', 'forEach', 'keys', 'values'];
+        interables.forEach((functionName) => {
+          newArgs.push('-' + functionName);
+          newArgs.push(functionName);
+        });
+        break;
+      case '-mp':
+        const maplike = ['clear', 'delete', 'entries', 'get', 'has', 'keys', 'set', 'size', 'values'];
+        maplike.forEach((functionName) => {
+          newArgs.push('-' + functionName);
+          newArgs.push(functionName);
+        });
+        break;
       case '--overview':
         newArgs.push(arg)
         newArgs.push((args[0] + '_overview'));
@@ -118,7 +124,7 @@ function printHelp() {
   doc += '\tclean\n';
   doc += '\tcss -n _selectorName_\n';
   doc += '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n';
-  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c]\n';
+  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp]\n';
   doc += '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n';
   doc += '\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n';
   doc += '\thelp\n';
