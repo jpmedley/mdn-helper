@@ -67,6 +67,7 @@ At least one of the following:
 * `-c`: (Optional) Indicates that a *constructor* page should be created.
 * `-it`: (Optional) Indicates that functions of the *iterable* IDL type will be created.
 * `-mp`: (Optional) Indicates that functions of the *maplike* IDL type will be created.
+* `-mr`: (Optional) Indicates that functions of the *readonly maplike* IDL type will be created.
 * `-e` or `--event`: (Optional) Indicates that an *event* page should be created with the specified name. This flag may be repeated as needed.
 * `-h` or `--handler`: (Optional) Indicates that an *event handler* page should be created with the specified name. This flag may be repeated as needed.
 * `-m` or `--method`: (Optional) Indicates that a *method* page should be created with the specified name. This flag may be repeated as needed.

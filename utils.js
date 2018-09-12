@@ -61,7 +61,14 @@ function getRealArguments(args) {
         });
         break;
       case '-mp':
-        const maplike = ['clear', 'delete', 'entries', 'get', 'has', 'keys', 'set', 'size', 'values'];
+        const maplike = ['clear', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values'];
+        maplike.forEach((functionName) => {
+          newArgs.push('-' + functionName);
+          newArgs.push(functionName);
+        });
+        break;
+      case '-mr':
+        const maplike = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
         maplike.forEach((functionName) => {
           newArgs.push('-' + functionName);
           newArgs.push(functionName);
@@ -124,7 +131,7 @@ function printHelp() {
   doc += '\tclean\n';
   doc += '\tcss -n _selectorName_\n';
   doc += '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n';
-  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp]\n';
+  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp] [-mr]\n';
   doc += '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n';
   doc += '\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n';
   doc += '\thelp\n';
