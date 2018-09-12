@@ -68,8 +68,8 @@ function getRealArguments(args) {
         });
         break;
       case '-mr':
-        const maplike = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
-        maplike.forEach((functionName) => {
+        const readonlyMaplike = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
+        readonlyMaplike.forEach((functionName) => {
           newArgs.push('-' + functionName);
           newArgs.push(functionName);
         });
