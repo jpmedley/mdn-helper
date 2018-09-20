@@ -123,7 +123,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_String"
+      "action": "add_string"
     },
     "formalAPIName": {
       "question": "What is the API name as it should appear on an Overview page?",
@@ -184,7 +184,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_String"
+      "action": "add_string"
     },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable/maplike in the spec?",
@@ -284,7 +284,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_String"
+      "action": "add_string"
     },
     "return": {
       "question": "What is the return value for this item?",
