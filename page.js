@@ -1,58 +1,48 @@
 'use strict';
 
 const fs = require('fs');
+const utils = require('./utils.js');
 
 const TEMPLATES = 'templates/';
 const QUESTIONS_FILE = utils.getConfig('questionsFile');
 const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
 
-const _questionTemplates = () => _loadQuestionTemplates() {
+
+const _questionTemplates = getTemplates();
+
+function getTemplates() {
   const questionPath = TEMPLATES + QUESTIONS_FILE
   const questionBuffer = fs.readFileSync(questionPath);
-  return JSON.parse(questionBuffer.toString()).templates;
-}
-
-class _Question_Factory {
-  static getQuestion(type) {
-    switch (type) {
-      case 'boolean':
-        return new _BooleanQuestion();
-      case 'string':
-        return new _StringQuestion();
-    }
-  }
+  const templates =  JSON.parse(questionBuffer.toString()).templates;
+  return templates;
 }
 
 class _Question {
-  constructor(template) {
+  constructor(templateName) {
+    const template = _questionTemplates[templateName];
     for (let t in template) {
       this[t] = template[t];
     }
-    this.answer;
+    this.answer ='';
   }
 
   ask() {
-    // Is prompt in scope when called as super.ask();
     let prompt = "\n" + this.question;
     if (this.default) {
       prompt += (" (" + this.default + ")");
     }
     prompt += "\n";
-  }
-}
-
-class _StringQuestion extends _Question {
-  super.ask();
-  return new Promise((resolve, reject) => {
-    utils.prompt.question(question, (answer) => {
-      if (answer == '') { answer = this.default; }
-      resolve(answer);
+    return new Promise((resolve, reject) => {
+      utils.prompt.question(prompt, (answer) => {
+        if (answer == '') {
+          this.answer = this.default;
+        } else {
+          this.answer = answer;
+        }
+        resolve();
+      });
     });
-  });
-}
-
-class _BooleanQuestion extends _Question {
-
+  }
 }
 
 class _Questions {
@@ -60,15 +50,20 @@ class _Questions {
     this.questions = new Object();
   }
 
-  add(question, value='') {
+  add(question, answer='') {
     if (!this.questions.hasOwnProperty(question)) {
-      this.questions[question] = '';
+      this.questions[question] = new _Question(question);
+      this.questions[question].answer = answer;
     }
-    this.questions[question] = value;
   }
 
-  askAll(){
-
+  async askQuestions(introMessage){
+    console.log(introMessage);
+    for (let q in this.questions) {
+      // console.log(this.questions[q]);
+      if ( this.questions[q].answer != '') { continue; }
+      await this.questions[q].ask();
+    }
   }
 
   needsAnswers() {
@@ -84,23 +79,32 @@ class _Questions {
 class _Page {
   constructor(name, type, sharedQuestions) {
     this.name = name;
-    this.type = name;
+    this.type = type;
     this.sharedQuestions = sharedQuestions;
+    // The type and name if the interface are also a question.
+    this.sharedQuestions.add(type, name);
     this.questions = new _Questions();
+
     let templatePath = TEMPLATES + this.type.toLowerCase() + ".html";
-    this.contents = fs.readFileSync(templatePath);
+    let buffer = fs.readFileSync(templatePath);
+    this.contents = buffer.toString();
+
     let tokens = this.contents.match(QUESTION_RE);
     for (let t in tokens) {
-      let question;
-      if (tokens[t].startsWith('[[shared:')) {
-        question = tokens[t].split(':');
-        question = question.slicd(0, -2);
+      let question = tokens[t];
+      if (question.startsWith('[[shared:')) {
+        question = question.split(':')[1];
+        question = question.slice(0, -2);
         this.sharedQuestions.add(question);
       } else {
         question = question.slice(2, -2);
         this.questions.add(question)
       }
     }
+  }
+
+  async askQuestions(introMessage) {
+    await this.questions.askQuestions(introMessage);
   }
 
   write() {

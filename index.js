@@ -1,5 +1,6 @@
 'use strict';
 
+const app = require('./app.js');
 const create = require('./create.js');
 const utils = require('./utils.js');
 
@@ -31,6 +32,9 @@ switch (realArguments[0]) {
     break;
   case 'interface':
     create.interface(realArguments);
+    break;
+  case 'test':
+    app.interface(realArguments);
     break;
   default:
     utils.printHelp();

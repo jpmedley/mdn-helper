@@ -39,7 +39,7 @@ function cleanOutput() {
 function getRealArguments(args) {
   args.shift();
   args.shift();
-  let commands = ['clean', 'css', 'header', 'help', 'interface'];
+  let commands = ['clean', 'css', 'header', 'help', 'interface', 'test'];
   if (!commands.includes(args[0])) {
     throw new Error("The command must be one of clean, css, header, help, or interface.");
   }
