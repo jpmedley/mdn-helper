@@ -10,9 +10,10 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_unorderedList"
     },
-    "constructor": {
+    "constructor_section": {
       "question": "Does this interface have a constructor? Yes or No?",
       "type": "boolean",
       "pattern": "",
@@ -22,7 +23,8 @@
       "default": "Yes",
       "required": true,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_block"
     },
     "css-example": {
       "question": "Enter a complete sample rule.",
@@ -70,7 +72,8 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_definitionList"
     },
     "elaboration": {
       "question": "Is there anything else to say about this item?",
@@ -106,11 +109,12 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_definitionList"
     },
     "forbidden-response": {
-      "question": "Is the response for this header forbitten? Yes or No?",
-      "type": "string",
+      "question": "Is the response for this header forbidden? Yes or No?",
+      "type": "boolean",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -118,7 +122,8 @@
       "default": "no",
       "required": true,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_String"
     },
     "formalAPIName": {
       "question": "What is the API name as it should appear on an Overview page?",
@@ -170,7 +175,7 @@
     },
     "isStandard": {
       "question": "Should this contain the {{SeeCompatTable}} macro?",
-      "type": "string",
+      "type": "boolean",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -178,7 +183,8 @@
       "default": "{{SeeCompatTable}}",
       "required": true,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_String"
     },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable/maplike in the spec?",
@@ -238,7 +244,8 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_definitionList"
     },
     "parameters": {
       "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
@@ -250,7 +257,8 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_unorderedList"
     },
     "properties": {
       "question": "Does this item have any properties? Please enter a comma-separated list or press Enter.",
@@ -262,7 +270,8 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_definitionList"
     },
     "readOnly": {
       "question": "Is this item read only? Yes or No?",
@@ -274,7 +283,8 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false
+      "skip": false,
+      "action": "add_String"
     },
     "return": {
       "question": "What is the return value for this item?",
