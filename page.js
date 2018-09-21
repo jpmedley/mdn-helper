@@ -102,14 +102,15 @@ class _Page {
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
     this.questions = new _Questions();
-    // START HERE:
-    //   1. action should be a member of question
-    //   2. If there's no wireframe.action use a default action which is just to store the answer.
     this.questions.on('runAction', (questionName, question) => {
       actions[question.action.name].run(questionName, question, this);
     });
 
     this.contents = utils.getTemplate(this.type.toLowerCase());
+    // START HERE:
+    //   This should be a utility function so that action files can use it.
+    //   Next, call it from add_block.run() and push the results into the
+    //   question collections.
     const reg = RegExp(utils.TOKEN_RE, 'g');
     let matches;
     while ((matches = reg.exec(this.contents)) != null) {
