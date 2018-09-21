@@ -1,6 +1,6 @@
 'use strict';
 
-function _run() {
+function _run(options) {
   console.log("It worked!");
 }
 

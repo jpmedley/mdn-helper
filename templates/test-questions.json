@@ -11,12 +11,13 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_unorderedList"
+      "action": null
     },
     "constructor": {
       "question": "Does this interface have a constructor? Yes or No?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -76,7 +77,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": null
     },
     "elaboration": {
       "question": "Is there anything else to say about this item?",
@@ -115,7 +116,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": null
     },
     "forbidden-response": {
       "question": "Is the response for this header forbidden? Yes or No?",
@@ -128,7 +129,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_string"
+      "action": null
     },
     "formalAPIName": {
       "question": "What is the API name as it should appear on an Overview page?",
@@ -193,7 +194,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_string"
+      "action": null
     },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable/maplike in the spec?",
@@ -258,7 +259,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": null
     },
     "parameters": {
       "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
@@ -271,7 +272,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_unorderedList"
+      "action": null
     },
     "properties": {
       "question": "Does this item have any properties? Please enter a comma-separated list or press Enter.",
@@ -284,7 +285,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": null
     },
     "readOnly": {
       "question": "Is this item read only? Yes or No?",
@@ -297,7 +298,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_string"
+      "action": null
     },
     "return": {
       "question": "What is the return value for this item?",

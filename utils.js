@@ -4,6 +4,9 @@ const config = require('config');
 const fs = require('fs');
 const readline = require('readline');
 
+const QUESTIONS_FILE = _getConfig('questionsFile');
+const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
+const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
@@ -14,13 +17,6 @@ const _prompt = readline.createInterface({
 
 function _closePrompt() {
   _prompt.close();
-}
-
-function _getConfig(parameter) {
-  if (config.has('User.' + parameter)) {
-    return config.get('User.' + parameter);
-  }
-  return config.get('Application.' + parameter);
 }
 
 function _cleanOutput() {
@@ -38,6 +34,20 @@ function _cleanOutput() {
       resolve();
     });
   });
+}
+
+function _getConfig(parameter) {
+  if (config.has('User.' + parameter)) {
+    return config.get('User.' + parameter);
+  }
+  return config.get('Application.' + parameter);
+}
+
+function _getTemplate(name) {
+  if (!name.endsWith(".html")) { name += ".html"; }
+  let templatePath = TEMPLATES + name;
+  let buffer = fs.readFileSync(templatePath);
+  return buffer.toString();
 }
 
 function _getRealArguments(args) {
@@ -118,6 +128,13 @@ function _getRealArguments(args) {
   return realArgs;
 }
 
+function _getWireframes() {
+  const wireframePath = TEMPLATES + QUESTIONS_FILE
+  const wireframeBuffer = fs.readFileSync(wireframePath);
+  const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
+  return wireframes;
+}
+
 function _normalizeArg(arg) {
   let args = { "-c":"--constructor", "--constructor":"--constructor", "-d": "--directive", "--directive": "--directive", "-e":"--event", "--event":"--event", "-h":"--handler", "-H":"--header", "--handler":"--handler", "--header":"--header", "-i":"--interface", "--interface":"--interface", "-m":"--method", "--method":"--method", "-o":"--overview", "--overview":"--overview", "-p":"--property", "--property":"--property", "-s": "--css", "--css": "--css"}
   if (arg in args) {
@@ -153,10 +170,13 @@ function _printWelcome() {
 }
 
 module.exports.OUT = OUT;
+module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.cleanOutput = _cleanOutput;
 module.exports.closePrompt = _closePrompt;
 module.exports.getConfig = _getConfig;
+module.exports.getTemplate = _getTemplate;
 module.exports.getRealArguments = _getRealArguments;
+module.exports.getWireframes = _getWireframes;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.prompt = _prompt;

@@ -1,59 +1,72 @@
 'use strict';
 
+const actions = require('./actions');
+const ee = require('events').EventEmitter;
 const fs = require('fs');
+const readline = require('readline');
+const util = require('util');
 const utils = require('./utils.js');
 
 const DONT_ASK = 'Don\'t ask.';
 const NO_ANSWER = '';
-const QUESTIONS_FILE = utils.getConfig('questionsFile');
-const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
-const TEMPLATES = 'templates/';
 
-
-const _questionTemplates = getTemplates();
-
-function getTemplates() {
-  const questionPath = TEMPLATES + QUESTIONS_FILE
-  const questionBuffer = fs.readFileSync(questionPath);
-  const templates =  JSON.parse(questionBuffer.toString()).templates;
-  return templates;
-}
+const _questionWireframes = utils.getWireframes();
 
 class _Question {
-  constructor(templateName) {
-    const template = _questionTemplates[templateName];
-    for (let t in template) {
-      this[t] = template[t];
+  constructor(wireframeName) {
+    const wireframe = _questionWireframes[wireframeName];
+    for (let w in wireframe) {
+      this[w] = wireframe[w];
     }
     this.answer ='';
   }
 
-  ask() {
+  _isValid() {
+    let valid = true;
+    if (!this.pattern) { return valid; }
+    const regex = RegExp(this.pattern, 'g');
+    const result = regex.exec(this.answer);
+    if (!result) { valid = false; }
+    return valid;
+  }
+
+  _prompt(prompt) {
+    return new Promise((resolve, reject) => {
+      utils.prompt.question(prompt, (answer) => {
+        (answer == '') ? this.answer = this.default : this.answer = answer;
+        if (this._isValid()) {
+          resolve(this);
+        } else {
+          reject();
+        }
+      })
+    })
+  }
+
+  async ask() {
     let prompt = "\n" + this.question;
     if (this.default) {
       prompt += (" (" + this.default + ")");
     }
     prompt += "\n";
-    return new Promise((resolve, reject) => {
-      utils.prompt.question(prompt, (answer) => {
-        if (answer == '') {
-          this.answer = this.default;
-        } else {
-          this.answer = answer;
-        }
-        resolve();
-      });
-    });
+    try {
+      await this._prompt(prompt);
+    } catch(e) {
+      console.log(this.help);
+      await this.ask();
+    }
+    return this;
   }
 }
 
 class _Questions {
   constructor() {
     this.questions = new Object();
+    util.inherits(_Questions, ee);
   }
 
   add(question, answer='') {
-    if (_questionTemplates[question] == DONT_ASK) { return; }
+    if (_questionWireframes[question] == DONT_ASK) { return; }
     if (!this.questions.hasOwnProperty(question)) {
       this.questions[question] = new _Question(question);
       this.questions[question].answer = answer;
@@ -63,15 +76,17 @@ class _Questions {
   async askQuestions(introMessage){
     console.log(introMessage);
     for (let q in this.questions) {
-      // console.log(this.questions[q]);
-      if ( this.questions[q].answer != '') { continue; }
-      let p = await this.questions[q].ask();
+      if ( this.questions[q].answer != NO_ANSWER) { continue; }
+      let answeredQuestion = await this.questions[q].ask();
+      if (answeredQuestion.action) {
+        this.emit('runAction', q, answeredQuestion)
+      }
     }
   }
 
   needsAnswers() {
     for (var p in this.questions) {
-      if (this.questions[p] == '') {
+      if (this.questions[p] == NO_ANSWER) {
         return true;
       }
     }
@@ -87,21 +102,21 @@ class _Page {
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
     this.questions = new _Questions();
+    // START HERE:
+    //   1. action should be a member of question
+    //   2. If there's no wireframe.action use a default action which is just to store the answer.
+    this.questions.on('runAction', (questionName, question) => {
+      actions[question.action.name].run(questionName, question, this);
+    });
 
-    let templatePath = TEMPLATES + this.type.toLowerCase() + ".html";
-    let buffer = fs.readFileSync(templatePath);
-    this.contents = buffer.toString();
-
-    let tokens = this.contents.match(QUESTION_RE);
-    for (let t in tokens) {
-      let question = tokens[t];
-      if (question.startsWith('[[shared:')) {
-        question = question.split(':')[1];
-        question = question.slice(0, -2);
-        this.sharedQuestions.add(question);
+    this.contents = utils.getTemplate(this.type.toLowerCase());
+    const reg = RegExp(utils.TOKEN_RE, 'g');
+    let matches;
+    while ((matches = reg.exec(this.contents)) != null) {
+      if (matches[0].startsWith('[[shared:')) {
+        this.sharedQuestions.add(matches[1]);
       } else {
-        question = question.slice(2, -2);
-        this.questions.add(question)
+        this.questions.add(matches[1]);
       }
     }
   }
@@ -111,20 +126,18 @@ class _Page {
   }
 
   write() {
-    const matches = this.contents.match(QUESTION_RE);
-    for (let m in matches) {
-      let token;
-      let answer;
-      if (matches[m].startsWith('[[shared:')) {
-        token = matches[m].slice(9, -2);
-        answer = this.sharedQuestions.questions[token].answer;
+    const reg = RegExp(utils.TOKEN_RE, 'g');
+    let matches;
+    let answer
+    while ((matches = reg.exec(this.contents)) != null) {
+      if (matches[0].startsWith('[[shared:')) {
+        answer = this.sharedQuestions.questions[matches[1]].answer;
       } else {
-        token = matches[m].slice(2, -2);
-        answer = this.questions.questions[token].answer;
+        answer = this.questions.questions[matches[1]].answer
       }
       if (answer == DONT_ASK) { continue; }
       if (answer == NO_ANSWER) { continue; }
-      this.contents = this.contents.replace(matches[m], answer);
+      this.contents = this.contents.replace(matches[0], answer);
     }
     let outPath = utils.OUT + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
     fs.writeFileSync(outPath, this.contents);

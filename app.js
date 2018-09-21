@@ -1,9 +1,13 @@
 'use strict';
 
+const actions = require('./actions');
 const page = require('./page.js');
 const utils = require('./utils.js');
 
 let sharedQuestions = new page.Questions();
+sharedQuestions.on('runAction', (questionName, question) => {
+  actions[question.action].run(questionName, question);
+});
 
 function _initPages(args) {
   let parentType = args[0];
