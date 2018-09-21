@@ -3,9 +3,11 @@
 const fs = require('fs');
 const utils = require('./utils.js');
 
-const TEMPLATES = 'templates/';
+const DONT_ASK = 'Don\'t ask.';
+const NO_ANSWER = '';
 const QUESTIONS_FILE = utils.getConfig('questionsFile');
 const QUESTION_RE = /(\[\[([\w\-\_:]+)\]\])/gm;
+const TEMPLATES = 'templates/';
 
 
 const _questionTemplates = getTemplates();
@@ -51,6 +53,7 @@ class _Questions {
   }
 
   add(question, answer='') {
+    if (_questionTemplates[question] == DONT_ASK) { return; }
     if (!this.questions.hasOwnProperty(question)) {
       this.questions[question] = new _Question(question);
       this.questions[question].answer = answer;
@@ -62,7 +65,7 @@ class _Questions {
     for (let q in this.questions) {
       // console.log(this.questions[q]);
       if ( this.questions[q].answer != '') { continue; }
-      await this.questions[q].ask();
+      let p = await this.questions[q].ask();
     }
   }
 
@@ -114,13 +117,14 @@ class _Page {
       let answer;
       if (matches[m].startsWith('[[shared:')) {
         token = matches[m].slice(9, -2);
+        answer = this.sharedQuestions.questions[token].answer;
       } else {
         token = matches[m].slice(2, -2);
+        answer = this.questions.questions[token].answer;
       }
-      answer = this.sharedQuestions[token];
       if (answer == DONT_ASK) { continue; }
       if (answer == NO_ANSWER) { continue; }
-      this.contents.replace(matches[m], answer);
+      this.contents = this.contents.replace(matches[m], answer);
     }
     let outPath = utils.OUT + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
     fs.writeFileSync(outPath, this.contents);

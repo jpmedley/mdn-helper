@@ -5,19 +5,6 @@ const utils = require('./utils.js');
 
 let sharedQuestions = new page.Questions();
 
-function _css(args) {
-  create(args);
-}
-
-function _header(args) {
-  create(args);
-}
-
-function _interface(args) {
-  args[0] = "interface";
-  create(args);
-}
-
 function _initPages(args) {
   let parentType = args[0];
   let parentName = args[1].split(',')[1];
@@ -50,8 +37,7 @@ async function create(args) {
     await pages[p].askQuestions(introMessage);
     pages[p].write();
   }
+  utils.closePrompt();
 }
 
-module.exports.css = _css;
-module.exports.header = _header;
-module.exports.interface = _interface;
+module.exports.create = create;

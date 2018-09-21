@@ -7,22 +7,26 @@ const readline = require('readline');
 const OUT = config.get('Application.outputDirectory');
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
-const prompt = readline.createInterface({
+const _prompt = readline.createInterface({
   input: process.stdin,
   output: process.stdout
-})
+});
 
-function getConfig(parameter) {
+function _closePrompt() {
+  _prompt.close();
+}
+
+function _getConfig(parameter) {
   if (config.has('User.' + parameter)) {
     return config.get('User.' + parameter);
   }
   return config.get('Application.' + parameter);
 }
 
-function cleanOutput() {
+function _cleanOutput() {
   return new Promise((resolve, reject) => {
     let question = "Are you sure? Y or N";
-    prompt.question(question, (answer) => {
+    _prompt.question(question, (answer) => {
       if (answer === 'Y') {
         console.log("Cleaning");
         fs.readdir(OUT, (e, files) => {
@@ -36,7 +40,7 @@ function cleanOutput() {
   });
 }
 
-function getRealArguments(args) {
+function _getRealArguments(args) {
   args.shift();
   args.shift();
   let commands = ['clean', 'css', 'header', 'help', 'interface', 'test'];
@@ -90,7 +94,7 @@ function getRealArguments(args) {
   newArgs.shift();
   if (newArgs.length == 0) {
     throw new Error("This command requires flags.");
-    printHelp();
+    _printHelp();
   }
 
   for (let i = 0; i < newArgs.length; i++) {
@@ -123,7 +127,7 @@ function _normalizeArg(arg) {
   }
 }
 
-function printHelp() {
+function _printHelp() {
   let doc = '';
   doc += 'Basic usage:\n';
   doc += '\tnode index.js [command] [arguments]\n';
@@ -141,7 +145,7 @@ function printHelp() {
   process.exit();
 }
 
-function printWelcome() {
+function _printWelcome() {
   console.clear();
   console.log("=".repeat(80));
   console.log(" ".repeat(30) + "Welcome to mdn-helper" + " ".repeat(29));
@@ -149,9 +153,10 @@ function printWelcome() {
 }
 
 module.exports.OUT = OUT;
-module.exports.cleanOutput = cleanOutput;
-module.exports.getConfig = getConfig;
-module.exports.getRealArguments = getRealArguments;
-module.exports.printHelp = printHelp;
-module.exports.printWelcome = printWelcome;
-module.exports.prompt = prompt;
+module.exports.cleanOutput = _cleanOutput;
+module.exports.closePrompt = _closePrompt;
+module.exports.getConfig = _getConfig;
+module.exports.getRealArguments = _getRealArguments;
+module.exports.printHelp = _printHelp;
+module.exports.printWelcome = _printWelcome;
+module.exports.prompt = _prompt;
