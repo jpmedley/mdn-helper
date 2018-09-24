@@ -186,7 +186,8 @@
     "isStandard": {
       "question": "Should this contain the {{SeeCompatTable}} macro?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y|{{SeeCompatTable}})",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -194,7 +195,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": null
+      "action": {"name": "add_string"}
     },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable/maplike in the spec?",

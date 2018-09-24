@@ -7,7 +7,7 @@ const util = require('util');
 const utils = require('./utils.js');
 
 const DONT_ASK = 'Don\'t ask.';
-const NO_ANSWER = '';
+const ANSWER_IS_NO = '';
 
 const _questionWireframes = utils.getWireframes();
 
@@ -18,7 +18,7 @@ class _Question {
       this[w] = wireframe[w];
     }
     this.name = wireframeName;
-    this.answer ='';
+    this.answer = null;
   }
 
   _isValid() {
@@ -64,7 +64,7 @@ class _Questions {
     this.questions = new Object();
   }
 
-  add(question, answer='') {
+  add(question, answer=null) {
     if (_questionWireframes[question] == DONT_ASK) { return; }
     if (!this.questions.hasOwnProperty(question)) {
       this.questions[question] = new _Question(question);
@@ -76,17 +76,20 @@ class _Questions {
     if (this.needsAnswers()) {
       console.log(introMessage);
       for (let q in this.questions) {
-        if ( this.questions[q].answer != NO_ANSWER) { continue; }
-        let answeredQuestion = await this.questions[q].ask();
+        if (this.questions[q].answer !== null) { continue; }
+        if (this.questions[q].answer == ANSWER_IS_NO) { continue; }
+        if (this.questions[q].answer) { continue; }
+        let answered = await this.questions[q].ask();
+        if (answered.action) {
+          await actions[answered.action.name].run(this, answered);
+        }
       }
     }
   }
 
   needsAnswers() {
     for (var p in this.questions) {
-      if (this.questions[p].answer == NO_ANSWER) {
-        return true;
-      }
+      if (this.questions[p].answer === null) { return true; }
     }
     return false;
   }
@@ -116,11 +119,13 @@ class _Page {
     console.log(introMessage);
     const questions = this.questions.questions;
     for (let q in questions) {
-      if (questions[q].answer != NO_ANSWER) { continue; }
-      let answeredQuestion = await questions[q].ask();
-      if (answeredQuestion.action) {
-        await actions[answeredQuestion.action.name].run(this, answeredQuestion);
+      if (questions[q].answer) { continue; }
+      let answered = await questions[q].ask();
+      if (answered.action) {
+        await actions[answered.action.name].run(this, answered);
       }
+      const token = "[[" + answered.name + "]]";
+      this.contents = this.contents.replace(token, answered.answer);
     }
   }
 
@@ -135,7 +140,7 @@ class _Page {
         answer = this.questions.questions[matches[1]].answer
       }
       if (answer == DONT_ASK) { continue; }
-      if (answer == NO_ANSWER) { continue; }
+      if (answer === null) { continue; }
       this.contents = this.contents.replace(matches[0], answer);
     }
     let outPath = utils.OUT + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
