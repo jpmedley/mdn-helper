@@ -1,7 +1,7 @@
 'use strict';
 
-function _run(options) {
-  console.log("It worked!");
+function _run(currentPage, question) {
+  
 }
 
 module.exports.run = _run;
