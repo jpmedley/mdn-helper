@@ -1,7 +1,6 @@
 'use strict';
 
 const actions = require('./actions');
-const ee = require('events').EventEmitter;
 const fs = require('fs');
 const readline = require('readline');
 const util = require('util');
@@ -18,6 +17,7 @@ class _Question {
     for (let w in wireframe) {
       this[w] = wireframe[w];
     }
+    this.name = wireframeName;
     this.answer ='';
   }
 
@@ -52,7 +52,7 @@ class _Question {
     try {
       await this._prompt(prompt);
     } catch(e) {
-      console.log(this.help);
+      console.log("\n" + this.help);
       await this.ask();
     }
     return this;
@@ -62,7 +62,6 @@ class _Question {
 class _Questions {
   constructor() {
     this.questions = new Object();
-    util.inherits(_Questions, ee);
   }
 
   add(question, answer='') {
@@ -74,19 +73,18 @@ class _Questions {
   }
 
   async askQuestions(introMessage){
-    console.log(introMessage);
-    for (let q in this.questions) {
-      if ( this.questions[q].answer != NO_ANSWER) { continue; }
-      let answeredQuestion = await this.questions[q].ask();
-      if (answeredQuestion.action) {
-        this.emit('runAction', q, answeredQuestion)
+    if (this.needsAnswers()) {
+      console.log(introMessage);
+      for (let q in this.questions) {
+        if ( this.questions[q].answer != NO_ANSWER) { continue; }
+        let answeredQuestion = await this.questions[q].ask();
       }
     }
   }
 
   needsAnswers() {
     for (var p in this.questions) {
-      if (this.questions[p] == NO_ANSWER) {
+      if (this.questions[p].answer == NO_ANSWER) {
         return true;
       }
     }
@@ -102,15 +100,7 @@ class _Page {
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
     this.questions = new _Questions();
-    this.questions.on('runAction', (questionName, question) => {
-      actions[question.action.name].run(questionName, question, this);
-    });
-
     this.contents = utils.getTemplate(this.type.toLowerCase());
-    // START HERE:
-    //   This should be a utility function so that action files can use it.
-    //   Next, call it from add_block.run() and push the results into the
-    //   question collections.
     const reg = RegExp(utils.TOKEN_RE, 'g');
     let matches;
     while ((matches = reg.exec(this.contents)) != null) {
@@ -123,7 +113,15 @@ class _Page {
   }
 
   async askQuestions(introMessage) {
-    await this.questions.askQuestions(introMessage);
+    console.log(introMessage);
+    const questions = this.questions.questions;
+    for (let q in questions) {
+      if (questions[q].answer != NO_ANSWER) { continue; }
+      let answeredQuestion = await questions[q].ask();
+      if (answeredQuestion.action) {
+        await actions[answeredQuestion.action.name].run(this, answeredQuestion);
+      }
+    }
   }
 
   write() {
