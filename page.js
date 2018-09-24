@@ -72,6 +72,10 @@ class _Questions {
     }
   }
 
+  answer(question, answer) {
+    this.questions[question].answer = answer;
+  }
+
   async askQuestions(introMessage){
     if (this.needsAnswers()) {
       console.log(introMessage);
@@ -129,10 +133,10 @@ class _Page {
     }
   }
 
-  write() {
+  render() {
     const reg = RegExp(utils.TOKEN_RE, 'g');
     let matches;
-    let answer
+    let answer;
     while ((matches = reg.exec(this.contents)) != null) {
       if (matches[0].startsWith('[[shared:')) {
         answer = this.sharedQuestions.questions[matches[1]].answer;
@@ -143,6 +147,10 @@ class _Page {
       if (answer === null) { continue; }
       this.contents = this.contents.replace(matches[0], answer);
     }
+  }
+
+  write() {
+    this.render();
     let outPath = utils.OUT + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
     fs.writeFileSync(outPath, this.contents);
   }

@@ -31,7 +31,7 @@ async function create(args) {
   let pages = _initPages(args);
 
   let introMessage = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
-  await sharedQuestions.askQuestions(introMessage);
+  // await sharedQuestions.askQuestions(introMessage);
 
   for (let p in pages) {
     introMessage = `\nQuestions for the ${pages[p].name} page\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers for the ${pages[p].name} page.\n`;

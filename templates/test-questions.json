@@ -1,5 +1,19 @@
 {
   "templates": {
+    "argument-definition": {
+      "question": "What is the definition for this argument.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": null,
+      "required": false,
+      "before": "",
+      "skip": false,
+      "action": null
+
+    },
     "arguments": {
       "question": "Does this constructor have any arguments? Please enter a comma-separated list or press Enter.",
       "type": "string",
@@ -11,7 +25,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": null
+      "action": {"name": "add_definitionList", "args": ["_frag_arguments.html"]}
     },
     "constructor": {
       "question": "Does this interface have a constructor? Yes or No?",
