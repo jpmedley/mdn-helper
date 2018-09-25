@@ -270,7 +270,7 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "None.",
       "required": false,
       "before": "",
       "skip": false,
