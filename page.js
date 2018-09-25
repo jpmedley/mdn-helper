@@ -151,7 +151,9 @@ class _Page {
 
   write() {
     this.render();
-    let outPath = utils.OUT + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
+    let outFolder = utils.OUT + '/' + this.sharedQuestions.name + '/';
+    if (!fs.existsSync(outFolder)) { fs.mkdirSync(outFolder); }
+    let outPath = outFolder + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
     fs.writeFileSync(outPath, this.contents);
   }
 }
