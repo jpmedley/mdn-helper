@@ -76,8 +76,9 @@ function _getRealArguments(args) {
         break;
       case '-m':
       case '--method':
-        if (arg.endsWith('(')) { arg += ")"; }
-        if (!arg.endsWith('()')) { arg += "()"; }
+        if (args[index+1].endsWith('(')) { args[index+1] += ")"; }
+        if (!args[index+1].endsWith('()')) { args[index+1] += "()"; }
+        newArgs.push(arg);
         break;
       case '-mp':
         const maplike = ['clear', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values'];
