@@ -42,7 +42,7 @@
       "action": {"name": "add_block", "args": ["_frag_constructor.html"]}
     },
     "child-interfaces": {
-      "question": "Does this interface have any childre? Yes or No?",
+      "question": "Does this interface have any children? Yes or No?",
       "type": "boolean",
       "pattern": "^(n|y|N|Y)",
       "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",

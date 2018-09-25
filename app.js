@@ -34,7 +34,7 @@ async function create(args) {
   await sharedQuestions.askQuestions(introMessage);
 
   for (let p in pages) {
-    introMessage = `\nQuestions for the ${pages[p].name} page\n` + (`-`.repeat(80)) + `\nYou will now be asked to provide answers for the ${pages[p].name} page.\n`;
+    introMessage = `\nQuestions for the ${pages[p].name} ${pages[p].type} page\n` + (`-`.repeat(80));
     await pages[p].askQuestions(introMessage);
     pages[p].write();
   }
