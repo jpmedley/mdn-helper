@@ -4,16 +4,17 @@ const actions = require('./actions');
 const page = require('./page.js');
 const utils = require('./utils.js');
 
-let sharedQuestions = new page.Questions();
-
 function _initPages(args) {
   let parentType = args[0];
   let parentName = args[1].split(',')[1];
 
   // Add space for interface or header name to sharedQuestions,
   //  and remove it from args.
+  let introMessage = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
+  let sharedQuestions = new page.Questions(introMessage);
   sharedQuestions[parentType] = parentName;
   sharedQuestions['name'] = parentName;
+  sharedQuestions.add(parentType, parentName);
   args.shift();
   args.shift();
 
@@ -29,13 +30,8 @@ function _initPages(args) {
 
 async function create(args) {
   let pages = _initPages(args);
-
-  let introMessage = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
-  await sharedQuestions.askQuestions(introMessage);
-
   for (let p in pages) {
-    introMessage = `\nQuestions for the ${pages[p].name} ${pages[p].type} page\n` + (`-`.repeat(80));
-    await pages[p].askQuestions(introMessage);
+    await pages[p].askQuestions();
     pages[p].write();
   }
   utils.closePrompt();
