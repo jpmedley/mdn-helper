@@ -120,7 +120,9 @@ class _Page {
   }
 
   async askQuestions(introMessage) {
-    console.log(introMessage);
+    if (this.questions.needsAnswers()) {
+      console.log(introMessage);
+    }
     const questions = this.questions.questions;
     for (let q in questions) {
       if (questions[q].answer) { continue; }

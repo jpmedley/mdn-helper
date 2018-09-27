@@ -49,7 +49,7 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "No",
       "required": true,
       "before": "",
       "skip": false,
@@ -140,11 +140,11 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "No",
       "required": false,
       "before": "",
       "skip": false,
-      "action": null
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "forbidden-response": {
       "question": "Is the response for this header forbidden? Yes or No?",
@@ -284,11 +284,11 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "None.",
+      "default": "<p>None.</p>",
       "required": false,
       "before": "",
       "skip": false,
-      "action": null
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "parameters": {
       "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
@@ -310,11 +310,11 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "<p>None.</p>",
       "required": false,
       "before": "",
       "skip": false,
-      "action": null
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "readOnly": {
       "question": "Is this item read only? Yes or No?",
