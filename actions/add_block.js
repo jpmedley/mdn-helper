@@ -7,6 +7,7 @@ async function _run(currentPage, question) {
   const answer = question.answer.toLowerCase();
   if (answer.startsWith('n')) {
     question.answer = '';
+    return;
   }
   const tempPage = new page.Page('temporary', question.action.args[0], currentPage.sharedQuestions);
   let msg;

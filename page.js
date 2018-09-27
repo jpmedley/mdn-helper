@@ -134,7 +134,7 @@ class _Page {
   }
 
   render() {
-    const reg = RegExp(utils.TOKEN_RE, 'g');
+    const reg = RegExp(utils.TOKEN_RE);
     let matches;
     let answer;
     while ((matches = reg.exec(this.contents)) != null) {
