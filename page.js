@@ -112,6 +112,7 @@ class _Page {
     this.sharedQuestions.add(type, name);
     let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80));
     this.questions = new _Questions(introMessage);
+    this.questions.add(type, name);
     this.contents = utils.getTemplate(this.type.toLowerCase());
     const reg = RegExp(utils.TOKEN_RE, 'g');
     let matches;
