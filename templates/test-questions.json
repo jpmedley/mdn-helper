@@ -317,17 +317,18 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "readOnly": {
-      "question": "Is this item read only? Yes or No?",
+      "question": "Is this item read only?  Yes or No?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "read-only",
       "required": true,
       "before": "",
       "skip": false,
-      "action": null
+      "action": {"name": "add_string"}
     },
     "return": {
       "question": "What is the return value for this item?",
