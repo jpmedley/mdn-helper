@@ -3,6 +3,7 @@
 const page = require('../page.js');
 
 async function _run(currentPage, question) {
+  if (question.answer == question.default) { return; }
   let newContents = '';
   let answers = question.answer.split(',');
   for (let a in answers) {
