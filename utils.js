@@ -69,7 +69,7 @@ function _getRealArguments(args) {
         break;
       case '-it':
         const iterables = ['entries', 'forEach', 'keys', 'values'];
-        interables.forEach((functionName) => {
+        iterables.forEach((functionName) => {
           newArgs.push('-' + functionName);
           newArgs.push(functionName);
         });
