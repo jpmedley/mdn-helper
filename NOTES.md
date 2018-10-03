@@ -11,4 +11,9 @@ NOT FOR RELEASE VERSION
 
 ## New commands
 
+`fromIdl`: Takes and interface name, finds the IDL and asks the appropriate questions.
 `validate`: Validates that question files contain the same keys.
+
+## Command changes
+
+* The `interface` command needs a -pr flag which means 'read-only property' so that 'Is it read only' need not be asked when it's provided by the IDL.
