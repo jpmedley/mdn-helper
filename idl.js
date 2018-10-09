@@ -4,7 +4,7 @@ const bcd = require('mdn-browser-compat-data');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
-class Interface() {
+class InterfaceData {
   constructor(sourceFile) {
     this._loadTree(sourceFile);
     this._loadExtras();
@@ -121,4 +121,4 @@ class Interface() {
   }
 }
 
-module.exports.Interface = Interface;
+module.exports.InterfaceData = InterfaceData;

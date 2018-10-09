@@ -20,6 +20,8 @@ switch (realArguments[0]) {
     utils.cleanOutput()
     .then(() => { process.exit(); });
     break;
+  case 'find':
+    app.find(realArguments[1]);
   case 'css':
   case 'header':
   case 'interface':

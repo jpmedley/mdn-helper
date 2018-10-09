@@ -4,9 +4,10 @@ const fs = require('fs');
 
 const API_DIRS = ["core/", "modules/"];
 
-class IDLFileSet() {
+class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
     this.files = [];
+    this._loadFiles(rootDirectory);
   }
 
   _loadFiles(rootDirectory) {
@@ -24,7 +25,7 @@ class IDLFileSet() {
       } else if (contents[c].isFile()) {
         if (!contents[c].name.endsWith('.idl')) { continue; }
         if (contents[c].name.startsWith('test_')) { continue; }
-        contents[c].directory = directory;
+        contents[c].directory = rootDirectory;
         function path() {
           return this.directory + this.name;
         }
@@ -39,7 +40,7 @@ class IDLFileSet() {
     let matches = [];
     let lcName = name.toLowerCase();
     for (let f in this.files) {
-      let lcFile = this.files[f].toLowerCase();
+      let lcFile = this.files[f].name.toLowerCase();
       if (lcFile.includes(lcName)) {
         matches.push(this.files[f]);
       }
