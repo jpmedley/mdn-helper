@@ -22,6 +22,7 @@ switch (realArguments[0]) {
     break;
   case 'find':
     app.find(realArguments[1]);
+    break;
   case 'css':
   case 'header':
   case 'interface':

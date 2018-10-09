@@ -9,8 +9,6 @@ const cb = require('prompt-checkbox');
 const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
-find('lock_man');
-
 function _initPages(args) {
   let parentType = args[0];
   let parentName = args[1].split(',')[1];
@@ -44,7 +42,7 @@ async function create(args) {
   utils.closePrompt();
 }
 
-function find(interfaceNamed) {
+async function find(interfaceNamed) {
   const idlSet = new fm.IDLFileSet();
   const matches = idlSet.findMatching(interfaceNamed);
   let names = [];
@@ -58,15 +56,13 @@ function find(interfaceNamed) {
     checkbox: radio.star,
     choices: names
   });
-  enq.prompt('idlFile')
+  await enq.prompt('idlFile')
   .then(answers => {
-    console.log(answers);
+    // console.log(answers);
   })
   .catch(err => {
-    console.log(err);
+    // console.log(err);
   })
-
-  console.log("Stop.");
 }
 
 module.exports.create = create;
