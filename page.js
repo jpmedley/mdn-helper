@@ -32,7 +32,7 @@ class _Question {
 
   _prompt(prompt) {
     return new Promise((resolve, reject) => {
-      utils.prompt.question(prompt, (answer) => {
+      utils.qPrompt.question(prompt, (answer) => {
         (answer == '') ? this.answer = this.default : this.answer = answer;
         if (this._isValid()) {
           resolve(this);

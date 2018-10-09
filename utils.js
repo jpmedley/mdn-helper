@@ -10,10 +10,10 @@ const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
-// const _prompt = readline.createInterface({
-//   input: process.stdin,
-//   output: process.stdout
-// });
+const _prompt = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 function _closePrompt() {
   _prompt.close();
@@ -195,4 +195,4 @@ module.exports.getRealArguments = _getRealArguments;
 module.exports.getWireframes = _getWireframes;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
-// module.exports.prompt = _prompt;
+module.exports.qPrompt = _prompt;
