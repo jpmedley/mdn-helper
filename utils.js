@@ -50,6 +50,14 @@ function _getTemplate(name) {
   return buffer.toString();
 }
 
+function _getIDLFile(name) {
+  if (!name.endsWith(".idl")) { name += ".idl"; }
+  // let filePath = IDL_FILES + name;
+  let filePath = name;
+  let buffer = fs.readFileSync(filePath);
+  return buffer.toString();
+}
+
 function _getRealArguments(args) {
   args.shift();
   args.shift();
@@ -180,6 +188,7 @@ module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.cleanOutput = _cleanOutput;
 module.exports.closePrompt = _closePrompt;
 module.exports.getConfig = _getConfig;
+module.exports.getIDLFile = _getIDLFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getRealArguments = _getRealArguments;
 module.exports.getWireframes = _getWireframes;
