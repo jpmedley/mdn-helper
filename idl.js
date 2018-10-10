@@ -11,9 +11,9 @@ class InterfaceData {
     this._loadMembers();
   }
 
-  function _loadExtras() {
-    let items = this.interface.extAttrs.items;
-    let this._signatures = [];
+  _loadExtras() {
+    let items = this._interface.extAttrs.items;
+    this._signatures = [];
     for (let i in items) {
       switch (items[i].name) {
         case 'Constructor':
@@ -30,26 +30,26 @@ class InterfaceData {
 
   _loadTree(fileName) {
     this.sourceContents = utils.getIDLFile(fileName);
-    let tree = webidl2.parse(idl);
+    let tree = webidl2.parse(this.sourceContents);
     for (let t in tree) {
       if (tree[t].type == 'interface') {
-        this.interface = tree[t];
+        this._interface = tree[t];
         break;
       }
     }
-    if (!this.inerface) {
+    if (!this._interface) {
       throw "The supplied file does not contain an interface structure.";
     }
   }
 
   _loadMembers() {
-    this.properties = [];
-    this.methods = [];
-    let mems = this.interface.members;
+    this._properties = [];
+    this._methods = [];
+    let mems = this._interface.members;
     for (let m in mems) {
       switch (mems[m].type) {
         case 'attribute':
-          this.properties.push(mems[m].escapedName);
+          this._properties.push(mems[m].escapedName);
           break;
         case 'operation':
           let property = {
@@ -78,7 +78,7 @@ class InterfaceData {
   get command() {
     let command = [];
     command.push('0');
-    command.push('1';)
+    command.push('1');
     command.push('interface');
     command.push('-n');
     command.push(this.name);
@@ -103,16 +103,20 @@ class InterfaceData {
     return this._flag;
   }
 
+  set flag(flagName) {
+    this._flag = flagName;
+  }
+
   get methods() {
-    return this.methods;
+    return this._methods;
   }
 
   get name() {
-    return this.interface.name;
+    return this._interface.name;
   }
 
   get properties() {
-    return this.properties;
+    return this._properties;
   }
 
   get signatures() {
@@ -121,11 +125,15 @@ class InterfaceData {
   }
 
   get sourceContents() {
-    return this.sourceContents;
+    return this._sourceContents;
+  }
+
+  set sourceContents(contents) {
+    this._sourceContents = contents;
   }
 
   get tree() {
-    return this.tree;
+    return this._tree;
   }
 
   get url() {
@@ -135,7 +143,8 @@ class InterfaceData {
   hasConstructor() {
     // extAttrs.items[e].name
     let has = false;
-    let items = this.tree.extAttrs.items;
+    // if (!this._tree.extAttrs) { return has; }
+    let items = this._interface.extAttrs.items;
     for (let i in items) {
       if (items[i].name === 'Constructor') {
         has = true;

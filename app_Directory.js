@@ -31,17 +31,13 @@ class _Directory {
     .catch(err => {
       throw err;
     });
-    this._interfaces = [];
-    console.log("typeof: " + typeof answers);
+    let interfaces = [];
     for (let m in matches) {
       if (answers.idlFile.includes(matches[m].name)) {
-        this._interfaces.push(matches[m]);
+        interfaces.push(matches[m]);
       }
     }
-  }
-
-  getCommandLine() {
-    
+    return interfaces;
   }
 
 }

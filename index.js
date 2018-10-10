@@ -1,5 +1,6 @@
 'use strict';
 
+const idl = require('./idl.js');
 const utils = require('./utils.js');
 
 utils.printWelcome();
@@ -14,7 +15,6 @@ catch(e) {
   process.exit(1);
 }
 
-let app_;
 switch (realArguments[0]) {
   case 'clean':
     utils.cleanOutput()
@@ -22,18 +22,21 @@ switch (realArguments[0]) {
     break;
   case 'find':
     const da = require('./app_Directory.js');
-    app_ = new da.Directory();
-    app_.findAndSelect(realArguments[1])
-    .then(() => {
-      console.log("interfaces");
+    const dirApp = new da.Directory();
+    dirApp.findAndSelect(realArguments[1])
+    .then((interfaces) => {
+      const id = new idl.InterfaceData(interfaces[0].path());
+      const dm = require('./app_manual.js');
+      const manApp = new dm.Manual(id.command);
+      manApp.create();
     })
     break;
   case 'css':
   case 'header':
   case 'interface':
     const dm = require('./app_manual.js');
-    app_ = new dm.Manual(realArguments);
-    app_.create()
+    const manApp = new dm.Manual(realArguments);
+    manApp.create();
     break;
   case 'help':
   default:
