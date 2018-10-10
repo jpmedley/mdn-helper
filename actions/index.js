@@ -8,7 +8,6 @@
 // * replace question.answer with modified contents.
 
 require("fs").readdirSync(__dirname).forEach(file => {
-  console.log(file);
   var name = file.replace('.js', '');
   module.exports[name] = require("./" + file);
   if (file == 'index.js') { return; }
