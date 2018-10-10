@@ -1,12 +1,8 @@
 'use strict';
 
 const actions = require('./actions');
-// const cb = require('prompt-checkbox');
 const cl = require('./commandLine.js');
-// const Enquirer = require('enquirer');
-// const fm = require('./filemanager.js');
 const page = require('./page.js');
-// const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
 class _Manual {
@@ -47,7 +43,5 @@ class _Manual {
   }
 
 }
-
-
 
 module.exports.Manual = _Manual;

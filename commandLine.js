@@ -7,7 +7,7 @@ const _commandLine = readline.createInterface({
   output: process.stdout
 });
 
-function _closecommandLine() {
+function _closeCommandLine() {
   _commandLine.close();
 }
 

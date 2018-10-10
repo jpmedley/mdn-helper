@@ -2,26 +2,13 @@
 
 const config = require('config');
 const fs = require('fs');
-// const readline = require('readline');
 
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
 
-// let _interaction;
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
-
-// function _openInteraction() {
-//   _interaction = readline.createInterface({
-//     input: process.stdin,
-//     output: process.stdout
-//   });
-// }
-
-// function _closeInteraction() {
-//   _interaction.close();
-// }
 
 function _cleanOutput() {
   return new Promise((resolve, reject) => {
@@ -191,13 +178,10 @@ function _printWelcome() {
 module.exports.OUT = OUT;
 module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.cleanOutput = _cleanOutput;
-// module.exports.closeInteraction = _closeInteraction;
 module.exports.getConfig = _getConfig;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getRealArguments = _getRealArguments;
 module.exports.getWireframes = _getWireframes;
-// module.exports.interaction = _interaction;
-// module.exports.openInteraction = _openInteraction;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;

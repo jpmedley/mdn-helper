@@ -23,8 +23,10 @@ switch (realArguments[0]) {
   case 'find':
     const da = require('./app_Directory.js');
     app_ = new da.Directory();
-    app_.find(realArguments[1]);
-    // app.find(realArguments[1]);
+    app_.findAndSelect(realArguments[1])
+    .then(() => {
+      console.log("interfaces");
+    })
     break;
   case 'css':
   case 'header':
@@ -32,7 +34,6 @@ switch (realArguments[0]) {
     const dm = require('./app_manual.js');
     app_ = new dm.Manual(realArguments);
     app_.create()
-    // app.create(realArguments);
     break;
   case 'help':
   default:
