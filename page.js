@@ -1,8 +1,8 @@
 'use strict';
 
 const actions = require('./actions');
+const cl = require('./commandLine.js');
 const fs = require('fs');
-const prompt = require('./prompt.js');
 const readline = require('readline');
 const util = require('util');
 const utils = require('./utils.js');
@@ -33,7 +33,7 @@ class _Question {
 
   _prompt(questionsString) {
     return new Promise((resolve, reject) => {
-      utils.interaction.question(questionsString, (answer) => {
+      cl.commandLine.question(questionsString, (answer) => {
         (answer == '') ? this.answer = this.default : this.answer = answer;
         if (this._isValid()) {
           resolve(this);

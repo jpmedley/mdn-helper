@@ -1,6 +1,5 @@
 'use strict';
 
-const app = require('./app.js');
 const utils = require('./utils.js');
 
 utils.printWelcome();
@@ -22,14 +21,16 @@ switch (realArguments[0]) {
     .then(() => { process.exit(); });
     break;
   case 'find':
-    app_ = new app.Directory();
+    const da = require('./app_Directory.js');
+    app_ = new da.Directory();
     app_.find(realArguments[1]);
     // app.find(realArguments[1]);
     break;
   case 'css':
   case 'header':
   case 'interface':
-    app_ = new app.Manual(realArguments);
+    const dm = require('./app_manual.js');
+    app_ = new dm.Manual(realArguments);
     app_.create()
     // app.create(realArguments);
     break;
