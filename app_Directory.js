@@ -25,12 +25,6 @@ class _Directory {
       choices: names
     });
     let answers = await enq.prompt('idlFile')
-    .then(answers => {
-      return answers;
-    })
-    .catch(err => {
-      throw err;
-    });
     let interfaces = [];
     for (let m in matches) {
       if (answers.idlFile.includes(matches[m].name)) {
