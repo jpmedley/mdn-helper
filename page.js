@@ -31,9 +31,9 @@ class _Question {
     return valid;
   }
 
-  _prompt(prompt) {
+  _prompt(questionsString) {
     return new Promise((resolve, reject) => {
-      utils.interaction.question(prompt, (answer) => {
+      utils.interaction.question(questionsString, (answer) => {
         (answer == '') ? this.answer = this.default : this.answer = answer;
         if (this._isValid()) {
           resolve(this);
@@ -54,13 +54,13 @@ class _Question {
   }
 
   async _ask() {
-    let prompt = "\n" + this.question;
+    let questionsString = "\n" + this.question;
     if (this.default) {
-      prompt += (" (" + this.default + ")");
+      questionsString += (" (" + this.default + ")");
     }
-    prompt += "\n";
+    questionsString += "\n";
     try {
-      await this._prompt(prompt);
+      await this._prompt(questionsString);
     } catch(e) {
       console.log("\n" + this.help);
       await this.ask();
