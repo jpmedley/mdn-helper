@@ -2,6 +2,7 @@
 
 const actions = require('./actions');
 const fs = require('fs');
+const prompt = require('./prompt.js');
 const readline = require('readline');
 const util = require('util');
 const utils = require('./utils.js');
@@ -12,14 +13,13 @@ const ANSWER_IS_NO = '';
 const _questionWireframes = utils.getWireframes();
 
 class _Question {
-  constructor(wireframeName, options) {
+  constructor(wireframeName) {
     const wireframe = _questionWireframes[wireframeName];
     for (let w in wireframe) {
       this[w] = wireframe[w];
     }
     this.name = wireframeName;
     this.answer = null;
-    this.options = options;
   }
 
   _isValid() {
@@ -33,8 +33,7 @@ class _Question {
 
   _prompt(prompt) {
     return new Promise((resolve, reject) => {
-      // utils.prompt.question(prompt, (answer) => {
-      this.options.prompt.question(prompt, (answer) => {
+      utils.interaction.question(prompt, (answer) => {
         (answer == '') ? this.answer = this.default : this.answer = answer;
         if (this._isValid()) {
           resolve(this);
@@ -71,10 +70,9 @@ class _Question {
 }
 
 class _Questions {
-  constructor(intro, options) {
+  constructor(intro) {
     this.intro = intro;
     this.questions = new Object();
-    this.options = options;
   }
 
   printIntro() {
@@ -89,7 +87,7 @@ class _Questions {
   add(question, answer=null) {
     if (_questionWireframes[question] == DONT_ASK) { return; }
     if (!this.questions.hasOwnProperty(question)) {
-      this.questions[question] = new _Question(question, {"prompt": this.options.prompt});
+      this.questions[question] = new _Question(question);
       this.questions[question].answer = answer;
     }
   }
@@ -107,15 +105,14 @@ class _Questions {
 }
 
 class _Page {
-  constructor(name, type, sharedQuestions, options) {
+  constructor(name, type, sharedQuestions) {
     this.name = name;
     this.type = type;
     this.sharedQuestions = sharedQuestions;
-    this.options = options;
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
     let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80));
-    this.questions = new _Questions(introMessage, this.options);
+    this.questions = new _Questions(introMessage);
     this.questions.add(type, name);
     this.contents = utils.getTemplate(this.type.toLowerCase());
     const reg = RegExp(utils.TOKEN_RE, 'g');

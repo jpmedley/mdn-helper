@@ -51,8 +51,7 @@ class _Manual {
     // Add space for interface or header name to sharedQuestions,
     //  and remove it from args.
     let introMessage = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
-    let prompt = utils.openPrompt();
-    let sharedQuestions = new page.Questions(introMessage, {"prompt": prompt});
+    let sharedQuestions = new page.Questions(introMessage);
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
     sharedQuestions.add(parentType, parentName);
@@ -63,19 +62,18 @@ class _Manual {
     this.pages = new Array();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
-      let pageOptions = {"prompt": prompt};
-      let aPage = new page.Page(members[1], members[0], sharedQuestions, pageOptions);
+      let aPage = new page.Page(members[1], members[0], sharedQuestions);
       this.pages.push(aPage);
     });
   }
 
   async create() {
-    utils.openPrompt();
+    // utils.openInteraction();
     for (let p in this.pages) {
       await this.pages[p].askQuestions();
       this.pages[p].write();
     }
-    utils.closePrompt();
+    // utils.closeInteraction();
   }
 
 }
