@@ -75,6 +75,30 @@ class InterfaceData {
     }
   }
 
+  get command() {
+    let command = [];
+    command.push('0');
+    command.push('1';)
+    command.push('interface');
+    command.push('-n');
+    command.push(this.name);
+    command.push('-o');
+    command.push('-i');
+    if (this.hasConstructor()) { command.push('-c'); }
+    let methods = this.methods;
+    for (let m in methods) {
+      command.push('-m');
+      command.push(method[m] + '()');
+    }
+    let properties = this.properties;
+    for (let p in properties) {
+      command.push('-p');
+      command.push(properties[p]);
+    }
+    let cleanCommand = utils.getRealArguments(command);
+    return cleanCommand;
+  }
+
   get flag() {
     return this._flag;
   }

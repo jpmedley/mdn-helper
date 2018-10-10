@@ -40,7 +40,9 @@ class _Directory {
     }
   }
 
-  
+  getCommandLine() {
+    
+  }
 
 }
 
