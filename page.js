@@ -1,71 +1,67 @@
 'use strict';
 
 const actions = require('./actions');
-const cl = require('./commandLine.js');
+const Enquirer = require('enquirer');
 const fs = require('fs');
-const readline = require('readline');
 const util = require('util');
 const utils = require('./utils.js');
 
 const DONT_ASK = 'Don\'t ask.';
 const ANSWER_IS_NO = '';
 
-const _questionWireframes = utils.getWireframes();
-
 class _Question {
-  constructor(wireframeName) {
-    const wireframe = _questionWireframes[wireframeName];
+  constructor(wireFrameName) {
+    const wireframe = utils.WIREFRAMES[wireFrameName];
     for (let w in wireframe) {
       this[w] = wireframe[w];
     }
-    this.name = wireframeName;
+    this.name = wireFrameName;
     this.answer = null;
   }
 
-  _isValid() {
-    let valid = true;
-    if (!this.pattern) { return valid; }
+  _isAnswerValid() {
+    if (!this.pattern) { return true; }
     const regex = RegExp(this.pattern, 'g');
     const result = regex.exec(this.answer);
-    if (!result) { valid = false; }
-    return valid;
+    if (!result) { return false; }
+    return true;
   }
 
-  _prompt(questionsString) {
-    return new Promise((resolve, reject) => {
-      cl.commandLine.question(questionsString, (answer) => {
-        (answer == '') ? this.answer = this.default : this.answer = answer;
-        if (this._isValid()) {
-          resolve(this);
-        } else {
-          reject();
-        }
-      })
-    })
+  async _prompt() {
+    let enq = new Enquirer();
+    enq.question(this.name, {
+      message: this.question,
+      default: this.default
+    });
+    let answer = await enq.prompt(this.name);
+    return answer
   }
 
   async ask(forPage) {
-    await this._ask();
-    if (this.action) {
-      await actions[this.action.name].run(forPage, this);
-    }
-    const token = "[[" + this.name + "]]";
-    forPage.contents = forPage.contents.replace(token, this.answer);
-  }
-
-  async _ask() {
-    let questionsString = "\n" + this.question;
-    if (this.default) {
-      questionsString += (" (" + this.default + ")");
-    }
-    questionsString += "\n";
     try {
-      await this._prompt(questionsString);
+      this.answer = await this._prompt(this.text);
+      if (this.action) {
+        await actions[this.action.name].run(forPage, this);
+      }
+      forPage.contents = forPage.contents.replace(this.token, this.answer);
     } catch(e) {
       console.log("\n" + this.help);
       await this.ask();
     }
-    return this;
+
+  }
+
+  get text() {
+    let text = "\n" + this.question;
+    if (this.default) {
+      text += (" (" + this.default + ")");
+    }
+    text += "\n";
+    return text;
+  }
+
+  get token() {
+    return "[[" + this.name + "]]";
   }
 }
 
@@ -85,7 +81,7 @@ class _Questions {
   }
 
   add(question, answer=null) {
-    if (_questionWireframes[question] == DONT_ASK) { return; }
+    if (utils.WIREFRAMES[question] == DONT_ASK) { return; }
     if (!this.questions.hasOwnProperty(question)) {
       this.questions[question] = new _Question(question);
       this.questions[question].answer = answer;

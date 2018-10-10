@@ -10,6 +10,15 @@ const OUT = config.get('Application.outputDirectory');
 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
+function loadWireFrames() {
+  const wireframePath = TEMPLATES + QUESTIONS_FILE;
+  const wireframeBuffer = fs.readFileSync(wireframePath);
+  const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
+  return wireframes;
+}
+
+const WIREFRAMES = loadWireFrames();
+
 function _cleanOutput() {
   return new Promise((resolve, reject) => {
     let question = "Are you sure? Y or N";
@@ -177,6 +186,7 @@ function _printWelcome() {
 
 module.exports.OUT = OUT;
 module.exports.TOKEN_RE = TOKEN_RE;
+module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.cleanOutput = _cleanOutput;
 module.exports.getConfig = _getConfig;
 module.exports.getIDLFile = _getIDLFile;

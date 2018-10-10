@@ -1,7 +1,6 @@
 'use strict';
 
 const actions = require('./actions');
-const cl = require('./commandLine.js');
 const page = require('./page.js');
 const utils = require('./utils.js');
 
