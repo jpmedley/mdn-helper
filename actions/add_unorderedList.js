@@ -15,7 +15,7 @@ async function _run(currentPage, question) {
   }
   newContents = ("<ul>\n" + newContents + "</ul>");
   question.answer = newContents;
-  console.log((`-`.repeat(23)) + '\nFinished with the list.');
+  // console.log((`-`.repeat(23)) + '\nFinished with the list.');
 }
 
 module.exports.run = _run;
