@@ -11,8 +11,7 @@ class _Directory {
     this.idlSet = new fm.IDLFileSet();
   }
 
-  async findAndSelect(interfaceNamed) {
-    const matches = this.idlSet.findMatching(interfaceNamed);
+  async _select(matches) {
     let names = [];
     for (let m in matches) {
       names.push(matches[m].name)
@@ -24,7 +23,32 @@ class _Directory {
       checkbox: radio.star,
       choices: names
     });
-    let answers = await enq.prompt('idlFile')
+    let answers = await enq.prompt('idlFile');
+    return answers;
+  }
+
+  async findAndShow(interfaceNamed) {
+    const matches = this.idlSet.findMatching(interfaceNamed);
+    const answers = await this._select(matches);
+    let idlPath, idlFile, name, match;
+    for (let a in answers.idlFile) {
+      name = answers.idlFile[a];
+      for (let m in matches) {
+        if (matches[m].name == name) {
+          match = matches[m];
+          break;
+        }
+      }
+      idlPath = match.path();
+      console.log(idlPath);
+      idlFile = utils.getIDLFile(idlPath);
+      console.log(idlFile);
+    }
+  }
+
+  async findAndBuild(interfaceNamed) {
+    const matches = this.idlSet.findMatching(interfaceNamed);
+    const answers = await this._select(matches);
     let interfaces = [];
     for (let m in matches) {
       if (answers.idlFile.includes(matches[m].name)) {
