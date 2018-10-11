@@ -32,10 +32,11 @@ class _Question {
 
   async _prompt() {
     let enq = new Enquirer();
-    enq.question(this.name, {
-      message: this.question,
-      default: this.default
-    });
+    let options = { message: this.question };
+    if (this.default) {
+      options.default = this.default;
+    }
+    enq.question(this.name, options);
     let tempAnswer = await enq.prompt(this.name);
     // Convert Enquirer answer to mdn-helper answer.
     this.answer = tempAnswer[this.name];
