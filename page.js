@@ -40,6 +40,7 @@ class _Question {
     // Convert Enquirer answer to mdn-helper answer.
     this.answer = tempAnswer[this.name];
     if (!this._isAnswerValid()) {
+      console.log(this.help);
       await this._prompt();
     }
   }
