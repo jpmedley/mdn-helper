@@ -23,7 +23,10 @@ class _Question {
     if (!this.pattern) { return true; }
     const regex = RegExp(this.pattern, 'g');
     const result = regex.exec(this.answer);
-    if (!result) { return false; }
+    if (!result) {
+
+      return false;
+    }
     return true;
   }
 
@@ -33,20 +36,24 @@ class _Question {
       message: this.question,
       default: this.default
     });
-    let answer = await enq.prompt(this.name);
-    return answer
+    let tempAnswer = await enq.prompt(this.name);
+    // Convert Enquirer answer to mdn-helper answer.
+    this.answer = tempAnswer[this.name];
+    if (!this._isAnswerValid()) {
+      await this._prompt();
+    }
   }
 
   async ask(forPage) {
     try {
-      this.answer = await this._prompt(this.text);
+      await this._prompt(this.text);
+    } catch(e) {
+      throw e;
+    } finally {
       if (this.action) {
         await actions[this.action.name].run(forPage, this);
       }
       forPage.contents = forPage.contents.replace(this.token, this.answer);
-    } catch(e) {
-      console.log("\n" + this.help);
-      await this.ask();
     }
 
   }

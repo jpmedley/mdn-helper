@@ -38,7 +38,6 @@ class _Manual {
       await this.pages[p].askQuestions();
       this.pages[p].write();
     }
-    cl.closeCommandLine();
   }
 
 }
