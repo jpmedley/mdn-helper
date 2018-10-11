@@ -31,11 +31,23 @@ Using the optional bash alias:
 
 ## Commands
 
+### build
+
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds builds results as though you had used the `interface` command.
+
+**Syntax:** `build _searchString_`
+
 ### css
 
 Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
 **Syntax:** `css -n _selectorName_`
+
+### find
+
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then displays the contents of that file.
+
+**Syntax:** `find _searchString`
 
 ### header
 

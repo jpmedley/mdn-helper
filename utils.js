@@ -163,9 +163,11 @@ function _printHelp() {
   let doc = '';
   doc += 'Basic usage:\n';
   doc += '\tnode index.js [command] [arguments]\n';
-  doc += `Commands:\n`;
+  doc += 'Commands:\n';
+  doc += '\tbuild _searchString_\n';
   doc += '\tclean\n';
   doc += '\tcss -n _selectorName_\n';
+  doc += '\tfind _searchString_\n';
   doc += '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n';
   doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp] [-mr]\n';
   doc += '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n';

@@ -40,9 +40,9 @@ class _Directory {
         }
       }
       idlPath = match.path();
-      console.log(idlPath);
       idlFile = utils.getIDLFile(idlPath);
       console.log(idlFile);
+      console.log("File located at " + idlPath + ".");
     }
   }
 
