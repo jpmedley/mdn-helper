@@ -52,10 +52,19 @@ class InterfaceData {
           this._properties.push(mems[m].escapedName);
           break;
         case 'operation':
-          let property = {
-            "name": mems[m].escaped,
-            "arguments": [],
-            "interface": mems[m].escaped + "("
+          let property;
+          if (mems[m].getter) {
+            property = {
+              "name": mems[m].body.name.escaped,
+              "arguments": [],
+              "interface": mems[m].body.name.escaped + "("
+            }
+          } else {
+            property = {
+              "name": mems[m].escaped,
+              "arguments": [],
+              "interface": mems[m].escaped + "("
+            }
           }
           if (mems[m].body.arguments) {
             let argument

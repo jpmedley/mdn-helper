@@ -6,6 +6,8 @@ const fm = require('./filemanager.js');
 const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
+const NOTHING_FOUND = "Could not find matching IDL files."
+
 class _Directory {
   constructor() {
     this.idlSet = new fm.IDLFileSet();
@@ -29,6 +31,10 @@ class _Directory {
 
   async findAndShow(interfaceNamed) {
     const matches = this.idlSet.findMatching(interfaceNamed);
+    if (!matches.length) {
+      console.log(NOTHING_FOUND);
+      process.exit();
+    }
     const answers = await this._select(matches);
     let idlPath, idlFile, name, match;
     for (let a in answers.idlFile) {
@@ -48,6 +54,10 @@ class _Directory {
 
   async findAndBuild(interfaceNamed) {
     const matches = this.idlSet.findMatching(interfaceNamed);
+    if (!matches.length) {
+      console.log(NOTHING_FOUND);
+      process.exit();
+    }
     const answers = await this._select(matches);
     let interfaces = [];
     for (let m in matches) {
