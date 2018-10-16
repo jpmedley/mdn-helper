@@ -4,8 +4,12 @@
   "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
   "main": "index.js",
   "scripts": {
+    "build": "node index.js build",
     "clean": "node index.js clean",
-    "help": "node index.js help"
+    "find": "node index.js find",
+    "help": "node index.js help",
+    "interface": "node index.js interface",
+    "update-data": "./update-idl.sh"
   },
   "keywords": [
     "MDN",

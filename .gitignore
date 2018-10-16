@@ -3,6 +3,7 @@ idl/
 in/
 out/
 .DS_Store
+idl.tar.gz
 
 # Logs
 logs
