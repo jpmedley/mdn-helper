@@ -7,3 +7,5 @@ curl $IDL_ZIP > idl.tar.gz
 
 mkdir idl/
 tar xvzf idl.tar.gz -C idl/
+
+rm idl.tar.gz
