@@ -114,7 +114,7 @@ function _getRealArguments(args) {
 
   let realArgs = new Array();
   realArgs.push(newArgs[0]);
-  if (newArgs[0] in ['clean','help']) { return realArgs; }
+  if (['clean','help'].includes(newArgs[0])) { return realArgs; }
 
   newArgs.shift();
   if (newArgs.length == 0) {
@@ -160,20 +160,20 @@ function _normalizeArg(arg) {
 }
 
 function _printHelp() {
-  let doc = '';
-  doc += 'Basic usage:\n';
-  doc += '\tnode index.js [command] [arguments]\n';
-  doc += 'Commands:\n';
-  doc += '\tbuild _searchString_\n';
-  doc += '\tclean\n';
-  doc += '\tcss -n _selectorName_\n';
-  doc += '\tfind _searchString_\n';
-  doc += '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n';
-  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp] [-mr]\n';
-  doc += '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n';
-  doc += '\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n';
-  doc += '\thelp\n';
-  doc += 'See the README file for details.\n'
+  let doc = 'Basic usage:\n' +
+            '\tnpm run [command] [arguments]\n' +
+            'Commands:\n' +
+            '\tbuild _searchString_\n' +
+            '\tclean\n' +
+            '\tcss -n _selectorName_\n' +
+            '\tfind _searchString_\n' +
+            '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n' +
+            '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp] [-mr]\n' +
+            '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n' +
+            '\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n' +
+            '\thelp\n' +
+            'See the README file for details.\n'
+
 
   console.log(doc);
   process.exit();
