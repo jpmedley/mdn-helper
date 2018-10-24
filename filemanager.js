@@ -6,7 +6,7 @@ const API_DIRS = ["core/", "modules/"];
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
-    this.files = [];
+    this._files = [];
     this._loadFiles(rootDirectory);
   }
 
@@ -31,18 +31,22 @@ class IDLFileSet {
         }
         contents[c].path = path;
         path.bind(contents[c]);
-        this.files.push(contents[c]);
+        this._files.push(contents[c]);
       }
     }
+  }
+
+  get files() {
+    return this._files;
   }
 
   findMatching(name) {
     let matches = [];
     let lcName = name.toLowerCase();
-    for (let f in this.files) {
-      let lcFile = this.files[f].name.toLowerCase();
+    for (let f in this._files) {
+      let lcFile = this._files[f].name.toLowerCase();
       if (lcFile.includes(lcName)) {
-        matches.push(this.files[f]);
+        matches.push(this._files[f]);
       }
     }
     return matches;

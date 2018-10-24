@@ -12,6 +12,7 @@ class InterfaceData {
   }
 
   _loadExtras() {
+    if (!this._interface.extAttrs) { return; }
     let items = this._interface.extAttrs.items;
     this._signatures = [];
     for (let i in items) {
@@ -28,17 +29,19 @@ class InterfaceData {
     }
   }
 
-  _loadTree(fileName) {
-    this.sourceContents = utils.getIDLFile(fileName);
+  _loadTree(fileObject) {
+    this.sourceContents = utils.getIDLFile(fileObject.path());
     let tree = webidl2.parse(this.sourceContents);
     for (let t in tree) {
-      if (tree[t].type == 'interface') {
-        this._interface = tree[t];
-        break;
+      switch (tree[t].type) {
+        case 'dictionary':
+        case 'interface':
+          this._interface = tree[t];
+          break;
       }
     }
     if (!this._interface) {
-      throw "The supplied file does not contain an interface structure.";
+      throw `The ${fileObject.path()} file does not contain interface data.`;
     }
   }
 
@@ -116,6 +119,10 @@ class InterfaceData {
     this._flag = flagName;
   }
 
+  get keys() {
+    return this._getIdentifiers('.');
+  }
+
   get methods() {
     return this._methods;
   }
@@ -145,21 +152,28 @@ class InterfaceData {
     return this._tree;
   }
 
-  get url() {
-    return bcd.api[this.name];
+  get urls() {
+    return this._getIdentifiers('/');
+  }
+
+  _getIdentifiers(separator) {
+    let urls = [];
+    urls.push(this.name);
+    if (this.hasConstructor()) {
+      urls.push(this.name + separator + this.name);
+    }
+    for (let m in this.methods) {
+      urls.push(this.name + separator + this.methods[m]);
+    }
+    for (let p in this.properties) {
+      urls.push(this.name + separator + this.properties[p]);
+    }
+    return urls;
   }
 
   hasConstructor() {
-    // extAttrs.items[e].name
-    let has = false;
-    // if (!this._tree.extAttrs) { return has; }
-    let items = this._interface.extAttrs.items;
-    for (let i in items) {
-      if (items[i].name === 'Constructor') {
-        has = true;
-      }
-    }
-    return has;
+    if (this._signatures) { return true; }
+    return false;
   }
 }
 

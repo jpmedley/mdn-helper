@@ -61,9 +61,9 @@ function _getIDLFile(name) {
 function _getRealArguments(args) {
   args.shift();
   args.shift();
-  let commands = ['build', 'clean', 'css', 'find', 'header', 'help', 'interface', 'test'];
+  let commands = ['build', 'burn', 'clean', 'css', 'find', 'header', 'help', 'interface', 'test'];
   if (!commands.includes(args[0])) {
-    throw new Error("The command must be one of build, clean, css, find, header, help, or interface.");
+    throw new Error("The command must be one of build, burn, clean, css, find, header, help, or interface.");
   }
   if (args[0] == 'find') { return args; }
   let newArgs = new Array();
@@ -114,7 +114,8 @@ function _getRealArguments(args) {
 
   let realArgs = new Array();
   realArgs.push(newArgs[0]);
-  if (['clean','help'].includes(newArgs[0])) { return realArgs; }
+  const simples = ['burn','clean','help'];
+  if (simples.includes(newArgs[0])) { return realArgs; }
 
   newArgs.shift();
   if (newArgs.length == 0) {

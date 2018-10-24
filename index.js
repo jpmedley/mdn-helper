@@ -19,6 +19,9 @@ catch(e) {
 
 let dirApp;
 switch (realArguments[0]) {
+  case 'burn':
+
+    break;
   case 'clean':
     utils.cleanOutput()
     .then(() => { process.exit(); });
