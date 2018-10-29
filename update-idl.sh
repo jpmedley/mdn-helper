@@ -9,3 +9,5 @@ mkdir idl/
 tar xvzf idl.tar.gz -C idl/
 
 rm idl.tar.gz
+
+mkdir idl/_test/

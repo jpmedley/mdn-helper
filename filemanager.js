@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-const API_DIRS = ["core/", "modules/"];
+const API_DIRS = ["_test/", "core/", "modules/"];
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
