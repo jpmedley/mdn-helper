@@ -45,44 +45,119 @@ class InterfaceData {
     }
   }
 
+  _getOperationSubType(member) {
+    let name;
+    if (member.stringifier) { return { "type": "stringifier", "name": null }; }
+    if (member.getter) {
+      if (member.body.name) {
+        name = member.body.name.escaped;
+      } else if (member.body.idlType) {
+        name = member.body.idlType.baseName;
+      } else if (member.extAttrs.items[0].rhs) {
+        name = member.extAttrs.items[0].rhs.value;
+      }
+      return { "type": "getter", "name": name };
+    }
+    name = member.body.name.escaped;
+    return { "type": "method", "name": name };
+  }
+
+  _getAttributeSubType(member) {
+    switch (member.idlType.baseName) {
+      case 'EventHandler':
+        return { "type": "eventhandler", "name": member.escapedName };
+        break;
+      case 'Promise':
+        return { "type": "method", "name": member.escapedName };
+        break;
+      default:
+        return { "type": "property", "name": member.escapedName };
+    }
+  }
+
+  _getArgumentString(args) {
+    let argString = '';
+    if (args.length) {
+      for (let a in args) {
+        argString += (args[a].idlType.baseName + " " + args[a].name + ", ");
+      }
+      argString = argString.slice(0, -1); // Chop last comma.
+    }
+    return argString;
+  }
+
+  _getConstructors() {
+    // if (!this._interface.extAttrs) { return; }
+    let extras = this._interface.extAttrs.items;
+    let sig;
+    for (let e in extras) {
+      if (extras[e].name == 'Constructor') {
+        sig = "(";
+        if (extras[e].signature.arguments) {
+          sig += this._getArgumentString(extras[e].signature.arguments);
+        }
+        sig += ")";
+      }
+      this._signatures.push(sig);
+    }
+  }
+
   _loadMembers() {
-    this._properties = [];
+    // START HERE: Test getConstructors().
+    this._getConstructors();
+    this._eventhandlers = [];
+    this._getters = []
     this._methods = [];
+    this._properties = [];
+    let property;
+    let subType;
+    let args;
     let mems = this._interface.members;
     for (let m in mems) {
       switch (mems[m].type) {
         case 'attribute':
-          this._properties.push(mems[m].escapedName);
+          subType = this._getAttributeSubType(mems[m]);
+          property = subType;
+          property.interface = subType.name;
+          switch (subType.type) {
+            case 'eventhandler':
+              this._eventhandlers.push(property);
+              break;
+            case 'method':
+              // args = this._getArguments(mems[m]);
+              if (mems[m].body) {
+                args = this._getArgumentString(mems[m].body.arguments);
+                property.interface += ("(" + args + ")");
+              }
+              this._methods.push(property);
+              break;
+            case 'property':
+              this._properties.push(property);
+              break;
+          }
           break;
         case 'operation':
-          let property;
-          if (mems[m].getter) {
-            property = {
-              "name": mems[m].body.name.escaped,
-              "arguments": [],
-              "interface": mems[m].body.name.escaped + "("
-            }
-          } else {
-            property = {
-              "name": mems[m].escaped,
-              "arguments": [],
-              "interface": mems[m].escaped + "("
-            }
+          subType = this._getOperationSubType(mems[m]);
+          switch (subType.type) {
+            case 'getter':
+              property = subType;
+              property.interface = subType.name;
+              this._getters.push(property);
+              break;
+            case 'method':
+              property = subType;
+              property.interface = subType.name;
+              // args = this._getArguments(mems[m]);
+              if (mems[m].body) {
+                args = this._getArgumentString(mems[m].body.arguments);
+                property.interface += ("(" + args + ")");
+              }
+              this._methods.push(property)
+              break;
+            case 'stringifier':
+              //
+              break;
           }
-          if (mems[m].body.arguments) {
-            let argument
-            for (let a in mems[m].body.arguments) {
-              argument = {
-                "name": mems[m].body.arguments[a].escapedName,
-                "type": mems[m].body.arguments[a].idlType.baseName
-              };
-              property.interface += (argument.name + " " + argument.type + ",");
-              property.arguments.push(argument);
-            }
-          }
-          property.interface = property.interface.slice(0, -1);
-          property.interface += ")";
-          break;
       }
     }
   }
@@ -111,12 +186,20 @@ class InterfaceData {
     return cleanCommand;
   }
 
+  get eventhandlers() {
+    return this._eventhandlers;
+  }
+
   get flag() {
     return this._flag;
   }
 
   set flag(flagName) {
     this._flag = flagName;
+  }
+
+  get getters() {
+    return this._getters;
   }
 
   get keys() {
@@ -157,22 +240,28 @@ class InterfaceData {
   }
 
   _getIdentifiers(separator) {
-    let urls = [];
-    urls.push(this.name);
+    let identifiers = [];
+    identifiers.push(this.name);
     if (this.hasConstructor()) {
-      urls.push(this.name + separator + this.name);
+      identifiers.push(this.name + separator + this.name + "()");
     }
-    for (let m in this.methods) {
-      urls.push(this.name + separator + this.methods[m]);
+    for (let e in this._eventhandlers) {
+      identifiers.push(this.name + separator + this._eventhandlers[e].interface);
     }
-    for (let p in this.properties) {
-      urls.push(this.name + separator + this.properties[p]);
+    for (let g in this._getters) {
+      identifiers.push(this.name + separator + this._getters[g].interface);
     }
-    return urls;
+    for (let m in this._methods) {
+      identifiers.push(this.name + separator + this._methods[m].interface);
+    }
+    for (let p in this._properties) {
+      identifiers.push(this.name + separator + this._properties[p].interface);
+    }
+    return identifiers;
   }
 
   hasConstructor() {
-    if (this._signatures) { return true; }
+    if (this._signatures.length) { return true; }
     return false;
   }
 }
