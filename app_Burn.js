@@ -2,14 +2,47 @@
 
 const fm = require('./filemanager.js');
 const fs = require('fs');
+const utils = require('./utils.js');
 const { InterfaceData } = require('./idl.js');
+const { Pinger } = require('./pinger.js');
+const { Redirects } = require('./redirects.js');
 
 const LOG_FILE = 'burn-log.txt';
+const RESULTS_FILE = 'burn-list.csv';
+
+const HTTP_OPTIONS = {
+  protocol: 'https:',
+  host: 'developer.mozilla.org',
+  path: ''
+}
 
 class Burn {
   constructor() {
-    this.fileSet = new fm.IDLFileSet();
     this._clearLog();
+    this._fileSet = new fm.IDLFileSet();
+    this._outputFile = utils.getOutputFile(RESULTS_FILE);
+    this._pinger = new Pinger(HTTP_OPTIONS);
+
+    this._pinger.addListener('needsretry', (record) => {
+      if (record.retry > 0) {
+        record.retry--;
+        this._nextTest();
+      }
+    });
+
+    this._pinger.addListener('missing', (record) => {
+      record.mdn_exists = false;
+      this._nextTest();
+    });
+
+    this._pinger.addListener('found', (record) => {
+      record.mdn_exists = true;
+      this._nextTest();
+    })
+  }
+
+  _nextTest() {
+    // START HERE: loop until record.mdn_exists all have values.
   }
 
   _clearLog() {
@@ -47,7 +80,7 @@ class Burn {
   }
 
   burn() {
-    let files = this.fileSet.files;
+    let files = this._fileSet.files;
     let idlFile = null;
     for (let f in files) {
       let idlFile = this._getIDLFile(files[f]);

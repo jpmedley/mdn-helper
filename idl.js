@@ -4,11 +4,13 @@ const bcd = require('mdn-browser-compat-data');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
+const RETRY_COUNT = 3;
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
   bcd: null,
   mdn_url: null,
-  mdn_exists: null
+  mdn_exists: null,
+  retry: RETRY_COUNT
 });
 
 class IDLError extends Error {
@@ -268,6 +270,7 @@ class InterfaceData {
       } else {
         record.bcd = true;
         if (data.__compat) {
+          // TO DO: Scheme and domain need to come off urls.
           record.mdn_url = data.__compat.mdn_url;
         } else {
           record.mdn_exists = false;

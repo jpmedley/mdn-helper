@@ -43,6 +43,15 @@ function _getConfig(parameter) {
   return config.get('Application.' + parameter);
 }
 
+function _getOutputFile(filePath, reuse = false) {
+  if (!reuse) {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(outPath);
+    }
+  }
+  return fs.openSync(outPath, 'w');
+}
+
 function _getTemplate(name) {
   if (!name.endsWith(".html")) { name += ".html"; }
   let templatePath = TEMPLATES + name;
@@ -193,6 +202,7 @@ module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.cleanOutput = _cleanOutput;
 module.exports.getConfig = _getConfig;
 module.exports.getIDLFile = _getIDLFile;
+module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getRealArguments = _getRealArguments;
 module.exports.getWireframes = _getWireframes;
