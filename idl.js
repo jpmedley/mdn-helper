@@ -116,14 +116,77 @@ class InterfaceData {
     }
   }
 
+  _getOperationSubType(member) {
+    let name;
+    if (member.stringifier) { return { "type": "stringifier", "name": null }; }
+    if (member.getter) {
+      if (member.body.name) {
+        name = member.body.name.escaped;
+      } else if (member.body.idlType) {
+        name = member.body.idlType.baseName;
+      } else if (member.extAttrs.items[0].rhs) {
+        name = member.extAttrs.items[0].rhs.value;
+      }
+      return { "type": "getter", "name": name };
+    }
+    name = member.body.name.escaped;
+    return { "type": "method", "name": name };
+  }
+
+  _getAttributeSubType(member) {
+    switch (member.idlType.baseName) {
+      case 'EventHandler':
+        return { "type": "eventhandler", "name": member.escapedName };
+        break;
+      case 'Promise':
+        return { "type": "method", "name": member.escapedName };
+        break;
+      default:
+        return { "type": "property", "name": member.escapedName };
+    }
+  }
+
+  _getArgumentString(args) {
+    let argString = '';
+    if (args.length) {
+      for (let a in args) {
+        argString += (args[a].idlType.baseName + " " + args[a].name + ", ");
+      }
+      argString = argString.slice(0, -1); // Chop last comma.
+    }
+    return argString;
+  }
+
+  _getConstructors() {
+    // if (!this._interface.extAttrs) { return; }
+    let extras = this._interface.extAttrs.items;
+    let sig;
+    for (let e in extras) {
+      if (extras[e].name == 'Constructor') {
+        sig = "(";
+        if (extras[e].signature.arguments) {
+          sig += this._getArgumentString(extras[e].signature.arguments);
+        }
+        sig += ")";
+      }
+      this._signatures.push(sig);
+    }
+  }
+
   _loadMembers() {
     // START HERE: Test getConstructors().
     this._getConstructors();
     this._eventhandlers = [];
+<<<<<<< HEAD
     this._getters = [];
     this._methods = [];
     this._properties = [];
     this._setters = [];
+=======
+    this._getters = []
+    this._methods = [];
+    this._properties = [];
+>>>>>>> 3b630236c64f759f6199ebf3a325143597936344
     let property;
     let subType;
     let args;
@@ -169,10 +232,13 @@ class InterfaceData {
               }
               this._methods.push(property)
               break;
+<<<<<<< HEAD
             case 'setter':
               property = subType;
               property.interface = subType.name;
               this._setters.push(property);
+=======
+>>>>>>> 3b630236c64f759f6199ebf3a325143597936344
             case 'stringifier':
               //
               break;
@@ -221,10 +287,13 @@ class InterfaceData {
     return this._getters;
   }
 
+<<<<<<< HEAD
   get interfaces() {
     return this._getIdentifiers('.', 'interface');
   }
 
+=======
+>>>>>>> 3b630236c64f759f6199ebf3a325143597936344
   get keys() {
     return this._getIdentifiers('.');
   }
@@ -262,6 +331,7 @@ class InterfaceData {
     return this._getIdentifiers('/');
   }
 
+<<<<<<< HEAD
   _getIdentifiers(separator, type='name') {
     // The type argument should be 'name' or 'interface'.
     let identifiers = [];
@@ -296,12 +366,36 @@ class InterfaceData {
     }
     for (let s in this._setters) {
       identifiers.push(this.name + this._setters[s][type]);
+=======
+  _getIdentifiers(separator) {
+    let identifiers = [];
+    identifiers.push(this.name);
+    if (this.hasConstructor()) {
+      identifiers.push(this.name + separator + this.name + "()");
+    }
+    for (let e in this._eventhandlers) {
+      identifiers.push(this.name + separator + this._eventhandlers[e].interface);
+    }
+    for (let g in this._getters) {
+      identifiers.push(this.name + separator + this._getters[g].interface);
+    }
+    for (let m in this._methods) {
+      identifiers.push(this.name + separator + this._methods[m].interface);
+    }
+    for (let p in this._properties) {
+      identifiers.push(this.name + separator + this._properties[p].interface);
+>>>>>>> 3b630236c64f759f6199ebf3a325143597936344
     }
     return identifiers;
   }
 
   hasConstructor() {
+<<<<<<< HEAD
     return this._constructor;
+=======
+    if (this._signatures.length) { return true; }
+    return false;
+>>>>>>> 3b630236c64f759f6199ebf3a325143597936344
   }
 }
 
