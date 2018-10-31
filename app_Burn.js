@@ -1,5 +1,6 @@
 'use strict';
 
+const bcd = require('mdn-browser-compat-data');
 const fm = require('./filemanager.js');
 const fs = require('fs');
 const { InterfaceData } = require('./idl.js');
@@ -30,7 +31,6 @@ class Burn {
   burn() {
     let files = this.fileSet.files;
     let idlFile = null;
-    let ids = null;
     for (let f in files) {
       try {
         idlFile = new InterfaceData(files[f]);
@@ -48,9 +48,26 @@ class Burn {
         }
       }
 
-      ids = idlFile.interfaces;
-      for (let i in ids) {
-        console.log(ids[i]);
+      let keys = idlFile.keys;
+      for (let k in keys) {
+        let tokens = keys[k].split('.');
+        let data = bcd.api[tokens[0]];
+        if (data && tokens.length > 1) {
+          data = bcd.api[tokens[0]][tokens[1]];
+        }
+        let record;
+        if (!data) {
+          record = keys[k] + ",false,false";
+        } else {
+          record = keys[k] + ",true,";
+          if (data.__compat) {
+            record += data.__compat.mdn_url;
+          } else {
+            record += false;
+          }
+        }
+        console.log(record);
+
       }
     }
   }
