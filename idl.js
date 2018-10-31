@@ -129,6 +129,12 @@ class InterfaceData {
       }
       return { "type": "getter", "name": name };
     }
+    if (member.setter) {
+      return { "type": "setter", "name": "[]" };
+    }
+    if (member.deleter) {
+      return { "type": "deleter", "name": "deleter" };
+    }
     name = member.body.name.escaped;
     return { "type": "method", "name": name };
   }
@@ -158,13 +164,13 @@ class InterfaceData {
   }
 
   _getConstructors() {
-    // if (!this._interface.extAttrs) { return; }
+    if (!this._interface.extAttrs) { return; }
     let extras = this._interface.extAttrs.items;
     let sig;
     for (let e in extras) {
       if (extras[e].name == 'Constructor') {
         sig = "(";
-        if (extras[e].signature.arguments) {
+        if (extras[e].signature) {
           sig += this._getArgumentString(extras[e].signature.arguments);
         }
         sig += ")";
@@ -177,16 +183,10 @@ class InterfaceData {
     // START HERE: Test getConstructors().
     this._getConstructors();
     this._eventhandlers = [];
-<<<<<<< HEAD
     this._getters = [];
     this._methods = [];
     this._properties = [];
     this._setters = [];
-=======
-    this._getters = []
-    this._methods = [];
-    this._properties = [];
->>>>>>> 3b630236c64f759f6199ebf3a325143597936344
     let property;
     let subType;
     let args;
@@ -232,13 +232,10 @@ class InterfaceData {
               }
               this._methods.push(property)
               break;
-<<<<<<< HEAD
             case 'setter':
               property = subType;
               property.interface = subType.name;
               this._setters.push(property);
-=======
->>>>>>> 3b630236c64f759f6199ebf3a325143597936344
             case 'stringifier':
               //
               break;
@@ -287,13 +284,10 @@ class InterfaceData {
     return this._getters;
   }
 
-<<<<<<< HEAD
   get interfaces() {
     return this._getIdentifiers('.', 'interface');
   }
 
-=======
->>>>>>> 3b630236c64f759f6199ebf3a325143597936344
   get keys() {
     return this._getIdentifiers('.');
   }
@@ -331,7 +325,6 @@ class InterfaceData {
     return this._getIdentifiers('/');
   }
 
-<<<<<<< HEAD
   _getIdentifiers(separator, type='name') {
     // The type argument should be 'name' or 'interface'.
     let identifiers = [];
@@ -366,36 +359,12 @@ class InterfaceData {
     }
     for (let s in this._setters) {
       identifiers.push(this.name + this._setters[s][type]);
-=======
-  _getIdentifiers(separator) {
-    let identifiers = [];
-    identifiers.push(this.name);
-    if (this.hasConstructor()) {
-      identifiers.push(this.name + separator + this.name + "()");
-    }
-    for (let e in this._eventhandlers) {
-      identifiers.push(this.name + separator + this._eventhandlers[e].interface);
-    }
-    for (let g in this._getters) {
-      identifiers.push(this.name + separator + this._getters[g].interface);
-    }
-    for (let m in this._methods) {
-      identifiers.push(this.name + separator + this._methods[m].interface);
-    }
-    for (let p in this._properties) {
-      identifiers.push(this.name + separator + this._properties[p].interface);
->>>>>>> 3b630236c64f759f6199ebf3a325143597936344
     }
     return identifiers;
   }
 
   hasConstructor() {
-<<<<<<< HEAD
     return this._constructor;
-=======
-    if (this._signatures.length) { return true; }
-    return false;
->>>>>>> 3b630236c64f759f6199ebf3a325143597936344
   }
 }
 

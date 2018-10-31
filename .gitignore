@@ -4,6 +4,7 @@ in/
 out/
 .DS_Store
 idl.tar.gz
+burn-log.txt
 
 # Logs
 logs

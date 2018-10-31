@@ -1,11 +1,30 @@
 'use strict';
 
 const fm = require('./filemanager.js');
+const fs = require('fs');
 const { InterfaceData } = require('./idl.js');
+
+const LOG_FILE = 'burn-log.txt';
 
 class Burn {
   constructor() {
     this.fileSet = new fm.IDLFileSet();
+    this._clearLog();
+  }
+
+  _clearLog() {
+    try {
+      fs.accessSync(LOG_FILE, fs.constants.F_OK);
+      fs.unlinkSync(LOG_FILE);
+    } catch (e) {
+      return;
+    }
+  }
+
+  _log(msg) {
+    fs.appendFile(LOG_FILE, msg, (e) => {
+      if (e) throw e;
+    });
   }
 
   burn() {
@@ -14,19 +33,17 @@ class Burn {
     let ids = null;
     for (let f in files) {
       try {
-        console.log(">>>" + files[f].path());
-        // idlFile = new idl.InterfaceData(files[f]);
         idlFile = new InterfaceData(files[f]);
       } catch(e) {
         if (e.constructor.name == 'IDLError') {
-          console.log('\t' + e.message);
+          let msg = (files[f].path() + "\n\t" + e.message + "\n\n");
+          this._log(msg);
           continue;
         } else if (e.constructor.name == 'WebIDLParseError') {
-          console.log('\t' + e.message);
+          let msg = (files[f].path() + "\n\t" + e.message + "\n\n");
+          this._log(msg);
           continue;
         } else {
-          console.log('\t' + e.name);
-          console.log('\t' + e.stack);
           throw e;
         }
       }
