@@ -1,6 +1,5 @@
 'use strict';
 
-const bcd = require('mdn-browser-compat-data');
 const fm = require('./filemanager.js');
 const fs = require('fs');
 const { InterfaceData } = require('./idl.js');
@@ -28,46 +27,34 @@ class Burn {
     });
   }
 
+  _getIDLFile(fileName) {
+    try {
+      let idlFile = new InterfaceData(fileName);
+      return idlFile;
+    } catch(e) {
+      if (e.constructor.name == 'IDLError') {
+        let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
+        this._log(msg);
+        return;
+      } else if (e.constructor.name == 'WebIDLParseError') {
+        let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
+        this._log(msg);
+        return;
+      } else {
+        throw e;
+      }
+    }
+  }
+
   burn() {
     let files = this.fileSet.files;
     let idlFile = null;
     for (let f in files) {
-      try {
-        idlFile = new InterfaceData(files[f]);
-      } catch(e) {
-        if (e.constructor.name == 'IDLError') {
-          let msg = (files[f].path() + "\n\t" + e.message + "\n\n");
-          this._log(msg);
-          continue;
-        } else if (e.constructor.name == 'WebIDLParseError') {
-          let msg = (files[f].path() + "\n\t" + e.message + "\n\n");
-          this._log(msg);
-          continue;
-        } else {
-          throw e;
-        }
-      }
-
-      let keys = idlFile.keys;
-      for (let k in keys) {
-        let tokens = keys[k].split('.');
-        let data = bcd.api[tokens[0]];
-        if (data && tokens.length > 1) {
-          data = bcd.api[tokens[0]][tokens[1]];
-        }
-        let record;
-        if (!data) {
-          record = keys[k] + ",false,false";
-        } else {
-          record = keys[k] + ",true,";
-          if (data.__compat) {
-            record += data.__compat.mdn_url;
-          } else {
-            record += false;
-          }
-        }
-        console.log(record);
-
+      let idlFile = this._getIDLFile(files[f]);
+      if (!idlFile) { continue; }
+      let burnRecords = idlFile.burnRecords;
+      for (let b in burnRecords) {
+        console.log(burnRecords[b].key + "," + burnRecords[b].bcd + "," + burnRecords[b].mdn_exists);
       }
     }
   }

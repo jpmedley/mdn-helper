@@ -4,6 +4,13 @@ const bcd = require('mdn-browser-compat-data');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
+const EMPTY_BURN_DATA = Object.freeze({
+  key: null,
+  bcd: null,
+  mdn_url: null,
+  mdn_exists: null
+});
+
 class IDLError extends Error {
   constructor(message, fileName='', lineNumber='') {
     super(message, fileName, lineNumber);
@@ -243,6 +250,52 @@ class InterfaceData {
       }
     }
   }
+
+  get burnRecords() {
+    let keys = this.keys;
+    let records = [];
+    for (let k in keys) {
+      let record = Object.assign({}, EMPTY_BURN_DATA);
+      record.key = keys[k];
+      let tokens = keys[k].split('.');
+      let data = bcd.api[tokens[0]];
+      if (data && tokens.length > 1) {
+        data = bcd.api[tokens[0]][tokens[1]];
+      }
+      if (!data) {
+        record.bcd = false;
+        record.mdn_exists = false;
+      } else {
+        record.bcd = true;
+        if (data.__compat) {
+          record.mdn_url = data.__compat.mdn_url;
+        } else {
+          record.mdn_exists = false;
+        }
+      }
+      records.push(record);
+    }
+    return records;
+  }
+
+
+    // let tokens = keys[k].split('.');
+    // let data = bcd.api[tokens[0]];
+    // if (data && tokens.length > 1) {
+    //   data = bcd.api[tokens[0]][tokens[1]];
+    // }
+    // let record;
+    // if (!data) {
+    //   record = keys[k] + ",false,false";
+    // } else {
+    //   record = keys[k] + ",true,";
+    //   if (data.__compat) {
+    //     record += data.__compat.mdn_url;
+    //   } else {
+    //     record += false;
+    //   }
+    // }
+    // console.log(record);
 
   get command() {
     let command = [];
