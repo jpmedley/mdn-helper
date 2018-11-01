@@ -5,44 +5,23 @@ const fs = require('fs');
 const utils = require('./utils.js');
 const { InterfaceData } = require('./idl.js');
 const { Pinger } = require('./pinger.js');
-const { Redirects } = require('./redirects.js');
 
 const LOG_FILE = 'burn-log.txt';
 const RESULTS_FILE = 'burn-list.csv';
 
-const HTTP_OPTIONS = {
-  protocol: 'https:',
-  host: 'developer.mozilla.org',
-  path: ''
-}
 
 class Burn {
   constructor() {
     this._clearLog();
     this._fileSet = new fm.IDLFileSet();
-    this._outputFile = utils.getOutputFile(RESULTS_FILE);
-    this._pinger = new Pinger(HTTP_OPTIONS);
+    // this._outputFile = utils.getOutputFile(RESULTS_FILE);
+    this._outputFile = (() => {
+      let file = utils.getOutputFile(RESULTS_FILE);
+      let header = "Interface,Has BCD,Has MDN Page,Expected URL\n";
+      fs.write(file, header, ()=>{});
+      return file;
+    })();
 
-    this._pinger.addListener('needsretry', (record) => {
-      if (record.retry > 0) {
-        record.retry--;
-        this._nextTest();
-      }
-    });
-
-    this._pinger.addListener('missing', (record) => {
-      record.mdn_exists = false;
-      this._nextTest();
-    });
-
-    this._pinger.addListener('found', (record) => {
-      record.mdn_exists = true;
-      this._nextTest();
-    })
-  }
-
-  _nextTest() {
-    // START HERE: loop until record.mdn_exists all have values.
   }
 
   _clearLog() {
@@ -79,17 +58,31 @@ class Burn {
     }
   }
 
-  burn() {
-    let files = this._fileSet.files;
-    let idlFile = null;
-    for (let f in files) {
-      let idlFile = this._getIDLFile(files[f]);
-      if (!idlFile) { continue; }
-      let burnRecords = idlFile.burnRecords;
-      for (let b in burnRecords) {
-        console.log(burnRecords[b].key + "," + burnRecords[b].bcd + "," + burnRecords[b].mdn_exists);
+  _record(records) {
+    for (let r in records) {
+      let line = records[r].key + "," + records[r].bcd + "," + records[r].mdn_exists;
+      if (records[r].mdn_url) {
+        line += "," + records[r].mdn_url;
+      }
+      line += "\n";
+      if (records[r].bcd != true) {
+        fs.write(this._outputFile, line, ()=>{});
       }
     }
+  }
+
+  burn() {
+    let files = this._fileSet.files;
+    // for (let f in files) {
+    //   let idlFile = this._getIDLFile(files[f]);
+      let idlFile = this._getIDLFile(files[1]);
+      // if (!idlFile) { continue; }
+      let burnRecords = idlFile.burnRecords;
+      let pinger = new Pinger(burnRecords);
+      burnRecords = pinger.pingRecords();
+      this._record(burnRecords);
+    // }
+    fs.close(this._outputFile, ()=>{});
   }
 }
 

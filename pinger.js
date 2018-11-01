@@ -1,55 +1,91 @@
 'use strict';
 
 const https = require('https');
-const extend = require('node.extend');
-const events = require('events');
 
 const RECOVERABLE_ERRORS = 'ECONNRESET,EPROTO,ETIMEDOUT';
-
-function Pinger(httpOptions) {
-  this.options = httpOptions;
-  extend(this, events.EventEmitter.prototype);
+// const REQUEST_OPTIONS = {
+//   protocol: 'https:',
+//   hostname: 'developer.mozilla.org',
+//   path: ''
+// }
+const REQUEST_OPTIONS = {
+  protocol: 'http',
+  hostname: 'localhost',
+  port: 8000,
+  path: ''
 }
 
-// let urlEntry = { url: url, retry: RETRY_COUNT }
-Pinger.prototype.ping = function(entry) {
-  this.options.path = entry.url;
-  let me = this;
-  if (entry.url.includes('DOMMatrix/a')) {
-    console.log('yeah!');
+const Status = Object.freeze({
+  "complete": 0,
+  "needsretry": 1
+});
+
+class Pinger {
+  constructor(records, httpOptions) {
+    this._records = records;
+    this._httpOptions = httpOptions;
   }
-  try {
-    https.get(this.options, (res) => {
-      me.statusCode = res.statusCode.toString();
-      if (me.statusCode.match(/3\d\d/)!=null) {
-        this.emit('found');
-      }
-      else if (me.statusCode.match(/4\d\d/)!==null) {
-        this.emit('missing', entry);
-      }
-      else if (me.statusCode.match(/5\d\d/)!=null) {
-        this.emit('needsretry', entry);
-      }
-      res.on('data', (chunk) => {
-        res.resume();
-      })
-      res.on('end', () => {
-        if (me.statusCode.match(/2\d\d/)!=null) {
-          this.emit('found');
+
+  pingRecords() {
+    for (let r of this._records) {
+      let retryCount = 3;
+      while (retryCount > 0) {
+        //START HERE: Test the catch() block.
+        let status = await this._ping(r)
+        .catch(e => {
+          console.log(e);
+        });
+        if (status.needsretry) {
+          retryCount--;
+          if (retryCount == 0) { r.mdn_exists = false; }
         }
-      })
-      res.on('error', (e) => {
-        if (RECOVERABLE_ERRORS.includes(e.code)) {
-          this.emit('needsretry', entry);
-        }
-        else {
-          throw e;
-        }
-      });
-    });
-  } catch(e) {
-    console.log(e);
+        else if (status.complete) { retryCount = 0; }
+      }
+    }
+    return this._records;
+  }
+
+  _ping(record) {
+    return new Promise((resolve, reject) => {
+      try {
+//         let base = REQUEST_OPTIONS.protocol + '//' + REQUEST_OPTIONS.hostname;
+        let base = 'https://developer.mozilla.org';
+        REQUEST_OPTIONS.path = record.mdn_url.replace(base, 'en-US');
+        https.get(REQUEST_OPTIONS, (res) => {
+          const status = res.statusCode.toString();
+          if (status.match(/3\d\d/)) {
+            throw new Error('Need to implement redirect.');
+          }
+          if (status.match(/4\d\d/)) {
+            record.mdn_exists = false;
+            resolve(Status.complete);
+          }
+          if (status.match(/5\d\d/)) {
+            resolve(Status.needsretry);
+          }
+          res.on('data', (chunk) => {
+            res.resume();
+          });
+          res.on('end', () => {
+            if (status.match(/2\d\d/)) {
+              record.mdn_exists = true;
+              resolve(Status.complete);
+            }
+          });
+          res.on('error', (e) => {
+            if (RECOVERABLE_ERRORS.includes(e.code)) {
+              resolve(Status.needsretry);
+            }
+            else {
+              reject(e);
+            }
+          });
+        });
+      } catch(e) {
+        reject(e);
+      }
+    })
   }
 }
 
-exports.Pinger = Pinger;
+module.exports.Pinger = Pinger;

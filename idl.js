@@ -4,13 +4,11 @@ const bcd = require('mdn-browser-compat-data');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
-const RETRY_COUNT = 3;
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
   bcd: null,
-  mdn_url: null,
   mdn_exists: null,
-  retry: RETRY_COUNT
+  mdn_url: null
 });
 
 class IDLError extends Error {
@@ -34,8 +32,8 @@ class InterfaceData {
       switch (items[i].name) {
         case 'Constructor':
           this._constructor = true;
-          if (items[i].name.signature) {
-            this._signatures.push(items[i].name.signature.arguments);
+          if (items[i].signature) {
+            this._signatures.push(items[i].signature.arguments);
           }
           break;
         case 'RuntimeEnabled':
@@ -53,6 +51,7 @@ class InterfaceData {
         case 'dictionary':
           const msg = `File ${fileObject.name} is for a dictionary.`;
           throw new IDLError(msg);
+          break;
         case 'interface':
           this._interface = tree[t];
           break;

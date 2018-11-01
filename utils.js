@@ -46,10 +46,10 @@ function _getConfig(parameter) {
 function _getOutputFile(filePath, reuse = false) {
   if (!reuse) {
     if (fs.existsSync(filePath)) {
-      fs.unlinkSync(outPath);
+      fs.unlinkSync(filePath);
     }
   }
-  return fs.openSync(outPath, 'w');
+  return fs.openSync(filePath, 'w');
 }
 
 function _getTemplate(name) {
