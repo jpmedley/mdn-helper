@@ -1,6 +1,7 @@
 'use strict';
 
 const { Burner } = require('./app_Burn.js');
+const { Cleaner } = require('./cleaner.js');
 const { Directory } = require('./app_Directory.js');
 const { Manual } = require('./app_manual.js');
 const { InterfaceData } = require('./idl.js');
@@ -27,8 +28,10 @@ switch (command) {
     burner.burn(includeFlags)
     break;
   case 'clean':
-    utils.cleanOutput()
-    .then(() => { process.exit(); });
+    let cleaner = new Cleaner();
+    cleaner.clean();
+    // utils.cleanOutput()
+    // .then(() => { process.exit(); });
     break;
   case 'find':
     dirApp = new Directory();

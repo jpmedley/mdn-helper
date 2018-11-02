@@ -20,23 +20,6 @@ function loadWireFrames() {
 
 const WIREFRAMES = loadWireFrames();
 
-function _cleanOutput() {
-  return new Promise((resolve, reject) => {
-    let question = "Are you sure? Y or N";
-    _prompt.question(question, (answer) => {
-      if (answer === 'Y') {
-        console.log("Cleaning");
-        fs.readdir(OUT, (e, files) => {
-          files.forEach(file => {
-            fs.unlinkSync(OUT + file);
-          })
-        })
-      }
-      resolve();
-    });
-  });
-}
-
 function _getConfig(parameter) {
   if (config.has('User.' + parameter)) {
     return config.get('User.' + parameter);
@@ -175,7 +158,7 @@ function _printHelp() {
             '\tnpm run [command] [arguments]\n' +
             'Commands:\n' +
             '\tbuild _searchString_\n' +
-            '\tburn\n' + 
+            '\tburn\n' +
             '\tclean\n' +
             '\tcss -n _selectorName_\n' +
             '\tfind _searchString_\n' +
@@ -210,7 +193,6 @@ function _validateCommand(args) {
 module.exports.OUT = OUT;
 module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.WIREFRAMES = WIREFRAMES;
-module.exports.cleanOutput = _cleanOutput;
 module.exports.getConfig = _getConfig;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getOutputFile = _getOutputFile;
