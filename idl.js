@@ -255,8 +255,8 @@ class InterfaceData {
     }
   }
 
-  getBurnRecords(excludeFlags=false) {
-    if (excludeFlags && this.flag) { return; }
+  getBurnRecords(includeFlags=false) {
+    if (!includeFlags && this.flag) { return; }
     let keys = this.keys;
     let records = [];
     for (let k in keys) {

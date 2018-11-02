@@ -69,12 +69,12 @@ class _Burner {
     }
   }
 
-  async burn(excludeFlags=false) {
+  async burn(includeFlags=false) {
     let files = this._fileSet.files;
     for (let f in files) {
       let idlFile = this._getIDLFile(files[f]);
       if (!idlFile) { continue; }
-      let burnRecords = idlFile.getBurnRecords(excludeFlags=false);
+      let burnRecords = idlFile.getBurnRecords(includeFlags);
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()

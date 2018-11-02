@@ -8,9 +8,9 @@ const utils = require('./utils.js');
 
 utils.printWelcome();
 
-let realArguments;
+let command;
 try {
-  realArguments = utils.getRealArguments(process.argv);
+  command = utils.validateCommand(process.argv);
 }
 catch(e) {
   console.error(e.message);
@@ -19,9 +19,12 @@ catch(e) {
 }
 
 let dirApp;
-switch (realArguments[0]) {
+switch (command) {
   case 'burn':
-    burnApp = new Burner();
+    let burner = new Burner();
+    let includeFlags = false;
+    if (['-f', '--flags'].includes(process.argv[3])) { includeFlags = true; }
+    burner.burn(includeFlags)
     break;
   case 'clean':
     utils.cleanOutput()
@@ -29,11 +32,11 @@ switch (realArguments[0]) {
     break;
   case 'find':
     dirApp = new Directory();
-    dirApp.findAndShow(realArguments[1]);
+    dirApp.findAndShow(process.argv[3]);
     break;
   case 'build':
     dirApp = new Directory();
-    dirApp.findAndBuild(realArguments[1])
+    dirApp.findAndBuild(process.argv[3])
     .then((interfaces) => {
       const id = new InterfaceData(interfaces[0].path());
       const { Manual } = require('./app_manual.js');
@@ -44,6 +47,7 @@ switch (realArguments[0]) {
   case 'css':
   case 'header':
   case 'interface':
+    const realArguments = utils.getRealArguments(process.argv);
     const manApp = new Manual(realArguments);
     manApp.create();
     break;

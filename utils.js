@@ -7,6 +7,7 @@ const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
+const COMMANDS = ['build', 'burn', 'clean', 'css', 'find', 'header', 'help', 'interface', 'test'];
 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
@@ -50,13 +51,6 @@ function _getOutputFile(filePath, reuse = false) {
     }
   }
   return fs.openSync(filePath, 'w');
-}
-
-function _getTemplate(name) {
-  if (!name.endsWith(".html")) { name += ".html"; }
-  let templatePath = TEMPLATES + name;
-  let buffer = fs.readFileSync(templatePath);
-  return buffer.toString();
 }
 
 function _getIDLFile(name) {
@@ -153,6 +147,13 @@ function _getRealArguments(args) {
   return realArgs;
 }
 
+function _getTemplate(name) {
+  if (!name.endsWith(".html")) { name += ".html"; }
+  let templatePath = TEMPLATES + name;
+  let buffer = fs.readFileSync(templatePath);
+  return buffer.toString();
+}
+
 function _getWireframes() {
   const wireframePath = TEMPLATES + QUESTIONS_FILE
   const wireframeBuffer = fs.readFileSync(wireframePath);
@@ -174,6 +175,7 @@ function _printHelp() {
             '\tnpm run [command] [arguments]\n' +
             'Commands:\n' +
             '\tbuild _searchString_\n' +
+            '\tburn\n' + 
             '\tclean\n' +
             '\tcss -n _selectorName_\n' +
             '\tfind _searchString_\n' +
@@ -196,6 +198,15 @@ function _printWelcome() {
   console.log("=".repeat(80));
 }
 
+function _validateCommand(args) {
+  if (!COMMANDS.includes(args[2])) {
+    let list = COMMANDS.join(', ');
+    let msg = `The command must be one of:\n\t${list}.\n`;
+    throw new Error(msg);
+  }
+  return args[2];
+}
+
 module.exports.OUT = OUT;
 module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.WIREFRAMES = WIREFRAMES;
@@ -208,3 +219,4 @@ module.exports.getRealArguments = _getRealArguments;
 module.exports.getWireframes = _getWireframes;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
+module.exports.validateCommand = _validateCommand;
