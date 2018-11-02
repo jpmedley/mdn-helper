@@ -7,6 +7,7 @@ const webidl2 = require('webidl2');
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
   bcd: null,
+  flag: null,
   mdn_exists: null,
   mdn_url: null,
   redirect: false
@@ -23,6 +24,27 @@ class InterfaceData {
     this._loadTree(sourceFile);
     this._loadExtras();
     this._loadMembers();
+  }
+
+  _loadTree(fileObject) {
+    this.sourceContents = utils.getIDLFile(fileObject.path());
+    let tree = webidl2.parse(this.sourceContents);
+    for (let t in tree) {
+      switch (tree[t].type) {
+        case 'dictionary':
+          // For now, don't include dictionaries in the log file.
+          // const msg = `File ${fileObject.name} is for a dictionary.`;
+          // throw new IDLError(msg);
+          break;
+        case 'interface':
+          this._interface = tree[t];
+          break;
+      }
+    }
+    if (!this._interface) {
+      const msg = `The ${fileObject.path()} file does not contain interface data.`;
+      throw new IDLError(msg);
+    }
   }
 
   _loadExtras() {
@@ -44,23 +66,68 @@ class InterfaceData {
     }
   }
 
-  _loadTree(fileObject) {
-    this.sourceContents = utils.getIDLFile(fileObject.path());
-    let tree = webidl2.parse(this.sourceContents);
-    for (let t in tree) {
-      switch (tree[t].type) {
-        case 'dictionary':
-          const msg = `File ${fileObject.name} is for a dictionary.`;
-          throw new IDLError(msg);
+  _loadMembers() {
+    // START HERE: Test getConstructors().
+    this._getConstructors();
+    this._eventhandlers = [];
+    this._getters = [];
+    this._methods = [];
+    this._properties = [];
+    this._setters = [];
+    let property;
+    let subType;
+    let args;
+    let mems = this._interface.members;
+    for (let m in mems) {
+      switch (mems[m].type) {
+        case 'attribute':
+          subType = this._getAttributeSubType(mems[m]);
+          property = subType;
+          property.interface = subType.name;
+          switch (subType.type) {
+            case 'eventhandler':
+              this._eventhandlers.push(property);
+              break;
+            case 'method':
+              // args = this._getArguments(mems[m]);
+              if (mems[m].body) {
+                args = this._getArgumentString(mems[m].body.arguments);
+                property.interface += ("(" + args + ")");
+              }
+              this._methods.push(property);
+              break;
+            case 'property':
+              this._properties.push(property);
+              break;
+          }
           break;
-        case 'interface':
-          this._interface = tree[t];
-          break;
+        case 'operation':
+          subType = this._getOperationSubType(mems[m]);
+          switch (subType.type) {
+            case 'getter':
+              property = subType;
+              property.interface = subType.name;
+              this._getters.push(property);
+              break;
+            case 'method':
+              property = subType;
+              property.interface = subType.name;
+              // args = this._getArguments(mems[m]);
+              if (mems[m].body) {
+                args = this._getArgumentString(mems[m].body.arguments);
+                property.interface += ("(" + args + ")");
+              }
+              this._methods.push(property)
+              break;
+            case 'setter':
+              property = subType;
+              property.interface = subType.name;
+              this._setters.push(property);
+            case 'stringifier':
+              //
+              break;
+          }
       }
-    }
-    if (!this._interface) {
-      const msg = `The ${fileObject.path()} file does not contain interface data.`;
-      throw new IDLError(msg);
     }
   }
 
@@ -188,72 +255,8 @@ class InterfaceData {
     }
   }
 
-  _loadMembers() {
-    // START HERE: Test getConstructors().
-    this._getConstructors();
-    this._eventhandlers = [];
-    this._getters = [];
-    this._methods = [];
-    this._properties = [];
-    this._setters = [];
-    let property;
-    let subType;
-    let args;
-    let mems = this._interface.members;
-    for (let m in mems) {
-      switch (mems[m].type) {
-        case 'attribute':
-          subType = this._getAttributeSubType(mems[m]);
-          property = subType;
-          property.interface = subType.name;
-          switch (subType.type) {
-            case 'eventhandler':
-              this._eventhandlers.push(property);
-              break;
-            case 'method':
-              // args = this._getArguments(mems[m]);
-              if (mems[m].body) {
-                args = this._getArgumentString(mems[m].body.arguments);
-                property.interface += ("(" + args + ")");
-              }
-              this._methods.push(property);
-              break;
-            case 'property':
-              this._properties.push(property);
-              break;
-          }
-          break;
-        case 'operation':
-          subType = this._getOperationSubType(mems[m]);
-          switch (subType.type) {
-            case 'getter':
-              property = subType;
-              property.interface = subType.name;
-              this._getters.push(property);
-              break;
-            case 'method':
-              property = subType;
-              property.interface = subType.name;
-              // args = this._getArguments(mems[m]);
-              if (mems[m].body) {
-                args = this._getArgumentString(mems[m].body.arguments);
-                property.interface += ("(" + args + ")");
-              }
-              this._methods.push(property)
-              break;
-            case 'setter':
-              property = subType;
-              property.interface = subType.name;
-              this._setters.push(property);
-            case 'stringifier':
-              //
-              break;
-          }
-      }
-    }
-  }
-
-  get burnRecords() {
+  getBurnRecords(excludeFlags=false) {
+    if (excludeFlags && this.flag) { return; }
     let keys = this.keys;
     let records = [];
     for (let k in keys) {
@@ -270,7 +273,6 @@ class InterfaceData {
       } else {
         record.bcd = true;
         if (data.__compat) {
-          // TO DO: Scheme and domain need to come off urls.
           record.mdn_url = data.__compat.mdn_url;
         } else {
           record.mdn_exists = false;
@@ -280,25 +282,6 @@ class InterfaceData {
     }
     return records;
   }
-
-
-    // let tokens = keys[k].split('.');
-    // let data = bcd.api[tokens[0]];
-    // if (data && tokens.length > 1) {
-    //   data = bcd.api[tokens[0]][tokens[1]];
-    // }
-    // let record;
-    // if (!data) {
-    //   record = keys[k] + ",false,false";
-    // } else {
-    //   record = keys[k] + ",true,";
-    //   if (data.__compat) {
-    //     record += data.__compat.mdn_url;
-    //   } else {
-    //     record += false;
-    //   }
-    // }
-    // console.log(record);
 
   get command() {
     let command = [];

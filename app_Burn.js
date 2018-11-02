@@ -29,7 +29,7 @@ class Burn {
       fs.unlinkSync(LOG_FILE);
     } catch (e) {
       return;
-    } 
+    }
   }
 
   _log(msg) {
@@ -69,12 +69,13 @@ class Burn {
     }
   }
 
-  async burn() {
+  async burn(excludeFlags=false) {
     let files = this._fileSet.files;
     for (let f in files) {
       let idlFile = this._getIDLFile(files[f]);
       if (!idlFile) { continue; }
-      let burnRecords = idlFile.burnRecords;
+      let burnRecords = idlFile.getBurnRecords(excludeFlags=false);
+      if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()
       .catch(e => {
