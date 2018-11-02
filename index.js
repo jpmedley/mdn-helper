@@ -1,8 +1,9 @@
 'use strict';
 
-const da = require('./app_Directory.js');
-const dm = require('./app_manual.js');
-const idl = require('./idl.js');
+const { Burner } = require('./app_Burn.js');
+const { Directory } = require('./app_Directory.js');
+const { Manual } = require('./app_manual.js');
+const { InterfaceData } = require('./idl.js');
 const utils = require('./utils.js');
 
 utils.printWelcome();
@@ -20,30 +21,30 @@ catch(e) {
 let dirApp;
 switch (realArguments[0]) {
   case 'burn':
-
+    burnApp = new Burner();
     break;
   case 'clean':
     utils.cleanOutput()
     .then(() => { process.exit(); });
     break;
   case 'find':
-    dirApp = new da.Directory();
+    dirApp = new Directory();
     dirApp.findAndShow(realArguments[1]);
     break;
   case 'build':
-    dirApp = new da.Directory();
+    dirApp = new Directory();
     dirApp.findAndBuild(realArguments[1])
     .then((interfaces) => {
-      const id = new idl.InterfaceData(interfaces[0].path());
-      const dm = require('./app_manual.js');
-      const manApp = new dm.Manual(id.command);
+      const id = new InterfaceData(interfaces[0].path());
+      const { Manual } = require('./app_manual.js');
+      const manApp = new Manual(id.command);
       manApp.create();
     })
     break;
   case 'css':
   case 'header':
   case 'interface':
-    const manApp = new dm.Manual(realArguments);
+    const manApp = new Manual(realArguments);
     manApp.create();
     break;
   case 'help':

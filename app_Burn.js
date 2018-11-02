@@ -10,7 +10,7 @@ const LOG_FILE = 'burn-log.txt';
 const RESULTS_FILE = 'burn-list.csv';
 
 
-class Burn {
+class _Burner {
   constructor() {
     this._resetLog();
     this._fileSet = new fm.IDLFileSet();
@@ -87,4 +87,4 @@ class Burn {
   }
 }
 
-module.exports.Burn = Burn;
+module.exports.Burner = _Burner;
