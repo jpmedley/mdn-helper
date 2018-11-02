@@ -12,25 +12,24 @@ const RESULTS_FILE = 'burn-list.csv';
 
 class Burn {
   constructor() {
-    this._clearLog();
+    this._resetLog();
     this._fileSet = new fm.IDLFileSet();
-    // this._outputFile = utils.getOutputFile(RESULTS_FILE);
     this._outputFile = (() => {
       let file = utils.getOutputFile(RESULTS_FILE);
-      let header = "Interface,Has BCD,Has MDN Page,Expected URL\n";
+      let header = "Interface,Has BCD,Has MDN Page,Expected URL,Redirect\n";
       fs.write(file, header, ()=>{});
       return file;
     })();
 
   }
 
-  _clearLog() {
+  _resetLog() {
     try {
       fs.accessSync(LOG_FILE, fs.constants.F_OK);
       fs.unlinkSync(LOG_FILE);
     } catch (e) {
       return;
-    }
+    } 
   }
 
   _log(msg) {
@@ -59,29 +58,30 @@ class Burn {
   }
 
   _record(records) {
-    for (let r in records) {
-      let line = records[r].key + "," + records[r].bcd + "," + records[r].mdn_exists;
-      if (records[r].mdn_url) {
-        line += "," + records[r].mdn_url;
-      }
-      line += "\n";
-      if (records[r].bcd != true) {
+    for (let r of records) {
+      if (!r.bcd || !r.mdn_exists) {
+        let line = r.key + ',' + r.bcd + ',' + r.mdn_exists;
+        if (r.mdn_url) { line += (',' + r.mdn_url); }
+        if (r.redirect) { line += (',redirects')}
+        line += '\n';
         fs.write(this._outputFile, line, ()=>{});
       }
     }
   }
 
-  burn() {
+  async burn() {
     let files = this._fileSet.files;
-    // for (let f in files) {
-    //   let idlFile = this._getIDLFile(files[f]);
-      let idlFile = this._getIDLFile(files[1]);
-      // if (!idlFile) { continue; }
+    for (let f in files) {
+      let idlFile = this._getIDLFile(files[f]);
+      if (!idlFile) { continue; }
       let burnRecords = idlFile.burnRecords;
       let pinger = new Pinger(burnRecords);
-      burnRecords = pinger.pingRecords();
+      burnRecords = await pinger.pingRecords()
+      .catch(e => {
+        throw e;
+      });
       this._record(burnRecords);
-    // }
+    }
     fs.close(this._outputFile, ()=>{});
   }
 }

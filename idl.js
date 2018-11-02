@@ -8,7 +8,8 @@ const EMPTY_BURN_DATA = Object.freeze({
   key: null,
   bcd: null,
   mdn_exists: null,
-  mdn_url: null
+  mdn_url: null,
+  redirect: false
 });
 
 class IDLError extends Error {
