@@ -4,13 +4,7 @@ const fs = require('fs');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const radio = require('radio-symbol');
-const readline = require('readline');
 const utils = require('./utils.js');
-
-const prompt = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 class _Cleaner {
   constructor() {
@@ -37,30 +31,29 @@ class _Cleaner {
       choices: dirs
     });
     let answers = await enq.prompt('outputDirs');
-    return answers;
+    return answers.outputDirs;
   }
 
   async _clean(dirsToDelete) {
-    return new Promise((resolve, reject) => {
-      let q = "Are you sure? Y or N?";
-      prompt.question(q, a => {
-        // START HERE: Racing ahead again instead of being async.
-        if (a.toLowerCase() == 'y') {
-          console.log("Removing selected directories.");
-          for (let d of dirsToDelete) {
-            // fs.unlinkSync(utils.OUT + dir);
-            console.log(`\tDeleting ${dir}`);
-          }
-        }
-        resolve();
-      });
-    });
+    const enq = new Enquirer();
+    const options = { message: "Are you sure? Y or N?" };
+    enq.question('confirm', options);
+    const answer = await enq.prompt('confirm');
+    if (answer.confirm.toLowerCase() == 'y') {
+      console.log("Removing selected directories.");
+      for (let d in dirsToDelete) {
+        console.log(`\tDeleting ${dirsToDelete[d]}.`);
+        utils.deleteUnemptyFolder(utils.OUT + dirsToDelete[d]);
+      }
+      console.log('\n');
+    } else {
+      console.log('Will not delete selected directories.\n');
+    }
   }
 
   async clean() {
     let dirsToDelete = await this._select();
-    await this._clean();
-    console.log("Done.");
+    await this._clean(dirsToDelete);
   }
 }
 

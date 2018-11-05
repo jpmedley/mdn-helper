@@ -20,6 +20,20 @@ function loadWireFrames() {
 
 const WIREFRAMES = loadWireFrames();
 
+function _deleteUnemptyFolder(folder) {
+  if (fs.existsSync(folder)) {
+    fs.readdirSync(folder).forEach(file => {
+      let path = folder + '/' + file;
+      if (fs.statSync(path).isDirectory()) {
+        _deleteUnemptyFolder(path);
+      } else {
+        fs.unlinkSync(path);
+      }
+    });
+    fs.rmdirSync(folder);
+  }
+}
+
 function _getConfig(parameter) {
   if (config.has('User.' + parameter)) {
     return config.get('User.' + parameter);
@@ -193,6 +207,7 @@ function _validateCommand(args) {
 module.exports.OUT = OUT;
 module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.WIREFRAMES = WIREFRAMES;
+module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.getConfig = _getConfig;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getOutputFile = _getOutputFile;

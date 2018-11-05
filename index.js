@@ -30,8 +30,6 @@ switch (command) {
   case 'clean':
     let cleaner = new Cleaner();
     cleaner.clean();
-    // utils.cleanOutput()
-    // .then(() => { process.exit(); });
     break;
   case 'find':
     dirApp = new Directory();
