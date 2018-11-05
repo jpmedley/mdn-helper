@@ -11,7 +11,9 @@ const RESULTS_FILE = 'burn-list.csv';
 
 
 class _Burner {
-  constructor() {
+  constructor(args) {
+    this._includeFlags = false;
+    if (['-f', '--flags'].includes(args[3])) { this._includeFlags = true; }
     this._resetLog();
     this._fileSet = new fm.IDLFileSet();
     this._outputFile = (() => {
@@ -69,12 +71,12 @@ class _Burner {
     }
   }
 
-  async burn(includeFlags=false) {
+  async burn() {
     let files = this._fileSet.files;
     for (let f in files) {
       let idlFile = this._getIDLFile(files[f]);
       if (!idlFile) { continue; }
-      let burnRecords = idlFile.getBurnRecords(includeFlags);
+      let burnRecords = idlFile.getBurnRecords(this._includeFlags);
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()

@@ -9,6 +9,28 @@ const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
 const REQUIREs_FLAGS = ['css','header','interface'];
 const COMMANDS = ['build','burn','clean','find','help'].concat(REQUIREs_FLAGS).sort();
+const FLAGS = {
+  "-c":"--constructor",
+  "--constructor":"--constructor",
+  "-d": "--directive",
+  "--directive": "--directive",
+  "-e":"--event",
+  "--event":"--event",
+  "-h":"--handler",
+  "-H":"--header",
+  "--handler":"--handler",
+  "--header":"--header",
+  "-i":"--interface",
+  "--interface":"--interface",
+  "-m":"--method",
+  "--method":"--method",
+  "-o":"--overview",
+  "--overview":"--overview",
+  "-p":"--property",
+  "--property":"--property",
+  "-s": "--css",
+  "--css": "--css"
+}
 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
@@ -142,9 +164,8 @@ function _getWireframes() {
 }
 
 function _normalizeArg(arg) {
-  let args = { "-c":"--constructor", "--constructor":"--constructor", "-d": "--directive", "--directive": "--directive", "-e":"--event", "--event":"--event", "-h":"--handler", "-H":"--header", "--handler":"--handler", "--header":"--header", "-i":"--interface", "--interface":"--interface", "-m":"--method", "--method":"--method", "-o":"--overview", "--overview":"--overview", "-p":"--property", "--property":"--property", "-s": "--css", "--css": "--css"}
-  if (arg in args) {
-    return args[arg];
+  if (arg in FLAGS) {
+    return FLAGS[arg];
   } else {
     return arg;
   }
@@ -179,6 +200,10 @@ function _printWelcome() {
 }
 
 function _validateCommand(args) {
+  TODO: Maybe redo using regex.
+  if ((args[1] == 'interface') && (!FLAGS[args[5]])) {
+    throw new Error('This command requires more than one flag.');
+  }
   if (REQUIREs_FLAGS.includes(args[2])) {
     if (args[3] != '-n') {
       throw new Error('This command requires flags.');

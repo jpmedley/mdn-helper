@@ -40,8 +40,9 @@ class _Directory {
     return answers;
   }
 
-  async findAndShow(interfacesNamed) {
-    const matches = this._find(interfacesNamed);
+  async findAndShow(args) {
+    if (!args[3]) { throw new Error('An argument is missing.'); }
+    const matches = this._find(args[3]);
     const answers = await this._select(matches);
     let idlPath, idlFile, name, match;
     for (let a in answers.idlFile) {
@@ -59,8 +60,9 @@ class _Directory {
     }
   }
 
-  async findAndBuild(interfacesNamed) {
-    const matches = this._find(interfacesNamed);
+  async findAndBuild(args) {
+    if (!args[3]) { throw new Error('An argument is missing.'); }
+    const matches = this._find(args[3]);
     const answers = await this._select(matches);
     let interfaces = [];
     for (let m in matches) {

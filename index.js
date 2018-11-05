@@ -10,7 +10,8 @@ utils.printWelcome();
 
 let command;
 try {
-  command = utils.validateCommand(process.argv);
+  // command = utils.validateCommand(process.argv);
+  command = process.argv[3];
 }
 catch(e) {
   console.error(e.message);
@@ -21,10 +22,8 @@ catch(e) {
 let dirApp;
 switch (command) {
   case 'burn':
-    let burner = new Burner();
-    let includeFlags = false;
-    if (['-f', '--flags'].includes(process.argv[3])) { includeFlags = true; }
-    burner.burn(includeFlags)
+    let burner = new Burner(process.argv);
+    burner.burn()
     break;
   case 'clean':
     let cleaner = new Cleaner();
@@ -32,11 +31,11 @@ switch (command) {
     break;
   case 'find':
     dirApp = new Directory();
-    dirApp.findAndShow(process.argv[3]);
+    dirApp.findAndShow(process.argv);
     break;
   case 'build':
     dirApp = new Directory();
-    dirApp.findAndBuild(process.argv[3])
+    dirApp.findAndBuild(process.argv)
     break;
   case 'css':
   case 'header':
