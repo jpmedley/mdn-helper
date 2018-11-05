@@ -4,7 +4,6 @@ const { Burner } = require('./app_Burn.js');
 const { Cleaner } = require('./cleaner.js');
 const { Directory } = require('./app_Directory.js');
 const { Manual } = require('./app_manual.js');
-const { InterfaceData } = require('./idl.js');
 const utils = require('./utils.js');
 
 utils.printWelcome();
@@ -38,12 +37,6 @@ switch (command) {
   case 'build':
     dirApp = new Directory();
     dirApp.findAndBuild(process.argv[3])
-    .then((interfaces) => {
-      const id = new InterfaceData(interfaces[0].path());
-      const { Manual } = require('./app_manual.js');
-      const manApp = new Manual(id.command);
-      manApp.create();
-    })
     break;
   case 'css':
   case 'header':

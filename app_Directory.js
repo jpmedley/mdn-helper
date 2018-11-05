@@ -3,6 +3,8 @@
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const fm = require('./filemanager.js');
+const { InterfaceData } = require('./idl.js');
+const { Manual } = require('./app_manual.js');
 const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
@@ -66,7 +68,9 @@ class _Directory {
         interfaces.push(matches[m]);
       }
     }
-    return interfaces;
+    const id = new InterfaceData(interfaces[0].path());
+    const manApp = new Manual(id.command);
+    manApp.create();
   }
 
 }
