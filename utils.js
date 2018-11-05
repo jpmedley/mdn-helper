@@ -7,7 +7,8 @@ const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
-const COMMANDS = ['build', 'burn', 'clean', 'css', 'find', 'header', 'help', 'interface', 'test'];
+const REQUIREs_FLAGS = ['css','header','interface'];
+const COMMANDS = ['build','burn','clean','find','help'].concat(REQUIREs_FLAGS).sort();
 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
@@ -58,14 +59,9 @@ function _getIDLFile(name) {
   return buffer.toString();
 }
 
-function _getRealArguments(args) {
+function _normalizeInterfaceArgs(args) {
   args.shift();
   args.shift();
-  let commands = ['build', 'burn', 'clean', 'css', 'find', 'header', 'help', 'interface', 'test'];
-  if (!commands.includes(args[0])) {
-    throw new Error("The command must be one of build, burn, clean, css, find, header, help, or interface.");
-  }
-  if (args[0] == 'find') { return args; }
   let newArgs = new Array();
   args.forEach((arg, index, args) => {
     arg = _normalizeArg(arg);
@@ -112,17 +108,6 @@ function _getRealArguments(args) {
     };
   });
 
-  let realArgs = new Array();
-  realArgs.push(newArgs[0]);
-  const simples = ['burn','clean','help'];
-  if (simples.includes(newArgs[0])) { return realArgs; }
-
-  newArgs.shift();
-  if (newArgs.length == 0) {
-    throw new Error("This command requires flags.");
-    _printHelp();
-  }
-
   for (let i = 0; i < newArgs.length; i++) {
     if (newArgs[i].startsWith('--')) {
       newArgs[i] = newArgs[i].replace('--', '@@');
@@ -132,7 +117,6 @@ function _getRealArguments(args) {
     }
   }
   let argString = newArgs.join();
-  // let realArgs = argString.split('@@');
   let argArray = argString.split('@@');
   if (argArray[0]=='') { argArray.shift(); }
   for (let arg in argArray) {
@@ -140,8 +124,7 @@ function _getRealArguments(args) {
       argArray[arg] = argArray[arg].slice(0, argArray[arg].length -1);
     }
   }
-  realArgs = realArgs.concat(argArray);
-  return realArgs;
+  return argArray;
 }
 
 function _getTemplate(name) {
@@ -196,10 +179,18 @@ function _printWelcome() {
 }
 
 function _validateCommand(args) {
+  if (REQUIREs_FLAGS.includes(args[2])) {
+    if (args[3] != '-n') {
+      throw new Error('This command requires flags.');
+    }
+  }
   if (!COMMANDS.includes(args[2])) {
     let list = COMMANDS.join(', ');
     let msg = `The command must be one of:\n\t${list}.\n`;
     throw new Error(msg);
+  }
+  if ((args.length < 4) && (args[2] != 'clean')) {
+    throw new Error('Wrong number of arguments.');
   }
   return args[2];
 }
@@ -212,8 +203,8 @@ module.exports.getConfig = _getConfig;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
-module.exports.getRealArguments = _getRealArguments;
 module.exports.getWireframes = _getWireframes;
+module.exports.normalizeInterfaceArgs = _normalizeInterfaceArgs;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.validateCommand = _validateCommand;

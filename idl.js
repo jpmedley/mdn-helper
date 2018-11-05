@@ -303,7 +303,7 @@ class InterfaceData {
       command.push('-p');
       command.push(properties[p].name);
     }
-    let cleanCommand = utils.getRealArguments(command);
+    let cleanCommand = utils.normalizeInterfaceArgs(command);
     return cleanCommand;
   }
 

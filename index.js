@@ -41,7 +41,7 @@ switch (command) {
   case 'css':
   case 'header':
   case 'interface':
-    const realArguments = utils.getRealArguments(process.argv);
+    const realArguments = utils.normalizeInterfaceArgs(process.argv);
     const manApp = new Manual(realArguments);
     manApp.create();
     break;
