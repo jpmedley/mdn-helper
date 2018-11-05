@@ -26,14 +26,14 @@ class InterfaceData {
     this._loadMembers();
   }
 
-  _loadTree(fileObject) {
-    this.sourceContents = utils.getIDLFile(fileObject.path());
+  _loadTree(sourceFile) {
+    this.sourceContents = utils.getIDLFile(sourceFile);
     let tree = webidl2.parse(this.sourceContents);
     for (let t in tree) {
       switch (tree[t].type) {
         case 'dictionary':
           // For now, don't include dictionaries in the log file.
-          // const msg = `File ${fileObject.name} is for a dictionary.`;
+          // const msg = `File ${sourceFile} is for a dictionary.`;
           // throw new IDLError(msg);
           break;
         case 'interface':
@@ -42,7 +42,7 @@ class InterfaceData {
       }
     }
     if (!this._interface) {
-      const msg = `The ${fileObject.path()} file does not contain interface data.`;
+      const msg = `The ${sourceFile} file does not contain interface data.`;
       throw new IDLError(msg);
     }
   }
@@ -296,12 +296,12 @@ class InterfaceData {
     let methods = this.methods;
     for (let m in methods) {
       command.push('-m');
-      command.push(method[m] + '()');
+      command.push(methods[m].name + '()');
     }
     let properties = this.properties;
     for (let p in properties) {
       command.push('-p');
-      command.push(properties[p]);
+      command.push(properties[p].name);
     }
     let cleanCommand = utils.getRealArguments(command);
     return cleanCommand;
