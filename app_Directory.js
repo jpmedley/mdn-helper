@@ -13,6 +13,15 @@ class _Directory {
     this.idlSet = new fm.IDLFileSet();
   }
 
+  _find(interfacesNamed) {
+    const matches = this.idlSet.findMatching(interfacesNamed);
+    if (!matches.length) {
+      console.log(NOTHING_FOUND);
+      process.exit();
+    }
+    return matches;
+  }
+
   async _select(matches) {
     let names = [];
     for (let m in matches) {
@@ -29,12 +38,8 @@ class _Directory {
     return answers;
   }
 
-  async findAndShow(interfaceNamed) {
-    const matches = this.idlSet.findMatching(interfaceNamed);
-    if (!matches.length) {
-      console.log(NOTHING_FOUND);
-      process.exit();
-    }
+  async findAndShow(interfacesNamed) {
+    const matches = this._find(interfacesNamed);
     const answers = await this._select(matches);
     let idlPath, idlFile, name, match;
     for (let a in answers.idlFile) {
@@ -52,12 +57,8 @@ class _Directory {
     }
   }
 
-  async findAndBuild(interfaceNamed) {
-    const matches = this.idlSet.findMatching(interfaceNamed);
-    if (!matches.length) {
-      console.log(NOTHING_FOUND);
-      process.exit();
-    }
+  async findAndBuild(interfacesNamed) {
+    const matches = this._find(interfacesNamed);
     const answers = await this._select(matches);
     let interfaces = [];
     for (let m in matches) {
