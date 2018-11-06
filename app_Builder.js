@@ -15,14 +15,14 @@ const FLAGS = {
   "-H":"--header",
   "--handler":"--handler",
   "--header":"--header",
-  "-i":"--interface",
-  "--interface":"--interface",
-  "-m":"--method",
-  "--method":"--method",
   "-l":"--landing",
   "--landing":"--landing",
+  "-m":"--method",
+  "--method":"--method",
   "-p":"--property",
   "--property":"--property",
+  "-r":"--reference",
+  "--reference":"--reference",
   "-s": "--css",
   "--css": "--css"
 }
@@ -120,7 +120,7 @@ class _Builder {
       switch (arg) {
         case '--constructor':
         case '--header':
-        case '--interface':
+        case '--reference':
           trueArgs.push(arg);
           trueArgs.push(args[2]);
           break;
