@@ -4,7 +4,7 @@ const actions = require('./actions');
 const page = require('./page.js');
 const utils = require('./utils.js');
 
-class _Manual {
+class _Builder {
   constructor(args) {
     this._initPages(args);
   }
@@ -42,4 +42,4 @@ class _Manual {
 
 }
 
-module.exports.Manual = _Manual;
+module.exports.Builder = _Builder;

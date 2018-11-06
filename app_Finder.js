@@ -4,13 +4,13 @@ const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const fm = require('./filemanager.js');
 const { InterfaceData } = require('./idl.js');
-const { Manual } = require('./app_manual.js');
+const { Builder } = require('./app_Builder.js');
 const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
 const NOTHING_FOUND = "Could not find matching IDL files."
 
-class _Directory {
+class _Finder {
   constructor() {
     this.idlSet = new fm.IDLFileSet();
   }
@@ -71,10 +71,10 @@ class _Directory {
       }
     }
     const id = new InterfaceData(interfaces[0].path());
-    const manApp = new Manual(id.command);
-    manApp.create();
+    const builder = new Builder(id.command);
+    builder.create();
   }
 
 }
 
-module.exports.Directory = _Directory;
+module.exports.Finder = _Finder;

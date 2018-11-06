@@ -1,8 +1,9 @@
 'use strict';
 
+const { Builder } = require('./app_Builder.js');
 const { Burner } = require('./app_Burn.js');
-const { Cleaner } = require('./cleaner.js');
-const { Directory } = require('./app_Directory.js');
+const { Cleaner } = require('./app_Cleaner.js');
+const { Finder } = require('./app_Finder.js');
 const { Manual } = require('./app_manual.js');
 const utils = require('./utils.js');
 
@@ -19,27 +20,28 @@ catch(e) {
   process.exit(1);
 }
 
-let dirApp;
+let finder;
 switch (command) {
   case 'burn':
-    let burner = new Burner(process.argv);
-    burner.burn()
+    let burner = new Burner();
+    burner.burn(process.argv)
     break;
   case 'clean':
     let cleaner = new Cleaner();
     cleaner.clean();
     break;
   case 'find':
-    dirApp = new Directory();
-    dirApp.findAndShow(process.argv);
+    finder = new Finder();
+    finder.findAndShow(process.argv);
     break;
   case 'build':
-    dirApp = new Directory();
-    dirApp.findAndBuild(process.argv)
+    finder = new Finder();
+    finder.findAndBuild(process.argv)
     break;
   case 'css':
   case 'header':
   case 'interface':
+    //START HERE: Have Manual() process its own arguments.
     const realArguments = utils.normalizeInterfaceArgs(process.argv);
     const manApp = new Manual(realArguments);
     manApp.create();
