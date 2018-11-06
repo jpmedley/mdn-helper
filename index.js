@@ -4,17 +4,14 @@ const { Builder } = require('./app_Builder.js');
 const { Burner } = require('./app_Burn.js');
 const { Cleaner } = require('./app_Cleaner.js');
 const { Finder } = require('./app_Finder.js');
-const { Manual } = require('./app_manual.js');
 const utils = require('./utils.js');
 
 utils.printWelcome();
 
 let command;
 try {
-  // command = utils.validateCommand(process.argv);
-  command = process.argv[3];
-}
-catch(e) {
+  command = utils.validateCommand(process.argv);
+} catch (e) {
   console.error(e.message);
   utils.printHelp();
   process.exit(1);
@@ -41,10 +38,8 @@ switch (command) {
   case 'css':
   case 'header':
   case 'interface':
-    //START HERE: Have Manual() process its own arguments.
-    const realArguments = utils.normalizeInterfaceArgs(process.argv);
-    const manApp = new Manual(realArguments);
-    manApp.create();
+    const builder = new Builder();
+    builder.build(process.argv);
     break;
   case 'help':
   default:

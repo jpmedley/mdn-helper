@@ -7,30 +7,8 @@ const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
-const REQUIREs_FLAGS = ['css','header','interface'];
-const COMMANDS = ['build','burn','clean','find','help'].concat(REQUIREs_FLAGS).sort();
-const FLAGS = {
-  "-c":"--constructor",
-  "--constructor":"--constructor",
-  "-d": "--directive",
-  "--directive": "--directive",
-  "-e":"--event",
-  "--event":"--event",
-  "-h":"--handler",
-  "-H":"--header",
-  "--handler":"--handler",
-  "--header":"--header",
-  "-i":"--interface",
-  "--interface":"--interface",
-  "-m":"--method",
-  "--method":"--method",
-  "-o":"--overview",
-  "--overview":"--overview",
-  "-p":"--property",
-  "--property":"--property",
-  "-s": "--css",
-  "--css": "--css"
-}
+const REQUIRES_FLAGS = ['css','header','interface'];
+const COMMANDS = ['build','burn','clean','find','help'].concat(REQUIRES_FLAGS).sort();
 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
@@ -81,73 +59,7 @@ function _getIDLFile(name) {
   return buffer.toString();
 }
 
-function _normalizeInterfaceArgs(args) {
-  args.shift();
-  args.shift();
-  let newArgs = new Array();
-  args.forEach((arg, index, args) => {
-    arg = _normalizeArg(arg);
-    switch (arg) {
-      case '--constructor':
-      case '--header':
-      case '--interface':
-        newArgs.push(arg);
-        newArgs.push(args[2]);
-        break;
-      case '-it':
-        const iterables = ['entries', 'forEach', 'keys', 'values'];
-        iterables.forEach((functionName) => {
-          newArgs.push('-' + functionName);
-          newArgs.push(functionName);
-        });
-        break;
-      case '-m':
-      case '--method':
-        if (args[index+1].endsWith('(')) { args[index+1] += ")"; }
-        if (!args[index+1].endsWith('()')) { args[index+1] += "()"; }
-        newArgs.push(arg);
-        break;
-      case '-mp':
-        const maplike = ['clear', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values'];
-        maplike.forEach((functionName) => {
-          newArgs.push('-' + functionName);
-          newArgs.push(functionName);
-        });
-        break;
-      case '-mr':
-        const readonlyMaplike = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
-        readonlyMaplike.forEach((functionName) => {
-          newArgs.push('-' + functionName);
-          newArgs.push(functionName);
-        });
-        break;
-      case '--overview':
-        newArgs.push(arg)
-        newArgs.push((args[0] + '_overview'));
-        break;
-      default:
-        newArgs.push(arg);
-    };
-  });
 
-  for (let i = 0; i < newArgs.length; i++) {
-    if (newArgs[i].startsWith('--')) {
-      newArgs[i] = newArgs[i].replace('--', '@@');
-    }
-    if (newArgs[i].startsWith('-')) {
-      newArgs[i] = newArgs[i].replace('-', '@@');
-    }
-  }
-  let argString = newArgs.join();
-  let argArray = argString.split('@@');
-  if (argArray[0]=='') { argArray.shift(); }
-  for (let arg in argArray) {
-    if (argArray[arg].endsWith(',')) {
-      argArray[arg] = argArray[arg].slice(0, argArray[arg].length -1);
-    }
-  }
-  return argArray;
-}
 
 function _getTemplate(name) {
   if (!name.endsWith(".html")) { name += ".html"; }
@@ -161,14 +73,6 @@ function _getWireframes() {
   const wireframeBuffer = fs.readFileSync(wireframePath);
   const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
   return wireframes;
-}
-
-function _normalizeArg(arg) {
-  if (arg in FLAGS) {
-    return FLAGS[arg];
-  } else {
-    return arg;
-  }
 }
 
 function _printHelp() {
@@ -200,22 +104,19 @@ function _printWelcome() {
 }
 
 function _validateCommand(args) {
-  TODO: Maybe redo using regex.
-  if ((args[1] == 'interface') && (!FLAGS[args[5]])) {
-    throw new Error('This command requires more than one flag.');
-  }
-  if (REQUIREs_FLAGS.includes(args[2])) {
-    if (args[3] != '-n') {
-      throw new Error('This command requires flags.');
-    }
+  if (['clean','help'].includes(args[2])) { return args[2]; }
+  if (args.length < 4) {
+    throw new Error('This command requires arguments.');
   }
   if (!COMMANDS.includes(args[2])) {
     let list = COMMANDS.join(', ');
     let msg = `The command must be one of:\n\t${list}.\n`;
     throw new Error(msg);
   }
-  if ((args.length < 4) && (args[2] != 'clean')) {
-    throw new Error('Wrong number of arguments.');
+  if (REQUIRES_FLAGS.includes(args[2])) {
+    if (args[3] != '-n') {
+      throw new Error('This command requires flags.');
+    }
   }
   return args[2];
 }
@@ -229,7 +130,6 @@ module.exports.getIDLFile = _getIDLFile;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
-module.exports.normalizeInterfaceArgs = _normalizeInterfaceArgs;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.validateCommand = _validateCommand;

@@ -41,7 +41,7 @@ class _Finder {
   }
 
   async findAndShow(args) {
-    if (!args[3]) { throw new Error('An argument is missing.'); }
+    // if (!args[3]) { throw new Error('An argument is missing.'); }
     const matches = this._find(args[3]);
     const answers = await this._select(matches);
     let idlPath, idlFile, name, match;
@@ -61,7 +61,7 @@ class _Finder {
   }
 
   async findAndBuild(args) {
-    if (!args[3]) { throw new Error('An argument is missing.'); }
+    // if (!args[3]) { throw new Error('An argument is missing.'); }
     const matches = this._find(args[3]);
     const answers = await this._select(matches);
     let interfaces = [];
@@ -71,8 +71,8 @@ class _Finder {
       }
     }
     const id = new InterfaceData(interfaces[0].path());
-    const builder = new Builder(id.command);
-    builder.create();
+    const builder = new Builder();
+    builder.build(id.command)
   }
 
 }

@@ -303,8 +303,9 @@ class InterfaceData {
       command.push('-p');
       command.push(properties[p].name);
     }
-    let cleanCommand = utils.normalizeInterfaceArgs(command);
-    return cleanCommand;
+    // let cleanCommand = utils.normalizeInterfaceArgs(command);
+    // return cleanCommand;
+    return command;
   }
 
   get eventhandlers() {
