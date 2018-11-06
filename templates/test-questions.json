@@ -160,7 +160,7 @@
       "action": null
     },
     "formalAPIName": {
-      "question": "What is the API name as it should appear on an Overview page?",
+      "question": "What is the API name as it should appear on the landing page?",
       "type": "string",
       "pattern": "",
       "message": "",

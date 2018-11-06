@@ -19,8 +19,8 @@ const FLAGS = {
   "--interface":"--interface",
   "-m":"--method",
   "--method":"--method",
-  "-o":"--overview",
-  "--overview":"--overview",
+  "-l":"--landing",
+  "--landing":"--landing",
   "-p":"--property",
   "--property":"--property",
   "-s": "--css",
@@ -151,9 +151,9 @@ class _Builder {
             trueArgs.push(functionName);
           });
           break;
-        case '--overview':
+        case '--landing':
           trueArgs.push(arg)
-          trueArgs.push((args[0] + '_overview'));
+          trueArgs.push((args[0] + '_landing'));
           break;
         default:
           trueArgs.push(arg);

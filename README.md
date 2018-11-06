@@ -85,7 +85,7 @@ Creates pages for JavaScript platform APIs. The results are written to the `*pat
 `-n`: The name of the interface being documented. This flag provides the interface\'s name for use in member pages. It does not create an overview, interface, or constructor page.
 
 At least one of the following:
-* `-o`: (Optional) Indicates that an *overview* page should be created.
+* `-l` or `--landing`: (Optional) Indicates that a [landing page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_landing_page_template) should be created.
 * `-i`: (Optional) Indicates that an *interface* page should be created.
 * `-c`: (Optional) Indicates that a *constructor* page should be created.
 * `-it`: (Optional) Indicates that pages for the functions of the *iterable* IDL type will be created.
