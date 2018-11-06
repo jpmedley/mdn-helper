@@ -6,6 +6,8 @@ const { Cleaner } = require('./app_Cleaner.js');
 const { Finder } = require('./app_Finder.js');
 const utils = require('./utils.js');
 
+global.__basedir = __dirname;
+
 utils.printWelcome();
 
 let command;
@@ -19,6 +21,10 @@ try {
 
 let finder;
 switch (command) {
+  case 'build':
+    finder = new Finder();
+    finder.findAndBuild(process.argv)
+    break;
   case 'burn':
     let burner = new Burner();
     burner.burn(process.argv)
@@ -30,10 +36,6 @@ switch (command) {
   case 'find':
     finder = new Finder();
     finder.findAndShow(process.argv);
-    break;
-  case 'build':
-    finder = new Finder();
-    finder.findAndBuild(process.argv)
     break;
   case 'css':
   case 'header':

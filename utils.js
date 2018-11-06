@@ -76,24 +76,13 @@ function _getWireframes() {
 }
 
 function _printHelp() {
-  let doc = 'Basic usage:\n' +
-            '\tnpm run [command] [arguments]\n' +
-            'Commands:\n' +
-            '\tbuild _searchString_\n' +
-            '\tburn\n' +
-            '\tclean\n' +
-            '\tcss -n _selectorName_\n' +
-            '\tfind _searchString_\n' +
-            '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n' +
-            '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp] [-mr]\n' +
-            '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n' +
-            '\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n' +
-            '\thelp\n' +
-            'See the README file for details.\n'
-
-
-  console.log(doc);
-  process.exit();
+  let intro = 'Basic usage:\n' +
+            '\tnpm run <command> [<arguments>] -- [<flags>]\n\n' +
+            'Commands:';
+  console.log(intro);
+  let help = fs.readFileSync(global.__basedir + '/HELP.txt');
+  help = help.toString();
+  console.log(help);
 }
 
 function _printWelcome() {
