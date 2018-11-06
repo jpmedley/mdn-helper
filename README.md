@@ -38,7 +38,7 @@ include APIs behind a flag.
 
 **Syntax:** `burn -- [(-f | --flags)]`
 
-## clean
+### clean
 
 Deletes selected folders from the `*path/to*/mdn-helper/out/` directory.
 
@@ -49,6 +49,10 @@ Deletes selected folders from the `*path/to*/mdn-helper/out/` directory.
 Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
 **Syntax:** `css -- -n _selectorName_`
+
+**Flag:**
+
+`-n`: The name of the css selector being documented. This flag provides the CSS page\'s name for use in CSS pages.
 
 ### find
 
@@ -62,7 +66,7 @@ Creates pages for the provided HTTP header and directive names names. The result
 
 **Syntax:** <code>header -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]</code>
 
-**Flags**
+**Flags:**
 
 `-n`: The name of the header being documented. This flag provides the header\'s name for use in directive pages. It does not create an interface page.
 
