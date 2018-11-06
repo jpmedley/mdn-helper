@@ -73,7 +73,9 @@ class _Burner {
   async burn(args) {
     if (['-f', '--flags'].includes(args[3])) { this._includeFlags = true; }
     let files = this._fileSet.files;
+    console.log('Looking for browser compatibility data and MDN pages.');
     for (let f in files) {
+      console.log('\t' + files[f].name);
       let idlFile = this._getIDLFile(files[f]);
       if (!idlFile) { continue; }
       let burnRecords = idlFile.getBurnRecords(this._includeFlags);

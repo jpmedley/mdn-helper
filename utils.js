@@ -93,7 +93,7 @@ function _printWelcome() {
 }
 
 function _validateCommand(args) {
-  if (['clean','help'].includes(args[2])) { return args[2]; }
+  if (['burn','clean','help'].includes(args[2])) { return args[2]; }
   if (args.length < 4) {
     throw new Error('This command requires arguments.');
   }

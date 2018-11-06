@@ -27,7 +27,7 @@ class InterfaceData {
   }
 
   _loadTree(sourceFile) {
-    this.sourceContents = utils.getIDLFile(sourceFile);
+    this.sourceContents = utils.getIDLFile(sourceFile.path());
     let tree = webidl2.parse(this.sourceContents);
     for (let t in tree) {
       switch (tree[t].type) {
