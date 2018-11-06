@@ -29,6 +29,11 @@
     Creates pages for JavaScript platform APIs. The results are written to the
     *path/to*/mdn-helper/out/ directory.
 
+  update-data
+    Downloads a new set of IDL files for use by the `build`, `burn`, and `find`
+    commands. You should run this command about once a week to keep your IDL
+    files up-to-date.
+
   help
     Prints help text to the console.
 

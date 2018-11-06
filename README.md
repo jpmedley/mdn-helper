@@ -15,6 +15,8 @@ The current version only handles JavaScript APIs.
 
 1. Change to the `mdn-helper` directory and run `npm install`.
 
+1. Enter `npm run update-data` to download the IDL files needed for the `build`, `burn`, and `find` commands. You should run this command about once a week to keep your IDL files up-to-date.
+
 ## Usage
 
 From within the mdn-helper direcory:
@@ -89,6 +91,10 @@ At least one of the following:
 * `-h` or `--handler`: (Optional) Indicates that an *event handler* page should be created with the specified name. This flag may be repeated as needed.
 * `-m` or `--method`: (Optional) Indicates that a *method* page should be created with the specified name. This flag may be repeated as needed.
 * `-p` or `--property`: (Optional) Indicates that a *property* pages should be created with the specified name. This flag may be repeated as needed.
+
+## update-data
+
+Downloads a new set of IDL files for use by the `build`, `burn`, and `find` commands. You should run this command about once a week to keep your IDL files up-to-date.
 
 ### help
 
