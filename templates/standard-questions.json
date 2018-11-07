@@ -1,5 +1,32 @@
 {
   "templates": {
+    "accessibility": {
+      "question": "Does this interface have accessibility concerns? Yes or No?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "Yes",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_block", "args": ["_frag_accessibility.html"]}
+    },
+    "argument-definition": {
+      "question": "What is the definition for this argument.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": null,
+      "required": false,
+      "before": "",
+      "skip": false,
+      "action": null
+    },
     "arguments": {
       "question": "Does this constructor have any parameters? Please enter a comma-separated list or press Enter.",
       "type": "string",
@@ -11,12 +38,27 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_unorderedList"
+      "action": {"name": "add_definitionList", "args": ["_frag_arguments.html"]}
+    },
+    "child-interfaces": {
+      "question": "Does this interface have any children? Yes or No?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "No",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_block", "args": ["_frag_childinterfaces.html"]}
     },
     "constructor": {
       "question": "Does this interface have a constructor? Yes or No?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -26,14 +68,15 @@
       "skip": false,
       "action": {"name": "add_block", "args": ["_frag_constructor.html"]}
     },
-    "css-example": {
-      "question": "Enter a complete sample rule.",
-      "type": "string",
-      "pattern": "",
+    "cors-response": {
+      "question": "Is the response for this header CORS safelisted? Yes or No?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "no",
       "required": true,
       "before": "",
       "skip": false,
@@ -65,6 +108,19 @@
       "skip": false,
       "action": null
     },
+    "directives": {
+      "question": "Does this item have any directives? Please enter a comma-separated list or press Enter.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "<p>None.</p>",
+      "required": false,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+    },
     "directive-values": {
       "question": "What are the possible values for this directive? Please enter a comma-separated list or press Enter.",
       "type": "string",
@@ -76,7 +132,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": null
     },
     "elaboration": {
       "question": "Is there anything else to say about this item?",
@@ -111,16 +167,30 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "No",
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+    },
+    "exceptions": {
+      "question": "Does this method throw any exceptions? Please enter a comma-separated list or press Enter.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "None.",
+      "required": false,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_definitionList", "args": ["_frag_exceptions.html"]}
     },
     "forbidden-response": {
       "question": "Is the response for this header forbidden? Yes or No?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -128,7 +198,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_string"
+      "action": null
     },
     "formalAPIName": {
       "question": "What is the API name as it should appear on the landing page?",
@@ -185,7 +255,8 @@
     "isStandard": {
       "question": "Should this contain the {{SeeCompatTable}} macro?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y|{{SeeCompatTable}})",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -193,7 +264,7 @@
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_string"
+      "action": {"name": "add_string"}
     },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable/maplike in the spec?",
@@ -254,11 +325,11 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "<p>None.</p>",
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "parameters": {
       "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
@@ -271,7 +342,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_unorderedList"
+      "action": null
     },
     "properties": {
       "question": "Does this item have any properties? Please enter a comma-separated list or press Enter.",
@@ -280,24 +351,25 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "<p>None.</p>",
       "required": false,
       "before": "",
       "skip": false,
-      "action": "add_definitionList"
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "readOnly": {
-      "question": "Is this item read only? Yes or No?",
+      "question": "Is this item read only?  Yes or No?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y|read-only)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "",
+      "default": "read-only",
       "required": true,
       "before": "",
       "skip": false,
-      "action": "add_string"
+      "action": {"name": "add_string"}
     },
     "return": {
       "question": "What is the return value for this item?",
@@ -308,6 +380,32 @@
       "replace": "*",
       "default": "{{jsxref('undefined')}}",
       "required": false,
+      "before": "",
+      "skip": false,
+      "action": null
+    },
+    "rfc-number": {
+      "question": "What is the RFC number where the header is defined?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": null
+    },
+    "rfc-title": {
+      "question": "What is the title of the RFC where the header is defined?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
       "before": "",
       "skip": false,
       "action": null
