@@ -290,8 +290,8 @@ class InterfaceData {
     command.push('interface');
     command.push('-n');
     command.push(this.name);
-    command.push('-o');
-    command.push('-i');
+    command.push('-l');
+    command.push('-r');
     if (this.hasConstructor()) { command.push('-c'); }
     let methods = this.methods;
     for (let m in methods) {

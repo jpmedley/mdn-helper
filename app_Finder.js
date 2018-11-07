@@ -70,7 +70,7 @@ class _Finder {
         interfaces.push(matches[m]);
       }
     }
-    const id = new InterfaceData(interfaces[0].path());
+    const id = new InterfaceData(interfaces[0]);
     const builder = new Builder();
     builder.build(id.command)
   }
