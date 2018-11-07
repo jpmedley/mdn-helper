@@ -7,7 +7,7 @@ The current version only handles JavaScript APIs.
 
 ## Installation
 
-1. Install [node.js](https://nodejs.org).
+1. Install [node.js](https://nodejs.org), version 10 or later.
 
 1. Clone this repository.
 
