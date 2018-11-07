@@ -9,8 +9,8 @@
   clean
     Deletes selected folders from the *path/to*/mdn-helper/out/ directory.
 
-  css -- -n selectorName
-    Creates a pages for CSS selectors. The results are written to the
+  css -- -n propertyName
+    Creates a page for a CSS property. The results are written to the
     *path/to*/mdn-helper/out/ directory.
 
   find searchString

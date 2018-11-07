@@ -46,13 +46,13 @@ Deletes selected folders from the `*path/to*/mdn-helper/out/` directory.
 
 ### css
 
-Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn-helper/out/` directory.
+Creates a pages for a CSS property. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `css -- -n _selectorName_`
+**Syntax:** `css -- -n _propertyName_`
 
 **Flag:**
 
-`-n`: The name of the css selector being documented. This flag provides the CSS page\'s name for use in CSS pages.
+`-n`: The name of the css property being documented. This flag provides the CSS page\'s name.
 
 ### find
 
