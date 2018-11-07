@@ -68,6 +68,20 @@
       "skip": false,
       "action": {"name": "add_block", "args": ["_frag_childinterfaces.html"]}
     },
+    "cors-response": {
+      "question": "Is the response for this header CORS safelisted? Yes or No?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "no",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": null
+    },
     "css-example": {
       "question": "Enter a complete sample rule.",
       "type": "string",
@@ -106,6 +120,19 @@
       "before": "",
       "skip": false,
       "action": null
+    },
+    "directives": {
+      "question": "Does this item have any directives? Please enter a comma-separated list or press Enter.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "<p>None.</p>",
+      "required": false,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "directive-values": {
       "question": "What are the possible values for this directive? Please enter a comma-separated list or press Enter.",
@@ -175,7 +202,8 @@
     "forbidden-response": {
       "question": "Is the response for this header forbidden? Yes or No?",
       "type": "boolean",
-      "pattern": "",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -365,6 +393,32 @@
       "replace": "*",
       "default": "{{jsxref('undefined')}}",
       "required": false,
+      "before": "",
+      "skip": false,
+      "action": null
+    },
+    "rfc-number": {
+      "question": "What is the RFC number where the header is defined?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": null
+    },
+    "rfc-title": {
+      "question": "What is the title of the RFC where the header is defined?",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
       "before": "",
       "skip": false,
       "action": null
