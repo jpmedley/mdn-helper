@@ -15,7 +15,7 @@
 
     },
     "arguments": {
-      "question": "Does this constructor have any arguments? Please enter a comma-separated list or press Enter.",
+      "question": "Does this constructor have any parameters? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",
