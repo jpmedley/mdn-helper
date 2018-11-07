@@ -17,9 +17,10 @@ class Pinger {
     this._httpOptions = httpOptions;
   }
 
-  async pingRecords() {
+  async pingRecords(verboseOutput = false) {
     for (let r of this._records) {
       if (!r.mdn_url) { continue; }
+      if (verboseOutput) { console.log(r.key); }
       let retryCount = 3;
       while (retryCount > 0) {
         let status = await this._ping(r)

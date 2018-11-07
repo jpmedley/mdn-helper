@@ -25,7 +25,7 @@ class _Cleaner {
     for (let d of this._directories) { dirs.push(d.name); }
     const enq = new Enquirer();
     enq.register('checkbox', cb);
-    enq.question('outputDirs', 'which output directories do you want to delete?', {
+    enq.question('outputDirs', 'Which output directories do you want to delete?', {
       type: 'checkbox',
       // checkbox: radio.star,
       choices: dirs

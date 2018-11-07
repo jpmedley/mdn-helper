@@ -401,4 +401,5 @@ class InterfaceData {
   }
 }
 
+module.exports.EMPTY_BURN_DATA = EMPTY_BURN_DATA;
 module.exports.InterfaceData = InterfaceData;

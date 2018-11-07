@@ -1,6 +1,8 @@
 'use strict';
 
-const ab = require('./app_Burn.js');
+const bcd = require('mdn-browser-compat-data');
 
-const burner = new ab.Burn();
-burner.burn();
+let cps = bcd;
+for (let p in cps) {
+  console.log(p);
+}
