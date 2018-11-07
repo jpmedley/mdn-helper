@@ -303,8 +303,6 @@ class InterfaceData {
       command.push('-p');
       command.push(properties[p].name);
     }
-    // let cleanCommand = utils.normalizeInterfaceArgs(command);
-    // return cleanCommand;
     return command;
   }
 
@@ -379,11 +377,6 @@ class InterfaceData {
       } else {
         identifiers.push(idBase);
       }
-
-
-      // let constr = this.name + separator + this.name;
-      // if (type == 'interface') { constr += "()"; }
-      // identifiers.push(constr);
     }
     for (let e in this._eventhandlers) {
       identifiers.push(this.name + separator + this._eventhandlers[e][type]);
