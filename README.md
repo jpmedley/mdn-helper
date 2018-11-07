@@ -7,7 +7,7 @@ The current version only handles JavaScript APIs.
 
 ## Installation
 
-1. Install [node.js](https://nodejs.org).
+1. Install [node.js](https://nodejs.org), version 10 or later.
 
 1. Clone this repository.
 
@@ -15,35 +15,58 @@ The current version only handles JavaScript APIs.
 
 1. Change to the `mdn-helper` directory and run `npm install`.
 
-1. (Optional) Add an alias for it to your .bashrc file. For example:
-
-   `alias mdn-helper='node *path/to*/mdn-helper/index.js'`
+1. Enter `npm run update-data` to download the IDL files needed for the `build`, `burn`, and `find` commands. You should run this command about once a week to keep your IDL files up-to-date.
 
 ## Usage
 
 From within the mdn-helper direcory:
 
-  `node index.js <command> [<arguments>]`
-
-Using the optional bash alias:
-
-  `mdn-helper <command> [<arguments>]`
+  `npm run <command> [<arguments>] -- [<flags>]`
 
 ## Commands
 
+### build
+
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `interface` command.
+
+**Syntax:** `build _searchString_`
+
+### burn
+
+Generates a burn-down list of undocumented Chrome APIs. Use -f or --flags to
+include APIs behind a flag.
+
+**Syntax:** `burn -- [(-f | --flags)]`
+
+### clean
+
+Deletes selected folders from the `*path/to*/mdn-helper/out/` directory.
+
+**Syntax:** `clean`
+
 ### css
 
-Creates a pages for CSS selectors. The results are written to the `*path/to*/mdn-helper/out/` directory.
+Creates a pages for a CSS property. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** `css -n _selectorName_`
+**Syntax:** `css -- -n _propertyName_`
+
+**Flag:**
+
+`-n`: The name of the css property being documented. This flag provides the CSS page\'s name.
+
+### find
+
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then displays the contents of that file.
+
+**Syntax:** `find _searchString`
 
 ### header
 
-Creates pages for HTTP headers. The results are written to the `*path/to*/mdn-helper/out/` directory.
+Creates pages for the provided HTTP header and directive names names. The results are written to the `*path/to*/mdn-helper/out/` directory. To build directive plages only, exclude the -H or --header flag.
 
 **Syntax:** <code>header -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]</code>
 
-**Flags**
+**Flags:**
 
 `-n`: The name of the header being documented. This flag provides the header\'s name for use in directive pages. It does not create an interface page.
 
@@ -62,20 +85,20 @@ Creates pages for JavaScript platform APIs. The results are written to the `*pat
 `-n`: The name of the interface being documented. This flag provides the interface\'s name for use in member pages. It does not create an overview, interface, or constructor page.
 
 At least one of the following:
-* `-o`: (Optional) Indicates that an *overview* page should be created.
-* `-i`: (Optional) Indicates that an *interface* page should be created.
-* `-c`: (Optional) Indicates that a *constructor* page should be created.
-* `-it`: (Optional) Indicates that functions of the *iterable* IDL type will be created.
-* `-mp`: (Optional) Indicates that functions of the *maplike* IDL type will be created.
-* `-mr`: (Optional) Indicates that functions of the *readonly maplike* IDL type will be created.
+* `-l` or `--landing`: (Optional) Indicates that a [landing page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_landing_page_template) should be created.
+* `-r` or `--reference`: (Optional) Indicates that an [interface reference page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_reference_page_template) should be created.
+* `-c`: (Optional) Indicates that a [constructor page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_constructor_subpage_template) should be created.
+* `-it`: (Optional) Indicates that pages for the functions of the *iterable* IDL type will be created, specifically entries(), forEach(), keys(), and values().
+* `-mp`: (Optional) Indicates that pages for the functions of the *maplike* IDL type will be created.
+* `-mr`: (Optional) Indicates that pages for the functions of the *readonly maplike* IDL type will be created.
 * `-e` or `--event`: (Optional) Indicates that an *event* page should be created with the specified name. This flag may be repeated as needed.
-* `-h` or `--handler`: (Optional) Indicates that an *event handler* page should be created with the specified name. This flag may be repeated as needed.
-* `-m` or `--method`: (Optional) Indicates that a *method* page should be created with the specified name. This flag may be repeated as needed.
-* `-p` or `--property`: (Optional) Indicates that a *property* pages should be created with the specified name. This flag may be repeated as needed.
+* `-h` or `--handler`: (Optional) Indicates that an [event handler page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_event_handler_subpage_template) should be created with the specified name. This flag may be repeated as needed.
+* `-m` or `--method`: (Optional) Indicates that a [method page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_method_subpage_template) should be created with the specified name. This flag may be repeated as needed.
+* `-p` or `--property`: (Optional) Indicates that a [property page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_property_subpage_template) should be created with the specified name. This flag may be repeated as needed.
 
-### clean
+## update-data
 
-Empties the `/out` directory.
+Downloads a new set of IDL files for use by the `build`, `burn`, and `find` commands. You should run this command about once a week to keep your IDL files up-to-date.
 
 ### help
 

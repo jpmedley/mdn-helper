@@ -2,156 +2,123 @@
 
 const config = require('config');
 const fs = require('fs');
-const readline = require('readline');
 
+const QUESTIONS_FILE = _getConfig('questionsFile');
+const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
+const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
+const REQUIRES_FLAGS = ['css','header','interface'];
+const COMMANDS = ['build','burn','clean','find','help'].concat(REQUIRES_FLAGS).sort();
+
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
-const prompt = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-})
+function loadWireFrames() {
+  const wireframePath = TEMPLATES + QUESTIONS_FILE;
+  const wireframeBuffer = fs.readFileSync(wireframePath);
+  const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
+  return wireframes;
+}
 
-function getConfig(parameter) {
+const WIREFRAMES = loadWireFrames();
+
+function _deleteUnemptyFolder(folder) {
+  if (fs.existsSync(folder)) {
+    fs.readdirSync(folder).forEach(file => {
+      let path = folder + '/' + file;
+      if (fs.statSync(path).isDirectory()) {
+        _deleteUnemptyFolder(path);
+      } else {
+        fs.unlinkSync(path);
+      }
+    });
+    fs.rmdirSync(folder);
+  }
+}
+
+function _getConfig(parameter) {
   if (config.has('User.' + parameter)) {
     return config.get('User.' + parameter);
   }
   return config.get('Application.' + parameter);
 }
 
-function cleanOutput() {
-  return new Promise((resolve, reject) => {
-    let question = "Are you sure? Y or N";
-    prompt.question(question, (answer) => {
-      if (answer === 'Y') {
-        console.log("Cleaning");
-        fs.readdir(OUT, (e, files) => {
-          files.forEach(file => {
-            fs.unlinkSync(OUT + file);
-          })
-        })
-      }
-      resolve();
-    });
-  });
-}
-
-function getRealArguments(args) {
-  args.shift();
-  args.shift();
-  let commands = ['clean', 'css', 'header', 'help', 'interface'];
-  if (!commands.includes(args[0])) {
-    throw new Error("The command must be one of clean, css, header, help, or interface.");
-  }
-  let newArgs = new Array();
-  args.forEach((arg, index, args) => {
-    arg = _normalizeArg(arg);
-    switch (arg) {
-      case '--constructor':
-      case '--header':
-      case '--interface':
-        newArgs.push(arg);
-        newArgs.push(args[2]);
-        break;
-      case '-it':
-        const iterables = ['entries', 'forEach', 'keys', 'values'];
-        interables.forEach((functionName) => {
-          newArgs.push('-' + functionName);
-          newArgs.push(functionName);
-        });
-        break;
-      case '-mp':
-        const maplike = ['clear', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values'];
-        maplike.forEach((functionName) => {
-          newArgs.push('-' + functionName);
-          newArgs.push(functionName);
-        });
-        break;
-      case '-mr':
-        const readonlyMaplike = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
-        readonlyMaplike.forEach((functionName) => {
-          newArgs.push('-' + functionName);
-          newArgs.push(functionName);
-        });
-        break;
-      case '--overview':
-        newArgs.push(arg)
-        newArgs.push((args[0] + '_overview'));
-        break;
-      default:
-        newArgs.push(arg);
-    };
-  });
-
-  let realArgs = new Array();
-  realArgs.push(newArgs[0]);
-  if (newArgs[0] in ['clean','help']) { return realArgs; }
-
-  newArgs.shift();
-  if (newArgs.length == 0) {
-    throw new Error("This command requires flags.");
-    printHelp();
-  }
-
-  for (let i = 0; i < newArgs.length; i++) {
-    if (newArgs[i].startsWith('--')) {
-      newArgs[i] = newArgs[i].replace('--', '@@');
-    }
-    if (newArgs[i].startsWith('-')) {
-      newArgs[i] = newArgs[i].replace('-', '@@');
+function _getOutputFile(filePath, reuse = false) {
+  if (!reuse) {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
     }
   }
-  let argString = newArgs.join();
-  // let realArgs = argString.split('@@');
-  let argArray = argString.split('@@');
-  if (argArray[0]=='') { argArray.shift(); }
-  for (let arg in argArray) {
-    if (argArray[arg].endsWith(',')) {
-      argArray[arg] = argArray[arg].slice(0, argArray[arg].length -1);
-    }
-  }
-  realArgs = realArgs.concat(argArray);
-  return realArgs;
+  return fs.openSync(filePath, 'w');
 }
 
-function _normalizeArg(arg) {
-  let args = { "-c":"--constructor", "--constructor":"--constructor", "-d": "--directive", "--directive": "--directive", "-e":"--event", "--event":"--event", "-h":"--handler", "-H":"--header", "--handler":"--handler", "--header":"--header", "-i":"--interface", "--interface":"--interface", "-m":"--method", "--method":"--method", "-o":"--overview", "--overview":"--overview", "-p":"--property", "--property":"--property", "-s": "--css", "--css": "--css"}
-  if (arg in args) {
-    return args[arg];
-  } else {
-    return arg;
-  }
+function _getIDLFile(name) {
+  if (!name.endsWith(".idl")) { name += ".idl"; }
+  // let filePath = IDL_FILES + name;
+  let filePath = name;
+  let buffer = fs.readFileSync(filePath);
+  return buffer.toString();
 }
 
-function printHelp() {
-  let doc = '';
-  doc += 'Basic usage:\n';
-  doc += '\tnode index.js [command] [arguments]\n';
-  doc += `Commands:\n`;
-  doc += '\tclean\n';
-  doc += '\tcss -n _selectorName_\n';
-  doc += '\theader -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]\n';
-  doc += '\tinterface -n _interfaceName_ [-o] [-i] [-c] [-it] [-mp] [-mr]\n';
-  doc += '\t\t[(-e | --event) _eventName_] [(-h | --handler) _handlerName_]\n';
-  doc += '\t\t[(-m | --method) _methodName_] [(-p | --property) _propertyName_]\n';
-  doc += '\thelp\n';
-  doc += 'See the README file for details.\n'
 
-  console.log(doc);
-  process.exit();
+
+function _getTemplate(name) {
+  if (!name.endsWith(".html")) { name += ".html"; }
+  let templatePath = TEMPLATES + name;
+  let buffer = fs.readFileSync(templatePath);
+  return buffer.toString();
 }
 
-function printWelcome() {
+function _getWireframes() {
+  const wireframePath = TEMPLATES + QUESTIONS_FILE
+  const wireframeBuffer = fs.readFileSync(wireframePath);
+  const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
+  return wireframes;
+}
+
+function _printHelp() {
+  let intro = 'Basic usage:\n' +
+            '\tnpm run <command> [<arguments>] -- [<flags>]\n\n' +
+            'Commands:';
+  console.log(intro);
+  let help = fs.readFileSync(global.__basedir + '/HELP.txt');
+  help = help.toString();
+  console.log(help);
+}
+
+function _printWelcome() {
   console.clear();
   console.log("=".repeat(80));
   console.log(" ".repeat(30) + "Welcome to mdn-helper" + " ".repeat(29));
   console.log("=".repeat(80));
 }
 
+function _validateCommand(args) {
+  if (['burn','clean','help'].includes(args[2])) { return args[2]; }
+  if (args.length < 4) {
+    throw new Error('This command requires arguments.');
+  }
+  if (!COMMANDS.includes(args[2])) {
+    let list = COMMANDS.join(', ');
+    let msg = `The command must be one of:\n\t${list}.\n`;
+    throw new Error(msg);
+  }
+  if (REQUIRES_FLAGS.includes(args[2])) {
+    if (args[3] != '-n') {
+      throw new Error('This command requires flags.');
+    }
+  }
+  return args[2];
+}
+
 module.exports.OUT = OUT;
-module.exports.cleanOutput = cleanOutput;
-module.exports.getConfig = getConfig;
-module.exports.getRealArguments = getRealArguments;
-module.exports.printHelp = printHelp;
-module.exports.printWelcome = printWelcome;
-module.exports.prompt = prompt;
+module.exports.TOKEN_RE = TOKEN_RE;
+module.exports.WIREFRAMES = WIREFRAMES;
+module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
+module.exports.getConfig = _getConfig;
+module.exports.getIDLFile = _getIDLFile;
+module.exports.getOutputFile = _getOutputFile;
+module.exports.getTemplate = _getTemplate;
+module.exports.getWireframes = _getWireframes;
+module.exports.printHelp = _printHelp;
+module.exports.printWelcome = _printWelcome;
+module.exports.validateCommand = _validateCommand;

@@ -1,11 +1,17 @@
 {
   "name": "mdn-helper",
-  "version": "0.0.3",
+  "version": "0.11.0",
   "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
   "main": "index.js",
   "scripts": {
+    "burn": "node index.js burn",
+    "build": "node index.js build",
     "clean": "node index.js clean",
-    "help": "node index.js help"
+    "css": "node index.js css",
+    "find": "node index.js find",
+    "help": "node index.js help",
+    "interface": "node index.js interface",
+    "update-data": "./update-idl.sh"
   },
   "keywords": [
     "MDN",
@@ -15,6 +21,14 @@
   "license": "MPL-2.0",
   "dependencies": {
     "config": "^1.30.0",
-    "readline": "^1.3.0"
+    "enquirer": "^1.0.3",
+    "fs": "0.0.1-security",
+    "mdn-browser-compat-data": "0.0.53",
+    "node.extend": "^2.0.1",
+    "prompt-checkbox": "^2.2.0",
+    "prompt-choices": "^5.0.0",
+    "radio-symbol": "^2.0.0",
+    "readline": "^1.3.0",
+    "webidl2": "^14.0.1"
   }
 }
