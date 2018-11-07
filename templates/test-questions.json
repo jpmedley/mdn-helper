@@ -146,6 +146,19 @@
       "skip": false,
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
+    "exceptions": {
+      "question": "Does this method throw any exceptions? Please enter a comma-separated list or press Enter.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "None.",
+      "required": false,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_definitionList", "args": ["_frag_exceptions.html"]}
+    },
     "forbidden-response": {
       "question": "Is the response for this header forbidden? Yes or No?",
       "type": "boolean",
