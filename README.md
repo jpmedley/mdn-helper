@@ -88,7 +88,7 @@ At least one of the following:
 * `-l` or `--landing`: (Optional) Indicates that a [landing page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_landing_page_template) should be created.
 * `-r` or `--reference`: (Optional) Indicates that an [interface reference page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_reference_page_template) should be created.
 * `-c`: (Optional) Indicates that a [constructor page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_constructor_subpage_template) should be created.
-* `-it`: (Optional) Indicates that pages for the functions of the *iterable* IDL type will be created.
+* `-it`: (Optional) Indicates that pages for the functions of the *iterable* IDL type will be created, specifically entries(), forEach(), keys(), and values().
 * `-mp`: (Optional) Indicates that pages for the functions of the *maplike* IDL type will be created.
 * `-mr`: (Optional) Indicates that pages for the functions of the *readonly maplike* IDL type will be created.
 * `-e` or `--event`: (Optional) Indicates that an *event* page should be created with the specified name. This flag may be repeated as needed.
