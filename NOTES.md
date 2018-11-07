@@ -6,6 +6,13 @@ NOT FOR RELEASE VERSION
 
 When doing multiple methods or properties, some questions have the same answer between members. Why not use the last-provided answer as the default for the current one, provided there is not a default in the questions file.
 
+## Features for 0.12.0
+
+* Produce burn-down lists for all the sections of BCD data based solely on it.
+* Make template processing recursive and based on common sections. For example `reference.html` > `_frag_properties.html` > `_frag_property.html`.
+* Base `find` command on an index so that users can search on API names instead of file names.
+* Make build and entry commands output BCD boilerplate when needed. 
+
 ## New commands
 
 `fromIdl`: Takes and interface name, finds the IDL and asks the appropriate questions.
