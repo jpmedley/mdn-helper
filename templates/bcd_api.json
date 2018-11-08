@@ -1,8 +1,8 @@
 {
   "api": {
-    "apiname": {
+    "_apiname": {
       "__compat": {
-        "mdn_url": "https://developer.mozilla.org/docs/Web/API/apiname",
+        "mdn_url": "https://developer.mozilla.org/docs/Web/API/_apiname",
         "support": {
           "chrome": {
             "version_added": null
@@ -50,10 +50,10 @@
           "deprecated": false
         }
       },
-      "apiname": {
+      "_apiname": {
         "__compat": {
-          "mdn_url": "https://developer.mozilla.org/docs/Web/API/apiname/apiname",
-          "description": "<code>apiname()</code> constructor",
+          "mdn_url": "https://developer.mozilla.org/docs/Web/API/_apiname/_apiname",
+          "description": "<code>_apiname()</code> constructor",
           "support": {
             "chrome": {
               "version_added": null
@@ -102,9 +102,9 @@
           }
         }
       },
-      "member": {
+      "_member": {
         "__compat": {
-          "mdn_url": "https://developer.mozilla.org/docs/Web/API/apiname/member",
+          "mdn_url": "https://developer.mozilla.org/docs/Web/API/_apiname/_member",
           "support": {
             "chrome": {
               "version_added": null

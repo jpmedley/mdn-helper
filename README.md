@@ -27,7 +27,7 @@ From within the mdn-helper direcory:
 
 ### build
 
-Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `interface` command.
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `css`, `header`, or `interface` command. For interfaces, this also outputs BCD if a file doesn't exist.
 
 **Syntax:** `build _searchString_`
 

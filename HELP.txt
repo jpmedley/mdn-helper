@@ -1,6 +1,6 @@
   build searchString
     Builds an interfaces boilerplates after selecting an IDL file based on
-    searchString.
+    searchString. For interfaces, this also outputs BCD if a file doesn't exist.
 
   burn bcd -- [(-d | --datafor) _category_]
   burn chrome -- [(-f | --flags)]

@@ -330,6 +330,23 @@ class InterfaceData {
     return this._getIdentifiers('.');
   }
 
+  get members() {
+    let result = [];
+    if (this._eventhandlers) {
+      result = result.concat(this._eventhandlers);
+    }
+    if (this._getters) {
+      result = result.concat(this._getters);
+    }
+    if (this._methods) {
+      result = result.concat(this._methods);
+    }
+    if (this._properties) {
+      result = result.concat(this._properties);
+    }
+    return result.sort();
+  }
+
   get methods() {
     return this._methods;
   }

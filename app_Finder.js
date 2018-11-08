@@ -72,7 +72,9 @@ class _Finder {
     }
     const id = new InterfaceData(interfaces[0]);
     const builder = new Builder();
-    builder.build(id.command)
+    builder.writeBCD(id);
+    builder.build(id.command);
+    // builder.build(id);
   }
 
 }

@@ -1,6 +1,9 @@
 'use strict';
 
 const actions = require('./actions');
+const bcd = require('mdn-browser-compat-data');
+const { BCDManager } = require('./app_BCD.js');
+const fs = require('fs');
 const page = require('./page.js');
 const utils = require('./utils.js');
 
@@ -184,6 +187,16 @@ class _Builder {
     return arrangedArgs;
   }
 
+  writeBCD(interfaceData) {
+    let name = interfaceData.name
+    if (bcd.api[name]) { return; }
+    let bcdm = new BCDManager();
+    let outPath = utils.OUT + name + '/';
+    if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
+    let outFilePath = outPath + name + '.json';
+    bcdm.getBCD(interfaceData, outFilePath);
+  }
+
   async build(args) {
     this._initPages(args);
     for (let p in this.pages) {
@@ -191,7 +204,6 @@ class _Builder {
       this.pages[p].write();
     }
   }
-
 }
 
 module.exports.Builder = _Builder;
