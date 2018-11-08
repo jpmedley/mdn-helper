@@ -33,10 +33,15 @@ Searches Chrome's IDL files for filenames matching the provided string, prompts 
 
 ### burn
 
-Generates a burn-down list of undocumented Chrome APIs. Use -f or --flags to
-include APIs behind a flag.
+Generates a burn-down list of undocumented features. This has two syntaxes.
 
-**Syntax:** `burn -- [(-f | --flags)]`
+**Syntax:** `burn chrome -- [(-f | --flags)]`
+
+Generates a Chrome API list based on the Chromium IDL flags. Use `-f` or `--flags` to include APIs behind a flag.
+
+**Syntax:** `burn bcd -- [(-d | --datafor) _category_]`
+
+Generates a list based purely on what's in browser compatibility data. `category` must be one of 'api', 'css', 'html', 'javascript', or 'svg'. If you don't enter one of these values, you will be prompted for one of them.
 
 ### clean
 
