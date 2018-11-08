@@ -18,12 +18,44 @@ class _Burner {
   constructor() {
     this._includeFlags = false;
     this._resetLog();
-    this._outputFile = (() => {
-      let file = utils.getOutputFile(RESULTS_FILE);
-      let header = "Interface,Has BCD,Has MDN Page,Expected URL,Redirect\n";
-      fs.write(file, header, ()=>{});
-      return file;
-    })();
+    this._outFileHandle;
+    this._outFileName = '';
+    this._outputLines = 0;
+  }
+
+  _closeOutputFile() {
+    fs.close(this._outFileHandle, ()=>{});
+    let msg;
+    if (this._outputLines != 0) {
+      msg = `Burn result for ${this._category} are in ${this._outFileName}.`;
+      console.log(msg);
+    } else {
+      msg = `No missing MDN pages were found for ${this._category}. `;
+      msg += 'An output file was not created.'
+      console.log(msg);
+      fs.unlinkSync(this._outFileName);
+    }
+  }
+
+  _openOutputFile(listID) {
+    this._outFileName = utils.OUT + listID + "-" + RESULTS_FILE;
+    let file = utils.getOutputFile(this._outFileName);
+    let header = "Interface,Has BCD,Has MDN Page,Expected URL,Redirect\n";
+    fs.write(file, header, ()=>{});
+    this._outFileHandle = file;
+  }
+
+  _record(records) {
+    for (let r of records) {
+      if (!r.bcd || !r.mdn_exists) {
+        let line = r.key + ',' + r.bcd + ',' + r.mdn_exists;
+        if (r.mdn_url) { line += (',' + r.mdn_url); }
+        if (r.redirect) { line += (',redirects')}
+        line += '\n';
+        fs.write(this._outFileHandle, line, ()=>{});
+        this._outputLines++;
+      }
+    }
   }
 
   _resetLog() {
@@ -60,18 +92,6 @@ class _Burner {
     }
   }
 
-  _record(records) {
-    for (let r of records) {
-      if (!r.bcd || !r.mdn_exists) {
-        let line = r.key + ',' + r.bcd + ',' + r.mdn_exists;
-        if (r.mdn_url) { line += (',' + r.mdn_url); }
-        if (r.redirect) { line += (',redirects')}
-        line += '\n';
-        fs.write(this._outputFile, line, ()=>{});
-      }
-    }
-  }
-
   async burn(args) {
     if (!['bcd','chrome'].includes(args[3])) {
       throw new Error('First burn argument must be one of \'bcd\' or \'chrome\'.');
@@ -80,24 +100,21 @@ class _Burner {
   }
 
   async _normalizeArguments(args) {
-    let category;
-    if (!args[4].includes('-d')) {
-      throw new Error(`The forth argument must be '-d' or '--datafor'. The word '${args[4]}' was found instead.`);
-    }
+    this._category;
     if (!['-d', '--datafor'].includes(args[4])) {
       args.push('-d');
-      category = await this._selectGroup();
-      args.push(category);
+      this._category = await this._selectGroup();
+      args.push(this._category);
     }
     if (args.length < 6) {
-      category = await this._selectGroup();
-      args.push(category);
+      this._category = await this._selectGroup();
+      args.push(this._category);
     }
     if (!CATEGORIES.includes(args[5])) {
       console.log(`Burn downs for the ${args[5]} category are not supported. `);
       args.pop();
-      category = await this._selectGroup();
-      args.push(category)
+      this._category = await this._selectGroup();
+      args.push(this._category)
     }
     return args;
   }
@@ -136,6 +153,7 @@ class _Burner {
 
   async _bcd(args) {
     args = await this._normalizeArguments(args);
+    this._openOutputFile(args[5]);
     console.log(`Checking for MDN pages for ${args[5]} data.`);
     let burnRecords = this._getBurnRecords(bcd[args[5]]);
     let pinger = new Pinger(burnRecords);
@@ -144,12 +162,14 @@ class _Burner {
       throw e;
     });
     this._record(burnRecords);
-    fs.close(this._outputFile, ()=>{});
+    this._closeOutputFile();
   }
 
   async _chrome(args) {
-    let fileSet = new fm.IDLFileSet();
     if (['-f', '--flags'].includes(args[4])) { this._includeFlags = true; }
+    this._openOutputFile(args[3]);
+    this._category = args[3];
+    let fileSet = new fm.IDLFileSet();
     let files = fileSet.files;
     console.log('Looking for browser compatibility data and MDN pages.');
     for (let f in files) {
@@ -164,7 +184,7 @@ class _Burner {
       });
       this._record(burnRecords);
     }
-    fs.close(this._outputFile, ()=>{});
+    this._closeOutputFile();
   }
 }
 
