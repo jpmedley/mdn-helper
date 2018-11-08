@@ -11,11 +11,7 @@ When doing multiple methods or properties, some questions have the same answer b
 * Make template processing recursive and based on common sections. For example `reference.html` > `_frag_properties.html` > `_frag_property.html`.
 * Base `find` command on an index so that users can search on API names instead of file names.
 * Make build and entry commands output BCD boilerplate when needed. 
-
-## New commands
-
-`fromIdl`: Takes and interface name, finds the IDL and asks the appropriate questions.
-`validate`: Validates that question files contain the same keys.
+* Add admin commands including `validate` which validates that question files contain the same keys.
 
 ## To Do
 
