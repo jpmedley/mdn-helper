@@ -83,7 +83,7 @@ At least one of the following:
 
 Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** <code>interface -n _interfaceName_ [-o] [-i] [-c] [(-e | --event) _eventName_] [(-h | --handler) _handlerName_] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]</code>
+**Syntax:** <code>interface -n _interfaceName_ [-l] [-r] [-c] [(-e | --event) _eventName_] [(-h | --handler) _handlerName_] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]</code>
 
 **Flags:**
 
