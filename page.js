@@ -102,6 +102,7 @@ class _Questions {
   }
 
   needsAnswers() {
+    console.log(this.questions);
     for (var p in this.questions) {
       if (this.questions[p].answer === null) { return true; }
     }
