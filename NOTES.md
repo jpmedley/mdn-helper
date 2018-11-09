@@ -13,6 +13,7 @@ When doing multiple methods or properties, some questions have the same answer b
 * Output BCD boilerplate for entry and remaining build commands.  
 * Add admin commands including `validate` which validates that question files contain the same keys.
 * When `find` and `build` present lists, they need to offer 'none' as an option.
+* The prompt for the `APIRef()` macro should invoke a check that it exists in `GroupData.json`.
 
 ## To Do
 
