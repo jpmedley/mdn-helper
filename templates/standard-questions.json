@@ -280,7 +280,7 @@
       "action": null
     },
     "mdnAPIRef": {
-      "question": "What is the API name as it should be used in the APIRef() macro?",
+      "question": "What is the API name as it should be used in the APIRef() macro? This is the same value used as the in GroupData.json.",
       "type": "string",
       "pattern": "",
       "message": "",
