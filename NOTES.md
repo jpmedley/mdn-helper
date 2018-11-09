@@ -12,6 +12,7 @@ When doing multiple methods or properties, some questions have the same answer b
 * Base `find` command on an index so that users can search on API names instead of file names.
 * Output BCD boilerplate for entry and remaining build commands.  
 * Add admin commands including `validate` which validates that question files contain the same keys.
+* When `find` and `build` present lists, they need to offer 'none' as an option.
 
 ## To Do
 
