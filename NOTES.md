@@ -8,6 +8,7 @@ When doing multiple methods or properties, some questions have the same answer b
 
 ## Features for 0.14.0
 
+* Improve wrapping of questions and display of answers.
 * Make template processing recursive and based on common sections. For example `reference.html` > `_frag_properties.html` > `_frag_property.html`.
 * Base `find` command on an index so that users can search on API names instead of file names.
 * Output BCD boilerplate for entry and remaining build commands.  
