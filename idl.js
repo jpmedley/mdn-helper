@@ -13,6 +13,11 @@ const EMPTY_BURN_DATA = Object.freeze({
   redirect: false
 });
 
+const EMPTY_BCD_DATA = Object.freeze({
+  key: null,
+  browsers: []
+})
+
 class IDLError extends Error {
   constructor(message, fileName='', lineNumber='') {
     super(message, fileName, lineNumber);
@@ -418,5 +423,6 @@ class InterfaceData {
   }
 }
 
+module.exports.EMPTY_BCD_DATA = EMPTY_BCD_DATA;
 module.exports.EMPTY_BURN_DATA = EMPTY_BURN_DATA;
 module.exports.InterfaceData = InterfaceData;
