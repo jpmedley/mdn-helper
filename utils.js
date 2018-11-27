@@ -92,6 +92,24 @@ function _printWelcome() {
   console.log("=".repeat(80));
 }
 
+function _today() {
+  let today = new Date();
+  let dd = today.getDate();
+  let mm = today.getMonth()+1; //January is 0!
+  let yyyy = today.getFullYear();
+
+  if(dd<10) {
+      dd = '0'+dd
+  }
+
+  if(mm<10) {
+      mm = '0'+mm
+  }
+
+  today = dd + '-' + mm + '-' + yyyy;
+  return today;
+}
+
 function _validateCommand(args) {
   if (['burn','clean','help'].includes(args[2])) { return args[2]; }
   if (args.length < 4) {
@@ -121,4 +139,5 @@ module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
+module.exports.today = _today;
 module.exports.validateCommand = _validateCommand;
