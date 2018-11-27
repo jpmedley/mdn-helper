@@ -4,15 +4,19 @@
 
   burn bcd -- [(-d | --datafor) _category_]
   burn chrome -- [(-f | --flags)]
-    Generates a burn-down list of undocumented features.
+  burn urls
+    Builds several types of burn-down lists.
 
-    The first syntax generates a list based purely on what's in browser
-    compatibility data. `category` must be one of 'api', 'css', 'html',
-    'javascript', or 'svg'. If you don't enter one of these values, you will be
-    prompted for one of them.
+    The first syntax generates a csv listing BCD entries where the browser
+    value is either null or missing. `category` must be one of 'api', 'css',
+    'html', 'javascript', or 'svg'. If you don't enter one of these values, you
+    will be prompted for one of them.
 
-    The second generates a Chrome API list based on the Chromium IDL flags. Use
-    `-f` or `--flags` to include APIs behind a flag.
+    The second generates a csv listing Chrome APIs that are lacking an MDN
+    page. Use `-f` or `--flags` to include APIs behind a flag.
+
+    The last generates a csv listing BCD entries that are lacking a
+    corresponding MDN page.
 
   clean
     Deletes selected folders from the *path/to*/mdn-helper/out/ directory.
