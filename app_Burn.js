@@ -204,6 +204,8 @@ class _Burner {
     let records = [];
     (function getRecords(data) {
       for (let d in data) {
+        if (d == '__parent') { continue; }
+        if (d == '__name') { continue; }
         if (!data[d].__compat) {
           getRecords(data[d]);
         } else {
@@ -253,42 +255,6 @@ class _Burner {
         }
       }
     }).call(this, bcdData);
-    return records;
-  }
-
-  _getBCDBurnRecords_(categoryData) {
-    let records = [];
-    let bcdData = bcd[categoryData.category];
-    for (let d in bcdData) {
-      for (let m in bcdData[d]) {
-        if (m == '__compat') {
-          // let parent = Object.assign({}, EMPTY_BCD_DATA);
-          let parent = { key: null, browsers: [] };
-          parent.key = d;
-          let support = bcdData[d].__compat.support;
-          for (let s in support) {
-            if (!categoryData.browsers.includes(s)) { continue; }
-            let va = (support[s].version_added ? support[s].version_added : 'missing');
-            parent.browsers[s] = va;
-          }
-          records.push(parent);
-        } else {
-          // let child = Object.assign({}, EMPTY_BCD_DATA);
-          let child = { key: null, browsers: [] };
-          child.key = d + '.' + m;
-          if (m == 'align-content') {
-            console.log('here');
-          }
-          let support =  bcdData[d][m].__compat.support;
-          for (let s in support) {
-            if (!categoryData.browsers.includes(s)) { continue; }
-            let va = (support[s].version_added ? support[s].version_added : 'missing');
-            child.browsers[s] = va;
-          }
-          records.push(child);
-        }
-      }
-    }
     return records;
   }
 
