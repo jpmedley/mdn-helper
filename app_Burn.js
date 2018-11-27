@@ -231,10 +231,18 @@ class _Burner {
     } while (d.__parent);
     let key = keys.join('.');
     let record = { key: key, browsers: {} };
+    for (let b of browsers) {
+      if (!data.support[b]) {
+        record.browsers[b] = 'missing';
+      }
+    }
     for (let d in data.support) {
       if (!browsers.includes(d)) { continue; }
-      let va = (data.support[d].version_added ? data.support[d].version_added : 'missing');
-      record.browsers[d] = va;
+      if (data.support[d].version_added==null) {
+        record.browsers[d] = 'missing';
+      } else {
+        record.browsers[d] = data.support[d].version_added;
+      }
     }
     return record;
   }
