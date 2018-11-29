@@ -15,7 +15,7 @@ const {
 const { Pinger } = require('./pinger.js');
 
 const LOG_FILE = 'burn-log.txt';
-const RESULTS_FILE = 'burn-list.csv';
+const RESULTS_FILE = utils.today() + '-burn-list.csv';
 const CATEGORIES = ['api','css','html','javascript','svg'];
 const BROWSERS = [
   'chrome',
@@ -58,7 +58,7 @@ class _Burner {
   }
 
   _openBCDFile(listId, selectedBrowsers) {
-    this._outFileName = utils.OUT + listId + '-BCD-' + RESULTS_FILE + utils.today();
+    this._outFileName = utils.OUT + listId + '-BCD-' + RESULTS_FILE;
     let file = utils.getOutputFile(this._outFileName);
     let header = 'Interface,' + selectedBrowsers.join(',') + '\n';
     fs.write(file, header, ()=>{});
@@ -66,7 +66,7 @@ class _Burner {
   }
 
   _openURLFile(listID, type) {
-    this._outFileName = utils.OUT + listID + "-" + type + "-" + RESULTS_FILE + utils.today();
+    this._outFileName = utils.OUT + listID + "-" + type + "-" + RESULTS_FILE;
     let file = utils.getOutputFile(this._outFileName);
     let header = "Interface,Has BCD,Has MDN Page,Expected URL,Redirect\n";
     fs.write(file, header, ()=>{});
