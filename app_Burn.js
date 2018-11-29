@@ -68,7 +68,7 @@ class _Burner {
   _openURLFile(listID, type) {
     this._outFileName = utils.OUT + listID + "-" + type + "-" + RESULTS_FILE;
     let file = utils.getOutputFile(this._outFileName);
-    let header = "Interface,Has BCD,Has MDN Page,Expected URL,Redirect\n";
+    let header = "Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n";
     fs.write(file, header, ()=>{});
     this._outFileHandle = file;
   }
