@@ -11,3 +11,5 @@ tar xvzf idl.tar.gz -C idl/
 rm idl.tar.gz
 
 mkdir idl/_test/
+
+node indexer.js

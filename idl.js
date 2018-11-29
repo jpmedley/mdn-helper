@@ -47,7 +47,7 @@ class InterfaceData {
       }
     }
     if (!this._interface) {
-      const msg = `The ${sourceFile} file does not contain interface data.`;
+      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
       throw new IDLError(msg);
     }
   }

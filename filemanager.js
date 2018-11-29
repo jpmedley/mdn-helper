@@ -1,16 +1,18 @@
 'use strict';
 
 const fs = require('fs');
+const { InterfaceData } = require('./idl.js');
 
 const API_DIRS = ["_test/", "core/", "modules/"];
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
     this._files = [];
-    this._loadFiles(rootDirectory);
+    this._rootDirectory = rootDirectory;
+    this._loadFiles();
   }
 
-  _loadFiles(rootDirectory) {
+  _loadFiles(rootDirectory = this._rootDirectory) {
     for (let d in API_DIRS) {
       let dir = rootDirectory + API_DIRS[d];
       this._processDirectory(dir);
@@ -38,6 +40,35 @@ class IDLFileSet {
 
   get files() {
     return this._files;
+  }
+
+  indexIDL() {
+    const indexPath = this._rootDirectory + 'idlindex.txt';
+    if (fs.existsSync(indexPath)) { fs.unlinkSync(indexPath)}
+    let idls = this.files;
+    for (let i of idls) {
+      try {
+        let idlFile = new InterfaceData(i);
+        fs.appendFileSync(indexPath, (idlFile.name + ',' + i.path() + '\n'));
+        for (let m of idlFile.members) {
+          fs.appendFileSync(indexPath, (idlFile.name + '.' + m.name + ',' + i.path() + '\n'));
+        }
+      } catch (e) {
+        if (e.constructor.name == 'IDLError') {
+          let msg = (i.path() + "\n\t" + e.message + "\n\n");
+          console.log(msg);
+          return;
+        } else if (e.constructor.name == 'WebIDLParseError') {
+          let msg = (i.path() + "\n\t" + e.message + "\n\n");
+          console.log(msg);
+          return;
+        } else {
+          throw e;
+        }
+      }finally {
+        continue;
+      }
+    }
   }
 
   findMatching(name) {
