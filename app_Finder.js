@@ -27,7 +27,8 @@ class _Finder {
   async _select(matches) {
     let names = [];
     for (let m in matches) {
-      names.push(matches[m].name)
+      // names.push(matches[m].name);
+      names.push(matches[m].index[0]);
     }
     let enq = new Enquirer();
     enq.register('checkbox', cb);

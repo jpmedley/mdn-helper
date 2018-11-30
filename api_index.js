@@ -35,13 +35,10 @@ class APIIndex {
     for (let i of this._indexEntries) {
       if (i.key.includes('.')) { continue; }
       if (i.lcKey.includes(containing)) {
-
-
-
         results.push(i)
       }
     }
-    console.log(results);
+    return results;
   }
 }
 

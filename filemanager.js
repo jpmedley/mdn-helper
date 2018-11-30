@@ -33,6 +33,21 @@ class IDLFileSet {
         }
         contents[c].path = path;
         path.bind(contents[c]);
+
+        contents[c].index = new Array();
+        // let idlFile = new InterfaceData(contents[c]);
+        let idlFile = this._getIDLFile(contents[c]);
+        if (idlFile) {
+          contents[c].index.push(idlFile.name);
+          // For now, only deal with interface names.
+          // for (let m of idlFile.members) {
+          //   contents[c].index.push(idlFile.name + '.' + m.name);
+          // }
+        }
+
+
+
+
         this._files.push(contents[c]);
       }
     }
@@ -40,6 +55,25 @@ class IDLFileSet {
 
   get files() {
     return this._files;
+  }
+
+  _getIDLFile(fileObject) {
+    try {
+      let idlFile = new InterfaceData(fileObject);
+      return idlFile;
+    } catch (e) {
+      if (e.constructor.name == 'IDLError') {
+        // let msg = (fileObject.path() + "\n\t" + e.message + "\n\n");
+        // console.log(msg);
+        return;
+      } else if (e.constructor.name == 'WebIDLParseError') {
+        // let msg = (fileObject.path() + "\n\t" + e.message + "\n\n");
+        // console.log(msg);
+        return;
+      } else {
+        throw e;
+      }
+    }
   }
 
   indexIDL() {
@@ -71,16 +105,26 @@ class IDLFileSet {
     }
   }
 
+//START HERE: Need to step through. This should work but doesn't.
   findMatching(name) {
+    console.log(name);
     let matches = [];
-    let lcName = name.toLowerCase();
+    // let lcName = name.toLowerCase();
     for (let f in this._files) {
-      let lcFile = this._files[f].name.toLowerCase();
-      if (lcFile.includes(lcName)) {
-        matches.push(this._files[f]);
+      console.log(this._files[f]);
+      if (f.index.includes(name)) {
+        matches.push(f);
       }
+      return matches;
     }
-    return matches;
+
+    // for (let f in this._files) {
+    //   let lcFile = this._files[f].name.toLowerCase();
+    //   if (lcFile.includes(lcName)) {
+    //     matches.push(this._files[f]);
+    //   }
+    // }
+    // return matches;
   }
 }
 
