@@ -29,16 +29,16 @@ class APIIndex {
     }
   }
 
-  find(containing) {
+  findInterfaces(containing) {
     containing = containing.toLowerCase();
     let results = [];
     for (let i of this._indexEntries) {
+      if (i.key.includes('.')) { continue; }
       if (i.lcKey.includes(containing)) {
-        if (!results.some((element) => {
-          return element.lcKey.includes(containing);
-        })) {
-          results.push(i);
-        }
+
+
+
+        results.push(i)
       }
     }
     console.log(results);
