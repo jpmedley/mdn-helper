@@ -16,7 +16,7 @@ const { Pinger } = require('./pinger.js');
 
 const LOG_FILE = 'burn-log.txt';
 const RESULTS_FILE = utils.today() + '-burn-list.csv';
-const CATEGORIES = ['api','css','html','javascript','svg'];
+const CATEGORIES = ['api','css','html','javascript','svg','webextensions'];
 const BROWSERS = [
   'chrome',
   'chrome_android',
