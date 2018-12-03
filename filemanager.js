@@ -73,35 +73,6 @@ class IDLFileSet {
     }
   }
 
-  indexIDL() {
-    const indexPath = this._rootDirectory + 'idlindex.txt';
-    if (fs.existsSync(indexPath)) { fs.unlinkSync(indexPath)}
-    let idls = this.files;
-    for (let i of idls) {
-      try {
-        let idlFile = new InterfaceData(i);
-        fs.appendFileSync(indexPath, (idlFile.name + ',' + i.path() + '\n'));
-        for (let m of idlFile.members) {
-          fs.appendFileSync(indexPath, (idlFile.name + '.' + m.name + ',' + i.path() + '\n'));
-        }
-      } catch (e) {
-        if (e.constructor.name == 'IDLError') {
-          let msg = (i.path() + "\n\t" + e.message + "\n\n");
-          console.log(msg);
-          return;
-        } else if (e.constructor.name == 'WebIDLParseError') {
-          let msg = (i.path() + "\n\t" + e.message + "\n\n");
-          console.log(msg);
-          return;
-        } else {
-          throw e;
-        }
-      }finally {
-        continue;
-      }
-    }
-  }
-
   findMatching(name) {
     let matches = [];
     let lcName = name.toLowerCase();
