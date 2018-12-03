@@ -27,7 +27,6 @@ class _Finder {
   async _select(matches) {
     let names = [];
     for (let m in matches) {
-
       names.push(matches[m].key);
     }
     let enq = new Enquirer();
