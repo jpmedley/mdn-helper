@@ -8,7 +8,7 @@ const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
 const REQUIRES_FLAGS = ['css','header','interface'];
-const COMMANDS = ['build','burn','clean','find','help'].concat(REQUIRES_FLAGS).sort();
+const COMMANDS = ['build','burn','clean','config','find','help'].concat(REQUIRES_FLAGS).sort();
 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
@@ -33,6 +33,24 @@ function _deleteUnemptyFolder(folder) {
     });
     fs.rmdirSync(folder);
   }
+}
+
+function _displayConfig() {
+  let app = config.Application;
+  console.log('Application configuration values');
+  for (let a in app) {
+    console.log('\t' + a + '=' + app[a]);
+  }
+  let user = config.User;
+  let out = '';
+  for (let u in user) {
+    out += ('\t' + u + '=' + user[u] + '\n');
+  }
+  if (out) {
+    console.log('User configuration values');
+    console.log(out);
+  }
+  console.log('');
 }
 
 function _getConfig(parameter) {
@@ -111,7 +129,7 @@ function _today() {
 }
 
 function _validateCommand(args) {
-  if (['burn','clean','help'].includes(args[2])) { return args[2]; }
+  if (['burn','clean','config','help'].includes(args[2])) { return args[2]; }
   if (args.length < 4) {
     throw new Error('This command requires arguments.');
   }
@@ -132,6 +150,7 @@ module.exports.OUT = OUT;
 module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
+module.exports.displayConfig = _displayConfig;
 module.exports.getConfig = _getConfig;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getOutputFile = _getOutputFile;

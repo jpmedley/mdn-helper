@@ -33,6 +33,9 @@ switch (command) {
     let cleaner = new Cleaner();
     cleaner.clean();
     break;
+  case 'config':
+    utils.displayConfig();
+    break;
   case 'find':
     finder = new Finder();
     finder.findAndShow(process.argv);

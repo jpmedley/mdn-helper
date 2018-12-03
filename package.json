@@ -7,6 +7,7 @@
     "burn": "node index.js burn",
     "build": "node index.js build",
     "clean": "node index.js clean",
+    "config": "node index.js config",
     "css": "node index.js css",
     "find": "node index.js find",
     "help": "node index.js help",
