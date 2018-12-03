@@ -27,12 +27,12 @@ class _Finder {
   async _select(matches) {
     let names = [];
     for (let m in matches) {
-      // names.push(matches[m].name);
-      names.push(matches[m].index[0]);
+
+      names.push(matches[m].key);
     }
     let enq = new Enquirer();
     enq.register('checkbox', cb);
-    enq.question('idlFile', 'Which IDL file?', {
+    enq.question('idlFile', 'Which interface do you want to write for?', {
       type: 'checkbox',
       checkbox: radio.star,
       choices: names
@@ -42,15 +42,13 @@ class _Finder {
   }
 
   async findAndShow(args) {
-    // if (!args[3]) { throw new Error('An argument is missing.'); }
     const matches = this._find(args[3]);
     const answers = await this._select(matches);
     let idlPath, idlFile, name, match;
-    for (let a in answers.idlFile) {
-      name = answers.idlFile[a];
-      for (let m in matches) {
-        if (matches[m].name == name) {
-          match = matches[m];
+    for (let a of answers.idlFile) {
+      for (let m of matches) {
+        if (a.includes(m.key)) {
+          match = m;
           break;
         }
       }
@@ -62,12 +60,11 @@ class _Finder {
   }
 
   async findAndBuild(args) {
-    // if (!args[3]) { throw new Error('An argument is missing.'); }
     const matches = this._find(args[3]);
     const answers = await this._select(matches);
     let interfaces = [];
     for (let m in matches) {
-      if (answers.idlFile.includes(matches[m].name)) {
+      if (answers.idlFile.includes(matches[m].key)) {
         interfaces.push(matches[m]);
       }
     }

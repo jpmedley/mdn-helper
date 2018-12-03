@@ -38,7 +38,8 @@ class IDLFileSet {
         // let idlFile = new InterfaceData(contents[c]);
         let idlFile = this._getIDLFile(contents[c]);
         if (idlFile) {
-          contents[c].index.push(idlFile.name);
+          contents[c].key = idlFile.name;
+          contents[c].index.push(idlFile.name.toLowerCase());
           // For now, only deal with interface names.
           // for (let m of idlFile.members) {
           //   contents[c].index.push(idlFile.name + '.' + m.name);
@@ -63,12 +64,8 @@ class IDLFileSet {
       return idlFile;
     } catch (e) {
       if (e.constructor.name == 'IDLError') {
-        // let msg = (fileObject.path() + "\n\t" + e.message + "\n\n");
-        // console.log(msg);
         return;
       } else if (e.constructor.name == 'WebIDLParseError') {
-        // let msg = (fileObject.path() + "\n\t" + e.message + "\n\n");
-        // console.log(msg);
         return;
       } else {
         throw e;
@@ -105,26 +102,16 @@ class IDLFileSet {
     }
   }
 
-//START HERE: Need to step through. This should work but doesn't.
   findMatching(name) {
-    console.log(name);
     let matches = [];
-    // let lcName = name.toLowerCase();
-    for (let f in this._files) {
-      console.log(this._files[f]);
-      if (f.index.includes(name)) {
+    let lcName = name.toLowerCase();
+    for (let f of this._files) {
+      if (f.index.length == 0) { continue; }
+      if (f.index[0].includes(lcName)) {
         matches.push(f);
       }
-      return matches;
     }
-
-    // for (let f in this._files) {
-    //   let lcFile = this._files[f].name.toLowerCase();
-    //   if (lcFile.includes(lcName)) {
-    //     matches.push(this._files[f]);
-    //   }
-    // }
-    // return matches;
+    return matches;
   }
 }
 
