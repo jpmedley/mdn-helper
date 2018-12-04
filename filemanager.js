@@ -33,9 +33,7 @@ class IDLFileSet {
         }
         contents[c].path = path;
         path.bind(contents[c]);
-
         contents[c].index = new Array();
-        // let idlFile = new InterfaceData(contents[c]);
         let idlFile = this._getIDLFile(contents[c]);
         if (idlFile) {
           contents[c].key = idlFile.name;
@@ -45,10 +43,6 @@ class IDLFileSet {
           //   contents[c].index.push(idlFile.name + '.' + m.name);
           // }
         }
-
-
-
-
         this._files.push(contents[c]);
       }
     }
