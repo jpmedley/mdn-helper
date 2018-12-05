@@ -70,8 +70,11 @@ class _Finder {
     const id = new InterfaceData(interfaces[0]);
     const builder = new Builder();
     builder.writeBCD(id);
-    builder.build(id.command);
-    // builder.build(id);
+    // Remimplement and add to help after conversion to yargs.
+    if (!args.includes('-j')) {
+      //The j flag means json only.
+      builder.build(id.command);
+    }
   }
 
 }
