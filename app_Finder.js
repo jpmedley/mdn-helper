@@ -9,6 +9,7 @@ const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
 const NOTHING_FOUND = "Could not find matching IDL files."
+const CANCEL = '(none)';
 
 class _Finder {
   constructor() {
@@ -29,6 +30,7 @@ class _Finder {
     for (let m in matches) {
       names.push(matches[m].key);
     }
+    names.push(CANCEL);
     let enq = new Enquirer();
     enq.register('checkbox', cb);
     enq.question('idlFile', 'Which interface do you want to write for?', {
@@ -43,6 +45,7 @@ class _Finder {
   async findAndShow(args) {
     const matches = this._find(args[3]);
     const answers = await this._select(matches);
+    if (answers.idlFile[0] == CANCEL) { process.exit(); }
     let idlPath, idlFile, name, match;
     for (let a of answers.idlFile) {
       for (let m of matches) {
@@ -61,6 +64,7 @@ class _Finder {
   async findAndBuild(args) {
     const matches = this._find(args[3]);
     const answers = await this._select(matches);
+    if (answers.idlFile[0] == CANCEL) { process.exit(); }
     let interfaces = [];
     for (let m in matches) {
       if (answers.idlFile.includes(matches[m].key)) {
