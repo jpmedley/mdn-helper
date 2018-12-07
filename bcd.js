@@ -7,6 +7,8 @@ const bcd = require('mdn-browser-compat-data');
 class BCD {
   constructor() {
     this._decorate(bcd);
+    bcd.getPossibleKeys = this.getPossibleKeys;
+    this.getPossibleKeys.bind(bcd);
     return bcd;
   }
 
@@ -24,6 +26,38 @@ class BCD {
         this._decorate(data[k]);
       }
     }
+  }
+
+  _generateFullKey(currentKey) {
+    let resultArray = new Array();
+    do {
+      resultArray.push(currentKey.__name);
+      currentKey = currentKey.__parent;
+    } while (currentKey.__parent);
+    resultArray = resultArray.reverse();
+    const result = resultArray.join('.');
+    return result;
+  }
+
+  getPossibleKeys(withString) {
+    let possibleKeys = new Array();
+    const NOT_KEYS = ['__compat','__name','__parent'];
+    let keys = Object.keys(this);
+    if (!keys.length) { throw new Error(); }
+    (function getKeys() {
+      for (let k of keys) {
+        if (NOT_KEYS.includes(k)) { continue; }
+        possibleKeys.push(this._generateFullKey(k));
+        getKeys();
+      }
+    })();
+
+
+    // let keys = Object.keys(this.api.XSLTProcessor);
+    // if (!keys.length) { throw new Error(); }
+    // for (let k of keys) {
+    //   console.log(k);
+    // }
   }
 }
 
