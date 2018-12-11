@@ -2,7 +2,7 @@
 
 const bcd = require('mdn-browser-compat-data');
 
-// const SKIPABLE = ['browsers','description','mathml','mdn_url','webdriver','webextensions','xpath','xslt','__parent'];
+const SKIPABLE = ['__compat','__name','__parent','browsers','description','mathml','mdn_url','getPossibleKeys','webdriver','webextensions','xpath','xslt'];
 
 function generateFullKey(currentKey) {
   if (!currentKey.__parent) { return currentKey.__name; }
@@ -28,9 +28,7 @@ class BCD {
     let keys = Object.keys(data);
     if (keys.length) {
       for (let k of keys) {
-        // if (k == '__compat') { continue; }
         if (!data[k]) { continue; }
-        // if (SKIPABLE.includes(k)) { continue; }
         if (k == '__parent') { continue; }
         if (typeof data[k] != 'object') { continue; }
         data[k].__parent = data;
@@ -42,30 +40,20 @@ class BCD {
 
   getPossibleKeys(withString) {
     let results = new Array();
-    const NOT_KEYS = ['__compat','__name','__parent'];
     (function getKeys(tree, results) {
       let keys = Object.keys(tree);
       if (!keys.length) { throw new Error(); }
       for (let k in tree) {
-        if (NOT_KEYS.includes(k)) { continue; }
-        // console.log(generateFullKey(tree[k]));
-        results.push(generateFullKey(tree[k]));
+        if (SKIPABLE.includes(k)) { continue; }
+        let fullKey = generateFullKey(tree[k]);
+        if (fullKey.includes(withString)) {
+          results.push(fullKey);
+        }
+        getKeys(tree[k], results);
       }
     })(this, results);
     return results;
-
-    // let keys = Object.keys(this);
-    // if (!keys.length) { throw new Error(); }
-    // (function getKeys(keys) {
-    //   for (let k of keys) {
-    //     if (NOT_KEYS.includes(k)) { continue; }
-    //     // possibleKeys.push(this._generateFullKey(k));
-    //     console.log(generateFullKey(keys[k]));
-    //     getKeys(k);
-    //   }
-    // })(keys);
   }
-
 
 }
 

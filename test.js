@@ -2,7 +2,7 @@
 
 const { bcd } = require('./bcd.js');
 
-let pk = bcd.getPossibleKeys('element');
+let pk = bcd.getPossibleKeys('background');
 console.log("=".repeat(80));
 console.log("SHOWING OUTPUT");
 for (let k of pk) {
