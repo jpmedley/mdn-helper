@@ -33,8 +33,6 @@ const BROWSERS = [
   'webview_android'
 ]
 
-const EXCLUSIONS = ['inspector/','testing/','typed_arrays/'];
-
 class _Burner {
   constructor() {
     this._includeFlags = false;
@@ -57,18 +55,6 @@ class _Burner {
       console.log(msg);
       fs.unlinkSync(this._outFileName);
     }
-  }
-
-  _isExcluded(testFile) {
-    // Prevent built-in JS features from being part of api/ (bcd) directory
-    // burn down.
-    for (let e of EXCLUSIONS) {
-      let path = testFile.path();
-      if (path.includes(e)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   _openBCDFile(listId, selectedBrowsers) {
@@ -311,7 +297,6 @@ class _Burner {
     let files = fileSet.files;
     console.log('Looking for browser compatibility data and MDN pages.');
     for (let f in files) {
-      if (this._isExcluded(files[f])) { continue; }
       let idlFile = this._getIDLFile(files[f]);
       if (!idlFile) { continue; }
       let burnRecords = idlFile.getBurnRecords(this._includeFlags);

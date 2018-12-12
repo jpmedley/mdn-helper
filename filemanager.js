@@ -4,6 +4,7 @@ const fs = require('fs');
 const { InterfaceData } = require('./idl.js');
 
 const API_DIRS = ["_test/", "core/", "modules/"];
+const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
@@ -23,6 +24,7 @@ class IDLFileSet {
     let contents = fs.readdirSync(rootDirectory, {withFileTypes: true});
     for (let c in contents) {
       if (contents[c].isDirectory()) {
+        if (EXCLUSIONS.includes(contents[c].name)) { continue; }
         this._processDirectory(rootDirectory + contents[c].name + "/");
       } else if (contents[c].isFile()) {
         if (!contents[c].name.endsWith('.idl')) { continue; }
