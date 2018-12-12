@@ -72,7 +72,6 @@ class InterfaceData {
   }
 
   _loadMembers() {
-    // START HERE: Test getConstructors().
     this._getConstructors();
     this._eventhandlers = [];
     this._getters = [];
@@ -94,7 +93,6 @@ class InterfaceData {
               this._eventhandlers.push(property);
               break;
             case 'method':
-              // args = this._getArguments(mems[m]);
               if (mems[m].body) {
                 args = this._getArgumentString(mems[m].body.arguments);
                 property.interface += ("(" + args + ")");
