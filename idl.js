@@ -24,11 +24,60 @@ class IDLError extends Error {
   }
 }
 
+//TODO: Retrieval of data should depend on whether it is flagged.
+
 class InterfaceData {
   constructor(sourceFile) {
     this._loadTree(sourceFile);
-    this._loadExtras();
-    this._loadMembers();
+    this._sortTree();
+    // this._loadExtras();
+    // this._loadMembers();
+  }
+
+  _sortTree() {
+    this._sortMembers();
+  }
+
+
+
+  _sortProperties() {
+    this._eventhandlers = new Map();
+    this._getters = new Map();
+    this._setters = new Map();
+    for (let p of this._properties) {
+      if (p[1].eventhandler) {
+        this._eventhandlers.set(p[0], p[1]);
+        this._properties.delete(p[0]);
+        continue;
+      }
+      if (p[1].getter) {
+        this._getters.set(p[0], p[1]);
+        this._properties.delete(p[0]);
+        continue;
+      }
+      if (p[1].setter) {
+        this._setters.set(p[0], p[1]);
+        this._properties.delete(p[0]);
+        continue;
+      }
+      throw new Error('Unexpected property type: ' + p);
+    }
+  }
+
+  _sortMembers() {
+    this._methods = new Map();
+    this._properties = new Map();
+    for (let m of this._interface.members) {
+      switch (m.type) {
+        case 'operation':
+          this._methods.set(m.body.name.escaped, m);
+          break;
+        case 'attribute':
+          this._properties.set(m.escapedName, m);
+        default:
+          throw new Error('Unknown member type found in InterfaceData._sortTree().')
+      }
+    }
   }
 
   _loadTree(sourceFile) {
@@ -53,6 +102,31 @@ class InterfaceData {
   }
 
   _loadExtras() {
+    if (!this._interface.extAttrs) { return; }
+    let items = this._interface.extAttrs.items;
+    this._signatures = [];
+    for (let i in items) {
+      switch (items[i].name) {
+        case 'Constructor':
+          this._constructor = true;
+          if (items[i].signature) {
+            this._signatures.push(items[i].signature.arguments);
+          }
+          break;
+        case 'RuntimeEnabled':
+          this._flag = items[i].rhs.value;
+          break;
+        case 'Exposed':
+          //
+          break;
+        case 'raisesException':
+          //
+          break;
+      }
+    }
+  }
+
+  _loadExtrasEX() {
     if (!this._interface.extAttrs) { return; }
     let items = this._interface.extAttrs.items;
     this._signatures = [];

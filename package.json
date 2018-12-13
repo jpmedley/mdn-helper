@@ -24,7 +24,7 @@
     "config": "^1.31.0",
     "enquirer": "^1.0.3",
     "fs": "0.0.1-security",
-    "mdn-browser-compat-data": "~0.0.59",
+    "mdn-browser-compat-data": "0.0.60",
     "node.extend": "^2.0.2",
     "prompt-checkbox": "^2.2.0",
     "prompt-choices": "^5.0.0",
