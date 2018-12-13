@@ -25,3 +25,10 @@ When doing multiple methods or properties, some questions have the same answer b
 * Change `shared:formalAPIName` to `shared:apiName` throughout. Anywhere that it should be suffixed with 'API' add it to the template. Give this a follow-up task that ensures it's not present twice.
 
 * Deal more completely with inheritance.
+
+## Useful Chromium Files
+
+JavaScript built-ins:
+  https://cs.chromium.org/codesearch/f/chromium/src/v8/src/builtins/builtins-definitions.h?cl=HEAD
+
+  
