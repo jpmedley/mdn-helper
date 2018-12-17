@@ -30,7 +30,7 @@ class _BCDManager {
     }
     for (let m of idl.members) {
       let member = _copyString(MEMBER_TEMPLATE)
-                   .replace(/\[\[member-name\]\]/g, m.name);
+                   .replace(/\[\[member-name\]\]/g, m[0]);
       members.push(member);
     }
     let memberString = members.join(',\n');

@@ -30,58 +30,112 @@ class InterfaceData {
   constructor(sourceFile) {
     this._loadTree(sourceFile);
     this._sortTree();
-    // this._loadExtras();
-    // this._loadMembers();
   }
 
   _sortTree() {
+    console.log(this._sourceData.name);
+    this._loadExtras();
     this._sortMembers();
+    this._sortMethods();
+    this._sortProperties();
   }
 
-
+  _sortMethods() {
+    this._deleter;
+    this._getters = new Map();
+    this._setters = new Map();
+    this._stringifier;
+    for (let m of this._methods) {
+      if (m[1].deleter) {
+        this._deleter = m;
+        this._methods.delete(m[0]);
+      }
+      if (m[1].getter) {
+        this._getters.set(m[0], m[1]);
+        this._methods.delete(m[0]);
+      }
+      if (m[1].setter) {
+        this._setters.set(m[0], m[1]);
+        this._methods.delete(m[0]);
+      }
+      if (m[1].stringifier) {
+        this._stringifier = m;
+        this._methods.delete(m[0]);
+      }
+    }
+  }
 
   _sortProperties() {
     this._eventhandlers = new Map();
     this._getters = new Map();
     this._setters = new Map();
     for (let p of this._properties) {
-      if (p[1].eventhandler) {
-        this._eventhandlers.set(p[0], p[1]);
-        this._properties.delete(p[0]);
-        continue;
+      // Sort based on return type.
+      switch (p[1].idlType.baseName) {
+        case 'EventHandler':
+          this._eventhandlers.set(p[0], p[1]);
+          this._properties.delete(p[0]);
+          break;
+        default:
+          // Leave it where it is
       }
-      if (p[1].getter) {
-        this._getters.set(p[0], p[1]);
-        this._properties.delete(p[0]);
-        continue;
-      }
-      if (p[1].setter) {
-        this._setters.set(p[0], p[1]);
-        this._properties.delete(p[0]);
-        continue;
-      }
-      throw new Error('Unexpected property type: ' + p);
     }
   }
 
   _sortMembers() {
+    this._consts = new Map();
+    this._iterable;
+    this._maplike;
     this._methods = new Map();
     this._properties = new Map();
-    for (let m of this._interface.members) {
+    this._setlike;
+    for (let m of this._sourceData.members) {
       switch (m.type) {
-        case 'operation':
-          this._methods.set(m.body.name.escaped, m);
-          break;
         case 'attribute':
           this._properties.set(m.escapedName, m);
+          break;
+        case 'const':
+          this._consts.set(m.name, m);
+          break;
+        case 'iterable':
+          this._iterable = m;
+          break;
+        case 'maplike':
+          this._maplike = m;
+          break;
+        case 'operation':
+          this._methods.set(this._getOperationKey(m), m);
+          break;
+        case 'setlike':
+          this._setlike = m;
+          break;
         default:
-          throw new Error('Unknown member type found in InterfaceData._sortTree().')
+          throw new Error(`Unknown member type found in InterfaceData._sortTree(): ${m.type}.`)
       }
     }
   }
 
+  _getOperationKey(member) {
+    if (member.deleter) {
+      return 'deleter';
+    }
+    if (member.getter) {
+      return 'getter';
+    }
+    if (member.setter) {
+      return 'setter';
+    }
+    if (member.stringifier) {
+      return 'stringifier';
+    }
+    if (member.body.name) {
+      return member.body.name.escaped;
+    }
+    throw new Error('Cannot find operation key.');
+  }
+
   _loadTree(sourceFile) {
-    this.sourceContents = utils.getIDLFile(sourceFile.path());
+    this._sourceContents = utils.getIDLFile(sourceFile.path());
     let tree = webidl2.parse(this.sourceContents);
     for (let t in tree) {
       switch (tree[t].type) {
@@ -91,19 +145,19 @@ class InterfaceData {
           // throw new IDLError(msg);
           break;
         case 'interface':
-          this._interface = tree[t];
+          this._sourceData = tree[t];
           break;
       }
     }
-    if (!this._interface) {
+    if (!this._sourceData) {
       const msg = `The ${sourceFile.path()} file does not contain interface data.`;
       throw new IDLError(msg);
     }
   }
 
   _loadExtras() {
-    if (!this._interface.extAttrs) { return; }
-    let items = this._interface.extAttrs.items;
+    if (!this._sourceData.extAttrs) { return; }
+    let items = this._sourceData.extAttrs.items;
     this._signatures = [];
     for (let i in items) {
       switch (items[i].name) {
@@ -117,191 +171,23 @@ class InterfaceData {
           this._flag = items[i].rhs.value;
           break;
         case 'Exposed':
+          this._exposed = new Array();
+          if (items[i].rhs) {
+            this._exposed.push(items[i].rhs.value);
+          } else {
+            for (let a of items[i].signature.arguments) {
+              this._exposed.push(a.idlType.idlType);
+            }
+          }
+          break;
+        case 'RaisesException':
+          this._raisesException = true;
+          this._exceptions = items[i].rhs.value;
+          break;
+        case 'SecureContext':
           //
           break;
-        case 'raisesException':
-          //
-          break;
       }
-    }
-  }
-
-  _loadExtrasEX() {
-    if (!this._interface.extAttrs) { return; }
-    let items = this._interface.extAttrs.items;
-    this._signatures = [];
-    for (let i in items) {
-      switch (items[i].name) {
-        case 'Constructor':
-          this._constructor = true;
-          if (items[i].signature) {
-            this._signatures.push(items[i].signature.arguments);
-          }
-          break;
-        case 'RuntimeEnabled':
-          this._flag = items[i].rhs.value;
-          break;
-      }
-    }
-  }
-
-  _loadMembers() {
-    this._getConstructors();
-    this._eventhandlers = [];
-    this._getters = [];
-    this._methods = [];
-    this._properties = [];
-    this._setters = [];
-    let property;
-    let subType;
-    let args;
-    let mems = this._interface.members;
-    for (let m in mems) {
-      switch (mems[m].type) {
-        case 'attribute':
-          subType = this._getAttributeSubType(mems[m]);
-          property = subType;
-          property.interface = subType.name;
-          switch (subType.type) {
-            case 'eventhandler':
-              this._eventhandlers.push(property);
-              break;
-            case 'method':
-              if (mems[m].body) {
-                args = this._getArgumentString(mems[m].body.arguments);
-                property.interface += ("(" + args + ")");
-              }
-              this._methods.push(property);
-              break;
-            case 'property':
-              this._properties.push(property);
-              break;
-          }
-          break;
-        case 'operation':
-          subType = this._getOperationSubType(mems[m]);
-          switch (subType.type) {
-            case 'getter':
-              property = subType;
-              property.interface = subType.name;
-              this._getters.push(property);
-              break;
-            case 'method':
-              property = subType;
-              property.interface = subType.name;
-              // args = this._getArguments(mems[m]);
-              if (mems[m].body) {
-                args = this._getArgumentString(mems[m].body.arguments);
-                property.interface += ("(" + args + ")");
-              }
-              this._methods.push(property)
-              break;
-            case 'setter':
-              property = subType;
-              property.interface = subType.name;
-              this._setters.push(property);
-            case 'stringifier':
-              //
-              break;
-          }
-      }
-    }
-  }
-
-  _getOperationSubType(member) {
-    let name;
-    if (member.stringifier) { return { "type": "stringifier", "name": null }; }
-    if (member.getter) {
-      if (member.body.name) {
-        name = member.body.name.escaped;
-      } else if (member.body.idlType) {
-        name = member.body.idlType.baseName;
-      } else if (member.extAttrs.items[0].rhs) {
-        name = member.extAttrs.items[0].rhs.value;
-      }
-      return { "type": "getter", "name": name };
-    }
-    if (member.setter) {
-      return { "type": "setter", "name": "[]"};
-    }
-    if (member.deleter) {
-      return { "type": "deleter", "name": "deleter"};
-    }
-    name = member.body.name.escaped;
-    return { "type": "method", "name": name };
-  }
-
-  _getAttributeSubType(member) {
-    switch (member.idlType.baseName) {
-      case 'EventHandler':
-        return { "type": "eventhandler", "name": member.escapedName };
-        break;
-      case 'Promise':
-        return { "type": "method", "name": member.escapedName };
-        break;
-      default:
-        return { "type": "property", "name": member.escapedName };
-    }
-  }
-
-  _getArgumentString(args) {
-    let argString = '';
-    if (args.length) {
-      for (let a in args) {
-        argString += (args[a].idlType.baseName + " " + args[a].name + ", ");
-      }
-      argString = argString.slice(0, -2); // Chop last comma and space.
-    }
-    return argString;
-  }
-
-  _getConstructors() {
-    if (!this._interface.extAttrs) { return; }
-    let extras = this._interface.extAttrs.items;
-    let sig;
-    for (let e in extras) {
-      if (extras[e].name == 'Constructor') {
-        if (extras[e].signature) {
-          sig += (this._getArgumentString(extras[e].signature.arguments) || '');
-        }
-        this._signatures.push(sig);
-      }
-    }
-  }
-
-  _getOperationSubType(member) {
-    let name;
-    if (member.stringifier) { return { "type": "stringifier", "name": null }; }
-    if (member.getter) {
-      if (member.body.name) {
-        name = member.body.name.escaped;
-      } else if (member.body.idlType) {
-        name = member.body.idlType.baseName;
-      } else if (member.extAttrs.items[0].rhs) {
-        name = member.extAttrs.items[0].rhs.value;
-      }
-      return { "type": "getter", "name": name };
-    }
-    if (member.setter) {
-      return { "type": "setter", "name": "[]" };
-    }
-    if (member.deleter) {
-      return { "type": "deleter", "name": "deleter" };
-    }
-    name = member.body.name.escaped;
-    return { "type": "method", "name": name };
-  }
-
-  _getAttributeSubType(member) {
-    switch (member.idlType.baseName) {
-      case 'EventHandler':
-        return { "type": "eventhandler", "name": member.escapedName };
-        break;
-      case 'Promise':
-        return { "type": "method", "name": member.escapedName };
-        break;
-      default:
-        return { "type": "property", "name": member.escapedName };
     }
   }
 
@@ -314,22 +200,6 @@ class InterfaceData {
       argString = argString.slice(0, -1); // Chop last comma.
     }
     return argString;
-  }
-
-  _getConstructors() {
-    if (!this._interface.extAttrs) { return; }
-    let extras = this._interface.extAttrs.items;
-    let sig;
-    for (let e in extras) {
-      if (extras[e].name == 'Constructor') {
-        sig = "(";
-        if (extras[e].signature) {
-          sig += this._getArgumentString(extras[e].signature.arguments);
-        }
-        sig += ")";
-      }
-      this._signatures.push(sig);
-    }
   }
 
   getBurnRecords(includeFlags=false) {
@@ -361,6 +231,7 @@ class InterfaceData {
   }
 
   get command() {
+    // START HERE: Construct a more complete command line based on new data.
     let command = [];
     command.push('0');
     command.push('1');
@@ -383,6 +254,14 @@ class InterfaceData {
     return command;
   }
 
+  get constants() {
+    return this._consts;
+  }
+
+  get deleter() {
+    return this._deleter;
+  }
+
   get eventhandlers() {
     return this._eventhandlers;
   }
@@ -399,6 +278,10 @@ class InterfaceData {
     return this._getters;
   }
 
+  get iterable() {
+    return this._iterable;
+  }
+
   get interfaces() {
     return this._getIdentifiers('.', 'interface');
   }
@@ -407,21 +290,45 @@ class InterfaceData {
     return this._getIdentifiers('.');
   }
 
+  get maplike() {
+    return this._maplike;
+  }
+
   get members() {
-    let result = [];
-    if (this._eventhandlers) {
-      result = result.concat(this._eventhandlers);
+    // let members = new Map([this._consts, this._eventhandlers, this._getters, this._methods, this._properties, this._setters]);
+    // return members;
+    let members = new Map();
+    for (let [k, v] of this._consts) {
+      members.set(k, v);
     }
-    if (this._getters) {
-      result = result.concat(this._getters);
+    if (this._deleter) {
+      members.set('deleter', this._deleter);
     }
-    if (this._methods) {
-      result = result.concat(this._methods);
+    for (let [k, v] of this._eventhandlers) {
+      members.set(k, v);
     }
-    if (this._properties) {
-      result = result.concat(this._properties);
+    for (let [k, v] of this._getters) {
+      members.set(k, v);
     }
-    return result.sort();
+    if (this._iterable) {
+      members.set('iterable', this._iterable);
+    }
+    if (this._maplike) {
+      members.set('maplike', this._mapline);
+    }
+    for (let [k, v] of this._methods) {
+      members.set(k, v);
+    }
+    for (let [k, v] of this._properties) {
+      members.set(k, v);
+    }
+    if (this._setlike) {
+      members.set('setlike', this._setlike);
+    }
+    if (this._stringifier) {
+      members.set('stringifier', this._stringifier);
+    }
+    return members;
   }
 
   get methods() {
@@ -429,11 +336,15 @@ class InterfaceData {
   }
 
   get name() {
-    return this._interface.name;
+    return this._sourceData.name;
   }
 
   get properties() {
     return this._properties;
+  }
+
+  get setlike() {
+    return this._setlike;
   }
 
   get signatures() {
@@ -445,8 +356,8 @@ class InterfaceData {
     return this._sourceContents;
   }
 
-  set sourceContents(contents) {
-    this._sourceContents = contents;
+  get stringifier() {
+    return this._stringifier;
   }
 
   get tree() {
