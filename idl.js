@@ -231,7 +231,7 @@ class InterfaceData {
   }
 
   get command() {
-    // START HERE: Construct a more complete command line based on new data.
+    // START HERE: Need to deal with setlike and stringifier.
     let command = [];
     command.push('0');
     command.push('1');
@@ -241,15 +241,19 @@ class InterfaceData {
     command.push('-l');
     command.push('-r');
     if (this.hasConstructor()) { command.push('-c'); }
-    let methods = this.methods;
-    for (let m in methods) {
-      command.push('-m');
-      command.push(methods[m].name + '()');
+    if (this._iterable) { command.push('-it'); }
+    if (this._maplike) { command.push('-mp'); }
+    for (let [k, v] of this._eventhandlers) {
+      command.push('-h');
+      command.push(k);
     }
-    let properties = this.properties;
-    for (let p in properties) {
+    for (let [k, v] of this._methods) {
+      command.push('-m');
+      command.push(k);
+    }
+    for (let [k, v] of this._properties) {
       command.push('-p');
-      command.push(properties[p].name);
+      command.push(k);
     }
     return command;
   }
