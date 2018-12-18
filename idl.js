@@ -33,7 +33,6 @@ class InterfaceData {
   }
 
   _sortTree() {
-    console.log(this._sourceData.name);
     this._loadExtras();
     this._sortMembers();
     this._sortMethods();
@@ -167,9 +166,6 @@ class InterfaceData {
             this._signatures.push(items[i].signature.arguments);
           }
           break;
-        case 'RuntimeEnabled':
-          this._flag = items[i].rhs.value;
-          break;
         case 'Exposed':
           this._exposed = new Array();
           if (items[i].rhs) {
@@ -180,9 +176,15 @@ class InterfaceData {
             }
           }
           break;
+        case 'OriginTrialEnabled':
+          this._originTrial = items[i].rhs.value;
+          break;
         case 'RaisesException':
           this._raisesException = true;
           this._exceptions = items[i].rhs.value;
+          break;
+        case 'RuntimeEnabled':
+          this._flag = items[i].rhs.value;
           break;
         case 'SecureContext':
           //
@@ -231,7 +233,7 @@ class InterfaceData {
   }
 
   get command() {
-    // START HERE: Need to deal with setlike and stringifier.
+    // Need to deal with setlike and stringifier.
     let command = [];
     command.push('0');
     command.push('1');
@@ -341,6 +343,10 @@ class InterfaceData {
 
   get name() {
     return this._sourceData.name;
+  }
+
+  get originTrial() {
+    return this._originTrial;
   }
 
   get properties() {

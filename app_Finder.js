@@ -25,6 +25,43 @@ class _Finder {
     return matches;
   }
 
+  _isFlagged(data) {
+    let message;
+    if (data._originTrial) {
+      message = 'This interface is in an origin trial ';
+    }
+    if (data._flag) {
+      message = 'This interface is behind a flag ';
+    }
+    if (data._originTrial && data._flag) {
+      message = 'This interface is in an origin trial and behind a flag ';
+    }
+    message += 'and therefore should not be documented on MDN. Do you want to procede?'
+    if (message) {
+      return { flagged: true, message: message }
+    } else {
+      return { flagged: false, message: '' }
+    }
+  }
+
+  async _confirm(message) {
+    let enq = new Enquirer();
+    const options = {
+      message: (message + ' Y or N?'),
+      validate: (value) => {
+        if (!['y','Y','n','N'].includes(value)) {
+          return "Please enter one of 'y','Y','n', or 'N'";
+        } else {
+          value = value.toLowerCase();
+          return true;
+        }
+      }
+    };
+    enq.question('confirm', options);
+    const answer = await enq.prompt('confirm');
+    return answer;
+  }
+
   async _select(matches) {
     let names = [];
     for (let m in matches) {
@@ -72,6 +109,11 @@ class _Finder {
       }
     }
     const id = new InterfaceData(interfaces[0]);
+    const flagged = this._isFlagged(id);
+    if (flagged.flagged) {
+      const answer = await this._confirm(flagged.message);
+      if (answer.confirm == 'n') { process.exit(); }
+    }
     const builder = new Builder();
     builder.writeBCD(id);
     // Remimplement and add to help after conversion to yargs.
