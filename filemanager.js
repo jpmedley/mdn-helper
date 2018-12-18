@@ -3,7 +3,8 @@
 const fs = require('fs');
 const { InterfaceData } = require('./idl.js');
 
-const API_DIRS = ["_test/", "core/", "modules/"];
+const API_DIRS = ["core/", "modules/"];
+const TEST_DIRS = ["_test/"];
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 
 class IDLFileSet {
@@ -14,8 +15,15 @@ class IDLFileSet {
   }
 
   _loadFiles(rootDirectory = this._rootDirectory) {
-    for (let d in API_DIRS) {
-      let dir = rootDirectory + API_DIRS[d];
+    let dir;
+    if (config.get('Application.test')) {
+      for ( let d of TEST_DIRS) {
+        dir = rootDirectory + d;
+        this._processDirectory(dir);
+      }
+    }
+    for (let d of API_DIRS) {
+      dir = rootDirectory + d;
       this._processDirectory(dir);
     }
   }
