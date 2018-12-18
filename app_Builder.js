@@ -44,6 +44,7 @@ class _Builder {
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
     sharedQuestions.add(parentType, parentName);
+    
     // We no longer need the conent type and name.
     args.shift();
     args.shift();

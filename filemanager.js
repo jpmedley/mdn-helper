@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const config = require('config');
 const { InterfaceData } = require('./idl.js');
 
 const API_DIRS = ["core/", "modules/"];
@@ -17,7 +18,7 @@ class IDLFileSet {
   _loadFiles(rootDirectory = this._rootDirectory) {
     let dir;
     if (config.get('Application.test')) {
-      for ( let d of TEST_DIRS) {
+      for (let d of TEST_DIRS) {
         dir = rootDirectory + d;
         this._processDirectory(dir);
       }
