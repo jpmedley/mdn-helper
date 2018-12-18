@@ -2,7 +2,7 @@
   "Application": {
     "outputDirectory": "out/",
     "questionsFile": "writer-questions.json",
-    "test": true
+    "test": false
   },
   "User": {
   }

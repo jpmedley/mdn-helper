@@ -1,4 +1,5 @@
 #!/bin/sh
+
 IDL_ZIP='https://chromium.googlesource.com/chromium/src/+archive/HEAD/third_party/blink/renderer.tar.gz'
 
 rm -rf idl/core/
