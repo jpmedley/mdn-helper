@@ -108,7 +108,7 @@ class _Finder {
     let idlPath, idlFile, name, match;
     for (let a of answers.idlFile) {
       for (let m of matches) {
-        if (a.includes(m.key)) {
+        if (a == m.key) {
           match = m;
           break;
         }
