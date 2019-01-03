@@ -393,20 +393,20 @@ class InterfaceData {
         identifiers.push(idBase);
       }
     }
-    for (let e in this._eventhandlers) {
-      identifiers.push(this.name + separator + this._eventhandlers[e][type]);
+    for (let e of this._eventhandlers.keys()) {
+      identifiers.push(this.name + separator + e);
     }
-    for (let g in this._getters) {
-      identifiers.push(this.name + separator + this._getters[g][type]);
+    for (let g of this._getters.keys()) {
+      identifiers.push(this.name + separator + g);
     }
-    for (let m in this._methods) {
-      identifiers.push(this.name + separator + this._methods[m][type]);
+    for (let m of this._methods.keys()) {
+      identifiers.push(this.name + separator + m);
     }
-    for (let p in this._properties) {
-      identifiers.push(this.name + separator + this._properties[p][type]);
+    for (let p of this._properties.keys()) {
+      identifiers.push(this.name + separator + p);
     }
-    for (let s in this._setters) {
-      identifiers.push(this.name + this._setters[s][type]);
+    for (let s of this._setters.keys()) {
+      identifiers.push(this.name + separator + s);
     }
     return identifiers;
   }

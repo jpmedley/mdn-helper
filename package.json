@@ -30,7 +30,7 @@
     "enquirer": "^1.0.3",
     "fs": "0.0.1-security",
     "husky": "^1.2.1",
-    "mdn-browser-compat-data": "0.0.60",
+    "mdn-browser-compat-data": "0.0.61",
     "node.extend": "^2.0.2",
     "prompt-checkbox": "^2.2.0",
     "prompt-choices": "^5.0.0",
