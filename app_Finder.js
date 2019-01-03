@@ -16,34 +16,6 @@ class _Finder {
     this.idlSet = new fm.IDLFileSet();
   }
 
-  _find(interfacesNamed) {
-    const matches = this.idlSet.findMatching(interfacesNamed);
-    if (!matches.length) {
-      console.log(NOTHING_FOUND);
-      process.exit();
-    }
-    return matches;
-  }
-
-  _isFlagged(data) {
-    let message;
-    if (data._originTrial) {
-      message = 'This interface is in an origin trial ';
-    }
-    if (data._flag) {
-      message = 'This interface is behind a flag ';
-    }
-    if (data._originTrial && data._flag) {
-      message = 'This interface is in an origin trial and behind a flag ';
-    }
-    message += 'and therefore should not be documented on MDN. Do you want to procede?'
-    if (message) {
-      return { flagged: true, message: message }
-    } else {
-      return { flagged: false, message: '' }
-    }
-  }
-
   async _confirm(message) {
     let enq = new Enquirer();
     const options = {
@@ -60,6 +32,55 @@ class _Finder {
     enq.question('confirm', options);
     const answer = await enq.prompt('confirm');
     return answer;
+  }
+
+  _find(interfacesNamed) {
+    const matches = this.idlSet.findMatching(interfacesNamed);
+    if (!matches.length) {
+      console.log(NOTHING_FOUND);
+      process.exit();
+    }
+    return matches;
+  }
+
+  _isFlagged(data) {
+    let message;
+    let stub = 'and therefore should not be documented on MDN. Do you want to procede?'
+    if (data._originTrial) {
+      message = 'This interface is in an origin trial ' + stub;
+    }
+    if (data._flag) {
+      message = 'This interface is behind a flag ';
+    }
+    if (data._originTrial && data._flag) {
+      message = 'This interface is in an origin trial and behind a flag ' + stub;
+    }
+    if (message) {
+      return { flagged: true, message: message }
+    } else {
+      return { flagged: false, message: '' }
+    }
+  }
+
+  _normalizeArguments(args, mode) {
+    // Remove -j if we're finding instead of building
+    if (mode == 'find') {
+      for (let i in args) {
+        if (args[i] == '-j') {
+          args.splice(i, 1);
+          return args;
+        }
+      }
+    }
+    // Make sure args in the correct order
+    for (let i in args) {
+      if ((args[i] == '-j') && (i == (args.length-1))) {
+        args.splice((args.length - 2), 0, '-j');
+        args.splice((args.length - 1), 1);
+        return args;
+      }
+    }
+    return args;
   }
 
   async _select(matches) {
@@ -80,7 +101,8 @@ class _Finder {
   }
 
   async findAndShow(args) {
-    const matches = this._find(args[3]);
+    args = this._normalizeArguments(args, 'find');
+    const matches = this._find(args[args.length - 1]);
     const answers = await this._select(matches);
     if (answers.idlFile[0] == CANCEL) { process.exit(); }
     let idlPath, idlFile, name, match;
@@ -99,7 +121,8 @@ class _Finder {
   }
 
   async findAndBuild(args) {
-    const matches = this._find(args[3]);
+    args = this._normalizeArguments(args, 'build');
+    const matches = this._find(args[args.length - 1]);
     const answers = await this._select(matches);
     if (answers.idlFile[0] == CANCEL) { process.exit(); }
     let interfaces = [];

@@ -39,6 +39,8 @@ class _BCDManager {
     this._bcdString = this._bcdString.replace('[[members]]', members);
     this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, idl.name);
     this._write(outFilePath);
+    const msg = `BCD boilerplate has been written to ${outFilePath}.`
+    console.log(msg);
   }
 }
 
