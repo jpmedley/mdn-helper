@@ -5,7 +5,7 @@ const Enquirer = require('enquirer');
 const fm = require('./filemanager.js');
 const { InterfaceData } = require('./idl.js');
 const { Builder } = require('./app_Builder.js');
-const radio = require('radio-symbol');
+const radio = require('prompt-radio');
 const utils = require('./utils.js');
 
 const NOTHING_FOUND = "Could not find matching IDL files."
@@ -85,19 +85,21 @@ class _Finder {
 
   async _select(matches) {
     let names = [];
-    for (let m in matches) {
-      names.push(matches[m].key);
+    // for (let m in matches) {
+    //   names.push(matches[m].key + ` (${matches[m].name})`);
+    // }
+    for (let m of matches) {
+      names.push(m.key + ` (${m.name})`);
     }
     names.push(CANCEL);
     let enq = new Enquirer();
-    enq.register('checkbox', cb);
-    enq.question('idlFile', 'Which interface do you want to write for?', {
-      type: 'checkbox',
-      checkbox: radio.star,
+    enq.register('radio', cb);
+    enq.question('idlFile', 'Which interface do you want to work with?', {
+      type: 'radio',
       choices: names
     });
-    let answers = await enq.prompt('idlFile');
-    return answers;
+    let answer = await enq.prompt('idlFile');
+    return answer;
   }
 
   async findAndShow(args) {
@@ -108,7 +110,9 @@ class _Finder {
     let idlPath, idlFile, name, match;
     for (let a of answers.idlFile) {
       for (let m of matches) {
-        if (a == m.key) {
+        // Get the filename out of the result.
+        let file = a.match(/\(([\w\.]*)\)/);
+        if (file[1] == m.name) {
           match = m;
           break;
         }
