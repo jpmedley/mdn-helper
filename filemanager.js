@@ -7,6 +7,7 @@ const { InterfaceData } = require('./idl.js');
 const API_DIRS = ["core/", "modules/"];
 const TEST_DIRS = ["_test/"];
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
+const TEST_MODE = config.get('Application.test');
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
@@ -17,7 +18,7 @@ class IDLFileSet {
 
   _loadFiles(rootDirectory = this._rootDirectory) {
     let dir;
-    if (config.get('Application.test')) {
+    if (TEST_MODE) {
       for (let d of TEST_DIRS) {
         dir = rootDirectory + d;
         this._processDirectory(dir);
@@ -53,6 +54,9 @@ class IDLFileSet {
           // for (let m of idlFile.members) {
           //   contents[c].index.push(idlFile.name + '.' + m.name);
           // }
+        } else {
+          console.log('Could not load:');
+          console.log(contents[c]);
         }
         this._files.push(contents[c]);
       }
@@ -68,6 +72,7 @@ class IDLFileSet {
       let idlFile = new InterfaceData(fileObject);
       return idlFile;
     } catch (e) {
+      if (TEST_MODE) { throw e; }
       if (e.constructor.name == 'IDLError') {
         return;
       } else if (e.constructor.name == 'WebIDLParseError') {
