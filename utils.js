@@ -69,6 +69,13 @@ function _getOutputFile(filePath, reuse = false) {
   return fs.openSync(filePath, 'w');
 }
 
+function _makeOutputFolder(dirName) {
+  const out = _getConfig('outputDirectory');
+  const todayFolder = out + '/' + dirName;
+  if (fs.existsSync(todayFolder)) { return; }
+  fs.mkdirSync(todayFolder);
+}
+
 function _getIDLFile(name) {
   if (!name.endsWith(".idl")) { name += ".idl"; }
   // let filePath = IDL_FILES + name;
@@ -156,6 +163,7 @@ module.exports.getIDLFile = _getIDLFile;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
+module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.today = _today;

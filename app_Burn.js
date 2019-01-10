@@ -58,7 +58,10 @@ class _Burner {
   }
 
   _openBCDFile(listId, selectedBrowsers) {
-    this._outFileName = utils.OUT + listId + '-BCD-' + RESULTS_FILE;
+    const todayFolder = 'burn_' + utils.today() + '/';
+    utils.makeOutputFolder(todayFolder);
+    const dir = utils.OUT + todayFolder;
+    this._outFileName = dir + listId + '-BCD-' + RESULTS_FILE;
     let file = utils.getOutputFile(this._outFileName);
     let header = 'Interface,' + selectedBrowsers.join(',') + '\n';
     fs.write(file, header, ()=>{});
@@ -66,7 +69,10 @@ class _Burner {
   }
 
   _openURLFile(listID, type) {
-    this._outFileName = utils.OUT + listID + "-" + type + "-" + RESULTS_FILE;
+    const todayFolder = 'burn_' + utils.today() + '/';
+    utils.makeOutputFolder(todayFolder);
+    const dir = utils.OUT + todayFolder;
+    this._outFileName = dir + listID + "-" + type + "-" + RESULTS_FILE;
     let file = utils.getOutputFile(this._outFileName);
     let header = "Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n";
     fs.write(file, header, ()=>{});
