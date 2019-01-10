@@ -55,8 +55,8 @@ class IDLFileSet {
           //   contents[c].index.push(idlFile.name + '.' + m.name);
           // }
         } else {
-          console.log('Could not load:');
-          console.log(contents[c]);
+          // console.log('Could not load:');
+          // console.log(contents[c]);
         }
         this._files.push(contents[c]);
       }
