@@ -45,15 +45,9 @@ class IDLFileSet {
         }
         contents[c].path = path;
         path.bind(contents[c]);
-        contents[c].index = new Array();
         let idlFile = this._getIDLFile(contents[c]);
         if (idlFile) {
           contents[c].key = idlFile.name;
-          contents[c].index.push(idlFile.name.toLowerCase());
-          // For now, only deal with interface names.
-          // for (let m of idlFile.members) {
-          //   contents[c].index.push(idlFile.name + '.' + m.name);
-          // }
         } else {
           // console.log('Could not load:');
           // console.log(contents[c]);
@@ -87,8 +81,7 @@ class IDLFileSet {
     let matches = [];
     let lcName = name.toLowerCase();
     for (let f of this._files) {
-      if (f.index.length == 0) { continue; }
-      if (f.index[0].includes(lcName)) {
+      if (f.name.includes(lcName)) {
         matches.push(f);
       }
     }
