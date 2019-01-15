@@ -44,7 +44,7 @@ class _Builder {
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
     sharedQuestions.add(parentType, parentName);
-    
+
     // We no longer need the conent type and name.
     args.shift();
     args.shift();
@@ -137,8 +137,12 @@ class _Builder {
           break;
         case '-m':
         case '--method':
-          if (args[index+1].endsWith('(')) { args[index+1] += ")"; }
-          if (!args[index+1].endsWith('()')) { args[index+1] += "()"; }
+          if (args[index+1].endsWith(')')) {
+            args[index+1] = args[index+1].slice(0, -1);
+          }
+          if (args[index+1].endsWith('(')) {
+            args[index+1] = args[index+1].slice(0, -1);
+          }
           trueArgs.push(arg);
           break;
         case '-mp':
