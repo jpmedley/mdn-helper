@@ -252,6 +252,20 @@
       "skip": false,
       "action": null
     },
+    "isSecureContext": {
+      "question": "Should this contain the {{securecontext_header}} macro?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y|{{securecontext_header}})",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "{{securecontext_header}}",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_string"}
+    },
     "isStandard": {
       "question": "Should this contain the {{SeeCompatTable}} macro?",
       "type": "boolean",
