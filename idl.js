@@ -33,10 +33,19 @@ class InterfaceData {
   }
 
   _sortTree() {
-    this._loadExtras();
-    this._sortMembers();
-    this._sortMethods();
-    this._sortProperties();
+    // STEP2 Figure out the type and diverge.
+    switch (this._type) {
+      case 'dictionary':
+        this._sortFields();
+        break;
+      case 'interface':
+        this._loadExtras();
+        this._sortMembers();
+        this._sortMethods();
+        this._sortProperties();
+        break;
+    }
+
   }
 
   _sortMethods() {
@@ -78,6 +87,15 @@ class InterfaceData {
         default:
           // Leave it where it is
       }
+    }
+  }
+
+  _sortFields() {
+    // STEP3 Sort the fields.
+    this._fields = new Map();
+    let ms = this._sourceContents.members;
+    for (let f in ms) {
+      this._fields.set(ms[f].escapedName, ms[f].default.value);
     }
   }
 
@@ -139,12 +157,13 @@ class InterfaceData {
     for (let t in tree) {
       switch (tree[t].type) {
         case 'dictionary':
-          // For now, don't include dictionaries in the log file.
-          // const msg = `File ${sourceFile} is for a dictionary.`;
-          // throw new IDLError(msg);
+          // STEP1: load source dictionary to _sourceData
+          this._sourceData = tree[t];
+          this._type = tree[t].type;
           break;
         case 'interface':
           this._sourceData = tree[t];
+          this._type = tree[t].type;
           break;
       }
     }

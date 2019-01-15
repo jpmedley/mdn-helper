@@ -66,7 +66,7 @@ class IDLFileSet {
       let idlFile = new InterfaceData(fileObject);
       return idlFile;
     } catch (e) {
-      if (TEST_MODE) { throw e; }
+      // if (TEST_MODE) { throw e; }
       if (e.constructor.name == 'IDLError') {
         return;
       } else if (e.constructor.name == 'WebIDLParseError') {
@@ -81,7 +81,9 @@ class IDLFileSet {
     let matches = [];
     let lcName = name.toLowerCase();
     for (let f of this._files) {
-      if (f.name.includes(lcName)) {
+      if (!f.key) { continue; }
+      let lcKey = f.key.toLowerCase();
+      if (lcKey.includes(lcName)) {
         matches.push(f);
       }
     }
