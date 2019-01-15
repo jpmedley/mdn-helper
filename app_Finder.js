@@ -124,18 +124,27 @@ class _Finder {
     }
   }
 
+  _resolveFile(answer, matches) {
+    let file = answer.match(/\((\w+\.idl)\)/);
+    for (let m of matches) {
+      if (file[1] == m.name) {
+        return m;
+      }
+    }
+  }
+
   async findAndBuild(args) {
     args = this._normalizeArguments(args, 'build');
     const matches = this._find(args[args.length - 1]);
     const answers = await this._select(matches);
     if (answers.idlFile[0] == CANCEL) { process.exit(); }
-    let interfaces = [];
-    for (let m in matches) {
-      if (answers.idlFile.includes(matches[m].key)) {
-        interfaces.push(matches[m]);
-      }
+    let resolvedFile = this._resolveFile(answers.idlFile[0], matches);
+    const id = new InterfaceData(resolvedFile);
+    if (id.type == 'dictionary') {
+      console.log('mdn-helper does not yet process dictionaries.');
+      console.log();
+      return;
     }
-    const id = new InterfaceData(interfaces[0]);
     const flagged = this._isFlagged(id);
     if (flagged.flagged) {
       const answer = await this._confirm(flagged.message);

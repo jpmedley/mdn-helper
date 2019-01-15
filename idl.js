@@ -393,6 +393,10 @@ class InterfaceData {
     return this._tree;
   }
 
+  get type() {
+    return this._type;
+  }
+
   get urls() {
     return this._getIdentifiers('/');
   }
