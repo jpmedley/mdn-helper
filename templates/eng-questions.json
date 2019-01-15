@@ -28,7 +28,7 @@
       "action": null
     },
     "arguments": {
-      "question": "Does this constructor have any parameters? Please enter a comma-separated list or press Enter.",
+      "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -252,6 +252,20 @@
       "skip": false,
       "action": null
     },
+    "isSecureContext": {
+      "question": "Should this contain the {{securecontext_header}} macro?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y|{{securecontext_header}})",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "{{securecontext_header}}",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_string"}
+    },
     "isStandard": {
       "question": "Should this contain the {{SeeCompatTable}} macro?",
       "type": "boolean",
@@ -409,6 +423,20 @@
       "before": "",
       "skip": false,
       "action": null
+    },
+    "see-also": {
+      "question": "Do you want to include a 'See also' section? Yes or No?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "Yes",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_block", "args": ["_frag_seealso.html"]}
     },
     "selector": {
       "question": "What is the name of the CSS selector?",

@@ -424,6 +424,20 @@
       "skip": false,
       "action": null
     },
+    "see-also": {
+      "question": "Do you want to include a 'See also' section? Yes or No?",
+      "type": "boolean",
+      "pattern": "^(n|y|N|Y)",
+      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "Yes",
+      "required": true,
+      "before": "",
+      "skip": false,
+      "action": {"name": "add_block", "args": ["_frag_seealso.html"]}
+    },
     "selector": {
       "question": "What is the name of the CSS selector?",
       "type": "string",
