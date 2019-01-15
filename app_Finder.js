@@ -34,7 +34,7 @@ class _Finder {
     return answer;
   }
 
-  _find(interfacesNamed) {
+  _findInterfaces(interfacesNamed) {
     const matches = this.idlSet.findMatching(interfacesNamed);
     if (!matches.length) {
       console.log(NOTHING_FOUND);
@@ -102,30 +102,11 @@ class _Finder {
     return answer;
   }
 
-  async findAndShow(args) {
-    args = this._normalizeArguments(args, 'find');
-    const matches = this._find(args[args.length - 1]);
+  async _find(args) {
+    const matches = this._findInterfaces(args[args.length - 1]);
     const answers = await this._select(matches);
     if (answers.idlFile[0] == CANCEL) { process.exit(); }
-    let idlPath, idlFile, name, match;
-    for (let a of answers.idlFile) {
-      for (let m of matches) {
-        // Get the filename out of the result.
-        let file = a.match(/\(([\w\.]*)\)/);
-        if (file[1] == m.name) {
-          match = m;
-          break;
-        }
-      }
-      idlPath = match.path();
-      idlFile = utils.getIDLFile(idlPath);
-      console.log(idlFile);
-      console.log("File located at " + idlPath + ".");
-    }
-  }
-
-  _resolveFile(answer, matches) {
-    let file = answer.match(/\((\w+\.idl)\)/);
+    let file = answers.idlFile[0].match(/\((\w+\.idl)\)/);
     for (let m of matches) {
       if (file[1] == m.name) {
         return m;
@@ -133,22 +114,31 @@ class _Finder {
     }
   }
 
+  _show(file) {
+    let idlFile = utils.getIDLFile(file.path());
+    console.log(idlFile);
+    console.log(`File located at ${file.path()}.`);
+  }
+
+  async findAndShow(args) {
+    args = this._normalizeArguments(args, 'find');
+    let file = await this._find(args);
+    this._show(file);
+  }
+
   async findAndBuild(args) {
     args = this._normalizeArguments(args, 'build');
-    const matches = this._find(args[args.length - 1]);
-    const answers = await this._select(matches);
-    if (answers.idlFile[0] == CANCEL) { process.exit(); }
-    let resolvedFile = this._resolveFile(answers.idlFile[0], matches);
-    const id = new InterfaceData(resolvedFile);
+    let file = await this._find(args);
+    const id = new InterfaceData(file);
     if (id.type == 'dictionary') {
       console.log('mdn-helper does not yet process dictionaries.');
-      console.log();
+      console.log('Printing the interface instead.\n');
+      this._show(file);
       return;
     }
-    const flagged = this._isFlagged(id);
-    if (flagged.flagged) {
+    if (this._isFlagged(id).flagged) {
       const answer = await this._confirm(flagged.message);
-      if (answer.confirm == 'n') { process.exit(); }
+      if (answer.confirm == 'n') { return; }
     }
     const builder = new Builder();
     builder.writeBCD(id);
