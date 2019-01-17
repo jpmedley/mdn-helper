@@ -305,6 +305,7 @@ class _Burner {
     for (let f in files) {
       let idlFile = this._getIDLFile(files[f]);
       if (!idlFile) { continue; }
+      if (idlFile._type != 'interface') { continue; }
       let burnRecords = idlFile.getBurnRecords(this._includeFlags);
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
