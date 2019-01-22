@@ -32,9 +32,12 @@ const FLAGS = {
 }
 
 class _Builder {
+  constructor(interfaceData) {
+    this._interfaceData = interfaceData;
+  }
 
-  _initPages(args) {
-    args = this._normalizeArguments(args);
+  _initPages() {
+    args = this._normalizeArguments(this._interfaceData.command);
     let parentType = args[0];
     let parentName = args[1].split(',')[1];
 
@@ -54,9 +57,15 @@ class _Builder {
     this.pages = new Array();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
+        // Step 4. Ping MDN for page. If MDN page doesn't exist then do the next
+        //  two steps. Also notify user that page already exists.
       let aPage = new page.Page(members[1], members[0], sharedQuestions);
       this.pages.push(aPage);
     });
+  }
+
+  _pageExists() {
+
   }
 
   _getNamedArg(arg) {
@@ -193,6 +202,16 @@ class _Builder {
     return arrangedArgs;
   }
 
+  _writreBCD() {
+    let name = this._interfaceData.name;
+    if (bcd.api[name]) { return; }
+    let bcdm = new BCDManager();
+    let outPath = utils.OUT + name + '/';
+    if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
+    let outFilePath = outPath + name + '.json';
+    bcdm.getBCD(this._interfaceData, outFilePath);
+  }
+
   writeBCD(interfaceData) {
     let name = interfaceData.name
     if (bcd.api[name]) { return; }
@@ -203,7 +222,19 @@ class _Builder {
     bcdm.getBCD(interfaceData, outFilePath);
   }
 
-  async build(args) {
+  // Step 2. Get args from internal InterfaceData instance reference (and
+  //  perhaps use an interface instead of commands.
+
+  async build() {
+    this._initPages();
+    for (let p of this.pages) {
+      await p.askQuestions();
+      this.pages[p].write();
+    }
+  }
+
+  async build_(args) {
+    // Step 3. Pull writeBCD to an internal call.
     this._initPages(args);
     for (let p in this.pages) {
       await this.pages[p].askQuestions();

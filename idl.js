@@ -33,7 +33,6 @@ class InterfaceData {
   }
 
   _sortTree() {
-    // STEP2 Figure out the type and diverge.
     switch (this._type) {
       case 'dictionary':
         this._sortFields();
