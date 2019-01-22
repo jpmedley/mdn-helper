@@ -2,7 +2,8 @@
   "Application": {
     "outputDirectory": "out/",
     "questionsFile": "writer-questions.json",
-    "test": false
+    "test": false,
+    "update": "daily"
   },
   "User": {
   }

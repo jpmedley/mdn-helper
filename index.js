@@ -19,6 +19,8 @@ try {
   process.exit(1);
 }
 
+utils.update();
+
 let finder;
 switch (command) {
   case 'build':
