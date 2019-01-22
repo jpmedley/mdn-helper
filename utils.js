@@ -2,6 +2,9 @@
 
 const config = require('config');
 const fs = require('fs');
+const path = require('path');
+const shell = require('shelljs');
+
 
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
@@ -9,6 +12,9 @@ const TEMPLATES = 'templates/';
 const OUT = config.get('Application.outputDirectory');
 const REQUIRES_FLAGS = ['css','header','interface'];
 const COMMANDS = ['build','burn','clean','config','find','help'].concat(REQUIRES_FLAGS).sort();
+const APP_ROOT = path.resolve(__dirname);
+const UPDATE_INTERVALS = ['daily','weekly'];
+const ONE_DAY = 86400000;
 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
@@ -135,6 +141,36 @@ function _today() {
   return today;
 }
 
+function _update(force=false) {
+  const updateFile = APP_ROOT + '/.update';
+  const now = new Date();
+  const lastUpdate = (() => {
+    let lu;
+    if (fs.existsSync(updateFile)) {
+      lu = fs.readFileSync(updateFile);
+      lu = lu.toString();
+    } else {
+      lu = "Tue Jan 22 1019 15:36:25 GMT-0500 (Eastern Standard Time)";
+    }
+    return new Date(lu);
+  })();
+  const actualInterval = now - lastUpdate
+  const updateInterval = config.get('Application.update');
+  let update = false;
+  switch (updateInterval) {
+    case 'daily':
+      if (actualInterval > ONE_DAY) { update = true; }
+      break;
+    case 'weekly':
+      if (actualInterval > (7 * ONE_DAY)) { update = true; }
+      break;
+  }
+  if (update){
+    shell.exec('./update-idl.sh');
+    fs.writeFileSync(updateFile, now);
+  }
+}
+
 function _validateCommand(args) {
   if (['burn','clean','config','help'].includes(args[2])) { return args[2]; }
   if (args.length < 4) {
@@ -167,4 +203,5 @@ module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.today = _today;
+module.exports.update = _update;
 module.exports.validateCommand = _validateCommand;

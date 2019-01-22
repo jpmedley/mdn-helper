@@ -3,6 +3,7 @@ idl/
 in/
 out/
 .DS_Store
+.update
 idl.tar.gz
 burn-log.txt
 burn-list.csv
