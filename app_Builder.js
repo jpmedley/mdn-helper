@@ -4,6 +4,7 @@ const actions = require('./actions');
 const bcd = require('mdn-browser-compat-data');
 const { BCDManager } = require('./app_BCD.js');
 const fs = require('fs');
+const { help } = require('./help.js');
 const page = require('./page.js');
 const utils = require('./utils.js');
 
@@ -39,7 +40,7 @@ class _Builder {
 
     // Add space for interface or header name to sharedQuestions,
     //  and remove it from args.
-    let introMessage = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
+    let introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n`;
     let sharedQuestions = new page.Questions(introMessage);
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
@@ -161,7 +162,8 @@ class _Builder {
           break;
         case '--landing':
           trueArgs.push(arg)
-          trueArgs.push((args[0] + '_landing'));
+//           trueArgs.push((args[0] + '_landing'));
+          trueArgs.push(args[2]);
           break;
         default:
           trueArgs.push(arg);

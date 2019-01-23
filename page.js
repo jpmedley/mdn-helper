@@ -3,6 +3,7 @@
 const actions = require('./actions');
 const Enquirer = require('enquirer');
 const fs = require('fs');
+const { help } = require('./help.js');
 const util = require('util');
 const utils = require('./utils.js');
 
@@ -116,7 +117,7 @@ class _Page {
     this.sharedQuestions = sharedQuestions;
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
-    let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80));
+    let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) +  help[this.type];
     this.questions = new _Questions(introMessage);
     this.questions.add(type, name);
     this.contents = utils.getTemplate(this.type.toLowerCase());
