@@ -28,7 +28,7 @@
       "action": null
     },
     "arguments": {
-      "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
+      "question": "Does this item have any parameters? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -109,7 +109,7 @@
       "action": null
     },
     "directives": {
-      "question": "Does this item have any directives? Please enter a comma-separated list or press Enter.",
+      "question": "Does this item have any directives? Please enter all directives with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -122,7 +122,7 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "directive-values": {
-      "question": "What are the possible values for this directive? Please enter a comma-separated list or press Enter.",
+      "question": "What are the possible values for this directive? Please enter all values with\ncommas between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -161,7 +161,7 @@
       "action": null
     },
     "eventHandlers": {
-      "question": "Does this interface have any event handlers? Please enter a comma-separated list or press Enter.",
+      "question": "Does this interface have any event handlers? Please enter all handlers with\ncommas between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -174,7 +174,7 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "exceptions": {
-      "question": "Does this method throw any exceptions? Please enter a comma-separated list or press Enter.",
+      "question": "Does this method throw any exceptions? Please enter all exceptions with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -294,7 +294,7 @@
       "action": null
     },
     "mdnAPIRef": {
-      "question": "What is the API name as it should be used in the APIRef() macro? This is the same value used as the in GroupData.json.",
+      "question": "What is the API name as it should be used in the APIRef()\nmacro? This is the same value used as the in GroupData.json.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -333,7 +333,7 @@
       "action": null
     },
     "methods": {
-      "question": "Does this interface have any methods (exclusing those that would be created for an iterable object)? Please enter a comma-separated list or press Enter.",
+      "question": "Does this interface have any methods (exclusing those that would be created for\nan iterable object)? Please enter all methods with commas between them.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -346,7 +346,7 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "parameters": {
-      "question": "Does this item have any parameters? Please enter a comma-separated list or press Enter.",
+      "question": "Does this item have any parameters? Please enter all parameters with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -359,7 +359,7 @@
       "action": null
     },
     "properties": {
-      "question": "Does this item have any properties? Please enter a comma-separated list or press Enter.",
+      "question": "Does this item have any properties? Please enter all properties with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",

@@ -32,7 +32,7 @@ const VERBOSE = Object.freeze({
 \nhttps://developer.mozilla.org/en-US/docs/Web/API/Sensor_APIs\n`,
   reference: `\nA reference page, also called an interface page is an overview for a single \
   \ninterface and contains basic descriptions of every interface member. For an \
-  \nexample go to https://developer.mozilla.org/en-US/docs/Web/API/OrientationSensor`,
+  \nexample go to https://developer.mozilla.org/en-US/docs/Web/API/OrientationSensor\n`,
   constructor: '',
   method:'',
   property: ''
