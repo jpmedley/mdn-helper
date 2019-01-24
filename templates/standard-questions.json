@@ -11,7 +11,6 @@
       "default": "Yes",
       "required": true,
       "before": "",
-      "skip": false,
       "action": {"name": "add_block", "args": ["_frag_accessibility.html"]}
     },
     "argument-definition": {
@@ -24,7 +23,6 @@
       "default": null,
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "arguments": {
@@ -37,7 +35,6 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "skip": false,
       "action": {"name": "add_definitionList", "args": ["_frag_arguments.html"]}
     },
     "child-interfaces": {
@@ -51,7 +48,6 @@
       "default": "No",
       "required": true,
       "before": "",
-      "skip": false,
       "action": {"name": "add_block", "args": ["_frag_childinterfaces.html"]}
     },
     "constructor": {
@@ -65,7 +61,6 @@
       "default": "Yes",
       "required": true,
       "before": "",
-      "skip": false,
       "action": {"name": "add_block", "args": ["_frag_constructor.html"]}
     },
     "cors-response": {
@@ -79,7 +74,6 @@
       "default": "no",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "description": {
@@ -92,7 +86,6 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "directive": {
@@ -105,11 +98,10 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "directives": {
-      "question": "Does this item have any directives? Please enter all directives with commas\n between each.",
+      "question": "Does this item have any directives? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -118,11 +110,10 @@
       "default": "<p>None.</p>",
       "required": false,
       "before": "",
-      "skip": false,
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "directive-values": {
-      "question": "What are the possible values for this directive? Please enter all values with\ncommas between each.",
+      "question": "What are the possible values for this directive? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -131,7 +122,6 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "elaboration": {
@@ -144,7 +134,6 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "event-inh": {
@@ -157,11 +146,10 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "eventHandlers": {
-      "question": "Does this interface have any event handlers? Please enter all handlers with\ncommas between each.",
+      "question": "Does this interface have any event handlers? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -170,11 +158,10 @@
       "default": "No",
       "required": false,
       "before": "",
-      "skip": false,
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "exceptions": {
-      "question": "Does this method throw any exceptions? Please enter all exceptions with commas\n between each.",
+      "question": "Does this method throw any exceptions? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -183,7 +170,6 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "skip": false,
       "action": {"name": "add_definitionList", "args": ["_frag_exceptions.html"]}
     },
     "forbidden-response": {
@@ -197,11 +183,10 @@
       "default": "no",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "formalAPIName": {
-      "question": "What is the API name as it should appear on the landing page?",
+      "question": "What is the formal name of the API as it appears on the specification?",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -210,7 +195,6 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "header": {
@@ -223,7 +207,6 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "header-spec-version": {
@@ -236,7 +219,6 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "header-type": {
@@ -249,11 +231,10 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "isSecureContext": {
-      "question": "Should this contain the {{securecontext_header}} macro?",
+      "question": "Does this API require a secure context? If so, press return to make the pages\ndisplay a blurb declaring it as such. Otherwise, enter 'n' and press return.\n",
       "type": "boolean",
       "pattern": "^(n|y|N|Y|{{securecontext_header}})",
       "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
@@ -263,11 +244,10 @@
       "default": "{{securecontext_header}}",
       "required": true,
       "before": "",
-      "skip": false,
       "action": {"name": "add_string"}
     },
     "isStandard": {
-      "question": "Should this contain the {{SeeCompatTable}} macro?",
+      "question": "Is this API a candidate recomendation of the W3C? If so,\npress return to make the pages display a blurb declaring the API experimental.\nOtherwise, enter 'n' and press return.",
       "type": "boolean",
       "pattern": "^(n|y|N|Y|{{SeeCompatTable}})",
       "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
@@ -277,7 +257,6 @@
       "default": "{{SeeCompatTable}}",
       "required": true,
       "before": "",
-      "skip": false,
       "action": {"name": "add_string"}
     },
     "iterableMemberLink": {
@@ -290,11 +269,10 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "mdnAPIRef": {
-      "question": "What is the API name as it should be used in the APIRef()\nmacro? This is the same value used as the in GroupData.json.",
+      "question": "What is the API name as it should be used in the APIRef() macro? This is the\nsame value used as the in GroupData.json.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -303,11 +281,10 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "mdnSpecName": {
-      "question": "What's the API name that will be passed to the MDN SpecName() and spec2() macros?",
+      "question": "What's the API name that will be passed to the MDN SpecName() and spec2() macros?\n",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -316,24 +293,22 @@
       "default": "",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "memberLink": {
-      "question": "What is the anchor for this item's location in the spec?",
-      "type": "string",
-      "pattern": "",
+      "question": "`Please provice the link to ${this.name} in the specification.`",
+      "pattern": "#\\S+",
+      "help": "The link must include an anchor.",
       "message": "",
       "hidden": false,
       "replace": "*",
       "default": "",
       "required": false,
       "before": "",
-      "skip": false,
-      "action": null
+      "action": {"name": "format_link"}
     },
     "methods": {
-      "question": "Does this interface have any methods (exclusing those that would be created for\nan iterable object)? Please enter all methods with commas between them.",
+      "question": "Does this interface have any methods (exclusing those that would be created for\nan iterable object)? Please enter all arguments with commas between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -342,11 +317,10 @@
       "default": "<p>None.</p>",
       "required": false,
       "before": "",
-      "skip": false,
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "parameters": {
-      "question": "Does this item have any parameters? Please enter all parameters with commas\n between each.",
+      "question": "Does this item have any parameters? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -355,11 +329,10 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "properties": {
-      "question": "Does this item have any properties? Please enter all properties with commas\n between each.",
+      "question": "Does this item have any properties? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -368,21 +341,19 @@
       "default": "<p>None.</p>",
       "required": false,
       "before": "",
-      "skip": false,
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "readOnly": {
-      "question": "Is this item read only?  Yes or No?",
+      "question": "Is this item read only?  Type 'n' or hit return.",
       "type": "boolean",
-      "pattern": "^(n|y|N|Y|read-only)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "pattern": "^(n|N|no|No|read-only)",
+      "help": "Answer must be one of 'N', 'No', or 'read-only'.",
       "message": "",
       "hidden": false,
       "replace": "*",
       "default": "read-only",
       "required": true,
       "before": "",
-      "skip": false,
       "action": {"name": "add_string"}
     },
     "return": {
@@ -395,7 +366,6 @@
       "default": "{{jsxref('undefined')}}",
       "required": false,
       "before": "",
-      "skip": false,
       "action": null
     },
     "rfc-number": {
@@ -408,7 +378,6 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "rfc-title": {
@@ -421,11 +390,10 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "see-also": {
-      "question": "Do you want to include a 'See also' section? Yes or No?",
+      "question": "Do you have 'see also' links you'd like to include in the page? (This will add\na 'see also' section to the page. You will need to add the links manually.)\nYes or No?",
       "type": "boolean",
       "pattern": "^(n|y|N|Y)",
       "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
@@ -435,7 +403,6 @@
       "default": "Yes",
       "required": true,
       "before": "",
-      "skip": false,
       "action": {"name": "add_block", "args": ["_frag_seealso.html"]}
     },
     "selector": {
@@ -448,7 +415,6 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "syntax": {
@@ -461,7 +427,6 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     },
     "syntax-explanation": {
@@ -474,7 +439,6 @@
       "default": "",
       "required": true,
       "before": "",
-      "skip": false,
       "action": null
     }
   }

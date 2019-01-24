@@ -1,0 +1,11 @@
+{
+  "Application": {
+    "help": "VERBOSE",
+    "outputDirectory": "out/",
+    "questionsFile": "standard-questions.json",
+    "test": false,
+    "update": "daily"
+  },
+  "User": {
+  }
+}

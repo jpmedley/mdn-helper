@@ -1,14 +1,16 @@
 'use strict';
 
 const actions = require('./actions');
+const config = require('config');
 const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help.js');
 const util = require('util');
 const utils = require('./utils.js');
 
-const DONT_ASK = 'Don\'t ask.';
 const ANSWER_IS_NO = '';
+const SKIP_KEY = config.get('Application.questionHiding.use');
+const SKIP_KEYS = config.get('Application.questionHiding.' + SKIP_KEY);
 
 class _Question {
   constructor(wireFrameName) {
@@ -90,7 +92,7 @@ class _Questions {
   }
 
   add(question, answer=null) {
-    if (utils.WIREFRAMES[question] == DONT_ASK) { return; }
+    if (SKIP_KEYS.includes(question)) { answer = ANSWER_IS_NO; }
     if (!this.questions.hasOwnProperty(question)) {
       this.questions[question] = new _Question(question);
       this.questions[question].answer = answer;
@@ -169,12 +171,13 @@ class _Page {
     let matches;
     let answer;
     while ((matches = reg.exec(this.contents)) != null) {
+      // if (SKIP_KEYS.includes(matches[1])) { continue; }
       if (matches[0].startsWith('[[shared:')) {
         answer = this.sharedQuestions.questions[matches[1]].answer;
       } else {
         answer = this.questions.questions[matches[1]].answer
       }
-      if (answer == DONT_ASK) { continue; }
+      if (answer == ANSWER_IS_NO) { continue; }
       if (answer === null) { continue; }
       this.contents = this.contents.replace(matches[0], answer);
     }
