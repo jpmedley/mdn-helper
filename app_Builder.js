@@ -39,13 +39,13 @@ class _Builder {
 
   _initPages() {
     const args = this._normalizeArguments(this._interfaceData.command);
-    let parentType = args[0];
-    let parentName = args[1].split(',')[1];
+    const parentType = args[0];
+    const parentName = args[1].split(',')[1];
 
     // Add space for interface or header name to sharedQuestions,
     //  and remove it from args.
-    let introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
-    let sharedQuestions = new page.Questions(introMessage);
+    const introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
+    const sharedQuestions = new page.Questions(introMessage);
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
     sharedQuestions.add(parentType, parentName);
