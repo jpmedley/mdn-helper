@@ -25,7 +25,8 @@ const VERBOSE = Object.freeze({
 \n* Next, you'll be asked qeustions in groups corresponding to overview, \
 \n  interface, constructor, and every member of the ${interfaceName} interface.\
 \nIf a question has a default, it will be in parenthesis and in lighter text \
-\nafter the question. Press return to accept the default.\n \
+\nafter the question. Default values may contain HTML tags or kumascript \
+\ntokens. Press return to accept the default.\n \
 \n The answers will be combined with page templates to create drafts for MDN \
 \n pages. Drafts are written to the ${directory}/ directory.\n\n`,
   shared: 'You will now be asked questions for answers that are shared among all the files\nto be created.\n\n',
