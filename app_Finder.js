@@ -136,10 +136,10 @@ class _Finder {
       this._show(file);
       return;
     }
-    if (this._isFlagged(id).flagged) {
-      const answer = await this._confirm(flagged.message);
-      if (answer.confirm == 'n') { return; }
-    }
+    // if (this._isFlagged(id).flagged) {
+    //   const answer = await this._confirm(flagged.message);
+    //   if (answer.confirm == 'n') { return; }
+    // }
     const builder = new Builder();
     builder.writeBCD(id);
     // Remimplement and add to help after conversion to yargs.

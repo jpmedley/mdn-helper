@@ -109,7 +109,7 @@
       "action": null
     },
     "directives": {
-      "question": "Does this item have any directives? Please enter all directives with commas\n between each.",
+      "question": "Does this item have any directives? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -122,7 +122,7 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "directive-values": {
-      "question": "What are the possible values for this directive? Please enter all values with\ncommas between each.",
+      "question": "What are the possible values for this directive? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -161,7 +161,7 @@
       "action": null
     },
     "eventHandlers": {
-      "question": "Does this interface have any event handlers? Please enter all handlers with\ncommas between each.",
+      "question": "Does this interface have any event handlers? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -174,7 +174,7 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "exceptions": {
-      "question": "Does this method throw any exceptions? Please enter all exceptions with commas\n between each.",
+      "question": "Does this method throw any exceptions? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -201,7 +201,7 @@
       "action": null
     },
     "formalAPIName": {
-      "question": "What is the API name as it should appear on the landing page?",
+      "question": "What is the formal name of the API as it appears on the specification?",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -253,7 +253,7 @@
       "action": null
     },
     "isSecureContext": {
-      "question": "Should this contain the {{securecontext_header}} macro?",
+      "question": "Does this API require a secure context? If so, press return to make the pages\ndisplay a blurb declaring it as such. Otherwise, enter 'n' and press return.\n",
       "type": "boolean",
       "pattern": "^(n|y|N|Y|{{securecontext_header}})",
       "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
@@ -267,7 +267,7 @@
       "action": {"name": "add_string"}
     },
     "isStandard": {
-      "question": "Should this contain the {{SeeCompatTable}} macro?",
+      "question": "Is this API a candidate recomendation of the W3C? If so,\npress return to make the pages display a blurb declaring the API experimental.\nOtherwise, enter 'n' and press return.",
       "type": "boolean",
       "pattern": "^(n|y|N|Y|{{SeeCompatTable}})",
       "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
@@ -294,7 +294,7 @@
       "action": null
     },
     "mdnAPIRef": {
-      "question": "What is the API name as it should be used in the APIRef()\nmacro? This is the same value used as the in GroupData.json.",
+      "question": "What is the API name as it should be used in the APIRef() macro? This is the\nsame value used as the in GroupData.json.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -307,7 +307,7 @@
       "action": null
     },
     "mdnSpecName": {
-      "question": "What's the API name that will be passed to the MDN SpecName() and spec2() macros?",
+      "question": "What's the API name that will be passed to the MDN SpecName() and spec2() macros?\n",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -321,7 +321,6 @@
     },
     "memberLink": {
       "question": "`Please provice the link to ${this.name} in the specification.`",
-      "type": "string",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -333,7 +332,7 @@
       "action": null
     },
     "methods": {
-      "question": "Does this interface have any methods (exclusing those that would be created for\nan iterable object)? Please enter all methods with commas between them.",
+      "question": "Does this interface have any methods (exclusing those that would be created for\nan iterable object)? Please enter all arguments with commas between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -346,7 +345,7 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "parameters": {
-      "question": "Does this item have any parameters? Please enter all parameters with commas\n between each.",
+      "question": "Does this item have any parameters? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -359,7 +358,7 @@
       "action": null
     },
     "properties": {
-      "question": "Does this item have any properties? Please enter all properties with commas\n between each.",
+      "question": "Does this item have any properties? Please enter all arguments with commas\n between each.",
       "type": "string",
       "pattern": "",
       "message": "",
@@ -372,10 +371,10 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "readOnly": {
-      "question": "Is this item read only?  Yes or No?",
+      "question": "Is this item read only?  Type 'n' or hit return.",
       "type": "boolean",
-      "pattern": "^(n|y|N|Y|read-only)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "pattern": "^(n|N|no|No|read-only)",
+      "help": "Answer must be one of 'N', 'No', or 'read-only'.",
       "message": "",
       "hidden": false,
       "replace": "*",

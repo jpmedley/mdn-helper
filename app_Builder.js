@@ -40,7 +40,7 @@ class _Builder {
 
     // Add space for interface or header name to sharedQuestions,
     //  and remove it from args.
-    let introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n`;
+    let introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
     let sharedQuestions = new page.Questions(introMessage);
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
@@ -162,7 +162,6 @@ class _Builder {
           break;
         case '--landing':
           trueArgs.push(arg)
-//           trueArgs.push((args[0] + '_landing'));
           trueArgs.push(args[2]);
           break;
         default:

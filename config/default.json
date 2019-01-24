@@ -2,7 +2,7 @@
   "Application": {
     "help": "VERBOSE",
     "outputDirectory": "out/",
-    "questionsFile": "eng-questions.json",
+    "questionsFile": "demo-questions.json",
     "test": false,
     "update": "daily"
   },
