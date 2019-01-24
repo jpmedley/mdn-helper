@@ -296,7 +296,7 @@
       "action": null
     },
     "memberLink": {
-      "question": "`Please provice the link to ${this.name} in the specification.`",
+      "question": "Please provice the link to the item in the specification.",
       "pattern": "#\\S+",
       "help": "The link must include an anchor.",
       "message": "",
