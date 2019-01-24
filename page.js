@@ -25,7 +25,6 @@ class _Question {
     const regex = RegExp(this.pattern, 'g');
     const result = regex.exec(this.answer);
     if (!result) {
-
       return false;
     }
     return true;

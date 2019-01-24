@@ -321,7 +321,8 @@
     },
     "memberLink": {
       "question": "`Please provice the link to ${this.name} in the specification.`",
-      "pattern": "",
+      "pattern": "#\\S+",
+      "help": "The link must include an anchor.",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -329,7 +330,7 @@
       "required": false,
       "before": "",
       "skip": false,
-      "action": null
+      "action": {"name": "format_link"}
     },
     "methods": {
       "question": "Does this interface have any methods (exclusing those that would be created for\nan iterable object)? Please enter all arguments with commas between each.",
