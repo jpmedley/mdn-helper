@@ -32,12 +32,13 @@ const FLAGS = {
 }
 
 class _Builder {
-  constructor(interfaceData) {
+  constructor(interfaceData, flagsOnly = false) {
     this._interfaceData = interfaceData;
+    this._flagsOnly = flagsOnly;
   }
 
   _initPages() {
-    args = this._normalizeArguments(this._interfaceData.command);
+    const args = this._normalizeArguments(this._interfaceData.command);
     let parentType = args[0];
     let parentName = args[1].split(',')[1];
 
@@ -202,7 +203,7 @@ class _Builder {
     return arrangedArgs;
   }
 
-  _writreBCD() {
+  _writeBCD() {
     let name = this._interfaceData.name;
     if (bcd.api[name]) { return; }
     let bcdm = new BCDManager();
@@ -212,33 +213,13 @@ class _Builder {
     bcdm.getBCD(this._interfaceData, outFilePath);
   }
 
-  writeBCD(interfaceData) {
-    let name = interfaceData.name
-    if (bcd.api[name]) { return; }
-    let bcdm = new BCDManager();
-    let outPath = utils.OUT + name + '/';
-    if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
-    let outFilePath = outPath + name + '.json';
-    bcdm.getBCD(interfaceData, outFilePath);
-  }
-
-  // Step 2. Get args from internal InterfaceData instance reference (and
-  //  perhaps use an interface instead of commands.
-
   async build() {
+    this._writeBCD();
+    if (this._flagsOnly) { return; }
     this._initPages();
     for (let p of this.pages) {
       await p.askQuestions();
-      this.pages[p].write();
-    }
-  }
-
-  async build_(args) {
-    // Step 3. Pull writeBCD to an internal call.
-    this._initPages(args);
-    for (let p in this.pages) {
-      await this.pages[p].askQuestions();
-      this.pages[p].write();
+      p.write();
     }
   }
 }

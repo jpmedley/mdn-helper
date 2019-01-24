@@ -140,13 +140,8 @@ class _Finder {
     //   const answer = await this._confirm(flagged.message);
     //   if (answer.confirm == 'n') { return; }
     // }
-    const builder = new Builder();
-    builder.writeBCD(id);
-    // Remimplement and add to help after conversion to yargs.
-    if (!args.includes('-j')) {
-      //The j flag means json only.
-      builder.build(id.command);
-    }
+    const builder = new Builder(id, (args.includes('-j')));
+    builder.build();
   }
 
 }
