@@ -17,4 +17,4 @@ tar -C idl/ -xvf idl.tar.gz modules/*.idl
 
 rm idl.tar.gz
 
-npm update mdn-browser-compat-data
+npm install mdn-browser-compat-data@latest
