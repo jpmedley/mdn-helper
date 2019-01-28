@@ -32,14 +32,17 @@ const BROWSERS = [
   'webview_android'
 ];
 
-async function selectArgument(question, choices) {
+async function selectArgument(question, choices, returnAll= false) {
   const enq = new Enquirer();
   enq.register('checkbox', cb);
-  enq.question('category', question, {
+  enq.question('chose', question, {
     type: 'checkbox',
     choices: choices
   });
-  const answer = await enq.prompt('category');
+  const answer = await enq.prompt('chose');
+  if (returnAll) { return answer.chose; }
+  else { return answer.chose[0]; }
+
   return answer.category[0];
 }
 
@@ -54,7 +57,8 @@ function _burnerFactory(args) {
 
       break;
     case 'bcd':
-
+      args.shift();
+      return new BCDBurner({ args: args });
       break;
     case 'urls':
       args.shift();
@@ -188,40 +192,115 @@ class BCDBurner extends Burner {
   constructor(options) {
     super(options);
     this._browsers;
+    this._type = 'bcd';
   }
 
   async burn() {
     await this._resolveArguments(this._args);
-    // START HERE.
+    this._openResultsFile();
+    console.log(`Checking BCD data for missing ${this._category} data.`);
+    let burnRecords = this._getBCDBurnRecords();
+    this._recordBCD(burnRecords);
+    this._closeOutputFile();
+  }
+
+  _getBCDBurnRecords() {
+    let records = [];
+    let bcdData = bcd[this._category];
+    (function getRecords(data) {
+      for (let d in data) {
+        if (d == '__parent') { continue; }
+        if (d == '__compat') {
+          let record = this._getNewRecord(data[d], this._browsers);
+          console.log(record.key);
+          records.push(record);
+        } else {
+          if ((typeof data[d]) != 'object') { continue; }
+          getRecords.call(this, data[d]);
+        }
+      }
+    }).call(this, bcdData);
+    return records;
+  }
+
+  _getNewRecord(data, browsers) {
+    let d = data.__parent;
+    let keys = [];
+    do {
+      keys.splice(0, 0, d.__name);
+      d = d.__parent;
+    } while (d.__parent);
+    let key = keys.join('.');
+    let record = { key: key, browsers: {} };
+    for (let b of browsers) {
+      if (!data.support[b]) {
+        record.browsers[b] = 'missing';
+      }
+    }
+    for (let d in data.support) {
+      if (!browsers.includes(d)) { continue; }
+      if (data.support[d].version_added==null) {
+        record.browsers[d] = 'missing';
+      } else {
+        record.browsers[d] = data.support[d].version_added;
+      }
+    }
+    return record;
+  }
+
+  _openResultsFile(listId) {
+    const folderName = 'burn_' + utils.today() + '/';
+    utils.makeOutputFolder(folderName);
+    const path = utils.OUT + folderName;
+    this._outFileName = path + this._category + '-' + this._type + '-burn-list_' + utils.today() + '.csv';
+    this._outFileHandle = utils.getOutputFile(this._outFileName);
+    let header = 'Interface,' + this._browsers.join(',') + '\n';
+    fs.write(this._outFileHandle, header, ()=>{});
+  }
+
+  _recordBCD(records) {
+    for (let r of records) {
+      let line = r.key + ',';
+      for (let b of this._browsers) {
+        line += (r.browsers[b] + ',');
+      }
+      line += '\n';
+      fs.write(this._outFileHandle, line, ()=>{});
+      this._outputLines++;
+    }
   }
 
   async _resolveArguments(args) {
     // -c css -b chrome
-    let argQuestion;
-    for (let a in args){
-      switch (args[a]) {
-        case '-c':
-        case '--category':
-          if (!CATEGORIES.includes(args[a+1])) {
-            argQuestion = `'${args[a]}' is not a valid category.\nWhich category do you want a burn list for/`;
-            this._category = await selectArgument(argQuestion, CATEGORIES);
-          } else {
-            this._category = args[a+1];
-          }
-          break;
-        case '-b':
-        case '--browsers':
-          this._browsers = args[a+1].split(',');
-          const valid = this._browsers.every(arg => {
-            arg = arg.trim();
-            return BROWSERS.includes(arg);
-          });
-          if (!valid) {
-            argQuestion = 'At least one of the provided browsers is not valid\nWhich browsers do you want a burn list for?';
-            this._browsers = await selectArgument(argQuestion, BROWSERS);
-          }
-        }
-      }
+    let pos;
+    pos = args.indexOf('-c');
+    if (pos > -1) { this._category = args[pos + 1]; }
+    pos = args.indexOf('--category');
+    if (pos > -1) { this._category = args[pos + 1]; }
+
+    let argQuestion = 'Which category do you want a burn list for?';
+    if (!this._category) {
+      this._category = await selectArgument(argQuestion, CATEGORIES);
+    }
+    if (!CATEGORIES.includes(this._category)) {
+      argQuestion = `${this._category} is not a valid category.\n` + argQuestion;
+      this._category = await selectArgument(argQuestion, CATEGORIES);
+    }
+
+    pos = args.indexOf('-b');
+    if (pos > -1) { this._browsers = args[pos + 1].split(','); }
+    pos = args.indexOf('--browsers');
+    if (pos > -1) { this._browsers = args[pos + 1].split(','); }
+
+    argQuestion = 'Which browsers do you want a burn list for?';
+    if (!this._browsers) {
+      this._browsers = await selectArgument(argQuestion, BROWSERS, true);
+    }
+    if (!this._browsers.every(browser => {
+      return BROWSERS.includes(browser);
+    })) {
+      argQuestion = 'At least one of the provided browsers is not valid\n' + argQuestion;
+      this._browsers = await selectArgument(argQuestion, BROWSERS, true);
     }
   }
 }
@@ -230,7 +309,29 @@ class ChromeBurner extends Burner {
   constructor(options) {
     super(options);
     //Replace this with this.options.includeFlags;
-    //this._includeFlags = false;
+    this._includeFlags = false;
+  }
+
+  async burn() {
+    await this._resolveArguments(this._args);
+    this._openResultsFile();
+    //Start here
+  }
+
+  _openURLFile() {
+    const folderName = 'burn_' + utils.today() + '/';
+    utils.makeOutputFolder(folderName);
+    const path = utils.OUT + folderName;
+    this._outFileName = path + 'chrome-burn-list_' + utils.today() + '.csv';
+    this._outFileHandle = utils.getOutputFile(this._outFileName);
+    const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
+    fs.write(this._outFileHandle, header, ()=>{});
+  }
+
+  async _resolveArguments(args) {
+    this._includeFlags = args.some(arg=>{
+      return (arg.includes('-f') || (arg.includes('--flags')));
+    })
   }
 }
 
