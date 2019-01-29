@@ -91,6 +91,7 @@ class _Finder {
     for (let m of matches) {
       names.push(m.key + ` (${m.name})`);
     }
+    names = names.sort();
     names.push(CANCEL);
     let enq = new Enquirer();
     enq.register('radio', cb);
