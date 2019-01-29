@@ -1,7 +1,6 @@
 'use strict';
 
 const { Builder } = require('./app_Builder.js');
-const { Burner } = require('./app_Burn.js');
 const { BurnerFactory } = require('./burner.js');
 const { Cleaner } = require('./app_Cleaner.js');
 const { Finder } = require('./app_Finder.js');
