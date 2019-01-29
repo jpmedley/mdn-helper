@@ -3,6 +3,7 @@
 const { bcd } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
+const { IDLFileSet } = require('./filemanager.js');
 // const fm = require('./filemanager.js');
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
@@ -52,16 +53,15 @@ function _burnerFactory(args) {
   args.shift();
   args.shift();
   const burnerType = args[0].toLowerCase();
+  args.shift();
   switch (burnerType) {
     case 'chrome':
-
+      return new ChromeBurner({ args: args });
       break;
     case 'bcd':
-      args.shift();
       return new BCDBurner({ args: args });
       break;
     case 'urls':
-      args.shift();
       return new URLBurner({ args: args });
       break;
     default:
@@ -315,10 +315,45 @@ class ChromeBurner extends Burner {
   async burn() {
     await this._resolveArguments(this._args);
     this._openResultsFile();
-    //Start here
+    let idlFiles = new IDLFileSet();
+    let files = idlFiles.files;
+    console.log('Looking for browser compatibility data and MDN pages.');
+    for (let f of files) {
+      let idlFile = this._getIDLFile(f);
+      if (!idlFile) { continue; }
+      if (idlFile._type != 'interface') { continue; }
+      let burnRecords = idlFile.getBurnRecords(this._includeFlags);
+      if (!burnRecords) { continue; }
+      let pinger = new Pinger(burnRecords);
+      burnRecords = await pinger.pingRecords()
+      .catch(e => {
+        throw e;
+      });
+      this._record(burnRecords);
+    }
+    this._closeOutputFile();
   }
 
-  _openURLFile() {
+  _getIDLFile(fileName) {
+    try {
+      let idlFile = new InterfaceData(fileName);
+      return idlFile;
+    } catch(e) {
+      if (e.constructor.name == 'IDLError') {
+        let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
+        this._log(msg);
+        return;
+      } else if (e.constructor.name == 'WebIDLParseError') {
+        let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
+        this._log(msg);
+        return;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  _openResultsFile() {
     const folderName = 'burn_' + utils.today() + '/';
     utils.makeOutputFolder(folderName);
     const path = utils.OUT + folderName;
@@ -326,6 +361,19 @@ class ChromeBurner extends Burner {
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
     fs.write(this._outFileHandle, header, ()=>{});
+  }
+
+  _record(records) {
+    for (let r of records) {
+      if (!r.bcd || !r.mdn_exists) {
+        let line = r.key + ',' + r.bcd + ',' + r.mdn_exists;
+        if (r.mdn_url) { line += (',' + r.mdn_url); }
+        if (r.redirect) { line += (',redirects')}
+        line += '\n';
+        fs.write(this._outFileHandle, line, ()=>{});
+        this._outputLines++;
+      }
+    }
   }
 
   async _resolveArguments(args) {

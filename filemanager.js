@@ -58,7 +58,10 @@ class IDLFileSet {
   }
 
   get files() {
-    return this._files;
+    // return this._files;
+    // Return files as an iterator.
+    const files = this._files[Symbol.iterator]();
+    return files;
   }
 
   _getIDLFile(fileObject) {
