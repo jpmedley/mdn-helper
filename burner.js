@@ -3,7 +3,10 @@
 const { bcd } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
+<<<<<<< HEAD
 const { IDLFileSet } = require('./filemanager.js');
+=======
+>>>>>>> eb4dc7fbb5e9f4f2c99a1a70056495b44410355c
 // const fm = require('./filemanager.js');
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
@@ -53,6 +56,7 @@ function _burnerFactory(args) {
   args.shift();
   args.shift();
   const burnerType = args[0].toLowerCase();
+<<<<<<< HEAD
   args.shift();
   switch (burnerType) {
     case 'chrome':
@@ -62,6 +66,18 @@ function _burnerFactory(args) {
       return new BCDBurner({ args: args });
       break;
     case 'urls':
+=======
+  switch (burnerType) {
+    case 'chrome':
+
+      break;
+    case 'bcd':
+      args.shift();
+      return new BCDBurner({ args: args });
+      break;
+    case 'urls':
+      args.shift();
+>>>>>>> eb4dc7fbb5e9f4f2c99a1a70056495b44410355c
       return new URLBurner({ args: args });
       break;
     default:
