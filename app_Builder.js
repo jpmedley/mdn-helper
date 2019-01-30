@@ -2,10 +2,12 @@
 
 const actions = require('./actions');
 const bcd = require('mdn-browser-compat-data');
+const { BurnHelpers } = require('./burner.js');
 const { BCDManager } = require('./app_BCD.js');
 const fs = require('fs');
 const { help } = require('./help.js');
 const page = require('./page.js');
+const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 
 const FLAGS = {
@@ -56,17 +58,31 @@ class _Builder {
 
     // Process remaining arguments.
     this.pages = new Array();
+    const existingPages = this._pagesExist();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
         // Step 4. Ping MDN for page. If MDN page doesn't exist then do the next
         //  two steps. Also notify user that page already exists.
-      let aPage = new page.Page(members[1], members[0], sharedQuestions);
+      if (!existingPages.includes(arg)) {
+        let aPage = new page.Page(members[1], members[0], sharedQuestions);
+      }
       this.pages.push(aPage);
     });
   }
 
-  _pageExists() {
-
+  _pagesExist() {
+    let key = 'api.' + this._interfaceData.keys[0];
+    // Start here: For some reason getRecords (next function) is going into a loop.
+    let burnRecords = BurnHelpers.getBurnRecords(key);
+    const pinger = new Pinger(burnRecords);
+    const verboseOutput = false;
+    pinger.pingRecords(verboseOutput)
+    .then(records => {
+      return records
+    })
+    .catch(e => {
+      throw e;
+    });
   }
 
   _getNamedArg(arg) {

@@ -33,8 +33,9 @@ const BROWSERS = [
 ];
 
 
-function getBurnRecords(category) {
-  const urlData = bcd[category];
+function getBurnRecords(key) {
+  // const urlData = bcd[key];
+  const urlData = bcd.getByKey(key);
   let records = [];
   (function getRecords(data) {
     for (let d in data) {
@@ -384,3 +385,4 @@ class ChromeBurner extends Burner {
 }
 
 module.exports.BurnerFactory = _burnerFactory;
+module.exports.BurnHelpers = { getBurnRecords };
