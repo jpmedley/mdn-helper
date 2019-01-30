@@ -32,6 +32,30 @@ const BROWSERS = [
   'webview_android'
 ];
 
+
+function getBurnRecords(category) {
+  const urlData = bcd[category];
+  let records = [];
+  (function getRecords(data) {
+    for (let d in data) {
+      if (d == '__parent') { continue; }
+      if (d == '__name') { continue; }
+      if (!data[d].__compat) {
+        getRecords(data[d]);
+      } else {
+        if (!data[d].__compat.mdn_url) { continue; }
+        let record = Object.assign({}, EMPTY_BURN_DATA);
+        record.key = d;
+        record.bcd = true;
+        record.mdn_exists = false;
+        record.mdn_url = data[d].__compat.mdn_url;
+        records.push(record);
+      }
+    }
+  })(urlData);
+  return records;
+}
+
 async function selectArgument(question, choices, returnAll= false) {
   const enq = new Enquirer();
   enq.register('checkbox', cb);
@@ -114,7 +138,7 @@ class URLBurner extends Burner {
     await this._resolveArguments(this._args);
     this._openResultsFile();
     console.log('Pinging MDN for known URLs.');
-    let burnRecords = this._getBurnRecords();
+    let burnRecords = getBurnRecords(this._category);
     const pinger = new Pinger(burnRecords);
     const verboseOutput = true;
     //This should be pingURLs().
@@ -124,29 +148,6 @@ class URLBurner extends Burner {
     });
     this._record(burnRecords);
     this._closeOutputFile();
-  }
-
-  _getBurnRecords() {
-    const urlData = bcd[this._category];
-    let records = [];
-    (function getRecords(data) {
-      for (let d in data) {
-        if (d == '__parent') { continue; }
-        if (d == '__name') { continue; }
-        if (!data[d].__compat) {
-          getRecords(data[d]);
-        } else {
-          if (!data[d].__compat.mdn_url) { continue; }
-          let record = Object.assign({}, EMPTY_BURN_DATA);
-          record.key = d;
-          record.bcd = true;
-          record.mdn_exists = false;
-          record.mdn_url = data[d].__compat.mdn_url;
-          records.push(record);
-        }
-      }
-    })(urlData);
-    return records;
   }
 
   _record(records) {
