@@ -119,6 +119,12 @@ class Burner {
     console.log(msg);
   }
 
+  _log(msg) {
+    fs.appendFile(LOG_FILE, msg, (e) => {
+      if (e) throw e;
+    });
+  }
+
   _resetLog() {
     try {
       fs.accessSync(LOG_FILE, fs.constants.F_OK);
