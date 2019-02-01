@@ -317,6 +317,7 @@ class ChromeBurner extends Burner {
     super(options);
     //Replace this with this.options.includeFlags;
     this._includeFlags = false;
+    this._includeOriginTrials = false;
   }
 
   async burn() {
@@ -329,7 +330,7 @@ class ChromeBurner extends Burner {
       let idlFile = this._getIDLFile(f);
       if (!idlFile) { continue; }
       if (idlFile._type != 'interface') { continue; }
-      let burnRecords = idlFile.getBurnRecords(this._includeFlags);
+      let burnRecords = idlFile.getBurnRecords(this._includeFlags, this._includeOriginTrials);
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()
@@ -386,7 +387,10 @@ class ChromeBurner extends Burner {
   async _resolveArguments(args) {
     this._includeFlags = args.some(arg=>{
       return (arg.includes('-f') || (arg.includes('--flags')));
-    })
+    });
+    this._includeOriginTrials = args.some(arg=>{
+      return (arg.includes('-o') || (arg.includes('--origin-trials')));
+    });
   }
 }
 

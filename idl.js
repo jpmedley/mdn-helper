@@ -222,8 +222,9 @@ class InterfaceData {
     return argString;
   }
 
-  getBurnRecords(includeFlags=false) {
+  getBurnRecords(includeFlags=false, includeOriginTrials=false) {
     if (!includeFlags && this.flag) { return; }
+    if (!includeOriginTrials && this.originTrial) { return; }
     let keys = this.keys;
     let records = [];
     for (let k in keys) {
