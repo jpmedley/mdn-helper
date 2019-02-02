@@ -85,9 +85,6 @@ class _Finder {
 
   async _select(matches) {
     let names = [];
-    // for (let m in matches) {
-    //   names.push(matches[m].key + ` (${matches[m].name})`);
-    // }
     for (let m of matches) {
       names.push(m.key + ` (${m.name})`);
     }

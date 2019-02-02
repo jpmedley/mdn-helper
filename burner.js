@@ -395,4 +395,3 @@ class ChromeBurner extends Burner {
 }
 
 module.exports.BurnerFactory = _burnerFactory;
-module.exports.BurnHelpers = { getBurnRecords };

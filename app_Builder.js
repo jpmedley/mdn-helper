@@ -2,10 +2,11 @@
 
 const actions = require('./actions');
 const bcd = require('mdn-browser-compat-data');
-const { BurnHelpers } = require('./burner.js');
 const { BCDManager } = require('./app_BCD.js');
+const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help.js');
+const { InterfaceData } = require('./idl.js');
 const page = require('./page.js');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -39,7 +40,7 @@ class _Builder {
     this._flagsOnly = flagsOnly;
   }
 
-  _initPages() {
+  async _initPages() {
     const args = this._normalizeArguments(this._interfaceData.command);
     const parentType = args[0];
     const parentName = args[1].split(',')[1];
@@ -58,31 +59,50 @@ class _Builder {
 
     // Process remaining arguments.
     this.pages = new Array();
-    const existingPages = this._pagesExist();
+    let skippingPages = new Array();
+    const existingPages = await this._getExistingPages();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
-        // Step 4. Ping MDN for page. If MDN page doesn't exist then do the next
-        //  two steps. Also notify user that page already exists.
-      if (!existingPages.includes(arg)) {
+      //Skip landing pages which aren't in BCD.
+      if (members[0] === 'landing') { return; }
+      if (members[0] === 'reference') { members[0] = 'interface'; }
+      if (!this._pageExists(arg, existingPages)) {
         let aPage = new page.Page(members[1], members[0], sharedQuestions);
+        this.pages.push(aPage);
+      } else {
+        skippingPages.push(members);
       }
-      this.pages.push(aPage);
     });
+    if (skippingPages.length > 0) {
+      let msg = '\nThe following pages from this interface already exist. You will not be asked\nquestions about them.\n';
+      for (let s of skippingPages){
+        msg += `\t ${s[1]} ${s[0]}\n`;
+      }
+      console.log(msg);
+      let enq = new Enquirer();
+      let options = { message: 'Press Enter to continue.' };
+      enq.question('continue', options);
+      let ans = await enq.prompt('continue');
+    }
   }
 
-  _pagesExist() {
-    let key = 'api.' + this._interfaceData.keys[0];
-    // Start here: For some reason getRecords (next function) is going into a loop.
-    let burnRecords = BurnHelpers.getBurnRecords(key);
+  _pageExists(arg, pageData) {
+    let args = arg.split(',');
+    let page = pageData.find(aPage=>{
+      return aPage.key.includes(args[1]);
+    });
+    return page.mdn_exists;
+  }
+
+  async _getExistingPages() {
+    let burnRecords = this._interfaceData.getBurnRecords();
     const pinger = new Pinger(burnRecords);
     const verboseOutput = false;
-    pinger.pingRecords(verboseOutput)
-    .then(records => {
-      return records
-    })
+    let records = await pinger.pingRecords(verboseOutput)
     .catch(e => {
       throw e;
     });
+    return records;
   }
 
   _getNamedArg(arg) {
@@ -150,6 +170,10 @@ class _Builder {
       arg = this._getNamedArg(arg);
       switch (arg) {
         case '--constructor':
+          // NEW
+          trueArgs.push(arg);
+          trueArgs.push(args[2] + '.' + args[2]);
+          break;
         case '--header':
         case '--reference':
           trueArgs.push(arg);
@@ -232,7 +256,7 @@ class _Builder {
   async build() {
     this._writeBCD();
     if (this._flagsOnly) { return; }
-    this._initPages();
+    await this._initPages();
     for (let p of this.pages) {
       await p.askQuestions();
       p.write();
