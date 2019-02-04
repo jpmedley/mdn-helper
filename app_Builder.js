@@ -98,6 +98,7 @@ class _Builder {
     let burnRecords = this._interfaceData.getBurnRecords();
     const pinger = new Pinger(burnRecords);
     const verboseOutput = false;
+    console.log('\nChecking for existing MDN pages. This may take a few minutes.');
     let records = await pinger.pingRecords(verboseOutput)
     .catch(e => {
       throw e;
