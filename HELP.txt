@@ -2,9 +2,9 @@
     Builds an interfaces boilerplates after selecting an IDL file based on
     searchString. For interfaces, this also outputs BCD if a file doesn't exist.
 
-  burn bcd -- [(-d | --datafor) _category_]
-  burn chrome -- [(-f | --flags)]
-  burn urls
+  burn bcd -- burn bcd -- [(-c | --category) _category_] [(-b | --browsers) _browsers_]
+  burn chrome  -- [(-f | --flags)] [(-o | --origin-trials)]
+  burn urls -- burn urls -- [(-c | --category) _category_]
     Builds several types of burn-down lists.
 
     The first syntax generates a csv listing BCD entries where the browser
