@@ -3,9 +3,12 @@
 const actions = require('./actions');
 const bcd = require('mdn-browser-compat-data');
 const { BCDManager } = require('./app_BCD.js');
+const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help.js');
+const { InterfaceData } = require('./idl.js');
 const page = require('./page.js');
+const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 
 const FLAGS = {
@@ -31,50 +34,17 @@ const FLAGS = {
   "--css": "--css"
 }
 
-class _Builder {
-  constructor(interfaceData, flagsOnly = false) {
-    this._interfaceData = interfaceData;
-    this._flagsOnly = flagsOnly;
+function getNamedArg(arg) {
+  if (arg in FLAGS) {
+    return FLAGS[arg];
+  } else {
+    return arg;
   }
+}
 
-  _initPages() {
-    const args = this._normalizeArguments(this._interfaceData.command);
-    const parentType = args[0];
-    const parentName = args[1].split(',')[1];
+class Builder {
+  constructor(options) {
 
-    // Add space for interface or header name to sharedQuestions,
-    //  and remove it from args.
-    const introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
-    const sharedQuestions = new page.Questions(introMessage);
-    sharedQuestions[parentType] = parentName;
-    sharedQuestions['name'] = parentName;
-    sharedQuestions.add(parentType, parentName);
-
-    // We no longer need the conent type and name.
-    args.shift();
-    args.shift();
-
-    // Process remaining arguments.
-    this.pages = new Array();
-    args.forEach((arg, index, args) => {
-      let members = arg.split(',');
-        // Step 4. Ping MDN for page. If MDN page doesn't exist then do the next
-        //  two steps. Also notify user that page already exists.
-      let aPage = new page.Page(members[1], members[0], sharedQuestions);
-      this.pages.push(aPage);
-    });
-  }
-
-  _pageExists() {
-
-  }
-
-  _getNamedArg(arg) {
-    if (arg in FLAGS) {
-      return FLAGS[arg];
-    } else {
-      return arg;
-    }
   }
 
   _normalizeArguments(args) {
@@ -111,7 +81,7 @@ class _Builder {
   _normalizeHeaderArgs(args) {
     let trueArgs = new Array();
     args.forEach((arg, index, args) => {
-      arg = this._getNamedArg(arg);
+      arg = getNamedArg(arg);
       switch (arg) {
         case '--directive':
           trueArgs.push(arg);
@@ -131,9 +101,13 @@ class _Builder {
   _normalizeInterfaceArgs(args) {
     let trueArgs = new Array();
     args.forEach((arg, index, args) => {
-      arg = this._getNamedArg(arg);
+      arg = getNamedArg(arg);
       switch (arg) {
         case '--constructor':
+          // NEW
+          trueArgs.push(arg);
+          trueArgs.push(args[2] + '.' + args[2]);
+          break;
         case '--header':
         case '--reference':
           trueArgs.push(arg);
@@ -202,6 +176,120 @@ class _Builder {
     }
     return arrangedArgs;
   }
+}
+
+class CLIBuilder extends Builder {
+  constructor(options) {
+    super(options);
+    this._args = options.args;
+  }
+
+  _initPages() {
+    let args = this._normalizeArguments(this._args);
+    let parentType = args[0];
+    let parentName = args[1].split(',')[1];
+
+    // Add space for interface or header name to sharedQuestions,
+    //  and remove it from args.
+    let introMessage = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
+    let sharedQuestions = new page.Questions(introMessage);
+    sharedQuestions[parentType] = parentName;
+    sharedQuestions['name'] = parentName;
+    sharedQuestions.add(parentType, parentName);
+
+    // We no longer need the conent type and name.
+    args.shift();
+    args.shift();
+
+    // Process remaining arguments.
+    this._pages = new Array();
+    args.forEach((arg, index, args) => {
+      let members = arg.split(',');
+      let aPage = new page.Page(members[1], members[0], sharedQuestions);
+      this._pages.push(aPage);
+    });
+  }
+
+  async build() {
+    this._initPages();
+    for (let p of this._pages) {
+      await p.askQuestions();
+      p.write();
+    }
+  }
+}
+
+class IDLBuilder extends Builder {
+  constructor(options) {
+    super(options);
+    this._interfaceData = options.interfaceData;
+    this._jsonOnly = options.jsonOnly || false;
+  }
+
+  async _initPages() {
+    const args = this._normalizeArguments(this._interfaceData.command);
+    const parentType = args[0];
+    const parentName = args[1].split(',')[1];
+
+    // Add space for interface or header name to sharedQuestions,
+    //  and remove it from args.
+    const introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
+    const sharedQuestions = new page.Questions(introMessage);
+    sharedQuestions[parentType] = parentName;
+    sharedQuestions['name'] = parentName;
+    sharedQuestions.add(parentType, parentName);
+
+    // We no longer need the conent type and name.
+    args.shift();
+    args.shift();
+
+    // Process remaining arguments.
+    this._pages = new Array();
+    let skippingPages = new Array();
+    const existingPages = await this._getExistingPages();
+    args.forEach((arg, index, args) => {
+      let members = arg.split(',');
+      //Skip landing pages which aren't in BCD.
+      if (members[0] === 'landing') { return; }
+      if (!this._pageExists(arg, existingPages)) {
+        let aPage = new page.Page(members[1], members[0], sharedQuestions);
+        this._pages.push(aPage);
+      } else {
+        skippingPages.push(members);
+      }
+    });
+    if (skippingPages.length > 0) {
+      let msg = '\nThe following pages from this interface already exist. You will not be asked\nquestions about them.\n';
+      for (let s of skippingPages){
+        msg += `\t ${s[1]} ${s[0]}\n`;
+      }
+      console.log(msg);
+      let enq = new Enquirer();
+      let options = { message: 'Press Enter to continue.' };
+      enq.question('continue', options);
+      let ans = await enq.prompt('continue');
+    }
+  }
+
+  _pageExists(arg, pageData) {
+    let args = arg.split(',');
+    let page = pageData.find(aPage=>{
+      return aPage.key.includes(args[1]);
+    });
+    return page.mdn_exists;
+  }
+
+  async _getExistingPages() {
+    let burnRecords = this._interfaceData.getBurnRecords();
+    const pinger = new Pinger(burnRecords);
+    const verboseOutput = false;
+    console.log('\nChecking for existing MDN pages. This may take a few minutes.');
+    let records = await pinger.pingRecords(verboseOutput)
+    .catch(e => {
+      throw e;
+    });
+    return records;
+  }
 
   _writeBCD() {
     let name = this._interfaceData.name;
@@ -215,13 +303,15 @@ class _Builder {
 
   async build() {
     this._writeBCD();
-    if (this._flagsOnly) { return; }
-    this._initPages();
-    for (let p of this.pages) {
+    if (this._jsonOnly) { return; }
+    await this._initPages();
+    for (let p of this._pages) {
       await p.askQuestions();
       p.write();
     }
   }
+
 }
 
-module.exports.Builder = _Builder;
+module.exports.CLIBuilder = CLIBuilder;
+module.exports.IDLBuilder = IDLBuilder;

@@ -1,7 +1,7 @@
 'use strict';
 
-const { Builder } = require('./app_Builder.js');
-const { Burner } = require('./app_Burn.js');
+const { CLIBuilder } = require('./builder.js');
+const { BurnerFactory } = require('./burner.js');
 const { Cleaner } = require('./app_Cleaner.js');
 const { Finder } = require('./app_Finder.js');
 const utils = require('./utils.js');
@@ -28,8 +28,8 @@ switch (command) {
     finder.findAndBuild(process.argv)
     break;
   case 'burn':
-    let burner = new Burner();
-    burner.burn(process.argv)
+    let burner = BurnerFactory(process.argv);
+    burner.burn();
     break;
   case 'clean':
     let cleaner = new Cleaner();
@@ -45,8 +45,8 @@ switch (command) {
   case 'css':
   case 'header':
   case 'interface':
-    const builder = new Builder();
-    builder.build(process.argv);
+    const builder = new CLIBuilder({ args: process.argv });
+    builder.build();
     break;
   case 'help':
   default:

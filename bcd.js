@@ -21,6 +21,8 @@ class BCD {
     this._decorate(bcd);
     bcd.getPossibleKeys = this.getPossibleKeys;
     this.getPossibleKeys.bind(bcd);
+    bcd.getByKey = this.getByKey;
+    this.getByKey.bind(bcd);
     return bcd;
   }
 
@@ -36,6 +38,15 @@ class BCD {
         this._decorate(data[k]);
       }
     }
+  }
+
+  getByKey(key) {
+    const keys = key.split('.');
+    let branch = this;
+    for (let k of keys) {
+      branch = branch[k];
+    }
+    return branch;
   }
 
   getPossibleKeys(withString) {

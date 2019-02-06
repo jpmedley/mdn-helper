@@ -27,25 +27,28 @@ From within the mdn-helper direcory:
 
 ### build
 
-Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `css`, `header`, or `interface` command. For interfaces, this also outputs BCD if a file doesn't exist.
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `css`, `header`, or `interface` command. For interfaces, this also outputs BCD if a file doesn't exist. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
 
-**Syntax:** `build _searchString_`
+**Syntax:** `build _searchString_ -- [(-j | --jsonOnly)]`
 
 ### burn
 
 Builds several types of burn-down lists. This has several syntaxes.
 
-**Syntax:** `burn chrome -- [(-f | --flags)]`
+**Syntax:** `burn chrome -- [(-f | --flags)] [(-o | --origin-trials)]`
 
-Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag.
+Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial.
 
-**Syntax:** `burn urls`
+**Syntax:** `burn urls -- [(-c | --category) _category_]`
 
-Generates a csv listing BCD entries that are lacking a corresponding MDN page.
+Generates a csv listing BCD entries that are lacking a corresponding MDN page. `_category_` must be one of 'api', 'css', 'html', 'javascript', or 'svg'. If you don't enter one of these values, you will be prompted for one of them.
 
-**Syntax:** `burn bcd -- [(-d | --datafor) _category_]`
+**Syntax:** `burn bcd -- [(-c | --category) _category_] [(-b | --browsers) _browsers_]`
 
-Generates a csv listing BCD entries where the browser value is either null or missing. `category` must be one of 'api', 'css', 'html', 'javascript', or 'svg'. If you don't enter one of these values, you will be prompted for one of them.
+Generates a csv listing BCD entries where the browser value is either null or missing.
+
+* `_category_` must be one of 'api', 'css', 'html', 'javascript', or 'svg'. If you don't enter one of these values, you will be prompted for one of them.
+* `_browsers_` must be a comma-separated list of browsers. If you don't enter any browsers or one of the provided browser names is not valid, you will be prompted to select browsers from a list.
 
 ### clean
 

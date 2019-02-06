@@ -4,7 +4,7 @@ const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const fm = require('./filemanager.js');
 const { InterfaceData } = require('./idl.js');
-const { Builder } = require('./app_Builder.js');
+const { IDLBuilder } = require('./builder.js');
 const radio = require('prompt-radio');
 const utils = require('./utils.js');
 
@@ -85,9 +85,6 @@ class _Finder {
 
   async _select(matches) {
     let names = [];
-    // for (let m in matches) {
-    //   names.push(matches[m].key + ` (${matches[m].name})`);
-    // }
     for (let m of matches) {
       names.push(m.key + ` (${m.name})`);
     }
@@ -106,7 +103,7 @@ class _Finder {
   async _find(args) {
     const matches = this._findInterfaces(args[args.length - 1]);
     const answers = await this._select(matches);
-    if (answers.idlFile[0] == CANCEL) { process.exit(); }
+    if (answers.idlFile[0] === CANCEL) { process.exit(); }
     let file = answers.idlFile[0].match(/\((\w+\.idl)\)/);
     for (let m of matches) {
       if (file[1] == m.name) {
@@ -137,11 +134,9 @@ class _Finder {
       this._show(file);
       return;
     }
-    // if (this._isFlagged(id).flagged) {
-    //   const answer = await this._confirm(flagged.message);
-    //   if (answer.confirm == 'n') { return; }
-    // }
-    const builder = new Builder(id, (args.includes('-j')));
+    // const builder = new Builder(id, (args.includes('-j')));
+    const options = { interfaceData: id, jsonOnly: args.includes('-j') };
+    const builder = new IDLBuilder(options);
     builder.build();
   }
 
