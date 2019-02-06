@@ -27,9 +27,9 @@ From within the mdn-helper direcory:
 
 ### build
 
-Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `css`, `header`, or `interface` command. For interfaces, this also outputs BCD if a file doesn't exist.
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `css`, `header`, or `interface` command. For interfaces, this also outputs BCD if a file doesn't exist. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
 
-**Syntax:** `build _searchString_`
+**Syntax:** `build _searchString_ -- [(-j | --jsonOnly)]`
 
 ### burn
 
