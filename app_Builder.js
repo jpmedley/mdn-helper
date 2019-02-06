@@ -180,10 +180,11 @@ class Builder {
 
 class CLIBuilder extends Builder {
   constructor(options) {
-    this_args = options._args;
+    super(options);
+    this._args = options.args;
   }
 
-  _initPages(args) {
+  _initPages() {
     let args = this._normalizeArguments(this._args);
     let parentType = args[0];
     let parentName = args[1].split(',')[1];
@@ -201,11 +202,11 @@ class CLIBuilder extends Builder {
     args.shift();
 
     // Process remaining arguments.
-    this.pages = new Array();
+    this._pages = new Array();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
       let aPage = new page.Page(members[1], members[0], sharedQuestions);
-      this.pages.push(aPage);
+      this._pages.push(aPage);
     });
   }
 
@@ -220,6 +221,7 @@ class CLIBuilder extends Builder {
 
 class IDLBuilder extends Builder {
   constructor(options) {
+    super(options);
     this._interfaceData = options.interfaceData;
     this._jsonOnly = options.jsonOnly || false;
   }
@@ -242,17 +244,16 @@ class IDLBuilder extends Builder {
     args.shift();
 
     // Process remaining arguments.
-    this.pages = new Array();
+    this._pages = new Array();
     let skippingPages = new Array();
     const existingPages = await this._getExistingPages();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
       //Skip landing pages which aren't in BCD.
       if (members[0] === 'landing') { return; }
-      if (members[0] === 'reference') { members[0] = 'interface'; }
       if (!this._pageExists(arg, existingPages)) {
         let aPage = new page.Page(members[1], members[0], sharedQuestions);
-        this.pages.push(aPage);
+        this._pages.push(aPage);
       } else {
         skippingPages.push(members);
       }
@@ -304,7 +305,7 @@ class IDLBuilder extends Builder {
     this._writeBCD();
     if (this._jsonOnly) { return; }
     await this._initPages();
-    for (let p of this.pages) {
+    for (let p of this._pages) {
       await p.askQuestions();
       p.write();
     }
@@ -336,7 +337,7 @@ class _Builder {
     args.shift();
 
     // Process remaining arguments.
-    this.pages = new Array();
+    this._pages = new Array();
     let skippingPages = new Array();
     const existingPages = await this._getExistingPages();
     args.forEach((arg, index, args) => {
@@ -346,7 +347,7 @@ class _Builder {
       if (members[0] === 'reference') { members[0] = 'interface'; }
       if (!this._pageExists(arg, existingPages)) {
         let aPage = new page.Page(members[1], members[0], sharedQuestions);
-        this.pages.push(aPage);
+        this._pages.push(aPage);
       } else {
         skippingPages.push(members);
       }
@@ -536,7 +537,7 @@ class _Builder {
     this._writeBCD();
     if (this._jsonOnly) { return; }
     await this._initPages();
-    for (let p of this.pages) {
+    for (let p of this._pages) {
       await p.askQuestions();
       p.write();
     }
@@ -544,3 +545,5 @@ class _Builder {
 }
 
 module.exports.Builder = _Builder;
+module.exports.CLIBuilder = CLIBuilder;
+module.exports.IDLBuilder = IDLBuilder;

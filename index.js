@@ -1,6 +1,6 @@
 'use strict';
 
-const { Builder } = require('./app_Builder.js');
+const { Builder, CLIBuilder } = require('./app_Builder.js');
 const { BurnerFactory } = require('./burner.js');
 const { Cleaner } = require('./app_Cleaner.js');
 const { Finder } = require('./app_Finder.js');
@@ -45,8 +45,8 @@ switch (command) {
   case 'css':
   case 'header':
   case 'interface':
-    const builder = new Builder();
-    builder.build(process.argv);
+    const builder = new CLIBuilder({ args: process.argv });
+    builder.build();
     break;
   case 'help':
   default:

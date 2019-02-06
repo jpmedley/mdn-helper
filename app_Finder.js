@@ -4,7 +4,7 @@ const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const fm = require('./filemanager.js');
 const { InterfaceData } = require('./idl.js');
-const { Builder } = require('./app_Builder.js');
+const { Builder, IDLBuilder } = require('./app_Builder.js');
 const radio = require('prompt-radio');
 const utils = require('./utils.js');
 
@@ -134,11 +134,9 @@ class _Finder {
       this._show(file);
       return;
     }
-    // if (this._isFlagged(id).flagged) {
-    //   const answer = await this._confirm(flagged.message);
-    //   if (answer.confirm == 'n') { return; }
-    // }
-    const builder = new Builder(id, (args.includes('-j')));
+    // const builder = new Builder(id, (args.includes('-j')));
+    const options = { interfaceData: id, jsonOnly: args.includes('-j') };
+    const builder = new IDLBuilder(options);
     builder.build();
   }
 
