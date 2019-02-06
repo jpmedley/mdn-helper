@@ -69,7 +69,7 @@ class IDLFileSet {
       let idlFile = new InterfaceData(fileObject);
       return idlFile;
     } catch (e) {
-      // if (TEST_MODE) { throw e; }
+      if (TEST_MODE) { throw e; }
       if (e.constructor.name == 'IDLError') {
         return;
       } else if (e.constructor.name == 'WebIDLParseError') {

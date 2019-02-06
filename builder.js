@@ -293,7 +293,11 @@ class IDLBuilder extends Builder {
 
   _writeBCD() {
     let name = this._interfaceData.name;
-    if (bcd.api[name]) { return; }
+    if (bcd.api[name]) {
+      const msg = `\nA BCD file already exists for ${name}. You will need to manually\nverify it for completeness.\n`;
+      console.log(msg);
+      return;
+    }
     let bcdm = new BCDManager();
     let outPath = utils.OUT + name + '/';
     if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
