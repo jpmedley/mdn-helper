@@ -6,6 +6,8 @@ const Enquirer = require('enquirer');
 const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
+const CANCEL = '(cancel)';
+
 class _Cleaner {
   constructor() {
     this._directories = this._getDirList();
@@ -23,6 +25,7 @@ class _Cleaner {
   async _select() {
     let dirs = [];
     for (let d of this._directories) { dirs.push(d.name); }
+    dirs.push(CANCEL);
     const enq = new Enquirer();
     enq.register('checkbox', cb);
     enq.question('outputDirs', 'Which output directories do you want to delete?', {
@@ -40,7 +43,7 @@ class _Cleaner {
     enq.question('confirm', options);
     const answer = await enq.prompt('confirm');
     if (answer.confirm.toLowerCase() == 'y') {
-      console.log("Removing selected directories.");
+      console.log("\nRemoving selected directories.");
       for (let d in dirsToDelete) {
         console.log(`\tDeleting ${dirsToDelete[d]}.`);
         utils.deleteUnemptyFolder(utils.OUT + dirsToDelete[d]);
@@ -53,6 +56,11 @@ class _Cleaner {
 
   async clean() {
     let dirsToDelete = await this._select();
+    if (dirsToDelete.includes(CANCEL)) {
+      const msg = '\nAbandoning cleaning operation as requested.\n';
+      console.log(msg);
+      return;
+    }
     await this._clean(dirsToDelete);
   }
 }
