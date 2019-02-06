@@ -4,7 +4,7 @@ const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const fm = require('./filemanager.js');
 const { InterfaceData } = require('./idl.js');
-const { Builder, IDLBuilder } = require('./app_Builder.js');
+const { IDLBuilder } = require('./builder.js');
 const radio = require('prompt-radio');
 const utils = require('./utils.js');
 
