@@ -372,6 +372,13 @@ class InterfaceData {
     return this._properties;
   }
 
+  get secureContext() {
+    const items = this._sourceData.extAttrs.items;
+    return items.some(item=>{
+      return item.name === 'SecureContext';
+    });
+  }
+
   get setlike() {
     return this._setlike;
   }

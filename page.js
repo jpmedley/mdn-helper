@@ -177,8 +177,8 @@ class _Page {
       } else {
         answer = this.questions.questions[matches[1]].answer
       }
-      if (answer == ANSWER_IS_NO) { continue; }
-      if (answer === null) { continue; }
+      // if (answer == ANSWER_IS_NO) { continue; }
+      // if (answer === null) { continue; }
       this.contents = this.contents.replace(matches[0], answer);
     }
   }
