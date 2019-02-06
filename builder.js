@@ -305,6 +305,11 @@ class IDLBuilder extends Builder {
     this._writeBCD();
     if (this._jsonOnly) { return; }
     await this._initPages();
+    if (this._pages.length === 0) {
+      let msg = '\nThere are no undocumented members for this interface.\n';
+      console.log(msg);
+      return;
+    }
     for (let p of this._pages) {
       await p.askQuestions();
       p.write();
