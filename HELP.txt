@@ -4,9 +4,9 @@
     Use -j or --jsonOnly to create a new JSON boilerplate for the browser
     compatibility data database, but no draft MDN pages.
 
-  burn bcd -- burn bcd -- [(-c | --category) _category_] [(-b | --browsers) _browsers_]
+  burn bcd burn bcd -- [(-c | --category) _category_] [(-b | --browsers) _browsers_]
   burn chrome  -- [(-f | --flags)] [(-o | --origin-trials)]
-  burn urls -- burn urls -- [(-c | --category) _category_]
+  burn urls burn urls -- [(-c | --category) _category_]
     Builds several types of burn-down lists.
 
     The first syntax generates a csv listing BCD entries where the browser
