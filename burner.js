@@ -13,6 +13,7 @@ const {
   InterfaceData
 } = require('./idl.js');
 
+const ALL_STRING = '(all)';
 const LOG_FILE = utils.today() + '-burn-log.txt';
 // const RESULTS_FILE = utils.today() + '-burn-list.csv';
 const CATEGORIES = ['api','css','html','javascript','svg','webextensions'];
@@ -29,7 +30,7 @@ const BROWSERS = [
   'safari',
   'safari_ios',
   'samsunginternet_android',
-  'webview_android'
+  'webview_android',
 ];
 
 
@@ -76,6 +77,11 @@ function _burnerFactory(args) {
   args.shift();
   args.shift();
   args.shift();
+  let eMsg = 'Burner type must be one of \'bcd\', \'chrome\', or \'urls\'.'
+  if (!args[0]) {
+    eMsg = 'You must provide a buner type. ' + eMsg;
+    throw new Error(eMsg);
+  }
   const burnerType = args[0].toLowerCase();
   args.shift();
   switch (burnerType) {
@@ -89,7 +95,8 @@ function _burnerFactory(args) {
       return new URLBurner({ args: args });
       break;
     default:
-      throw new Error('First burn argument must be one of \'bcd\', \'urls\' or \'chrome\'.');
+      eMsg = 'Burner type is invalid or misspelled. ' + eMsg;
+      throw new Error(eMsg);
   }
 }
 
@@ -299,15 +306,35 @@ class BCDBurner extends Burner {
     pos = args.indexOf('--browsers');
     if (pos > -1) { this._browsers = args[pos + 1].split(','); }
 
-    argQuestion = 'Which browsers do you want a burn list for?';
     if (!this._browsers) {
-      this._browsers = await selectArgument(argQuestion, BROWSERS, true);
+      // Interactive path
+      await this._selectBrowser();
+    } else {
+      // Command line path
+      if (!this._browsers.every(browser => {
+        return BROWSERS.includes(browser);
+      })) {
+        console.log('At least one of the provided browsers is not valid\n'); await this._selectBrowser();
+      }
     }
-    if (!this._browsers.every(browser => {
-      return BROWSERS.includes(browser);
-    })) {
-      argQuestion = 'At least one of the provided browsers is not valid\n' + argQuestion;
-      this._browsers = await selectArgument(argQuestion, BROWSERS, true);
+  }
+
+  async _selectBrowser() {
+    let inValid = true;
+    let argQuestion = 'Which browsers do you want a burn list for?';
+    const selectionList = [ALL_STRING, ...BROWSERS];
+    while (inValid) {
+      this._browsers = await selectArgument(argQuestion, selectionList, true);
+      if (this._browsers == ALL_STRING) {
+        this._browsers = BROWSERS;
+        inValid = false
+      } else if (this._browsers.includes(ALL_STRING)) {
+        argQuestion = `Selecting both ${ALL_STRING} and another browser is an invalid choice.\n`+ argQuestion;
+      } else if (this._browsers.every(browser=>{
+        return BROWSERS.includes(browser);
+      })) {
+        inValid = false;
+      }
     }
   }
 }
