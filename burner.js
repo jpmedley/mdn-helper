@@ -2,6 +2,7 @@
 
 const { bcd } = require('./bcd.js');
 const cb = require('prompt-checkbox');
+const config = require('config');
 const Enquirer = require('enquirer');
 const { IDLFileSet } = require('./filemanager.js');
 const fs = require('fs');
@@ -15,8 +16,8 @@ const {
 
 const ALL_STRING = '(all)';
 const LOG_FILE = utils.today() + '-burn-log.txt';
-// const RESULTS_FILE = utils.today() + '-burn-list.csv';
 const CATEGORIES = ['api','css','html','javascript','svg','webextensions'];
+const TEST_MODE = config.get('Application.test');
 const BROWSERS = [
   'chrome',
   'chrome_android',
@@ -374,16 +375,17 @@ class ChromeBurner extends Burner {
       let idlFile = new InterfaceData(fileName);
       return idlFile;
     } catch(e) {
-      if (e.constructor.name == 'IDLError') {
-        let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
-        this._log(msg);
-        return;
-      } else if (e.constructor.name == 'WebIDLParseError') {
-        let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
-        this._log(msg);
-        return;
-      } else {
-        throw e;
+      if (TEST_MODE) { throw e; }
+      switch (e.constructor.name) {
+        case 'IDLError':
+        case 'IDLNotSupportedError':
+        case 'WebIDLParseError':
+          let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
+          this._log(msg);
+          return;
+          break;
+        default:
+          throw e;
       }
     }
   }
