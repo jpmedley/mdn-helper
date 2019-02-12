@@ -69,13 +69,11 @@ class IDLFileSet {
       let idlFile = new InterfaceData(fileObject);
       return idlFile;
     } catch (e) {
-      if (TEST_MODE) { throw e; }
-      if (e.constructor.name == 'IDLError') {
-        return;
-      } else if (e.constructor.name == 'WebIDLParseError') {
-        return;
-      } else {
-        throw e;
+      switch (e.constructor.name) {
+        case 'IDLError':
+        case 'IDLNotSupportedError':
+        case 'WebIDLParseError':
+          break;
       }
     }
   }

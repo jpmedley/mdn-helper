@@ -19,7 +19,13 @@ const EMPTY_BCD_DATA = Object.freeze({
 })
 
 class IDLError extends Error {
-  constructor(message, fileName='', lineNumber='') {
+  constructor(message='', fileName='', lineNumber='') {
+    super(message, fileName, lineNumber);
+  }
+}
+
+class IDLNotSupportedError extends IDLError {
+  constructor(message='', fileName='', lineNumber='') {
     super(message, fileName, lineNumber);
   }
 }
@@ -164,6 +170,9 @@ class InterfaceData {
           this._sourceData = tree[t];
           this._type = tree[t].type;
           break;
+        case 'typedef':
+          const msg = `The ${sourceFile.path()} is of type ${tree[t].type} and not currently processible.`
+          throw new IDLNotSupportedError(msg);
       }
     }
     if (!this._sourceData) {
