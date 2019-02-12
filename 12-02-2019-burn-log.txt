@@ -1,0 +1,231 @@
+idl/core/css/cssom/css_numeric_value.idl
+	The idl/core/css/cssom/css_numeric_value.idl is of type typedef and not currently processible.
+
+idl/core/css/cssom/css_unparsed_value.idl
+	The idl/core/css/cssom/css_unparsed_value.idl is of type typedef and not currently processible.
+
+idl/core/css/cssom_string.idl
+	The idl/core/css/cssom_string.idl is of type typedef and not currently processible.
+
+idl/core/dom/common_definitions.idl
+	The idl/core/dom/common_definitions.idl is of type typedef and not currently processible.
+
+idl/core/dom/document.idl
+	The idl/core/dom/document.idl is of type typedef and not currently processible.
+
+idl/core/dom/element.idl
+	Got an error during or right after parsing `interface Element`: Expected identifiers but none found
+
+idl/core/dom/events/event_listener.idl
+	The idl/core/dom/events/event_listener.idl file does not contain interface data.
+
+idl/core/dom/frame_request_callback.idl
+	The idl/core/dom/frame_request_callback.idl file does not contain interface data.
+
+idl/core/dom/function_string_callback.idl
+	The idl/core/dom/function_string_callback.idl file does not contain interface data.
+
+idl/core/dom/idle_request_callback.idl
+	The idl/core/dom/idle_request_callback.idl file does not contain interface data.
+
+idl/core/dom/node_filter.idl
+	The idl/core/dom/node_filter.idl file does not contain interface data.
+
+idl/core/dom/void_function.idl
+	The idl/core/dom/void_function.idl file does not contain interface data.
+
+idl/core/fetch/headers.idl
+	The idl/core/fetch/headers.idl is of type typedef and not currently processible.
+
+idl/core/fetch/request.idl
+	The idl/core/fetch/request.idl is of type typedef and not currently processible.
+
+idl/core/fileapi/blob.idl
+	The idl/core/fileapi/blob.idl is of type typedef and not currently processible.
+
+idl/core/frame/reporting_observer.idl
+	The idl/core/frame/reporting_observer.idl is of type typedef and not currently processible.
+
+idl/core/frame/window_or_worker_global_scope.idl
+	The idl/core/frame/window_or_worker_global_scope.idl is of type typedef and not currently processible.
+
+idl/core/html/canvas/image_data.idl
+	The idl/core/html/canvas/image_data.idl is of type typedef and not currently processible.
+
+idl/core/html/event_handler.idl
+	The idl/core/html/event_handler.idl file does not contain interface data.
+
+idl/core/html/forms/form_data.idl
+	The idl/core/html/forms/form_data.idl is of type typedef and not currently processible.
+
+idl/core/html/forms/html_form_element.idl
+	Got an error during or right after parsing `interface HTMLFormElement`: Expected identifiers but none found
+
+idl/core/html/html_area_element.idl
+	Got an error during or right after parsing `interface HTMLAreaElement`: Expected identifiers but none found
+
+idl/core/html/html_anchor_element.idl
+	Got an error during or right after parsing `interface HTMLAnchorElement`: Expected identifiers but none found
+
+idl/core/html/html_element.idl
+	Got an error during or right after parsing `interface HTMLElement`: Expected identifiers but none found
+
+idl/core/html/html_iframe_element.idl
+	Got an error during or right after parsing `interface HTMLIFrameElement`: Expected identifiers but none found
+
+idl/core/html/html_image_element.idl
+	Got an error during or right after parsing `interface HTMLImageElement`: Expected identifiers but none found
+
+idl/core/html/html_link_element.idl
+	Got an error during or right after parsing `interface HTMLLinkElement`: Expected identifiers but none found
+
+idl/core/html/html_script_element.idl
+	Got an error during or right after parsing `interface HTMLScriptElement`: Expected identifiers but none found
+
+idl/core/html/html_table_cell_element.idl
+	Got an error during or right after parsing `interface HTMLTableCellElement`: Expected identifiers but none found
+
+idl/core/html/media/html_media_element.idl
+	Got an error during or right after parsing `interface HTMLMediaElement`: Expected identifiers but none found
+
+idl/core/html/void_callback.idl
+	The idl/core/html/void_callback.idl file does not contain interface data.
+
+idl/core/mojo/mojo.idl
+	The idl/core/mojo/mojo.idl is of type typedef and not currently processible.
+
+idl/core/svg/svg_image_element.idl
+	Got an error during or right after parsing `interface SVGImageElement`: Expected identifiers but none found
+
+idl/core/timing/dom_high_res_time_stamp.idl
+	The idl/core/timing/dom_high_res_time_stamp.idl is of type typedef and not currently processible.
+
+idl/core/timing/performance_entry_list.idl
+	The idl/core/timing/performance_entry_list.idl is of type typedef and not currently processible.
+
+idl/core/trustedtypes/trusted_html.idl
+	The idl/core/trustedtypes/trusted_html.idl is of type typedef and not currently processible.
+
+idl/core/trustedtypes/trusted_script.idl
+	The idl/core/trustedtypes/trusted_script.idl is of type typedef and not currently processible.
+
+idl/core/trustedtypes/trusted_script_url.idl
+	The idl/core/trustedtypes/trusted_script_url.idl is of type typedef and not currently processible.
+
+idl/core/trustedtypes/trusted_type_policy.idl
+	The idl/core/trustedtypes/trusted_type_policy.idl is of type typedef and not currently processible.
+
+idl/core/trustedtypes/trusted_url.idl
+	The idl/core/trustedtypes/trusted_url.idl is of type typedef and not currently processible.
+
+idl/modules/bluetooth/bluetooth_uuid.idl
+	The idl/modules/bluetooth/bluetooth_uuid.idl is of type typedef and not currently processible.
+
+idl/modules/canvas/canvas2d/canvas_rendering_context_2d.idl
+	The idl/modules/canvas/canvas2d/canvas_rendering_context_2d.idl is of type typedef and not currently processible.
+
+idl/modules/canvas/htmlcanvas/html_canvas_element_module.idl
+	The idl/modules/canvas/htmlcanvas/html_canvas_element_module.idl is of type typedef and not currently processible.
+
+idl/modules/canvas/htmlcanvas/html_canvas_element_module_support_webgl2_compute.idl
+	The idl/modules/canvas/htmlcanvas/html_canvas_element_module_support_webgl2_compute.idl is of type typedef and not currently processible.
+
+idl/modules/canvas/offscreencanvas/offscreen_canvas_module.idl
+	The idl/modules/canvas/offscreencanvas/offscreen_canvas_module.idl is of type typedef and not currently processible.
+
+idl/modules/canvas/offscreencanvas/offscreen_canvas_module_support_webgl2_compute.idl
+	The idl/modules/canvas/offscreencanvas/offscreen_canvas_module_support_webgl2_compute.idl is of type typedef and not currently processible.
+
+idl/modules/cookie_store/cookie_list_item.idl
+	The idl/modules/cookie_store/cookie_list_item.idl is of type typedef and not currently processible.
+
+idl/modules/credentialmanager/credential_creation_options.idl
+	The idl/modules/credentialmanager/credential_creation_options.idl is of type typedef and not currently processible.
+
+idl/modules/credentialmanager/public_key_credential_parameters.idl
+	The idl/modules/credentialmanager/public_key_credential_parameters.idl is of type typedef and not currently processible.
+
+idl/modules/crypto/subtle_crypto.idl
+	The idl/modules/crypto/subtle_crypto.idl is of type typedef and not currently processible.
+
+idl/modules/filesystem/entries_callback.idl
+	The idl/modules/filesystem/entries_callback.idl file does not contain interface data.
+
+idl/modules/filesystem/entry_callback.idl
+	The idl/modules/filesystem/entry_callback.idl file does not contain interface data.
+
+idl/modules/filesystem/error_callback.idl
+	The idl/modules/filesystem/error_callback.idl file does not contain interface data.
+
+idl/modules/filesystem/file_callback.idl
+	The idl/modules/filesystem/file_callback.idl file does not contain interface data.
+
+idl/modules/filesystem/file_system_callback.idl
+	The idl/modules/filesystem/file_system_callback.idl file does not contain interface data.
+
+idl/modules/filesystem/file_writer_callback.idl
+	The idl/modules/filesystem/file_writer_callback.idl file does not contain interface data.
+
+idl/modules/filesystem/metadata_callback.idl
+	The idl/modules/filesystem/metadata_callback.idl file does not contain interface data.
+
+idl/modules/mediastream/media_track_constraint_set.idl
+	The idl/modules/mediastream/media_track_constraint_set.idl is of type typedef and not currently processible.
+
+idl/modules/mediastream/navigator_media_stream.idl
+	The idl/modules/mediastream/navigator_media_stream.idl is of type typedef and not currently processible.
+
+idl/modules/netinfo/network_information.idl
+	The idl/modules/netinfo/network_information.idl is of type typedef and not currently processible.
+
+idl/modules/nfc/nfc.idl
+	The idl/modules/nfc/nfc.idl is of type typedef and not currently processible.
+
+idl/modules/nfc/nfc_record.idl
+	The idl/modules/nfc/nfc_record.idl is of type typedef and not currently processible.
+
+idl/modules/push_messaging/push_event_init.idl
+	The idl/modules/push_messaging/push_event_init.idl is of type typedef and not currently processible.
+
+idl/modules/quota/deprecated_storage_callbacks.idl
+	The idl/modules/quota/deprecated_storage_callbacks.idl file does not contain interface data.
+
+idl/modules/sensor/orientation_sensor.idl
+	The idl/modules/sensor/orientation_sensor.idl is of type typedef and not currently processible.
+
+idl/modules/srcobject/html_media_element_src_object.idl
+	The idl/modules/srcobject/html_media_element_src_object.idl is of type typedef and not currently processible.
+
+idl/modules/vr/vr_layer_init.idl
+	The idl/modules/vr/vr_layer_init.idl is of type typedef and not currently processible.
+
+idl/modules/webdatabase/sql_statement_callback.idl
+	The idl/modules/webdatabase/sql_statement_callback.idl file does not contain interface data.
+
+idl/modules/webdatabase/sql_statement_error_callback.idl
+	The idl/modules/webdatabase/sql_statement_error_callback.idl file does not contain interface data.
+
+idl/modules/webdatabase/sql_transaction.idl
+	The idl/modules/webdatabase/sql_transaction.idl is of type typedef and not currently processible.
+
+idl/modules/webdatabase/sql_transaction_callback.idl
+	The idl/modules/webdatabase/sql_transaction_callback.idl file does not contain interface data.
+
+idl/modules/webdatabase/sql_transaction_error_callback.idl
+	The idl/modules/webdatabase/sql_transaction_error_callback.idl file does not contain interface data.
+
+idl/modules/webgl/ext_disjoint_timer_query.idl
+	The idl/modules/webgl/ext_disjoint_timer_query.idl is of type typedef and not currently processible.
+
+idl/modules/webgl/webgl2_rendering_context_base.idl
+	The idl/modules/webgl/webgl2_rendering_context_base.idl is of type typedef and not currently processible.
+
+idl/modules/webgl/webgl_rendering_context_base.idl
+	The idl/modules/webgl/webgl_rendering_context_base.idl is of type typedef and not currently processible.
+
+idl/modules/xr/xr_webgl_layer.idl
+	The idl/modules/xr/xr_webgl_layer.idl is of type typedef and not currently processible.
+
+idl/modules/xr/xr_frame_request_callback.idl
+	The idl/modules/xr/xr_frame_request_callback.idl file does not contain interface data.
+

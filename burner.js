@@ -396,7 +396,11 @@ class ChromeBurner extends Burner {
     const path = utils.OUT + folderName;
     this._outFileName = path + 'chrome-burn-list_' + utils.today() + '.csv';
     this._outFileHandle = utils.getOutputFile(this._outFileName);
-    const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
+    let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect';
+    if (this._includeFlags) {
+      header += ',Behind a Flag';
+    }
+    header += '\n';
     fs.write(this._outFileHandle, header, ()=>{});
   }
 
@@ -406,6 +410,9 @@ class ChromeBurner extends Burner {
         let line = r.key + ',' + r.bcd + ',' + r.mdn_exists;
         if (r.mdn_url) { line += (',' + r.mdn_url); }
         if (r.redirect) { line += (',redirects')}
+        if (this._includeFlags && r.flag) {
+          line += (',' + r.flag);
+        }
         line += '\n';
         fs.write(this._outFileHandle, line, ()=>{});
         this._outputLines++;

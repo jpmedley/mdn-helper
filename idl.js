@@ -238,6 +238,7 @@ class InterfaceData {
     let records = [];
     for (let k in keys) {
       let record = Object.assign({}, EMPTY_BURN_DATA);
+      record.flag = this.flag;
       record.key = keys[k];
       let tokens = keys[k].split('.');
       let data = bcd.api[tokens[0]];
