@@ -1,6 +1,7 @@
 'use strict';
 
 const bcd = require('mdn-browser-compat-data');
+const { FlagStatus } = require('./flags.js');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
@@ -9,7 +10,7 @@ const EMPTY_BURN_DATA = Object.freeze({
   bcd: null,
   flag: null,
   mdn_exists: null,
-  mdn_url: null,
+  mdn_url: '',
   redirect: false
 });
 
@@ -34,6 +35,7 @@ class IDLNotSupportedError extends IDLError {
 
 class InterfaceData {
   constructor(sourceFile) {
+    this._flags = FlagStatus;
     this._loadTree(sourceFile);
     this._sortTree();
   }
@@ -96,7 +98,6 @@ class InterfaceData {
   }
 
   _sortFields() {
-    // STEP3 Sort the fields.
     this._fields = new Map();
     let ms = this._sourceContents.members;
     for (let f in ms) {
@@ -237,8 +238,11 @@ class InterfaceData {
     let keys = this.keys;
     let records = [];
     for (let k in keys) {
+      let flagged = this.getMemberFlag(keys[k]) || this.flag;
+      // console.log(flagged);
+      if (!includeFlags && flagged) { continue; }
       let record = Object.assign({}, EMPTY_BURN_DATA);
-      record.flag = this.flag;
+      record.flag = flagged;
       record.key = keys[k];
       let tokens = keys[k].split('.');
       let data = bcd.api[tokens[0]];
@@ -302,12 +306,44 @@ class InterfaceData {
   }
 
   get flag() {
-    return this._flag;
+    if (this.flagType === 'stable') {
+      return false;
+    } else {
+      return true;
+    }
   }
 
-  set flag(flagName) {
-    this._flag = flagName;
+  get flagType() {
+    return this._flags[this._flag];
   }
+
+  getMemberFlag(key) {
+    switch (this.getMemberFlagType(key)) {
+      case 'stable':
+      case undefined:
+        return false;
+        break;
+      default:
+        return true;
+    }
+  }
+
+  getMemberFlagType(key) {
+    if (!key.includes('.')) { return this.flagType; }
+    const member = this._sourceData.members.find(member=>{
+      return member.name === key;
+    });
+    if (!member) { return undefined; }
+    const flagged = member.extAttrs.find(attr=>{
+      return attr === 'RuntimeEnabled';
+    });
+    const flagName = flagged.rhs.value;
+    return this._flags[flagName];
+  }
+
+  // set flag(flagName) {
+  //   this._flag = flagName;
+  // }
 
   get getters() {
     return this._getters;
