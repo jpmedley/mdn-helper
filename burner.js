@@ -105,7 +105,6 @@ class Burner {
   constructor(options) {
     // this.options = options;
     this._args = options.args;
-    this._resetLog();
     this._outFileHandle;
     this._outfileName
     this._outputLines = 0;
@@ -128,18 +127,9 @@ class Burner {
   }
 
   _log(msg) {
-    fs.appendFile(LOG_FILE, msg, (e) => {
+    fs.appendFile(this._logFile, msg, (e) => {
       if (e) throw e;
     });
-  }
-
-  _resetLog() {
-    try {
-      fs.accessSync(LOG_FILE, fs.constants.F_OK);
-      fs.unlinkSync(LOG_FILE);
-    } catch (e) {
-      return;
-    }
   }
 }
 
@@ -193,9 +183,10 @@ class URLBurner extends Burner {
   }
 
   _openResultsFile(listID) {
-    const folderName = 'burn_' + utils.today() + '/';
-    utils.makeOutputFolder(folderName);
-    const path = utils.OUT + folderName;
+    this._outputPath = 'burn_' + utils.today() + '/';
+    this._logFile = this._outputPath + LOG_FILE;
+    utils.makeOutputFolder(this._outputPath);
+    const path = utils.OUT + this._outputPath;
     this._outFileName = path + this._category + '-' + this._type + '-burn-list_' + utils.today() + '.csv';
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
@@ -264,9 +255,10 @@ class BCDBurner extends Burner {
   }
 
   _openResultsFile(listId) {
-    const folderName = 'burn_' + utils.today() + '/';
-    utils.makeOutputFolder(folderName);
-    const path = utils.OUT + folderName;
+    this._outputPath = 'burn_' + utils.today() + '/';
+    this._logFile = this._outputPath + LOG_FILE;
+    utils.makeOutputFolder(this._outputPath);
+    const path = utils.OUT + this._outputPath
     this._outFileName = path + this._category + '-' + this._type + '-burn-list_' + utils.today() + '.csv';
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     let header = 'Interface,' + this._browsers.join(',') + '\n';
@@ -391,8 +383,9 @@ class ChromeBurner extends Burner {
   }
 
   _openResultsFile() {
-    const folderName = 'burn_' + utils.today() + '/';
-    utils.makeOutputFolder(folderName);
+    this._outputPath = 'burn_' + utils.today() + '/';
+    this._logFile = this._outputPath + LOG_FILE;
+    utils.makeOutputFolder(this._outputPath);
     const path = utils.OUT + folderName;
     this._outFileName = path + 'chrome-burn-list_' + utils.today() + '.csv';
     this._outFileHandle = utils.getOutputFile(this._outFileName);
