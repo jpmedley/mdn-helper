@@ -10,7 +10,7 @@ const EMPTY_BURN_DATA = Object.freeze({
   bcd: null,
   flag: null,
   mdn_exists: null,
-  mdn_url: '',
+  mdn_url: null,
   redirect: false
 });
 
@@ -252,12 +252,14 @@ class InterfaceData {
       if (!data) {
         record.bcd = false;
         record.mdn_exists = false;
+        record.mdn_url = '';
       } else {
         record.bcd = true;
         if (data.__compat) {
           record.mdn_url = data.__compat.mdn_url;
         } else {
           record.mdn_exists = false;
+          record.mdn_url = '';
         }
       }
       records.push(record);

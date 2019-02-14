@@ -407,9 +407,10 @@ class ChromeBurner extends Burner {
   _record(records) {
     for (let r of records) {
       if (!r.bcd || !r.mdn_exists) {
-        let line = r.key + ',' + r.bcd + ',' + r.mdn_exists;
-        if (r.mdn_url) { line += (',' + r.mdn_url); }
-        if (r.redirect) { line += (',redirects')}
+        let line = r.key + ',' + r.bcd + ',' + r.mdn_exists + ',' + r.mdn_url;
+        // if (r.mdn_url) { line += (',' + r.mdn_url); }
+        // if (r.redirect) { line += (',redirects')}
+        line += (',' + r.redirect);
         if (this._includeFlags && r.flag) {
           line += (',' + r.flag);
         }
