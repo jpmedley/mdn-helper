@@ -113,6 +113,7 @@ class InterfaceData {
     this._properties = new Map();
     this._setlike;
     for (let m of this._sourceData.members) {
+      m.flag = this._attachFlag(m);
       switch (m.type) {
         case 'attribute':
           this._properties.set(m.escapedName, m);
@@ -135,6 +136,22 @@ class InterfaceData {
         default:
           throw new Error(`Unknown member type found in InterfaceData._sortTree(): ${m.type}.`)
       }
+    }
+  }
+
+  _attachFlag(member) {
+    if (!member.extAttrs) {
+      member.flag = null;
+      return;
+    }
+    let flag = member.extAttrs.items.find(attr => {
+      return attr.name === 'RuntimeEnabled';
+    });
+//     member.flag = flag.rhs.value;
+    if (flag) {
+      member.flag = flag.rhs.value;
+    } else {
+      member.flag = null;
     }
   }
 
@@ -199,9 +216,7 @@ class InterfaceData {
           if (items[i].rhs) {
             this._exposed.push(items[i].rhs.value);
           } else {
-            for (let a of items[i].signature.arguments) {
-              this._exposed.push(a.idlType.idlType);
-            }
+            this._exposed = [...items[i].signature.arguments];
           }
           break;
         case 'OriginTrialEnabled':
@@ -212,7 +227,7 @@ class InterfaceData {
           this._exceptions = items[i].rhs.value;
           break;
         case 'RuntimeEnabled':
-          this._flag = items[i].rhs.value;
+          this._flag = this._flags[items[i].rhs.value];
           break;
         case 'SecureContext':
           //
@@ -232,7 +247,16 @@ class InterfaceData {
     return argString;
   }
 
-  getBurnRecords(includeFlags=false, includeOriginTrials=false) {
+  getBurnRecords(options) {
+      let keys = this.keys;
+      let records = [];
+      for (let k of keys) {
+
+
+      }
+  }
+
+  getBurnRecords_(includeFlags=false, includeOriginTrials=false) {
     if (!includeFlags && this.flag) { return; }
     if (!includeOriginTrials && this.originTrial) { return; }
     let keys = this.keys;
@@ -308,15 +332,15 @@ class InterfaceData {
   }
 
   get flag() {
-    if (this.flagType === 'stable') {
+    return this._flag;
+  }
+
+  get flagged() {
+    if (this._flag === 'stable') {
       return false;
     } else {
       return true;
     }
-  }
-
-  get flagType() {
-    return this._flags[this._flag];
   }
 
   getMemberFlag(key) {
@@ -342,10 +366,6 @@ class InterfaceData {
     const flagName = flagged.rhs.value;
     return this._flags[flagName];
   }
-
-  // set flag(flagName) {
-  //   this._flag = flagName;
-  // }
 
   get getters() {
     return this._getters;
