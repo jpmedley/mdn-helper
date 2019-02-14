@@ -44,6 +44,7 @@ class BCD {
     const keys = key.split('.');
     let branch = this;
     for (let k of keys) {
+      if (!branch[k]) { return null; }
       branch = branch[k];
     }
     return branch;

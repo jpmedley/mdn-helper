@@ -15,6 +15,7 @@ const {
 } = require('./idl.js');
 
 const ALL_STRING = '(all)';
+const BURNABLE_TYPES = ['interface'];
 const LOG_FILE = utils.today() + '-burn-log.txt';
 const CATEGORIES = ['api','css','html','javascript','svg','webextensions'];
 const TEST_MODE = config.get('Application.test');
@@ -335,22 +336,20 @@ class BCDBurner extends Burner {
 class ChromeBurner extends Burner {
   constructor(options) {
     super(options);
-    //Replace this with this.options.includeFlags;
-    this._includeFlags = false;
-    this._includeOriginTrials = false;
   }
 
   async burn() {
     await this._resolveArguments(this._args);
     this._openResultsFile();
     let idlFiles = new IDLFileSet();
-    let files = idlFiles.files;
+    let files = idlFiles.files
     console.log('Looking for browser compatibility data and MDN pages.');
     for (let f of files) {
       let idlFile = this._getIDLFile(f);
       if (!idlFile) { continue; }
-      if (idlFile._type != 'interface') { continue; }
-      let burnRecords = idlFile.getBurnRecords(this._includeFlags, this._includeOriginTrials);
+      if (!idlFile.burnable) { continue; }
+      if (idlFile._type === 'dictionary') { continue; }
+      let burnRecords = idlFile.getBurnRecords();
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()
@@ -364,7 +363,10 @@ class ChromeBurner extends Burner {
 
   _getIDLFile(fileName) {
     try {
-      let idlFile = new InterfaceData(fileName);
+      let idlFile = new InterfaceData(fileName, {
+        experimental: this._includeFlags,
+        originTrials: this._includeOriginTrials
+      });
       return idlFile;
     } catch(e) {
       if (TEST_MODE) { throw e; }
@@ -390,9 +392,8 @@ class ChromeBurner extends Burner {
     this._outFileName = `${this._outputPath}chrome-burnlist_${today}.csv`;
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect';
-    if (this._includeFlags) {
-      header += ',Behind a Flag';
-    }
+    if (this._includeFlags) { header += ',Behind a Flag'; }
+    if (this._includeOriginTrials) { header += ',In Origin Trial'; }
     header += '\n';
     fs.write(this._outFileHandle, header, ()=>{});
   }
@@ -400,13 +401,9 @@ class ChromeBurner extends Burner {
   _record(records) {
     for (let r of records) {
       if (!r.bcd || !r.mdn_exists) {
-        let line = r.key + ',' + r.bcd + ',' + r.mdn_exists + ',' + r.mdn_url;
-        // if (r.mdn_url) { line += (',' + r.mdn_url); }
-        // if (r.redirect) { line += (',redirects')}
-        line += (',' + r.redirect);
-        if (this._includeFlags && r.flag) {
-          line += (',' + r.flag);
-        }
+        let line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url}`;
+        if (this._includeFlags) { line += `,${r.flag}`; }
+        if (this._includeOriginTrials) { line += `,${r.origin_trial}`; }
         line += '\n';
         fs.write(this._outFileHandle, line, ()=>{});
         this._outputLines++;

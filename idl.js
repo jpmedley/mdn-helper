@@ -7,10 +7,11 @@ const webidl2 = require('webidl2');
 
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
-  bcd: null,
-  flag: null,
-  mdn_exists: null,
-  mdn_url: null,
+  bcd: false,
+  flag: false,
+  mdn_exists: false,
+  mdn_url: '',
+  origin_trial: false,
   redirect: false
 });
 
@@ -31,128 +32,105 @@ class IDLNotSupportedError extends IDLError {
   }
 }
 
-//TODO: Retrieval of data should depend on whether it is flagged.
-
 class InterfaceData {
-  constructor(sourceFile) {
+  constructor(sourceFile, options) {
     this._flags = FlagStatus;
     this._loadTree(sourceFile);
-    this._sortTree();
+    this._includeExperimental = options.experimental;
+    // this._includeTest = options.tests;
+    this._includeOriginTrials = options.originTrials
   }
 
-  _sortTree() {
-    switch (this._type) {
-      case 'dictionary':
-        this._sortFields();
-        break;
-      case 'interface':
-        this._loadExtras();
-        this._sortMembers();
-        this._sortMethods();
-        this._sortProperties();
-        break;
+  _loadTree(sourceFile) {
+    this._sourceContents = utils.getIDLFile(sourceFile.path());
+    let tree = webidl2.parse(this._sourceContents);
+    for (let t of tree) {
+      switch (t.type) {
+        case 'dictionary':
+          this._sourceData = t;
+          this._type = t.type;
+          break;
+        case 'interface':
+          this._sourceData = t;
+          this._type = t.type;
+          break;
+        case 'typedef':
+          const msg = `The ${sourceFile.path()} is of type ${t.type} and not currently processible.`
+          throw new IDLNotSupportedError(msg);
+      }
     }
-
-  }
-
-  _sortMethods() {
-    this._deleter;
-    this._getters = new Map();
-    this._setters = new Map();
-    this._stringifier;
-    for (let m of this._methods) {
-      if (m[1].deleter) {
-        this._deleter = m;
-        this._methods.delete(m[0]);
-      }
-      if (m[1].getter) {
-        this._getters.set(m[0], m[1]);
-        this._methods.delete(m[0]);
-      }
-      if (m[1].setter) {
-        this._setters.set(m[0], m[1]);
-        this._methods.delete(m[0]);
-      }
-      if (m[1].stringifier) {
-        this._stringifier = m;
-        this._methods.delete(m[0]);
-      }
+    if (!this._sourceData) {
+      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
+      throw new IDLError(msg);
     }
   }
 
-  _sortProperties() {
-    this._eventhandlers = new Map();
-    this._getters = new Map();
-    this._setters = new Map();
-    for (let p of this._properties) {
-      // Sort based on return type.
-      switch (p[1].idlType.baseName) {
-        case 'EventHandler':
-          this._eventhandlers.set(p[0], p[1]);
-          this._properties.delete(p[0]);
-          break;
-        default:
-          // Leave it where it is
+  _generateRecord(options) {
+    let record = Object.assign({}, EMPTY_BURN_DATA);
+    record.key = options.key;
+    if (options.key === 'location.valueOf') { console.log('Stop'); }
+    let bcdData = bcd.getByKey(`api.${record.key}`);
+    if (bcdData) {
+      record.bcd = true;
+      if (bcdData.__compat) {
+        if (bcdData.__compat.mdn_url) {
+          record.mdn_url = bcdData.__compat.mdn_url;
+        }
       }
+      record.flag = this.isFlagged(options.idlData);
+      record.origin_trial = this.isOriginTrial(options.idlData);
     }
+    return record;
   }
 
-  _sortFields() {
-    this._fields = new Map();
-    let ms = this._sourceContents.members;
-    for (let f in ms) {
-      this._fields.set(ms[f].escapedName, ms[f].default.value);
-    }
-  }
-
-  _sortMembers() {
-    this._consts = new Map();
-    this._iterable;
-    this._maplike;
-    this._methods = new Map();
-    this._properties = new Map();
-    this._setlike;
-    for (let m of this._sourceData.members) {
-      m.flag = this._attachFlag(m);
-      switch (m.type) {
-        case 'attribute':
-          this._properties.set(m.escapedName, m);
-          break;
-        case 'const':
-          this._consts.set(m.name, m);
-          break;
-        case 'iterable':
-          this._iterable = m;
-          break;
-        case 'maplike':
-          this._maplike = m;
-          break;
-        case 'operation':
-          this._methods.set(this._getOperationKey(m), m);
-          break;
-        case 'setlike':
-          this._setlike = m;
-          break;
-        default:
-          throw new Error(`Unknown member type found in InterfaceData._sortTree(): ${m.type}.`)
-      }
-    }
-  }
-
-  _attachFlag(member) {
-    if (!member.extAttrs) {
-      member.flag = null;
-      return;
-    }
-    let flag = member.extAttrs.items.find(attr => {
+  _getFlag(member) {
+    if (!member.extAttrs) { return null; }
+    const flag = member.extAttrs.items.find(attr => {
       return attr.name === 'RuntimeEnabled';
     });
-//     member.flag = flag.rhs.value;
     if (flag) {
-      member.flag = flag.rhs.value;
+      return flag.rhs.value;
     } else {
-      member.flag = null;
+      return null;
     }
+  }
+
+  _getFlagStatus(member) {
+    return this._flags[this._getFlag(member)];
+  }
+
+  _getIdentifiers(separator, type='name') {
+    let identifiers = [];
+    identifiers.push(this.name);
+    if (type === 'interface') {
+      if (this.hasConstructor()) {
+        let signature = `${this.name}${separator}${this.name}`;
+        let signatures = this.signatures.map(sig => {
+          return `${signature}(${sig})`;
+        })(signature);
+        identifiers = [identifiers, ...signatures];
+      }
+    }
+    this._sourceData.members.map(m => {
+      switch (m.type) {
+        case 'attribute':
+          identifiers.push(`${this.name}${separator}${m.escapedName}`);
+          break;
+        case 'const':
+          identifiers.push(`${this.name}${separator}${m.name}`);
+          break;
+        case 'iterable':
+        case 'maplike':
+        case 'setlike':
+          identifiers.push(`${this.name}${separator}${m}`);
+          break;
+        case 'operation':
+          let opKey = this._getOperationKey(m);
+          identifiers.push(`${this.name}${separator}${opKey}`);
+        default:
+          throw new IDLError(`Unknown member type found in InterfaceData._sortTree(): ${m.type}.`)
+      }
+    })
   }
 
   _getOperationKey(member) {
@@ -174,125 +152,38 @@ class InterfaceData {
     throw new Error('Cannot find operation key.');
   }
 
-  _loadTree(sourceFile) {
-    this._sourceContents = utils.getIDLFile(sourceFile.path());
-    let tree = webidl2.parse(this.sourceContents);
-    for (let t in tree) {
-      switch (tree[t].type) {
-        case 'dictionary':
-          // STEP1: load source dictionary to _sourceData
-          this._sourceData = tree[t];
-          this._type = tree[t].type;
-          break;
-        case 'interface':
-          this._sourceData = tree[t];
-          this._type = tree[t].type;
-          break;
-        case 'typedef':
-          const msg = `The ${sourceFile.path()} is of type ${tree[t].type} and not currently processible.`
-          throw new IDLNotSupportedError(msg);
-      }
-    }
-    if (!this._sourceData) {
-      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
-      throw new IDLError(msg);
+  _getOriginTrial(member) {
+    if (!member.extAttrs) { return null; }
+    const ot = member.extAttrs.items.find(attr => {
+      return attr.name === 'OriginTrialEnabled';
+    });
+    if (ot) {
+      return ot.rhs.value;
+    } else {
+      return null;
     }
   }
 
-  _loadExtras() {
-    if (!this._sourceData.extAttrs) { return; }
-    let items = this._sourceData.extAttrs.items;
-    this._signatures = [];
-    for (let i in items) {
-      switch (items[i].name) {
-        case 'Constructor':
-          this._constructor = true;
-          if (items[i].signature) {
-            this._signatures.push(items[i].signature.arguments);
-          }
-          break;
-        case 'Exposed':
-          this._exposed = new Array();
-          if (items[i].rhs) {
-            this._exposed.push(items[i].rhs.value);
-          } else {
-            this._exposed = [...items[i].signature.arguments];
-          }
-          break;
-        case 'OriginTrialEnabled':
-          this._originTrial = items[i].rhs.value;
-          break;
-        case 'RaisesException':
-          this._raisesException = true;
-          this._exceptions = items[i].rhs.value;
-          break;
-        case 'RuntimeEnabled':
-          this._flag = this._flags[items[i].rhs.value];
-          break;
-        case 'SecureContext':
-          //
-          break;
-      }
+  _isBurnable(member) {
+    // if (!this._includeTest && (this._getFlagStatus(member) === 'test')) {
+    //   return false;
+    // }
+    if (!this._includeExperimental && (this._getFlagStatus(member) === 'experimental')) {
+      return false;
     }
+    if (!this._includeOriginTrials && (this.isOriginTrial(member))) {
+      return false;
+    }
+    return true;
   }
 
-  _getArgumentString(args) {
-    let argString = '';
-    if (args.length) {
-      for (let a in args) {
-        argString += (args[a].idlType.baseName + " " + args[a].name + ", ");
-      }
-      argString = argString.slice(0, -1); // Chop last comma.
-    }
-    return argString;
-  }
-
-  getBurnRecords(options) {
-      let keys = this.keys;
-      let records = [];
-      for (let k of keys) {
-
-
-      }
-  }
-
-  getBurnRecords_(includeFlags=false, includeOriginTrials=false) {
-    if (!includeFlags && this.flag) { return; }
-    if (!includeOriginTrials && this.originTrial) { return; }
-    let keys = this.keys;
-    let records = [];
-    for (let k in keys) {
-      let flagged = this.getMemberFlag(keys[k]) || this.flag;
-      // console.log(flagged);
-      if (!includeFlags && flagged) { continue; }
-      let record = Object.assign({}, EMPTY_BURN_DATA);
-      record.flag = flagged;
-      record.key = keys[k];
-      let tokens = keys[k].split('.');
-      let data = bcd.api[tokens[0]];
-      if (data && tokens.length > 1) {
-        data = bcd.api[tokens[0]][tokens[1]];
-      }
-      if (!data) {
-        record.bcd = false;
-        record.mdn_exists = false;
-        record.mdn_url = '';
-      } else {
-        record.bcd = true;
-        if (data.__compat) {
-          record.mdn_url = data.__compat.mdn_url;
-        } else {
-          record.mdn_exists = false;
-          record.mdn_url = '';
-        }
-      }
-      records.push(record);
-    }
-    return records;
+  get burnable() {
+    return this._isBurnable(this._sourceData);
   }
 
   get command() {
     // Need to deal with setlike and stringifier.
+    console.log(this._sourceContents);
     let command = [];
     command.push('0');
     command.push('1');
@@ -301,82 +192,105 @@ class InterfaceData {
     command.push(this.name);
     command.push('-l');
     command.push('-r');
-    if (this.hasConstructor()) { command.push('-c'); }
-    if (this._iterable) { command.push('-it'); }
-    if (this._maplike) { command.push('-mp'); }
-    for (let [k, v] of this._eventhandlers) {
+    if (this.hasConstructor) { command.push('-c'); }
+    if (this.iterable) { command.push('-it'); }
+    if (this.maplike) { command.push('-mp'); }
+    let ehs = this.eventHandlers;
+    for (let e in ehs) {
       command.push('-h');
-      command.push(k);
+      command.push(ehs[e]);
     }
-    for (let [k, v] of this._methods) {
+    let meths = this.methods;
+    for (let m in meths) {
       command.push('-m');
-      command.push(k);
+      command.push(meths[m].body.name.value);
     }
-    for (let [k, v] of this._properties) {
+    let props = this.properties;
+    for (let p in props) {
       command.push('-p');
-      command.push(k);
+      command.push(props[p].name);
     }
     return command;
   }
 
   get constants() {
-    return this._consts;
+    let returns = this._sourceData.members.filter(m => {
+      if (!m.type === 'const') { return false; }
+      if (this._isBurnable(m)) { return true; }
+    });
+    if (returns.length === 0) { return null; }
+    return returns;
+  }
+
+  get constructorBranch() {
+    try {
+      return this._sourceData.extAttrs.items.find(i => {
+        return i.name === 'Constructor';
+      })
+    } catch (e) {
+      if (e.name === 'TypeError') {
+        return null;
+      } else {
+        throw e;
+      }
+    }
   }
 
   get deleter() {
-    return this._deleter;
+    throw new IDLError('Time to deal with deleaters.')
   }
 
-  get eventhandlers() {
-    return this._eventhandlers;
+  get eventHandlers() {
+    let returns = this._sourceData.members.filter(m => {
+      if (m.baseName === 'EventHandler') {
+        return this._isBurnable(m);
+      }
+      return false;
+    });
+    if (returns.length === 0) { return null; }
+    return returns;
   }
 
   get flag() {
-    return this._flag;
+    // Temporary implementation.
+    return 'stable';
+    // if (!this._sourceData.extAttrs) { return null; }
+    // return this._flags[this._sourceData.extAttrs.rhs.value];
   }
 
   get flagged() {
-    if (this._flag === 'stable') {
-      return false;
-    } else {
+    if (this._getFlagStatus(this._sourceData) === 'stable') {
       return true;
     }
-  }
-
-  getMemberFlag(key) {
-    switch (this.getMemberFlagType(key)) {
-      case 'stable':
-      case undefined:
-        return false;
-        break;
-      default:
-        return true;
-    }
-  }
-
-  getMemberFlagType(key) {
-    if (!key.includes('.')) { return this.flagType; }
-    const member = this._sourceData.members.find(member=>{
-      return member.name === key;
-    });
-    if (!member) { return undefined; }
-    const flagged = member.extAttrs.find(attr=>{
-      return attr === 'RuntimeEnabled';
-    });
-    const flagName = flagged.rhs.value;
-    return this._flags[flagName];
-  }
-
-  get getters() {
-    return this._getters;
+    return false;
   }
 
   get iterable() {
-    return this._iterable;
+    return this._sourceData.members.some(m => {
+      return m.type === 'iterable';
+    });
+  }
+
+  get getter() {
+    throw new IDLError('Time to deal with getters.')
+  }
+
+  get hasConstructor() {
+    try {
+      return this._sourceData.extAttrs.items.some(i => {
+        return i.name === 'Constructor';
+      })
+    } catch (e) {
+      if (e.name === 'TypeError') {
+        return false;
+      } else {
+        throw e;
+      }
+    }
   }
 
   get interfaces() {
-    return this._getIdentifiers('.', 'interface');
+    return this._getIdentifiers(',', 'interface');
   }
 
   get keys() {
@@ -384,48 +298,17 @@ class InterfaceData {
   }
 
   get maplike() {
-    return this._maplike;
-  }
-
-  get members() {
-    // let members = new Map([this._consts, this._eventhandlers, this._getters, this._methods, this._properties, this._setters]);
-    // return members;
-    let members = new Map();
-    for (let [k, v] of this._consts) {
-      members.set(k, v);
-    }
-    if (this._deleter) {
-      members.set('deleter', this._deleter);
-    }
-    for (let [k, v] of this._eventhandlers) {
-      members.set(k, v);
-    }
-    for (let [k, v] of this._getters) {
-      members.set(k, v);
-    }
-    if (this._iterable) {
-      members.set('iterable', this._iterable);
-    }
-    if (this._maplike) {
-      members.set('maplike', this._mapline);
-    }
-    for (let [k, v] of this._methods) {
-      members.set(k, v);
-    }
-    for (let [k, v] of this._properties) {
-      members.set(k, v);
-    }
-    if (this._setlike) {
-      members.set('setlike', this._setlike);
-    }
-    if (this._stringifier) {
-      members.set('stringifier', this._stringifier);
-    }
-    return members;
+    return this._sourceData.members.some(m => {
+      return m.type === 'maplike';
+    });
   }
 
   get methods() {
-    return this._methods;
+    let returns = this._sourceData.members.filter(item => {
+      return item.type === 'operation';
+    });
+    if (returns.length === 0) { return null; }
+    return returns;
   }
 
   get name() {
@@ -433,84 +316,113 @@ class InterfaceData {
   }
 
   get originTrial() {
-    return this._originTrial;
+    if (this._getOriginTrial(this._sourceData)) {
+      return true;
+    }
+    return false;
   }
 
   get properties() {
-    return this._properties;
-  }
-
-  get secureContext() {
-    const items = this._sourceData.extAttrs.items;
-    return items.some(item=>{
-      return item.name === 'SecureContext';
+    let returns = this._sourceData.members.filter(item => {
+      return item.type === 'attribute';
     });
+    if (returns.length === 0) { return null; }
+    return returns;
   }
 
-  get setlike() {
-    return this._setlike;
+  get setters() {
+    throw new IDLError('Time to deal with setters.')
   }
 
   get signatures() {
-    // Constructor signatures.
-    return this._signatures;
-  }
-
-  get sourceContents() {
-    return this._sourceContents;
+    try {
+      return this._sourceData.extAttrs.items.map(i => {
+        return i.name === 'Constructor';
+      })
+    } catch (e) {
+      if (e.name === 'TypeError') {
+        return null;
+      } else {
+        throw e;
+      }
+    }
   }
 
   get stringifier() {
-    return this._stringifier;
-  }
-
-  get tree() {
-    return this._tree;
-  }
-
-  get type() {
-    return this._type;
+    throw new IDLError('Time to deal with stringifier.')
   }
 
   get urls() {
     return this._getIdentifiers('/');
   }
 
-  _getIdentifiers(separator, type='name') {
-    // The type argument should be 'name' or 'interface'.
-    let identifiers = [];
-    identifiers.push(this.name);
-    if (this.hasConstructor()) {
-      let idBase = this.name + separator + this.name;
-      if (type == 'interface') {
-        for (let s in this._signatures) {
-          let sig = idBase + "(" + this._signatures[s] + ")";
-          identifiers.push(sig);
-        }
-      } else {
-        identifiers.push(idBase);
+  getBurnRecords() {
+    let records = [];
+    // Get an interface record.
+    // We wouldn't be here if interface was not burnable.
+    let options = {
+      idlData: this._sourceData,
+      key: this._sourceData.name
+    }
+    records.push(this._generateRecord(options));
+    // Get a constructor record.
+    if (this.hasConstructor) {
+      if (this._isBurnable(this.constructorBranch)) {
+        options.key = `${this._sourceData.name}.${this._sourceData.name}`;
+        records.push(this._generateRecord(options));
       }
     }
-    for (let e of this._eventhandlers.keys()) {
-      identifiers.push(this.name + separator + e);
+    // Get member records.
+    if (this._sourceData.members) {
+      this._sourceData.members.forEach(m => {
+        if (this._shouldBurn(m)) {
+          options.idlData = m;
+          let name = this._resolveMemberName(m);
+          options.key = `${this._sourceData.name}.${name}`;
+          records.push(this._generateRecord(options));
+        }
+      })
     }
-    for (let g of this._getters.keys()) {
-      identifiers.push(this.name + separator + g);
-    }
-    for (let m of this._methods.keys()) {
-      identifiers.push(this.name + separator + m);
-    }
-    for (let p of this._properties.keys()) {
-      identifiers.push(this.name + separator + p);
-    }
-    for (let s of this._setters.keys()) {
-      identifiers.push(this.name + separator + s);
-    }
-    return identifiers;
+    return records;
   }
 
-  hasConstructor() {
-    return this._constructor;
+  _shouldBurn(member) {
+    if (!this._isBurnable) { return false; }
+    const skipList = ['const','iterable','maplike','setlike'];
+    if (skipList.includes(member.type)) { return false; }
+    if (member.stringifier) { return false; }
+    if (member.deleter) { return false; }
+    return true;
+  }
+
+  _resolveMemberName(member) {
+    switch (member.type) {
+      case 'operation':
+        if (member.getter || member.setter) {
+          return member.body.idlType.baseName;
+        } else {
+          return member.body.name.value;
+        }
+        break;
+      case 'attribute':
+        return member.name;
+      default:
+        return 'what';
+    }
+  }
+
+  isFlagged(searchRoot) {
+    if (!searchRoot.extAttrs) { return false; }
+    return searchRoot.extAttrs.items.some(attr => {
+      return attr.name === 'RuntimeEnabled';
+    });
+  }
+
+  isOriginTrial(searchRoot) {
+    if (!searchRoot.extAttrs) { return false; }
+    return searchRoot.extAttrs.items.some(attr => {
+      return attr.name == 'OriginTrialEnabled';
+    });
   }
 }
 
