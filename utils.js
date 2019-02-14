@@ -75,13 +75,6 @@ function _getOutputFile(filePath, reuse = false) {
   return fs.openSync(filePath, 'w');
 }
 
-function _makeOutputFolder(dirName) {
-  const out = _getConfig('outputDirectory');
-  const todayFolder = out + '/' + dirName;
-  if (fs.existsSync(todayFolder)) { return; }
-  fs.mkdirSync(todayFolder);
-}
-
 function _getIDLFile(name) {
   if (!name.endsWith(".idl")) { name += ".idl"; }
   // let filePath = IDL_FILES + name;
@@ -89,8 +82,6 @@ function _getIDLFile(name) {
   let buffer = fs.readFileSync(filePath);
   return buffer.toString();
 }
-
-
 
 function _getTemplate(name) {
   if (!name.endsWith(".html")) { name += ".html"; }
@@ -104,6 +95,14 @@ function _getWireframes() {
   const wireframeBuffer = fs.readFileSync(wireframePath);
   const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
   return wireframes;
+}
+
+function _makeOutputFolder(dirName) {
+  const out = _getConfig('outputDirectory');
+  const todayFolder = `${out}${dirName}/`;
+  if (fs.existsSync(todayFolder)) { return todayFolder; }
+  fs.mkdirSync(todayFolder);
+  return todayFolder;
 }
 
 function _printHelp() {

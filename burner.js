@@ -183,11 +183,11 @@ class URLBurner extends Burner {
   }
 
   _openResultsFile(listID) {
-    this._outputPath = 'burn_' + utils.today() + '/';
+    const today = utils.today();
+    const folderName = `burn_${today}`;
+    this._outputPath = utils.makeOutputFolder(folderName);
     this._logFile = this._outputPath + LOG_FILE;
-    utils.makeOutputFolder(this._outputPath);
-    const path = utils.OUT + this._outputPath;
-    this._outFileName = path + this._category + '-' + this._type + '-burn-list_' + utils.today() + '.csv';
+    this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv}`
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
     fs.write(this._outFileHandle, header, ()=>{});
@@ -255,11 +255,11 @@ class BCDBurner extends Burner {
   }
 
   _openResultsFile(listId) {
-    this._outputPath = 'burn_' + utils.today() + '/';
+    const today = utils.today();
+    const folderName = `burn_${today}`;
+    this._outputPath = utils.makeOutputFolder(folderName);
     this._logFile = this._outputPath + LOG_FILE;
-    utils.makeOutputFolder(this._outputPath);
-    const path = utils.OUT + this._outputPath
-    this._outFileName = path + this._category + '-' + this._type + '-burn-list_' + utils.today() + '.csv';
+    this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv`;
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     let header = 'Interface,' + this._browsers.join(',') + '\n';
     fs.write(this._outFileHandle, header, ()=>{});
@@ -383,11 +383,11 @@ class ChromeBurner extends Burner {
   }
 
   _openResultsFile() {
-    this._outputPath = 'burn_' + utils.today() + '/';
+    const today = utils.today();
+    const folderName = `burn_${today}`;
+    this._outputPath = utils.makeOutputFolder(folderName);
     this._logFile = this._outputPath + LOG_FILE;
-    utils.makeOutputFolder(this._outputPath);
-    const path = utils.OUT + folderName;
-    this._outFileName = path + 'chrome-burn-list_' + utils.today() + '.csv';
+    this._outFileName = `${this._outputPath}chrome-burnlist_${today}.csv`;
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
     fs.write(this._outFileHandle, header, ()=>{});
