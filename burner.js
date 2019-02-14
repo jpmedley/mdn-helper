@@ -15,6 +15,7 @@ const {
 } = require('./idl.js');
 
 const ALL_STRING = '(all)';
+const BURNABLE_TYPES = ['interface'];
 const LOG_FILE = utils.today() + '-burn-log.txt';
 const CATEGORIES = ['api','css','html','javascript','svg','webextensions'];
 const TEST_MODE = config.get('Application.test');
@@ -338,19 +339,22 @@ class ChromeBurner extends Burner {
     //Replace this with this.options.includeFlags;
     this._includeFlags = false;
     this._includeOriginTrials = false;
+    this._includeTestFlags = false;
   }
 
   async burn() {
     await this._resolveArguments(this._args);
     this._openResultsFile();
     let idlFiles = new IDLFileSet();
-    let files = idlFiles.files;
+    let files = idlFiles.files
     console.log('Looking for browser compatibility data and MDN pages.');
     for (let f of files) {
       let idlFile = this._getIDLFile(f);
-      if (!idlFile) { continue; }
-      if (idlFile._type != 'interface') { continue; }
-      let burnRecords = idlFile.getBurnRecords(this._includeFlags, this._includeOriginTrials);
+      if (!this._isBurnable(idlFile)) { continue; }
+      let burnRecords = idlFile.getBurnRecords({
+        includeFlags: this._includeFlags,
+        includeOriginTrials: this._includeOriginTrials
+      });
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()
@@ -360,6 +364,15 @@ class ChromeBurner extends Burner {
       this._record(burnRecords);
     }
     this._closeOutputFile();
+  }
+
+  _isBurnable(idlFile) {
+    if (!idlFile) { return false; }
+    if (!BURNABLE_TYPES.includes(idlFile._type)) { return false; }
+    if (!this._includeFlags && idlFile.flagged) { return false; }
+    if (!this._includeTestFlags && (idlFile.flag === 'test')) { return false; }
+    if (!this._includeOriginTrials && idlFile.originTrial) { return false; }
+    return true;
   }
 
   _getIDLFile(fileName) {
