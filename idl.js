@@ -93,6 +93,10 @@ class InterfaceData {
     } else {
       return null;
     }
+    if (!this._sourceData) {
+      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
+      throw new IDLError(msg);
+    }
   }
 
   _getFlagStatus(member) {

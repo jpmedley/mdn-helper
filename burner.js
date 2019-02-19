@@ -336,6 +336,10 @@ class BCDBurner extends Burner {
 class ChromeBurner extends Burner {
   constructor(options) {
     super(options);
+    //Replace this with this.options.includeFlags;
+    this._includeFlags = false;
+    this._includeOriginTrials = false;
+    this._includeTestFlags = false;
   }
 
   async burn() {
@@ -346,10 +350,11 @@ class ChromeBurner extends Burner {
     console.log('Looking for browser compatibility data and MDN pages.');
     for (let f of files) {
       let idlFile = this._getIDLFile(f);
-      if (!idlFile) { continue; }
-      if (!idlFile.burnable) { continue; }
-      if (idlFile._type === 'dictionary') { continue; }
-      let burnRecords = idlFile.getBurnRecords();
+      if (!this._isBurnable(idlFile)) { continue; }
+      let burnRecords = idlFile.getBurnRecords({
+        includeFlags: this._includeFlags,
+        includeOriginTrials: this._includeOriginTrials
+      });
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()
@@ -359,6 +364,15 @@ class ChromeBurner extends Burner {
       this._record(burnRecords);
     }
     this._closeOutputFile();
+  }
+
+  _isBurnable(idlFile) {
+    if (!idlFile) { return false; }
+    if (!BURNABLE_TYPES.includes(idlFile._type)) { return false; }
+    if (!this._includeFlags && idlFile.flagged) { return false; }
+    if (!this._includeTestFlags && (idlFile.flag === 'test')) { return false; }
+    if (!this._includeOriginTrials && idlFile.originTrial) { return false; }
+    return true;
   }
 
   _getIDLFile(fileName) {
