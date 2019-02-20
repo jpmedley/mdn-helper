@@ -336,7 +336,6 @@ class BCDBurner extends Burner {
 class ChromeBurner extends Burner {
   constructor(options) {
     super(options);
-    //Replace this with this.options.includeFlags;
     this._includeFlags = false;
     this._includeOriginTrials = false;
     this._includeTestFlags = false;
