@@ -68,7 +68,6 @@ class InterfaceData {
   _generateRecord(options) {
     let record = Object.assign({}, EMPTY_BURN_DATA);
     record.key = options.key;
-    if (options.key === 'location.valueOf') { console.log('Stop'); }
     let bcdData = bcd.getByKey(`api.${record.key}`);
     if (bcdData) {
       record.bcd = true;
@@ -77,9 +76,9 @@ class InterfaceData {
           record.mdn_url = bcdData.__compat.mdn_url;
         }
       }
-      record.flag = this.isFlagged(options.idlData);
-      record.origin_trial = this.isOriginTrial(options.idlData);
     }
+    record.flag = this.isFlagged(options.idlData);
+    record.origin_trial = this.isOriginTrial(options.idlData);
     return record;
   }
 
