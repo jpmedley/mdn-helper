@@ -106,7 +106,7 @@ class InterfaceData {
     let identifiers = [];
     identifiers.push(this.name);
     if (type === 'interface') {
-      if (this.hasConstructor()) {
+      if (this.hasConstructor) {
         let signature = `${this.name}${separator}${this.name}`;
         let signatures = this.signatures.map(sig => {
           return `${signature}(${sig})`;
@@ -304,6 +304,14 @@ class InterfaceData {
     return this._sourceData.members.some(m => {
       return m.type === 'maplike';
     });
+  }
+
+  get members() {
+    let members = new Map();
+    for (let m of this._sourceData.members) {
+      members.set(m.name, m);
+    }
+    return members;
   }
 
   get methods() {

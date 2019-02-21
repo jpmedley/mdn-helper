@@ -25,7 +25,7 @@ class _BCDManager {
 
   getBCD(idl, outFilePath) {
     let members = [];
-    if (idl.hasConstructor()) {
+    if (idl.hasConstructor) {
       members.push(_copyString(CONSTR_TEMPLATE));
     }
     for (let m of idl.members) {
