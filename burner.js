@@ -414,7 +414,7 @@ class ChromeBurner extends Burner {
   _record(records) {
     for (let r of records) {
       if (!r.bcd || !r.mdn_exists) {
-        let line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url}`;
+        let line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url},${r.redirect}`;
         if (this._includeFlags) { line += `,${r.flag}`; }
         if (this._includeOriginTrials) { line += `,${r.origin_trial}`; }
         line += '\n';
