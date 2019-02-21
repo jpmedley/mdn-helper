@@ -188,7 +188,7 @@ class URLBurner extends Burner {
     const folderName = `burn_${today}`;
     this._outputPath = utils.makeOutputFolder(folderName);
     this._logFile = this._outputPath + LOG_FILE;
-    this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv}`
+    this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv`
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
     fs.write(this._outFileHandle, header, ()=>{});
