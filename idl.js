@@ -180,6 +180,31 @@ class InterfaceData {
     return true;
   }
 
+  _resolveMemberName(member) {
+    switch (member.type) {
+      case 'operation':
+        if (member.getter || member.setter) {
+          return member.body.idlType.baseName;
+        } else {
+          return member.body.name.value;
+        }
+        break;
+      case 'attribute':
+        return member.name;
+      default:
+        return 'what';
+    }
+  }
+
+  _shouldBurn(member) {
+    if (!this._isBurnable) { return false; }
+    const skipList = ['const','iterable','maplike','setlike'];
+    if (skipList.includes(member.type)) { return false; }
+    if (member.stringifier) { return false; }
+    if (member.deleter) { return false; }
+    return true;
+  }
+
   get burnable() {
     return this._isBurnable(this._sourceData);
   }
@@ -406,31 +431,6 @@ class InterfaceData {
     return member.extAttrs.items.some(i => {
       return i.name == 'SecureContext';
     })
-  }
-
-  _shouldBurn(member) {
-    if (!this._isBurnable) { return false; }
-    const skipList = ['const','iterable','maplike','setlike'];
-    if (skipList.includes(member.type)) { return false; }
-    if (member.stringifier) { return false; }
-    if (member.deleter) { return false; }
-    return true;
-  }
-
-  _resolveMemberName(member) {
-    switch (member.type) {
-      case 'operation':
-        if (member.getter || member.setter) {
-          return member.body.idlType.baseName;
-        } else {
-          return member.body.name.value;
-        }
-        break;
-      case 'attribute':
-        return member.name;
-      default:
-        return 'what';
-    }
   }
 
   isFlagged(searchRoot) {
