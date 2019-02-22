@@ -63,6 +63,12 @@ class _Finder {
   }
 
   _normalizeArguments(args, mode) {
+    this._includeFlags = args.some(arg=>{
+      return (arg.includes('-f') || (arg.includes('--flags')));
+    });
+    this._includeOriginTrials = args.some(arg=>{
+      return (arg.includes('-o') || (arg.includes('--origin-trials')));
+    });
     // Remove -j if we're finding instead of building
     if (mode == 'find') {
       for (let i in args) {
@@ -127,7 +133,10 @@ class _Finder {
   async findAndBuild(args) {
     args = this._normalizeArguments(args, 'build');
     let file = await this._find(args);
-    const id = new InterfaceData(file);
+    const id = new InterfaceData(file, {
+      experimental: this._includeFlags,
+      originTrial: this._includeOriginTrials
+    });
     if (id.type == 'dictionary') {
       console.log('mdn-helper does not yet process dictionaries.');
       console.log('Printing the interface instead.\n');

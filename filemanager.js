@@ -58,15 +58,16 @@ class IDLFileSet {
   }
 
   get files() {
-    // return this._files;
-    // Return files as an iterator.
     const files = this._files[Symbol.iterator]();
     return files;
   }
 
   _getIDLFile(fileObject) {
     try {
-      let idlFile = new InterfaceData(fileObject);
+      let idlFile = new InterfaceData(fileObject, {
+        experimental: true,
+        originTrials: true
+      });
       return idlFile;
     } catch (e) {
       switch (e.constructor.name) {
