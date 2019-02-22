@@ -186,7 +186,6 @@ class InterfaceData {
 
   get command() {
     // Need to deal with setlike and stringifier.
-    console.log(this._sourceContents);
     let command = [];
     command.push('0');
     command.push('1');
