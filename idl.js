@@ -340,6 +340,12 @@ class InterfaceData {
     return returns;
   }
 
+  getSecureContext(member = this._sourceData) {
+    return member.extAttrs.items.some(i => {
+      return i.name == 'SecureContext';
+    })
+  }
+
   get setters() {
     throw new IDLError('Time to deal with setters.')
   }
@@ -394,6 +400,12 @@ class InterfaceData {
       })
     }
     return records;
+  }
+
+  getSecureContext(member = this._sourceData) {
+    return member.extAttrs.items.some(i => {
+      return i.name == 'SecureContext';
+    })
   }
 
   _shouldBurn(member) {
