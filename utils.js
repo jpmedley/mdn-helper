@@ -9,13 +9,17 @@ const shell = require('shelljs');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
-const OUT = config.get('Application.outputDirectory');
+const HOMEDIR = require('os').homedir();
+let OUT = config.get('Application.outputDirectory');
 const REQUIRES_FLAGS = ['css','header','interface'];
 const COMMANDS = ['build','burn','clean','config','find','help'].concat(REQUIRES_FLAGS).sort();
 const APP_ROOT = path.resolve(__dirname);
 const UPDATE_INTERVALS = ['daily','weekly'];
 const ONE_DAY = 86400000;
 
+if (OUT.includes('$HOME')) {
+  OUT = OUT.replace('$HOME', HOMEDIR);
+} 
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
 function loadWireFrames() {
@@ -110,7 +114,7 @@ function _printHelp() {
             '\tnpm run <command> [<arguments>] -- [<flags>]\n\n' +
             'Commands:';
   console.log(intro);
-  let help = fs.readFileSync(global.__basedir + '/HELP.txt');
+  let help = fs.readFileSync(global.__basedir + '/help/HELP.txt');
   help = help.toString();
   console.log(help);
 }

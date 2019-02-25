@@ -1,7 +1,7 @@
 {
   "Application": {
     "help": "VERBOSE",
-    "outputDirectory": "/Users/jmedley/Desktop/out/",
+    "outputDirectory": "$HOME/Desktop/out/",
     "questionsFile": "standard-questions.json",
     "test": false,
     "update": "daily"

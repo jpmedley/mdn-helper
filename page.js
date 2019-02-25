@@ -4,7 +4,7 @@ const actions = require('./actions');
 const config = require('config');
 const Enquirer = require('enquirer');
 const fs = require('fs');
-const { help } = require('./help.js');
+const { help } = require('./help/help.js');
 const util = require('util');
 const utils = require('./utils.js');
 

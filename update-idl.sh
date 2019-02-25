@@ -7,7 +7,7 @@ rm -rf idl/core/
 rm -rf idl/modules/
 rm -rf idl/platform/
 
-if [ -d "idl" ]; then
+if [ ! -d "idl" ]; then
   mkdir idl
 fi
 

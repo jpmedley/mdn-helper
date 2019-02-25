@@ -15,7 +15,7 @@ The current version only handles JavaScript APIs.
 
 1. Change to the `mdn-helper` directory and run `npm install`.
 
-1. Enter `npm run update-data` to download the IDL files needed for the `build`, `burn`, and `find` commands. You should run this command about once a week to keep your IDL files up-to-date.
+1. Enter `npm run update-data` to download the IDL files needed for the `build`, `burn`, and `find` commands. This script will run automatically at startup approximately every twenty-four hours.
 
 ## Usage
 
@@ -27,9 +27,11 @@ From within the mdn-helper direcory:
 
 ### build
 
-Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds the results as though you had used the `css`, `header`, or `interface` command. For interfaces, this also outputs BCD if a file doesn't exist. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds a JSON file for the [Browser compatibility Database](https://github.com/mdn/browser-compat-data) and after asking a series of questions, builds boilerplate pages ready for publishing on MDN. This command also outputs BCD if a file doesn't exist. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
 
 **Syntax:** `build _searchString_ -- [(-j | --jsonOnly)]`
+
+For detailed instructions, see [Building MDN Pages][BUILDING-PAGES.md].
 
 ### burn
 
@@ -133,3 +135,7 @@ Prints help text to the console.
 **Create an interface page and two members**
 
 `node index.js interface -n Widget -m "doStuff()" -p isReady`
+
+## configuration
+
+When installed, no configuration is needed. [Instructions are provided](help/CONFIGURING.md) for a few options that you may want to change.
