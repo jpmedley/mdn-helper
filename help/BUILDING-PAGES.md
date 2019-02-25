@@ -29,14 +29,13 @@ The `build` command helps you rapidly build JSON and HTML boilerplates for undoc
   * The JSON file contains only null values. You will need to supply version numbers. (I hope to integrate with Confluence in a future release so that whenever possible this information is supplied for you.)
   * You will need to correct the nesting of the JSON and create a pull request to submit it to the database. [JSON Editor Online](http://jsoneditoronline.org/#/) can fix the nesting for you quickly.
   * MDN Helper writes the JSON file to a subfolder of `Desktop/out`.
-
 1. For the interface and each of its members, MDN Helper pings the expected URL as listed in the Browser compatibility Database (if the data exists that is.)
 
 1. If pages are found to be missing for the selected interface, you will be asked questions to gather information needed for the interface. These pages will also be written to `Desktop/out`.
 
 1. In `Desktop/out` open and inspect the files you just created. Add any additional information you feel is needed. Add code examples for every page you created whenever possible.
 
-You are now ready to upload the new files to MDN. Use the `clean` command to [clean up old files](clean-up-old-files).
+You are now ready to upload the new files to MDN. Use the `clean` command to [clean up old files](#clean-up-old-files).
 
 ## Create a JSON file
 
@@ -49,3 +48,5 @@ The application flow will be similar to building complete pages, but will end be
 ## Clean up old files
 
 After publishing your new MDN pages, you will want to remove them from your output directory. You can do this manually, but MDN Helper provides a command for this. Type the command below and follow the on-screen directions.
+
+`npm run clean`

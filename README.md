@@ -31,7 +31,7 @@ Searches Chrome's IDL files for filenames matching the provided string, prompts 
 
 **Syntax:** `build _searchString_ -- [(-j | --jsonOnly)]`
 
-For detailed instructions, see [Building MDN Pages][BUILDING-PAGES.md].
+For detailed instructions, see [Building MDN Pages](BUILDING-PAGES.md).
 
 ### burn
 
