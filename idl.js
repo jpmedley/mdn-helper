@@ -180,6 +180,31 @@ class InterfaceData {
     return true;
   }
 
+  _resolveMemberName(member) {
+    switch (member.type) {
+      case 'operation':
+        if (member.getter || member.setter) {
+          return member.body.idlType.baseName;
+        } else {
+          return member.body.name.value;
+        }
+        break;
+      case 'attribute':
+        return member.name;
+      default:
+        return 'what';
+    }
+  }
+
+  _shouldBurn(member) {
+    if (!this._isBurnable) { return false; }
+    const skipList = ['const','iterable','maplike','setlike'];
+    if (skipList.includes(member.type)) { return false; }
+    if (member.stringifier) { return false; }
+    if (member.deleter) { return false; }
+    return true;
+  }
+
   get burnable() {
     return this._isBurnable(this._sourceData);
   }
@@ -340,6 +365,12 @@ class InterfaceData {
     return returns;
   }
 
+  getSecureContext(member = this._sourceData) {
+    return member.extAttrs.items.some(i => {
+      return i.name == 'SecureContext';
+    })
+  }
+
   get setters() {
     throw new IDLError('Time to deal with setters.')
   }
@@ -396,29 +427,10 @@ class InterfaceData {
     return records;
   }
 
-  _shouldBurn(member) {
-    if (!this._isBurnable) { return false; }
-    const skipList = ['const','iterable','maplike','setlike'];
-    if (skipList.includes(member.type)) { return false; }
-    if (member.stringifier) { return false; }
-    if (member.deleter) { return false; }
-    return true;
-  }
-
-  _resolveMemberName(member) {
-    switch (member.type) {
-      case 'operation':
-        if (member.getter || member.setter) {
-          return member.body.idlType.baseName;
-        } else {
-          return member.body.name.value;
-        }
-        break;
-      case 'attribute':
-        return member.name;
-      default:
-        return 'what';
-    }
+  getSecureContext(member = this._sourceData) {
+    return member.extAttrs.items.some(i => {
+      return i.name == 'SecureContext';
+    })
   }
 
   isFlagged(searchRoot) {
