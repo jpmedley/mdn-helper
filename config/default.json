@@ -1,10 +1,12 @@
 {
   "Application": {
+    "blacklist": ["ApplicationCache","ApplicationCacheErrorEvent"],
     "help": "CONCISE",
     "outputDirectory": "out/",
     "questionsFile": "standard-questions.json",
     "test": false,
     "update": "daily",
+    "useBlacklist": "true",
     "questionHiding": {
       "use": "NEW_WRITER",
       "ENG": ["iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"],

@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const shell = require('shelljs');
 
-
+const BLACKLIST = config.get('Application.blacklist');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
@@ -19,7 +19,7 @@ const ONE_DAY = 86400000;
 
 if (OUT.includes('$HOME')) {
   OUT = OUT.replace('$HOME', HOMEDIR);
-} 
+}
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
 function loadWireFrames() {
@@ -94,6 +94,13 @@ function _getTemplate(name) {
   return buffer.toString();
 }
 
+function _isBlacklisted(apiName) {
+  if (config.get('Application.useBlacklist')) {
+    return BLACKLIST.includes(apiName);
+  }
+  return false;
+}
+
 function _getWireframes() {
   const wireframePath = TEMPLATES + QUESTIONS_FILE
   const wireframeBuffer = fs.readFileSync(wireframePath);
@@ -102,8 +109,8 @@ function _getWireframes() {
 }
 
 function _makeOutputFolder(dirName) {
-  const out = _getConfig('outputDirectory');
-  const todayFolder = `${out}${dirName}/`;
+  // const out = _getConfig('outputDirectory');
+  const todayFolder = `${OUT}${dirName}/`;
   if (fs.existsSync(todayFolder)) { return todayFolder; }
   fs.mkdirSync(todayFolder);
   return todayFolder;
@@ -202,6 +209,7 @@ module.exports.getIDLFile = _getIDLFile;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
+module.exports.isBlacklisted = _isBlacklisted;
 module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;

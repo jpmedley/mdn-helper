@@ -367,6 +367,7 @@ class ChromeBurner extends Burner {
 
   _isBurnable(idlFile) {
     if (!idlFile) { return false; }
+    if (utils.isBlacklisted(idlFile._sourceData.name)) { return false; }
     if (!BURNABLE_TYPES.includes(idlFile._type)) { return false; }
     if (!this._includeFlags && idlFile.flagged) { return false; }
     if (!this._includeTestFlags && (idlFile.flag === 'test')) { return false; }
