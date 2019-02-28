@@ -12,7 +12,7 @@
     "find": "node index.js find",
     "help": "node index.js help",
     "interface": "node index.js interface",
-    "update-data": "./update-idl.sh"
+    "update-data": "node index.js update-data"
   },
   "keywords": [
     "MDN",
@@ -30,7 +30,7 @@
     "enquirer": "^1.0.3",
     "fs": "0.0.1-security",
     "husky": "^1.3.1",
-    "mdn-browser-compat-data": "^0.0.68",
+    "mdn-browser-compat-data": "^0.0.69",
     "node.extend": "^2.0.2",
     "prompt-checkbox": "^2.2.0",
     "prompt-choices": "^5.0.0",

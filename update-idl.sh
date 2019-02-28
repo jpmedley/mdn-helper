@@ -11,6 +11,7 @@ if [ ! -d "idl" ]; then
   mkdir idl
 fi
 
+echo '\nDownloading IDL and related data files.\n'
 curl $IDL_ZIP > idl.tar.gz
 
 tar -C idl/ -xvf idl.tar.gz core/*.idl
@@ -19,4 +20,5 @@ tar -C idl/ -xvf idl.tar.gz platform/runtime_enabled_features.json5
 
 rm idl.tar.gz
 
-npm update mdn-browser-compat-data@latest
+echo '\nInstalling latest browser compatibility data.\n'
+npm install mdn-browser-compat-data@latest

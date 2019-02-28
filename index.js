@@ -48,6 +48,9 @@ switch (command) {
     const builder = new CLIBuilder({ args: process.argv });
     builder.build();
     break;
+  case 'update-data':
+    //Do nothing. It was already done above.
+    break;
   case 'help':
   default:
     utils.printHelp();
