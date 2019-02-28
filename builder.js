@@ -276,7 +276,8 @@ class IDLBuilder extends Builder {
     let page = pageData.find(aPage=>{
       return aPage.key.includes(args[1]);
     });
-    return page.mdn_exists;
+    if (page) { return page.mdn_exists; }
+    return false;
   }
 
   async _getExistingPages() {
