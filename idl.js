@@ -229,6 +229,7 @@ class InterfaceData {
     }
     let meths = this.methods;
     for (let m in meths) {
+      if (meths[m].stringifier) { continue; }
       command.push('-m');
       command.push(meths[m].body.name.value);
     }
