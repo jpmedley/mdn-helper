@@ -2,9 +2,6 @@
 
 const config = require('config');
 
-let interfaceName = "FontFace";
-let directory = "out";
-
 const CONCISE = Object.freeze({
   intro: '\n',
   shared: '\n',
@@ -16,19 +13,19 @@ const CONCISE = Object.freeze({
 });
 
 const VERBOSE = Object.freeze({
-  intro: `\nTo document the ${interfaceName} interface, MDN requires a page for the interface, \
+  intro: `\nTo document the selected interface, MDN requires a page for the interface, \
 \nitself a page for its constructor, and pages for each of its members. To \
 \ncreate these pages, you'll be asked a series of questions about the \
-\n${interfaceName} interface. The questions will be divided into several groups:\n \
+\nselected interface. The questions will be divided into several groups:\n \
 \n* First, you'll be asked questions whose answers are shared among all the \
 \n  pages to be created. \
 \n* Next, you'll be asked qeustions in groups corresponding to overview, \
-\n  interface, constructor, and every member of the ${interfaceName} interface.\
+\n  interface, constructor, and every member of the selected interface.\
 \nIf a question has a default, it will be in parenthesis and in lighter text \
 \nafter the question. Default values may contain HTML tags or kumascript \
 \ntokens. Press return to accept the default.\n \
 \n The answers will be combined with page templates to create drafts for MDN \
-\n pages. Drafts are written to the ${directory}/ directory.\n\n`,
+\n pages. Drafts are written to the configured output directory.\n\n`,
   shared: 'You will now be asked questions for answers that are shared among all the files\nto be created.\n\n',
   landing: `\nA landing page provides basic information about the API and a list of interfaces \
 \nin the API. For an example, go to \
