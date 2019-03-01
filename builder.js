@@ -8,7 +8,6 @@ const fs = require('fs');
 const { help } = require('./help/help.js');
 const { InterfaceData } = require('./idl.js');
 const page = require('./page.js');
-const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 
 const FLAGS = {
@@ -246,7 +245,7 @@ class IDLBuilder extends Builder {
     // Process remaining arguments.
     this._pages = new Array();
     let skippingPages = new Array();
-    const existingPages = await this._getExistingPages();
+    const existingPages = await this._interfaceData.ping();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
       //Skip landing pages which aren't in BCD.
@@ -278,18 +277,6 @@ class IDLBuilder extends Builder {
     });
     if (page) { return page.mdn_exists; }
     return false;
-  }
-
-  async _getExistingPages() {
-    let burnRecords = this._interfaceData.getBurnRecords();
-    const pinger = new Pinger(burnRecords);
-    const verboseOutput = false;
-    console.log('\nChecking for existing MDN pages. This may take a few minutes.');
-    let records = await pinger.pingRecords(verboseOutput)
-    .catch(e => {
-      throw e;
-    });
-    return records;
   }
 
   _writeBCD() {

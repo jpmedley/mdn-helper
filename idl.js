@@ -2,6 +2,7 @@
 
 const bcd = require('mdn-browser-compat-data');
 const { FlagStatus } = require('./flags.js');
+const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
@@ -39,6 +40,18 @@ class InterfaceData {
     this._includeExperimental = options.experimental;
     // this._includeTest = options.tests;
     this._includeOriginTrials = options.originTrials
+  }
+
+  async ping() {
+    let pingRecords = this.getBurnRecords();
+    const pinger = new Pinger(pingRecords);
+    const verboseOutput = false
+    console.log('\nChecking for existing MDN pages. This may take a few minutes.');
+    let records = await pinger.pingRecords(verboseOutput)
+    .catch(e => {
+      throw e;
+    });
+    return records;
   }
 
   _loadTree(sourceFile) {
