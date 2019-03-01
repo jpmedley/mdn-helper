@@ -19,7 +19,7 @@ try {
   process.exit(1);
 }
 
-utils.update();
+utils.update(process.argv);
 
 let finder;
 switch (command) {

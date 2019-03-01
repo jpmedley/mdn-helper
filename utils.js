@@ -159,7 +159,10 @@ function _today() {
   return today;
 }
 
-function _update(force=false) {
+function _update(args) {
+  const force = args.some(e => {
+    return (e.includes('-f'));
+  });
   const updateFile = APP_ROOT + '/.update';
   const now = new Date();
   const lastUpdate = (() => {
@@ -175,7 +178,7 @@ function _update(force=false) {
   const actualInterval = now - lastUpdate
   const updateInterval = config.get('Application.update');
   let update = false;
-  switch (updateInterval) {
+  switch (updateInterval && !force) {
     case 'daily':
       if (actualInterval > ONE_DAY) { update = true; }
       break;
@@ -183,9 +186,11 @@ function _update(force=false) {
       if (actualInterval > (7 * ONE_DAY)) { update = true; }
       break;
   }
-  if (update){
+  if (update || force){
     shell.exec('./update-idl.sh');
     fs.writeFileSync(updateFile, now);
+  } else if (!update || force) {
+    console.log('No data update is currently needed.');
   }
 }
 
