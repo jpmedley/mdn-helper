@@ -1,6 +1,6 @@
 {
   "name": "mdn-helper",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
   "main": "index.js",
   "scripts": {
