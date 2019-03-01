@@ -72,13 +72,18 @@ Creates a pages for a CSS property. The results are written to the `*path/to*/md
 
 Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then displays the contents of that file.
 
-**Syntax:** `find _searchString`
+**Syntax:** `find _searchString -- [(-p | --ping)]`
+
+**Flag:**
+
+`-p` or `--ping`: (Optional) Pings the MDN pages for the interface members and
+display whether they exist.
 
 ### header
 
 Creates pages for the provided HTTP header and directive names names. The results are written to the `*path/to*/mdn-helper/out/` directory. To build directive plages only, exclude the -H or --header flag.
 
-**Syntax:** <code>header -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]</code>
+**Syntax:** <code>header -- -n _headerName_ [(-H | --header)] [(-d | --directive) _directiveName_]</code>
 
 **Flags:**
 
