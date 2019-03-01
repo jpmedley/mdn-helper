@@ -273,10 +273,11 @@ class IDLBuilder extends Builder {
         msg += `\t ${s[1]} ${s[0]}\n`;
       }
       console.log(msg);
-      let enq = new Enquirer();
-      let options = { message: 'Press Enter to continue.' };
-      enq.question('continue', options);
-      let ans = await enq.prompt('continue');
+      await utils.pause();
+      // let enq = new Enquirer();
+      // let options = { message: 'Press Enter to continue.' };
+      // enq.question('continue', options);
+      // let ans = await enq.prompt('continue');
     }
   }
 

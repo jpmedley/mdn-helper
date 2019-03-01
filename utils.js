@@ -1,6 +1,7 @@
 'use strict';
 
 const config = require('config');
+const Enquirer = require('enquirer');
 const fs = require('fs');
 const path = require('path');
 const shell = require('shelljs');
@@ -116,6 +117,13 @@ function _makeOutputFolder(dirName) {
   return todayFolder;
 }
 
+async function _pause() {
+  let enq = new Enquirer();
+  let options = { message: 'Press Enter to continue.' };
+  enq.question('continue', options);
+  let ans = await enq.prompt('continue');
+}
+
 function _printHelp() {
   let intro = 'Basic usage:\n' +
             '\tnpm run <command> [<arguments>] -- [<flags>]\n\n' +
@@ -211,6 +219,7 @@ module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
 module.exports.isBlacklisted = _isBlacklisted;
 module.exports.makeOutputFolder = _makeOutputFolder;
+module.exports.pause = _pause;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.today = _today;

@@ -71,6 +71,9 @@ class _Finder {
     });
     // Remove -j if we're finding instead of building
     if (mode == 'find') {
+      this._ping = args.some(arg=>{
+        return (arg.includes('-p') || (arg.includes('--ping')));
+      });
       for (let i in args) {
         if (args[i] == '-j') {
           args.splice(i, 1);
@@ -107,7 +110,7 @@ class _Finder {
   }
 
   async _find(args) {
-    const matches = this._findInterfaces(args[args.length - 1]);
+    const matches = this._findInterfaces(args[3]);
     const answers = await this._select(matches);
     if (answers.idlFile[0] === CANCEL) { process.exit(); }
     let file = answers.idlFile[0].match(/\((\w+\.idl)\)/);
@@ -127,6 +130,23 @@ class _Finder {
   async findAndShow(args) {
     args = this._normalizeArguments(args, 'find');
     let file = await this._find(args);
+    if (this._ping) {
+      const id = new InterfaceData(file, false, false);
+      if (id.type == 'dictionary') {
+        console.log('mdn-helper does not yet ping dictionaries.');
+      } else {
+        const pingRecords = await id.ping();
+        console.log('Exists?   Interface');
+        console.log('-'.repeat(51));
+        pingRecords.forEach(r => {
+          // console.log(r);
+          let exists = r.mdn_exists.toString().padEnd(10);
+          console.log(exists + r.key);
+        });
+        await utils.pause();
+      }
+    }
+
     this._show(file);
   }
 
