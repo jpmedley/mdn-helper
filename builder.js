@@ -41,6 +41,16 @@ function getNamedArg(arg) {
   }
 }
 
+
+function pageExists(arg, pageData) {
+  let args = arg.split(',');
+  let page = pageData.find(aPage=>{
+    return aPage.key.includes(args[1]);
+  });
+  if (page) { return page.mdn_exists; }
+  return false;
+}
+
 class Builder {
   constructor(options) {
 
@@ -250,7 +260,7 @@ class IDLBuilder extends Builder {
       let members = arg.split(',');
       //Skip landing pages which aren't in BCD.
       if (members[0] === 'landing') { return; }
-      if (!this._pageExists(arg, existingPages)) {
+      if (!pageExists(arg, existingPages)) {
         let aPage = new page.Page(members[1], members[0], sharedQuestions);
         this._pages.push(aPage);
       } else {
@@ -268,15 +278,6 @@ class IDLBuilder extends Builder {
       enq.question('continue', options);
       let ans = await enq.prompt('continue');
     }
-  }
-
-  _pageExists(arg, pageData) {
-    let args = arg.split(',');
-    let page = pageData.find(aPage=>{
-      return aPage.key.includes(args[1]);
-    });
-    if (page) { return page.mdn_exists; }
-    return false;
   }
 
   _writeBCD() {
@@ -310,5 +311,6 @@ class IDLBuilder extends Builder {
 
 }
 
+module.exports.pageExists = pageExists;
 module.exports.CLIBuilder = CLIBuilder;
 module.exports.IDLBuilder = IDLBuilder;
