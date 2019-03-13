@@ -178,7 +178,7 @@ function _update(args) {
   const actualInterval = now - lastUpdate
   const updateInterval = config.get('Application.update');
   let update = false;
-  switch (updateInterval && !force) {
+  switch (updateInterval) {
     case 'daily':
       if (actualInterval > ONE_DAY) { update = true; }
       break;
@@ -186,16 +186,18 @@ function _update(args) {
       if (actualInterval > (7 * ONE_DAY)) { update = true; }
       break;
   }
+  if (force) { update = force; }
   if (update || force){
     shell.exec('./update-idl.sh');
     fs.writeFileSync(updateFile, now);
+    return true;
   } else if (!update || force) {
-    console.log('No data update is currently needed.');
+    return false;
   }
 }
 
 function _validateCommand(args) {
-  if (['burn','clean','config','help','update-data'].includes(args[2])) { return args[2]; }
+  if (['burn','clean','config','help'].includes(args[2])) { return args[2]; }
   if (args.length < 4) {
     throw new Error('This command requires arguments.');
   }
