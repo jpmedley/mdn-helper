@@ -2,7 +2,7 @@
 
 const actions = require('./actions');
 const bcd = require('mdn-browser-compat-data');
-const { BCDManager } = require('./app_BCD.js');
+const { BCDManager } = require('./bcdmanager.js');
 const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');

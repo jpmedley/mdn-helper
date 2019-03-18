@@ -2,8 +2,8 @@
 
 const { CLIBuilder } = require('./builder.js');
 const { BurnerFactory } = require('./burner.js');
-const { Cleaner } = require('./app_Cleaner.js');
-const { Finder } = require('./app_Finder.js');
+const { Cleaner } = require('./cleaner.js');
+const { Finder } = require('./finder.js');
 const utils = require('./utils.js');
 
 global.__basedir = __dirname;
