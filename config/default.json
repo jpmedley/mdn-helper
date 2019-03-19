@@ -1,6 +1,5 @@
 {
   "Application": {
-    "blacklist": ["ApplicationCache","ApplicationCacheErrorEvent"],
     "help": "CONCISE",
     "outputDirectory": "out/",
     "questionsFile": "standard-questions.json",
@@ -11,7 +10,16 @@
       "use": "NEW_WRITER",
       "ENG": ["iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"],
       "NEW_WRITER": ["child-interfaces", "isSecureContext", "iterableMemberLink", "iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"]
-    }
+    },
+    "blacklist": [
+      "ApplicationCache",
+      "ApplicationCacheErrorEvent",
+      "MojoHandle",
+      "MojoInterfaceInterceptor",
+      "MojoInterfaceRequestEVent",
+      "MojoWatcher",
+      "Plugin"
+    ]
   },
   "User": {
   }
