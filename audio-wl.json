@@ -1,0 +1,10 @@
+{
+  "whitelist": [
+    "AudioParam",
+    "AudioProcessingEvent",
+    "AudioTrackList",
+    "AudioWorklet",
+    "AudioWorkletGlobalScope",
+    "AudioWorkletNode"
+  ]
+}
