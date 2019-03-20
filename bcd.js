@@ -69,4 +69,4 @@ class BCD {
 
 }
 
-module.exports.bcd = new BCD();
+module.exports.BCD = BCD;

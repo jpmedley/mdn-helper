@@ -1,6 +1,6 @@
 'use strict';
 
-const { bcd } = require('./bcd.js');
+const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const config = require('config');
 const Enquirer = require('enquirer');
@@ -35,10 +35,11 @@ const BROWSERS = [
   'webview_android',
 ];
 
+global._bcd = new BCD();
 
 function getBurnRecords(key) {
   // const urlData = bcd[key];
-  const urlData = bcd.getByKey(key);
+  const urlData = global._bcd.getByKey(key);
   let records = [];
   (function getRecords(data) {
     for (let d in data) {

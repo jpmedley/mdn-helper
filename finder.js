@@ -1,5 +1,6 @@
 'use strict';
 
+const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const fm = require('./filemanager.js');
@@ -10,6 +11,8 @@ const utils = require('./utils.js');
 
 const NOTHING_FOUND = "Could not find matching IDL files."
 const CANCEL = '(none)';
+
+global._bcd = new BCD();
 
 class _Finder {
   constructor() {

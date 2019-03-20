@@ -1,6 +1,5 @@
 'use strict';
 
-const bcd = require('mdn-browser-compat-data');
 const { FlagStatus } = require('./flags.js');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -38,8 +37,7 @@ class InterfaceData {
     this._flags = FlagStatus;
     this._loadTree(sourceFile);
     this._includeExperimental = options.experimental;
-    // this._includeTest = options.tests;
-    this._includeOriginTrials = options.originTrials
+    this._includeOriginTrials = options.originTrials;
   }
 
   async ping() {
@@ -81,7 +79,7 @@ class InterfaceData {
   _generateRecord(options) {
     let record = Object.assign({}, EMPTY_BURN_DATA);
     record.key = options.key;
-    let bcdData = bcd.getByKey(`api.${record.key}`);
+    let bcdData = global._bcd.getByKey(`api.${record.key}`);
     if (bcdData) {
       record.bcd = true;
       if (bcdData.__compat) {
