@@ -78,7 +78,6 @@ function _burnerFactory(args) {
   // First three args are no longer needed.
   args.shift();
   args.shift();
-  args.shift();
   let eMsg = 'Burner type must be one of \'bcd\', \'chrome\', or \'urls\'.'
   if (!args[0]) {
     eMsg = 'You must provide a buner type. ' + eMsg;

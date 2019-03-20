@@ -3,8 +3,6 @@
 const { BurnerFactory } = require('./burner.js');
 const { printWelcome, update } = require('./utils.js');
 
-// global.__basedir = __dirname;
-
 printWelcome();
 update(process.argv);
 

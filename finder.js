@@ -110,7 +110,7 @@ class _Finder {
   }
 
   async _find(args) {
-    const matches = this._findInterfaces(args[3]);
+    const matches = this._findInterfaces(args[2]);
     const answers = await this._select(matches);
     if (answers.idlFile[0] === CANCEL) { process.exit(); }
     let file = answers.idlFile[0].match(/\((\w+\.idl)\)/);
