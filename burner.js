@@ -37,12 +37,13 @@ const BROWSERS = [
 
 global._bcd = new BCD();
 
-function getBurnRecords(key) {
+function getBurnRecords(key, whitelist) {
   // const urlData = bcd[key];
   const urlData = global._bcd.getByKey(key);
   let records = [];
   (function getRecords(data) {
     for (let d in data) {
+      if ((whitelist) && (!whitelist.includes(d))) { continue; }
       if (d == '__parent') { continue; }
       if (d == '__name') { continue; }
       if (!data[d].__compat) {
@@ -127,10 +128,22 @@ class Burner {
     console.log(msg);
   }
 
+  _loadWhitelist() {
+    const buffer = fs.readFileSync(this._whitelist);
+    this._whitelist = JSON.parse(buffer.toString()).whitelist;
+  }
+
   _log(msg) {
     fs.appendFile(this._logFile, msg, (e) => {
       if (e) throw e;
     });
+  }
+
+  async _resolveArguments(args) {
+    const whitelist = args.findIndex(arg=>{
+      return (arg.includes('-w') || (arg.includes('--whitelist')));
+    });
+    this._whitelist = args[whitelist+1];
   }
 }
 
@@ -144,7 +157,8 @@ class URLBurner extends Burner {
     await this._resolveArguments(this._args);
     this._openResultsFile();
     console.log('Pinging MDN for known URLs.');
-    let burnRecords = getBurnRecords(this._category);
+    if (this._whitelist) { this._loadWhitelist(); }
+    let burnRecords = getBurnRecords(this._category, this._whitelist);
     const pinger = new Pinger(burnRecords);
     const verboseOutput = true;
     //This should be pingURLs().
@@ -170,8 +184,12 @@ class URLBurner extends Burner {
   }
 
   async _resolveArguments(args) {
+    await super._resolveArguments(args);
     const catQuestion = 'Which category do you want a burn list for?'
-    if (args.length < 2) {
+    const hasCategory = args.some(arg=>{
+      return (arg.includes('-c') || (arg.includes('--category')));
+    });
+    if (!hasCategory) {
       this._category = await selectArgument(catQuestion, CATEGORIES);
     } else {
       if (!CATEGORIES.includes(args[1])) {
@@ -279,6 +297,7 @@ class BCDBurner extends Burner {
   }
 
   async _resolveArguments(args) {
+    await super._resolveArguments(args);
     // -c css -b chrome
     let pos;
     pos = args.indexOf('-c');
@@ -352,7 +371,8 @@ class ChromeBurner extends Burner {
       if (!this._isBurnable(idlFile)) { continue; }
       let burnRecords = idlFile.getBurnRecords({
         includeFlags: this._includeFlags,
-        includeOriginTrials: this._includeOriginTrials
+        includeOriginTrials: this._includeOriginTrials,
+        whitelist: this._whitelist
       });
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
@@ -426,6 +446,7 @@ class ChromeBurner extends Burner {
   }
 
   async _resolveArguments(args) {
+    await super._resolveArguments(args);
     this._includeFlags = args.some(arg=>{
       return (arg.includes('-f') || (arg.includes('--flags')));
     });
