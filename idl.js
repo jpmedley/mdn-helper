@@ -415,10 +415,8 @@ class InterfaceData {
     // We wouldn't be here if interface was not burnable.
     let options = {
       idlData: this._sourceData,
-      key: this._sourceData.name,
-      whitelist: this._whitelist
-    }
-    //START HERE: Make rest of this account for whitelist. 
+      key: this._sourceData.name
+    } 
     records.push(this._generateRecord(options));
     // Get a constructor record.
     if (this.hasConstructor) {

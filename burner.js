@@ -37,6 +37,9 @@ const BROWSERS = [
 
 global._bcd = new BCD();
 
+//To Do: Every burner class should use some form of isBurnable(). It would
+//       confine whitelist testing to a better place.
+
 function getBurnRecords(key, whitelist) {
   // const urlData = bcd[key];
   const urlData = global._bcd.getByKey(key);
@@ -231,9 +234,12 @@ class BCDBurner extends Burner {
 
   _getBCDBurnRecords() {
     let records = [];
-    let bcdData = bcd[this._category];
+    let bcdData = global._bcd[this._category];
     (function getRecords(data) {
       for (let d in data) {
+        if ((this._whitelist) && (!this._whitelist.includes(d))) {
+          continue;
+        }
         if (d == '__parent') { continue; }
         if (d == '__compat') {
           let record = this._getNewRecord(data[d], this._browsers);
@@ -371,8 +377,7 @@ class ChromeBurner extends Burner {
       if (!this._isBurnable(idlFile)) { continue; }
       let burnRecords = idlFile.getBurnRecords({
         includeFlags: this._includeFlags,
-        includeOriginTrials: this._includeOriginTrials,
-        whitelist: this._whitelist
+        includeOriginTrials: this._includeOriginTrials
       });
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
@@ -386,6 +391,9 @@ class ChromeBurner extends Burner {
   }
 
   _isBurnable(idlFile) {
+    if ((this._whitelist) && (!this._whitelist.includes(idlFile. name))) {
+      return false;
+    }
     if (!idlFile) { return false; }
     if (utils.isBlacklisted(idlFile._sourceData.name)) { return false; }
     if (!BURNABLE_TYPES.includes(idlFile._type)) { return false; }
