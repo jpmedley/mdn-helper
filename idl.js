@@ -26,12 +26,6 @@ class IDLError extends Error {
   }
 }
 
-class IDLNotSupportedError extends IDLError {
-  constructor(message='', fileName='', lineNumber='') {
-    super(message, fileName, lineNumber);
-  }
-}
-
 class InterfaceData {
   constructor(sourceFile, options) {
     this._flags = FlagStatus;
@@ -67,7 +61,7 @@ class InterfaceData {
           break;
         case 'typedef':
           const msg = `The ${sourceFile.path()} is of type ${t.type} and not currently processible.`
-          throw new IDLNotSupportedError(msg);
+          global.__logger.info(msg);
       }
     }
     if (!this._sourceData) {
@@ -416,7 +410,7 @@ class InterfaceData {
     let options = {
       idlData: this._sourceData,
       key: this._sourceData.name
-    } 
+    }
     records.push(this._generateRecord(options));
     // Get a constructor record.
     if (this.hasConstructor) {

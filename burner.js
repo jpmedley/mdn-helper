@@ -16,7 +16,6 @@ const {
 
 const ALL_STRING = '(all)';
 const BURNABLE_TYPES = ['interface'];
-const LOG_FILE = utils.today() + '-burn-log.txt';
 const CATEGORIES = ['api','css','html','javascript','svg','webextensions'];
 const TEST_MODE = config.get('Application.test');
 const BROWSERS = [
@@ -136,12 +135,6 @@ class Burner {
     this._whitelist = JSON.parse(buffer.toString()).whitelist;
   }
 
-  _log(msg) {
-    fs.appendFile(this._logFile, msg, (e) => {
-      if (e) throw e;
-    });
-  }
-
   async _resolveArguments(args) {
     const whitelist = args.findIndex(arg=>{
       return (arg.includes('-w') || (arg.includes('--whitelist')));
@@ -208,7 +201,6 @@ class URLBurner extends Burner {
     const today = utils.today();
     const folderName = `burn_${today}`;
     this._outputPath = utils.makeOutputFolder(folderName);
-    this._logFile = this._outputPath + LOG_FILE;
     this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv`
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
@@ -283,7 +275,6 @@ class BCDBurner extends Burner {
     const today = utils.today();
     const folderName = `burn_${today}`;
     this._outputPath = utils.makeOutputFolder(folderName);
-    this._logFile = this._outputPath + LOG_FILE;
     this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv`;
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     let header = 'Interface,' + this._browsers.join(',') + '\n';
@@ -391,7 +382,7 @@ class ChromeBurner extends Burner {
   }
 
   _isBurnable(idlFile) {
-    if ((this._whitelist) && (!this._whitelist.includes(idlFile. name))) {
+    if ((this._whitelist) && (!this._whitelist.includes(idlFile.name))) {
       return false;
     }
     if (!idlFile) { return false; }
@@ -414,10 +405,9 @@ class ChromeBurner extends Burner {
       if (TEST_MODE) { throw e; }
       switch (e.constructor.name) {
         case 'IDLError':
-        case 'IDLNotSupportedError':
         case 'WebIDLParseError':
           let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
-          this._log(msg);
+          global.__logger.info(msg);
           return;
           break;
         default:
@@ -430,7 +420,6 @@ class ChromeBurner extends Burner {
     const today = utils.today();
     const folderName = `burn_${today}`;
     this._outputPath = utils.makeOutputFolder(folderName);
-    this._logFile = this._outputPath + LOG_FILE;
     this._outFileName = `${this._outputPath}chrome-burnlist_${today}.csv`;
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect';

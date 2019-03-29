@@ -11,13 +11,13 @@ const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const HOMEDIR = require('os').homedir();
-let OUT = config.get('Application.outputDirectory');
 const REQUIRES_FLAGS = ['css','header','interface'];
 const COMMANDS = ['build','burn','clean','config','find','help'].concat(REQUIRES_FLAGS).sort();
 const APP_ROOT = path.resolve(__dirname);
 const UPDATE_INTERVALS = ['daily','weekly'];
 const ONE_DAY = 86400000;
 
+let OUT = config.get('Application.outputDirectory');
 if (OUT.includes('$HOME')) {
   OUT = OUT.replace('$HOME', HOMEDIR);
 }
