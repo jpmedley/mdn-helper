@@ -8,6 +8,7 @@ const { IDLFileSet } = require('./filemanager.js');
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
+const winston = require('winston');
 const {
   EMPTY_BCD_DATA,
   EMPTY_BURN_DATA,
@@ -114,6 +115,7 @@ class Burner {
     this._outputLines = 0;
     this._type;
     this._category;
+    this._outputPath = utils.makeOutputFolder(`burn_${utils.today()}`);
   }
 
   _closeOutputFile() {
@@ -130,16 +132,50 @@ class Burner {
     console.log(msg);
   }
 
+  _getOutFileName() {
+    this._outFileName = `${this._outputPath}${this._type}`;
+    if (this._category) {
+      this._outFileName += `-${this._category}`;
+    }
+    if (this._whitelist) {
+      this._outFileName += `-${this._whitelistName}`;
+    }
+    this._outFileName += `-burnlist-${utils.today()}.csv`;
+  }
+
   _loadWhitelist() {
-    const buffer = fs.readFileSync(this._whitelist);
+    if (!this._whitelistPath) { return; }
+    const buffer = fs.readFileSync(this._whitelistPath);
     this._whitelist = JSON.parse(buffer.toString()).whitelist;
+    this._whitelistName = (() => {
+      const wl = this._whitelistPath.match(/\/(\S+)\.js/);
+      return `${wl[1]}`;
+    })();
   }
 
   async _resolveArguments(args) {
     const whitelist = args.findIndex(arg=>{
       return (arg.includes('-w') || (arg.includes('--whitelist')));
     });
-    this._whitelist = args[whitelist+1];
+    if (whitelist > -1) {
+      this._whitelistPath = args[whitelist +1];
+    }
+  }
+
+  _startBurnLogFile() {
+    let fileName = this._outputPath + this._type;
+    if (this._category) {
+      fileName += `-${this._category}`;
+    }
+    if (this._whitelist) {
+      fileName += `-${this._whitelistName}`;
+    }
+    fileName += `-${utils.today()}.log`
+
+    const fileTransport = new winston.transports.File({
+      filename: fileName
+    });
+    global.__logger.add(fileTransport);
   }
 }
 
@@ -151,9 +187,10 @@ class URLBurner extends Burner {
 
   async burn() {
     await this._resolveArguments(this._args);
+    this._loadWhitelist();
+    this._startBurnLogFile();
     this._openResultsFile();
     console.log('Pinging MDN for known URLs.');
-    if (this._whitelist) { this._loadWhitelist(); }
     let burnRecords = getBurnRecords(this._category, this._whitelist);
     const pinger = new Pinger(burnRecords);
     const verboseOutput = true;
@@ -198,10 +235,7 @@ class URLBurner extends Burner {
   }
 
   _openResultsFile(listID) {
-    const today = utils.today();
-    const folderName = `burn_${today}`;
-    this._outputPath = utils.makeOutputFolder(folderName);
-    this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv`
+    this._getOutFileName();
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
     fs.write(this._outFileHandle, header, ()=>{});
@@ -217,6 +251,8 @@ class BCDBurner extends Burner {
 
   async burn() {
     await this._resolveArguments(this._args);
+    this._loadWhitelist();
+    this._startBurnLogFile();
     this._openResultsFile();
     console.log(`Checking BCD data for missing ${this._category} data.`);
     let burnRecords = this._getBCDBurnRecords();
@@ -229,7 +265,7 @@ class BCDBurner extends Burner {
     let bcdData = global._bcd[this._category];
     (function getRecords(data) {
       for (let d in data) {
-        if ((this._whitelist) && (!this._whitelist.includes(d))) {
+        if ((this._whitelistName) && (!this._whitelist.includes(d))) {
           continue;
         }
         if (d == '__parent') { continue; }
@@ -272,10 +308,7 @@ class BCDBurner extends Burner {
   }
 
   _openResultsFile(listId) {
-    const today = utils.today();
-    const folderName = `burn_${today}`;
-    this._outputPath = utils.makeOutputFolder(folderName);
-    this._outFileName = `${this._outputPath}${this._category}-${this._type}-burnlist_${today}.csv`;
+    this._getOutFileName();
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     let header = 'Interface,' + this._browsers.join(',') + '\n';
     fs.write(this._outFileHandle, header, ()=>{});
@@ -355,12 +388,14 @@ class ChromeBurner extends Burner {
     this._includeFlags = false;
     this._includeOriginTrials = false;
     this._includeTestFlags = false;
+    this._type = 'chrome';
   }
 
   async burn() {
     await this._resolveArguments(this._args);
+    this._loadWhitelist();
+    this._startBurnLogFile();
     this._openResultsFile();
-    if (this._whitelist) { this._loadWhitelist(); }
     let idlFiles = new IDLFileSet();
     let files = idlFiles.files
     console.log('Looking for browser compatibility data and MDN pages.');
@@ -384,7 +419,7 @@ class ChromeBurner extends Burner {
 
   _isBurnable(idlFile) {
     if (!idlFile) { return false; }
-    if ((this._whitelist) && (!this._whitelist.includes(idlFile.name))) {
+    if ((this._whitelistName) && (!this._whitelist.includes(idlFile.name))) {
       return false;
     }
     if (utils.isBlacklisted(idlFile._sourceData.name)) { return false; }
@@ -418,10 +453,7 @@ class ChromeBurner extends Burner {
   }
 
   _openResultsFile() {
-    const today = utils.today();
-    const folderName = `burn_${today}`;
-    this._outputPath = utils.makeOutputFolder(folderName);
-    this._outFileName = `${this._outputPath}chrome-burnlist_${today}.csv`;
+    this._getOutFileName();
     this._outFileHandle = utils.getOutputFile(this._outFileName);
     let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect';
     if (this._includeFlags) { header += ',Behind a Flag'; }

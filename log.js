@@ -3,14 +3,8 @@
 const { OUT, today } = require('./utils.js');
 const winston = require('winston');
 
-const _logger = winston.createLogger();
-
-function _getLogger(options) {
-  const fileTransport = new winston.transports.File({
-    filename: `${OUT}${options.type}${today()}.log`
-  });
-  _logger.add(fileTransport);
-  return _logger;
+function _initiateLogger() {
+  global.__logger = winston.createLogger();
 }
 
-module.exports.getLogger = _getLogger;
+module.exports.initiateLogger = _initiateLogger;
