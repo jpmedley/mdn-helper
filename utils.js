@@ -160,9 +160,12 @@ function _today() {
 }
 
 function _update(args) {
-  const force = args.some(e => {
-    return (e.includes('-f'));
-  });
+  let force = false;
+  if (args) {
+    force = args.some(e => {
+      return (e.includes('-f'));
+    });
+  }
   const updateFile = APP_ROOT + '/.update';
   const now = new Date();
   const lastUpdate = (() => {
