@@ -49,23 +49,24 @@ class InterfaceData {
   _loadTree(sourceFile) {
     this._sourceContents = utils.getIDLFile(sourceFile.path());
     let tree = webidl2.parse(this._sourceContents);
+    let msg;
     for (let t of tree) {
+      // Currently returns the first item found.
       switch (t.type) {
         case 'dictionary':
-          this._sourceData = t;
-          this._type = t.type;
+        case 'typedef':
+          msg = `The ${sourceFile.path()} contains a ${t.type} which is not currently processible.`;
+          global.__logger.info(msg);
           break;
         case 'interface':
           this._sourceData = t;
           this._type = t.type;
           break;
-        case 'typedef':
-          const msg = `The ${sourceFile.path()} is of type ${t.type} and not currently processible.`
-          global.__logger.info(msg);
       }
+      if (this._sourceData) { return; }
     }
     if (!this._sourceData) {
-      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
+      const msg = `The ${sourceFile.path()} file is invalid or does not contain interface data.`;
       throw new IDLError(msg);
     }
   }
@@ -293,9 +294,9 @@ class InterfaceData {
 
   get flagged() {
     if (this._getFlagStatus(this._sourceData) === 'stable') {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   get iterable() {
