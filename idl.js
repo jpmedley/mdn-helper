@@ -294,9 +294,9 @@ class InterfaceData {
 
   get flagged() {
     if (this._getFlagStatus(this._sourceData) === 'stable') {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   get iterable() {
