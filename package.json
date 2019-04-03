@@ -19,6 +19,9 @@
     "MDN",
     "contributing"
   ],
+  "engines": {
+    "node": ">=10.11.0"
+  },
   "husky": {
     "hooks": {
       "pre-push": "node presubmit.js"
