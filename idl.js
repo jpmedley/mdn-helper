@@ -53,10 +53,13 @@ class InterfaceData {
     for (let t of tree) {
       // Currently returns the first item found.
       switch (t.type) {
+        case 'enum':
         case 'dictionary':
         case 'typedef':
           msg = `The ${sourceFile.path()} contains a ${t.type} which is not currently processible.`;
-          global.__logger.info(msg);
+          if (global.__logger) {
+            global.__logger.info(msg);
+          }
           break;
         case 'interface':
           this._sourceData = t;
