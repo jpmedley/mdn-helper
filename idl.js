@@ -211,6 +211,48 @@ class InterfaceData {
     if (skipList.includes(member.type)) { return false; }
     if (member.stringifier) { return false; }
     if (member.deleter) { return false; }
+    if (!this._includeOriginTrials) {
+      let isFlagged;
+      switch (member.type) {
+        case "operation":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'OriginTrialEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+        case "attribute":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'OriginTrialEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+      }
+    }
+    if (!this._includeExperimental) {
+      let isFlagged;
+      switch (member.type) {
+        case "operation":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'RuntimeEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+        case "attribute":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'RuntimeEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+      }
+    }
     return true;
   }
 
