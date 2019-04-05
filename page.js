@@ -91,5 +91,13 @@ class _Page {
   }
 }
 
+class _AutoPage extends _Page {
+  
+}
+
+class _InteractivePage extends _Page {
+
+}
+
 module.exports.Page = _Page;
 // module.exports.Questions = _Questions;
