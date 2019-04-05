@@ -182,7 +182,7 @@ function _update(args) {
   const updateInterval = config.get('Application.update');
   let update = false;
   switch (updateInterval) {
-    case 'weekly':
+    case 'hourly':
       if (actualInterval > ONE_HOUR) { update = true; }
       break;
     case 'daily':
