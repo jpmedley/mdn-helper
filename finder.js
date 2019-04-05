@@ -3,7 +3,7 @@
 const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
-const fm = require('./filemanager.js');
+const { IDLFileSet } = require('./idlfileset.js');
 const { InterfaceData } = require('./idl.js');
 const { IDLBuilder } = require('./builder.js');
 const radio = require('prompt-radio');
@@ -16,7 +16,7 @@ global._bcd = new BCD();
 
 class _Finder {
   constructor() {
-    this.idlSet = new fm.IDLFileSet();
+    this.idlSet = new IDLFileSet();
   }
 
   async _confirm(message) {

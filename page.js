@@ -1,115 +1,14 @@
 'use strict';
 
-const actions = require('./actions');
 const config = require('config');
-const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
-const util = require('util');
+const { Questions } = require('./questions.js');
 const utils = require('./utils.js');
 
 const ANSWER_IS_NO = '';
 const SKIP_KEY = config.get('Application.questionHiding.use');
 const SKIP_KEYS = config.get('Application.questionHiding.' + SKIP_KEY);
-
-class _Question {
-  constructor(wireFrameName) {
-    const wireframe = utils.WIREFRAMES[wireFrameName];
-    for (let w in wireframe) {
-      this[w] = wireframe[w];
-    }
-    this.name = wireFrameName;
-    this.answer = null;
-  }
-
-  _isAnswerValid() {
-    if (!this.pattern) { return true; }
-    const regex = RegExp(this.pattern, 'g');
-    const result = regex.exec(this.answer);
-    if (!result) {
-      return false;
-    }
-    return true;
-  }
-
-  async _prompt() {
-    let enq = new Enquirer();
-    let options = { message: this.question };
-    if (this.default) {
-      options.default = this.default;
-    }
-    enq.question(this.name, options);
-    let tempAnswer = await enq.prompt(this.name);
-    // Convert Enquirer answer to mdn-helper answer.
-    this.answer = tempAnswer[this.name];
-    if (!this._isAnswerValid()) {
-      console.log(this.help);
-      await this._prompt();
-    }
-  }
-
-  async ask(forPage) {
-    try {
-      await this._prompt(this.text);
-    } catch(e) {
-      throw e;
-    } finally {
-      if (this.action) {
-        await actions[this.action.name].run(forPage, this);
-      }
-      forPage.contents = forPage.contents.replace(this.token, this.answer);
-    }
-
-  }
-
-  get text() {
-    let text = "\n" + this.question;
-    if (this.default) {
-      text += (" (" + this.default + ")");
-    }
-    text += "\n";
-    return text;
-  }
-
-  get token() {
-    return "[[" + this.name + "]]";
-  }
-}
-
-class _Questions {
-  constructor(intro) {
-    this.intro = intro;
-    this.questions = new Object();
-  }
-
-  printIntro() {
-    if (this.intro == '') { return; }
-    console.log(this.intro);
-  }
-
-  set introMessage(message) {
-    this.intro = message;
-  }
-
-  add(question, answer=null) {
-    if (SKIP_KEYS.includes(question)) { answer = ANSWER_IS_NO; }
-    if (!this.questions.hasOwnProperty(question)) {
-      this.questions[question] = new _Question(question);
-      this.questions[question].answer = answer;
-    }
-  }
-
-  answer(question, answer) {
-    this.questions[question].answer = answer;
-  }
-
-  needsAnswers() {
-    for (var p in this.questions) {
-      if (this.questions[p].answer === null) { return true; }
-    }
-    return false;
-  }
-}
 
 class _Page {
   constructor(name, type, sharedQuestions) {
@@ -119,7 +18,7 @@ class _Page {
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
     let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) +  help[this.type] + '\n';
-    this.questions = new _Questions(introMessage);
+    this.questions = new Questions(introMessage);
     this.questions.add(type, name);
     this.contents = utils.getTemplate(this.type);
     const reg = RegExp(utils.TOKEN_RE, 'g');
@@ -193,4 +92,4 @@ class _Page {
 }
 
 module.exports.Page = _Page;
-module.exports.Questions = _Questions;
+// module.exports.Questions = _Questions;

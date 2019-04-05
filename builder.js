@@ -6,7 +6,8 @@ const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { InterfaceData } = require('./idl.js');
-const { Page, Questions } = require('./page.js');
+const { Page } = require('./page.js');
+const { Questions } = require('./questions.js');
 const utils = require('./utils.js');
 
 const FLAGS = {
