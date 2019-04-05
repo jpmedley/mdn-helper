@@ -12,8 +12,10 @@ const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const HOMEDIR = require('os').homedir();
 const APP_ROOT = path.resolve(__dirname);
-const UPDATE_INTERVALS = ['daily','weekly'];
+const UPDATE_INTERVALS = ['hourly','daily','weekly'];
+const ONE_HOUR = 3600000;
 const ONE_DAY = 86400000;
+const ONE_WEEK = 604800000;
 
 let OUT = config.get('Application.outputDirectory');
 if (OUT.includes('$HOME')) {
@@ -180,11 +182,14 @@ function _update(args) {
   const updateInterval = config.get('Application.update');
   let update = false;
   switch (updateInterval) {
+    case 'weekly':
+      if (actualInterval > ONE_HOUR) { update = true; }
+      break;
     case 'daily':
       if (actualInterval > ONE_DAY) { update = true; }
       break;
     case 'weekly':
-      if (actualInterval > (7 * ONE_DAY)) { update = true; }
+      if (actualInterval > (ONE_WEEK)) { update = true; }
       break;
   }
   if (force) { update = force; }
