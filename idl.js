@@ -12,8 +12,17 @@ const EMPTY_BURN_DATA = Object.freeze({
   mdn_exists: false,
   mdn_url: '',
   origin_trial: false,
-  redirect: false
+  redirect: false,
+  type: ''
 });
+
+//Cross refences webidl2 types with MDN terminology
+const TYPES = Object.freeze({
+  attribute: "property",
+  constructor: "constructor",
+  operation: "method",
+  interface: "reference",
+})
 
 const EMPTY_BCD_DATA = Object.freeze({
   key: null,
@@ -88,6 +97,8 @@ class InterfaceData {
     }
     record.flag = this.isFlagged(options.idlData);
     record.origin_trial = this.isOriginTrial(options.idlData);
+    // record.type = options.idlData.type;
+    record.type = TYPES[options.idlData.type];
     return record;
   }
 

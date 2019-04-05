@@ -6,7 +6,7 @@ const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { InterfaceData } = require('./idl.js');
-const page = require('./page.js');
+const { Page, Questions } = require('./page.js');
 const utils = require('./utils.js');
 
 const FLAGS = {
@@ -200,7 +200,7 @@ class CLIBuilder extends Builder {
     // Add space for interface or header name to sharedQuestions,
     //  and remove it from args.
     let introMessage = `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\nYou will now be asked questions for answers that are shared\namong all the files to be created.\n`;
-    let sharedQuestions = new page.Questions(introMessage);
+    let sharedQuestions = new Questions(introMessage);
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
     sharedQuestions.add(parentType, parentName);
@@ -213,7 +213,7 @@ class CLIBuilder extends Builder {
     this._pages = new Array();
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
-      let aPage = new page.Page(members[1], members[0], sharedQuestions);
+      let aPage = new Page(members[1], members[0], sharedQuestions);
       this._pages.push(aPage);
     });
   }
@@ -242,7 +242,7 @@ class IDLBuilder extends Builder {
     // Add space for interface or header name to sharedQuestions,
     //  and remove it from args.
     const introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
-    const sharedQuestions = new page.Questions(introMessage);
+    const sharedQuestions = new Questions(introMessage);
     sharedQuestions[parentType] = parentName;
     sharedQuestions['name'] = parentName;
     sharedQuestions.add(parentType, parentName);
@@ -255,15 +255,12 @@ class IDLBuilder extends Builder {
     this._pages = new Array();
     let skippingPages = new Array();
     const existingPages = await this._interfaceData.ping();
-    args.forEach((arg, index, args) => {
-      let members = arg.split(',');
-      //Skip landing pages which aren't in BCD.
-      if (members[0] === 'landing') { return; }
-      if (!pageExists(arg, existingPages)) {
-        let aPage = new page.Page(members[1], members[0], sharedQuestions);
-        this._pages.push(aPage);
+    existingPages.forEach((page, index, pages) => {
+      if (page.mdn_exists) {
+        skippingPages.push([page.type, page.key])
       } else {
-        skippingPages.push(members);
+        let aPage = new Page(page.key, page.type, sharedQuestions);
+        this._pages.push(aPage);
       }
     });
     if (skippingPages.length > 0) {
@@ -273,10 +270,6 @@ class IDLBuilder extends Builder {
       }
       console.log(msg);
       await utils.pause();
-      // let enq = new Enquirer();
-      // let options = { message: 'Press Enter to continue.' };
-      // enq.question('continue', options);
-      // let ans = await enq.prompt('continue');
     }
   }
 

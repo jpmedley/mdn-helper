@@ -8,6 +8,7 @@ let REQUEST_OPTIONS = {
   path: ''
 }
 const MDN = "https://" + REQUEST_OPTIONS.hostname;
+const RETRY_COUNT = 3;
 const STATUS_NEEDS_RETRY = 0;
 const STATUS_COMPLETE = 1;
 
@@ -21,7 +22,7 @@ class Pinger {
     for (let r of this._records) {
       if (!r.mdn_url) { continue; }
       if (verboseOutput) { console.log(r.key); }
-      let retryCount = 3;
+      let retryCount = RETRY_COUNT;
       while (retryCount > 0) {
         let status = await this._ping(r)
         .catch(e => {
