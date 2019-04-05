@@ -41,6 +41,10 @@ class BCD {
   }
 
   getByKey(key) {
+    if (key.startsWith('on')) {
+      key = key.replace('on', '');
+      key += '_event';
+    }
     const keys = key.split('.');
     let branch = this;
     for (let k of keys) {
@@ -69,4 +73,4 @@ class BCD {
 
 }
 
-module.exports.bcd = new BCD();
+module.exports.BCD = BCD;

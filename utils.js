@@ -11,13 +11,11 @@ const QUESTIONS_FILE = _getConfig('questionsFile');
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const HOMEDIR = require('os').homedir();
-let OUT = config.get('Application.outputDirectory');
-const REQUIRES_FLAGS = ['css','header','interface'];
-const COMMANDS = ['build','burn','clean','config','find','help'].concat(REQUIRES_FLAGS).sort();
 const APP_ROOT = path.resolve(__dirname);
 const UPDATE_INTERVALS = ['daily','weekly'];
 const ONE_DAY = 86400000;
 
+let OUT = config.get('Application.outputDirectory');
 if (OUT.includes('$HOME')) {
   OUT = OUT.replace('$HOME', HOMEDIR);
 }
@@ -160,9 +158,12 @@ function _today() {
 }
 
 function _update(args) {
-  const force = args.some(e => {
-    return (e.includes('-f'));
-  });
+  let force = false;
+  if (args) {
+    force = args.some(e => {
+      return (e.includes('-f'));
+    });
+  }
   const updateFile = APP_ROOT + '/.update';
   const now = new Date();
   const lastUpdate = (() => {
@@ -196,24 +197,6 @@ function _update(args) {
   }
 }
 
-function _validateCommand(args) {
-  if (['burn','clean','config','help'].includes(args[2])) { return args[2]; }
-  if (args.length < 4) {
-    throw new Error('This command requires arguments.');
-  }
-  if (!COMMANDS.includes(args[2])) {
-    let list = COMMANDS.join(', ');
-    let msg = `The command must be one of:\n\t${list}.\n`;
-    throw new Error(msg);
-  }
-  if (REQUIRES_FLAGS.includes(args[2])) {
-    if (args[3] != '-n') {
-      throw new Error('This command requires flags.');
-    }
-  }
-  return args[2];
-}
-
 module.exports.OUT = OUT;
 module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.WIREFRAMES = WIREFRAMES;
@@ -231,4 +214,3 @@ module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.today = _today;
 module.exports.update = _update;
-module.exports.validateCommand = _validateCommand;

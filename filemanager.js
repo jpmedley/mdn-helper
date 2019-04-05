@@ -72,7 +72,6 @@ class IDLFileSet {
     } catch (e) {
       switch (e.constructor.name) {
         case 'IDLError':
-        case 'IDLNotSupportedError':
         case 'WebIDLParseError':
           break;
       }

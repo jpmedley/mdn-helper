@@ -1,23 +1,27 @@
 {
   "name": "mdn-helper",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
   "main": "index.js",
   "scripts": {
-    "burn": "node index.js burn",
-    "build": "node index.js build",
-    "clean": "node index.js clean",
-    "config": "node index.js config",
-    "css": "node index.js css",
-    "find": "node index.js find",
-    "help": "node index.js help",
-    "interface": "node index.js interface",
-    "update-data": "node update.js"
+    "burn": "node app_Burner.js",
+    "build": "node app_Builder.js",
+    "clean": "node app_Cleaner.js",
+    "config": "node app_Config.js",
+    "css": "node app_Manual.js css",
+    "find": "node app_Finder.js",
+    "header": "node app_Manual.js header",
+    "help": "node app_Help.js",
+    "interface": "node app_Manual.js interface",
+    "update-data": "node app_UpdateData.js"
   },
   "keywords": [
     "MDN",
     "contributing"
   ],
+  "engines": {
+    "node": ">=10.11.0"
+  },
   "husky": {
     "hooks": {
       "pre-push": "node presubmit.js"
@@ -30,7 +34,7 @@
     "enquirer": "^1.0.3",
     "fs": "0.0.1-security",
     "husky": "^1.3.1",
-    "mdn-browser-compat-data": "^0.0.70",
+    "mdn-browser-compat-data": "^0.0.74",
     "node.extend": "^2.0.2",
     "prompt-checkbox": "^2.2.0",
     "prompt-choices": "^5.0.0",
@@ -38,6 +42,7 @@
     "radio-symbol": "^2.0.0",
     "readline": "^1.3.0",
     "shelljs": "^0.8.3",
-    "webidl2": "^14.0.1"
+    "webidl2": "^14.0.1",
+    "winston": "^3.2.1"
   }
 }

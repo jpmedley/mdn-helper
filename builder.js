@@ -1,8 +1,7 @@
 'use strict';
 
 const actions = require('./actions');
-const bcd = require('mdn-browser-compat-data');
-const { BCDManager } = require('./app_BCD.js');
+const { BCDManager } = require('./bcdmanager.js');
 const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
@@ -283,7 +282,8 @@ class IDLBuilder extends Builder {
 
   _writeBCD() {
     let name = this._interfaceData.name;
-    if (bcd.api[name]) {
+    // const bcd = new BCD();
+    if (global._bcd.api[name]) {
       const msg = `\nA BCD file already exists for ${name}. You will need to manually\nverify it for completeness.\n`;
       console.log(msg);
       return;

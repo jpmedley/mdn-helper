@@ -7,4 +7,4 @@ printWelcome();
 update();
 
 const finder = new Finder();
-finder.findAndShow(process.argv);
+finder.findAndBuild(process.argv);

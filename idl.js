@@ -1,6 +1,5 @@
 'use strict';
 
-const bcd = require('mdn-browser-compat-data');
 const { FlagStatus } = require('./flags.js');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -27,19 +26,12 @@ class IDLError extends Error {
   }
 }
 
-class IDLNotSupportedError extends IDLError {
-  constructor(message='', fileName='', lineNumber='') {
-    super(message, fileName, lineNumber);
-  }
-}
-
 class InterfaceData {
   constructor(sourceFile, options) {
     this._flags = FlagStatus;
     this._loadTree(sourceFile);
     this._includeExperimental = options.experimental;
-    // this._includeTest = options.tests;
-    this._includeOriginTrials = options.originTrials
+    this._includeOriginTrials = options.originTrials;
   }
 
   async ping() {
@@ -57,23 +49,27 @@ class InterfaceData {
   _loadTree(sourceFile) {
     this._sourceContents = utils.getIDLFile(sourceFile.path());
     let tree = webidl2.parse(this._sourceContents);
+    let msg;
     for (let t of tree) {
+      // Currently returns the first item found.
       switch (t.type) {
+        case 'enum':
         case 'dictionary':
-          this._sourceData = t;
-          this._type = t.type;
+        case 'typedef':
+          msg = `The ${sourceFile.path()} contains a ${t.type} which is not currently processible.`;
+          if (global.__logger) {
+            global.__logger.info(msg);
+          }
           break;
         case 'interface':
           this._sourceData = t;
           this._type = t.type;
           break;
-        case 'typedef':
-          const msg = `The ${sourceFile.path()} is of type ${t.type} and not currently processible.`
-          throw new IDLNotSupportedError(msg);
       }
+      if (this._sourceData) { return; }
     }
     if (!this._sourceData) {
-      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
+      const msg = `The ${sourceFile.path()} file is invalid or does not contain interface data.`;
       throw new IDLError(msg);
     }
   }
@@ -81,7 +77,7 @@ class InterfaceData {
   _generateRecord(options) {
     let record = Object.assign({}, EMPTY_BURN_DATA);
     record.key = options.key;
-    let bcdData = bcd.getByKey(`api.${record.key}`);
+    let bcdData = global._bcd.getByKey(`api.${record.key}`);
     if (bcdData) {
       record.bcd = true;
       if (bcdData.__compat) {
@@ -215,6 +211,48 @@ class InterfaceData {
     if (skipList.includes(member.type)) { return false; }
     if (member.stringifier) { return false; }
     if (member.deleter) { return false; }
+    if (!this._includeOriginTrials) {
+      let isFlagged;
+      switch (member.type) {
+        case "operation":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'OriginTrialEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+        case "attribute":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'OriginTrialEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+      }
+    }
+    if (!this._includeExperimental) {
+      let isFlagged;
+      switch (member.type) {
+        case "operation":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'RuntimeEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+        case "attribute":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'RuntimeEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+      }
+    }
     return true;
   }
 
