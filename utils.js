@@ -8,7 +8,6 @@ const shell = require('shelljs');
 
 const BLACKLIST = config.get('Application.blacklist');
 const QUESTIONS_FILE = _getConfig('questionsFile');
-const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 const TEMPLATES = 'templates/';
 const HOMEDIR = require('os').homedir();
 const APP_ROOT = path.resolve(__dirname);
@@ -203,7 +202,6 @@ function _update(args) {
 }
 
 module.exports.OUT = OUT;
-module.exports.TOKEN_RE = TOKEN_RE;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.displayConfig = _displayConfig;

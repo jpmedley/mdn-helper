@@ -8,7 +8,7 @@ const SKIP_KEY = config.get('Application.questionHiding.use');
 const SKIP_KEYS = config.get('Application.questionHiding.' + SKIP_KEY);
 
 class _Questions {
-  constructor(intro) {
+  constructor(intro = '') {
     this.intro = intro;
     this.questions = new Object();
   }

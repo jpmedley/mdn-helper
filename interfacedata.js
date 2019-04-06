@@ -271,38 +271,6 @@ class InterfaceData {
     return this._isBurnable(this._sourceData);
   }
 
-  get command() {
-    // Need to deal with setlike and stringifier.
-    let command = [];
-    command.push('0');
-    command.push('1');
-    command.push('interface');
-    command.push('-n');
-    command.push(this.name);
-    command.push('-l');
-    command.push('-r');
-    if (this.hasConstructor) { command.push('-c'); }
-    if (this.iterable) { command.push('-it'); }
-    if (this.maplike) { command.push('-mp'); }
-    let ehs = this.eventHandlers;
-    for (let e in ehs) {
-      command.push('-h');
-      command.push(ehs[e]);
-    }
-    let meths = this.methods;
-    for (let m in meths) {
-      if (meths[m].stringifier) { continue; }
-      command.push('-m');
-      command.push(meths[m].body.name.value);
-    }
-    let props = this.properties;
-    for (let p in props) {
-      command.push('-p');
-      command.push(props[p].name);
-    }
-    return command;
-  }
-
   get constants() {
     let returns = this._sourceData.members.filter(m => {
       if (!m.type === 'const') { return false; }

@@ -5,7 +5,7 @@ const { BCDManager } = require('./bcdmanager.js');
 const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
-const { InterfaceData } = require('./idl.js');
+const { InterfaceData } = require('./interfacedata.js');
 const { Page } = require('./page.js');
 const { Questions } = require('./questions.js');
 const utils = require('./utils.js');
@@ -187,7 +187,7 @@ class Builder {
   }
 }
 
-class CLIBuilder extends Builder {
+class _CLIBuilder extends Builder {
   constructor(options) {
     super(options);
     this._args = options.args;
@@ -228,49 +228,45 @@ class CLIBuilder extends Builder {
   }
 }
 
-class IDLBuilder extends Builder {
+class _IDLBuilder extends Builder {
   constructor(options) {
     super(options);
     this._interfaceData = options.interfaceData;
     this._jsonOnly = options.jsonOnly || false;
+    this._interactive = options.interactive || false;
   }
 
   async _initPages() {
-    const args = this._normalizeArguments(this._interfaceData.command);
-    const parentType = args[0];
-    const parentName = args[1].split(',')[1];
-
-    // Add space for interface or header name to sharedQuestions,
-    //  and remove it from args.
+    // Add space for interface or header name to sharedQuestions.
     const introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
     const sharedQuestions = new Questions(introMessage);
-    sharedQuestions[parentType] = parentName;
-    sharedQuestions['name'] = parentName;
-    sharedQuestions.add(parentType, parentName);
-
-    // We no longer need the conent type and name.
-    args.shift();
-    args.shift();
+    sharedQuestions['interface'] = this._interfaceData.name;
+    sharedQuestions['name'] = this._interfaceData.name;
+    sharedQuestions.add('interface', this._interfaceData.name);
 
     // Process remaining arguments.
     this._pages = new Array();
     let skippingPages = new Array();
-    const existingPages = await this._interfaceData.ping();
-    existingPages.forEach((page, index, pages) => {
+    const missingPages = await this._interfaceData.ping();
+    missingPages.forEach((page, index, pages) => {
       if (page.mdn_exists) {
-        skippingPages.push([page.type, page.key])
+        skippingPages.push([page.type, page.key]);
       } else {
-        let aPage = new Page(page.key, page.type, sharedQuestions);
-        this._pages.push(aPage);
+        const newPage = new Page(page.key, page.type, sharedQuestions);
+        this._pages.push(newPage);
       }
     });
     if (skippingPages.length > 0) {
       let msg = '\nThe following pages from this interface already exist. You will not be asked\nquestions about them.\n';
-      for (let s of skippingPages){
+      for (let s of skippingPages) {
         msg += `\t ${s[1]} ${s[0]}\n`;
       }
       console.log(msg);
       await utils.pause();
+    }
+    if (missingPages === 0) {
+      let msg = 'No MDN pages have been created for this interface.';
+      console.log(msg);
     }
   }
 
@@ -293,19 +289,24 @@ class IDLBuilder extends Builder {
     this._writeBCD();
     if (this._jsonOnly) { return; }
     await this._initPages();
+    let msg;
     if (this._pages.length === 0) {
-      let msg = '\nThere are no undocumented members for this interface.\n';
+      msg = '\nThere are no undocumented members for this interface.\n';
       console.log(msg);
       return;
     }
     for (let p of this._pages) {
-      await p.askQuestions();
+      if (this._interactive) {
+        await p.askQuestions();
+      }
       p.write();
     }
+    msg = `\nMDN drafts were written to ${utils.OUT}/${this._interfaceData.name}.`
+    console.log(msg);
   }
 
 }
 
 module.exports.pageExists = pageExists;
-module.exports.CLIBuilder = CLIBuilder;
-module.exports.IDLBuilder = IDLBuilder;
+module.exports.CLIBuilder = _CLIBuilder;
+module.exports.IDLBuilder = _IDLBuilder;

@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const config = require('config');
-const { InterfaceData } = require('./idl.js');
+const { InterfaceData } = require('./interfacedata.js');
 
 const API_DIRS = ["core/", "modules/"];
 const TEST_DIRS = ["_test/"];

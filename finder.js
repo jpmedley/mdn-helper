@@ -4,7 +4,7 @@ const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const { IDLFileSet } = require('./idlfileset.js');
-const { InterfaceData } = require('./idl.js');
+const { InterfaceData } = require('./interfacedata.js');
 const { IDLBuilder } = require('./builder.js');
 const radio = require('prompt-radio');
 const utils = require('./utils.js');
@@ -66,10 +66,13 @@ class _Finder {
   }
 
   _normalizeArguments(args, mode) {
-    this._includeFlags = args.some(arg=>{
+    this._interactive = args.some(arg => {
+      return (arg.includes('-i') || (arg.includes('--interactive')));
+    });
+    this._includeFlags = args.some(arg => {
       return (arg.includes('-f') || (arg.includes('--flags')));
     });
-    this._includeOriginTrials = args.some(arg=>{
+    this._includeOriginTrials = args.some(arg => {
       return (arg.includes('-o') || (arg.includes('--origin-trials')));
     });
     // Remove -j if we're finding instead of building
@@ -167,7 +170,11 @@ class _Finder {
       return;
     }
     // const builder = new Builder(id, (args.includes('-j')));
-    const options = { interfaceData: id, jsonOnly: args.includes('-j') };
+    const options = {
+      interfaceData: id,
+      jsonOnly: args.includes('-j'),
+      interactive: this._interactive
+    };
     const builder = new IDLBuilder(options);
     builder.build();
   }

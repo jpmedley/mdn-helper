@@ -13,7 +13,7 @@ const {
   EMPTY_BCD_DATA,
   EMPTY_BURN_DATA,
   InterfaceData
-} = require('./idl.js');
+} = require('./interfacedata.js');
 
 const ALL_STRING = '(all)';
 const BURNABLE_TYPES = ['interface'];

@@ -9,19 +9,21 @@ const utils = require('./utils.js');
 const ANSWER_IS_NO = '';
 const SKIP_KEY = config.get('Application.questionHiding.use');
 const SKIP_KEYS = config.get('Application.questionHiding.' + SKIP_KEY);
+const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 
 class _Page {
   constructor(name, type, sharedQuestions) {
     this.name = name;
     this.type = type;
     this.sharedQuestions = sharedQuestions;
+
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
     let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) +  help[this.type] + '\n';
     this.questions = new Questions(introMessage);
     this.questions.add(type, name);
     this.contents = utils.getTemplate(this.type);
-    const reg = RegExp(utils.TOKEN_RE, 'g');
+    const reg = RegExp(TOKEN_RE, 'g');
     let matches;
     while ((matches = reg.exec(this.contents)) != null) {
       if (matches[0].startsWith('[[shared:')) {
@@ -66,18 +68,15 @@ class _Page {
   }
 
   render() {
-    const reg = RegExp(utils.TOKEN_RE);
+    const reg = RegExp(TOKEN_RE);
     let matches;
     let answer;
     while ((matches = reg.exec(this.contents)) != null) {
-      // if (SKIP_KEYS.includes(matches[1])) { continue; }
       if (matches[0].startsWith('[[shared:')) {
         answer = this.sharedQuestions.questions[matches[1]].answer;
       } else {
         answer = this.questions.questions[matches[1]].answer
       }
-      // if (answer == ANSWER_IS_NO) { continue; }
-      // if (answer === null) { continue; }
       this.contents = this.contents.replace(matches[0], answer);
     }
   }
@@ -91,13 +90,4 @@ class _Page {
   }
 }
 
-class _AutoPage extends _Page {
-  
-}
-
-class _InteractivePage extends _Page {
-
-}
-
 module.exports.Page = _Page;
-// module.exports.Questions = _Questions;
