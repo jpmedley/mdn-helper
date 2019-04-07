@@ -31,7 +31,7 @@ The `build` command helps you rapidly build JSON and HTML boilerplates for undoc
   * MDN Helper writes the JSON file to a subfolder of `Desktop/out`.
 1. For the interface and each of its members, MDN Helper pings the expected URL as listed in the Browser compatibility Database (if the data exists that is.)
 
-1. If pages are found to be missing for the selected interface, you will be asked questions to gather information needed for the interface. These pages will also be written to `Desktop/out`.
+1. If pages are found to be missing for the selected interface, boilerplates will be written to the output directory. If you used the `build` command with the interactive flag (`-i` or `--interactive`) you will be asked questions to gather information needed for the interface. 
 
 1. In `Desktop/out` open and inspect the files you just created. Add any additional information you feel is needed. Add code examples for every page you created whenever possible.
 

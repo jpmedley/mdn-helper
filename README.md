@@ -27,9 +27,9 @@ From within the mdn-helper direcory:
 
 ### build
 
-Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then builds a JSON file for the [Browser compatibility Database](https://github.com/mdn/browser-compat-data) and after asking a series of questions, builds boilerplate pages ready for publishing on MDN. This command also outputs BCD if a file doesn't exist. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
+Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, builds a JSON file for the [Browser compatibility Database](https://github.com/mdn/browser-compat-data), the builds boilerplate pages formatted for publishing on MDN. Use `-i` or `--interactive` to interactively fill in missing information through a series of questions. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
 
-**Syntax:** `build _searchString_ -- [(-j | --jsonOnly)]`
+**Syntax:** `build _searchString_ -- [(-i | --interactive)] [(-j | --jsonOnly)]`
 
 For detailed instructions, see [Building MDN Pages](/help/BUILDING-PAGES.md).
 
@@ -39,7 +39,7 @@ Builds several types of burn-down lists. This has several syntaxes.
 
 **Syntax:** `burn chrome -- [(-f | --flags)] [(-o | --origin-trials)] [(-w | --whitelist)]`
 
-Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--whitelist` to include of list of interfaces to burn. 
+Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--whitelist` to include of list of interfaces to burn.
 
 **Syntax:** `burn urls -- [(-c | --category) _category_]`
 
