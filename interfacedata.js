@@ -102,24 +102,20 @@ class InterfaceData {
     return record;
   }
 
-  _getFlag(member) {
+  _getExtendedAttribute(member, attributeName) {
     if (!member.extAttrs) { return null; }
-    const flag = member.extAttrs.items.find(attr => {
-      return attr.name === 'RuntimeEnabled';
+    const attributeValue = member.extAttrs.items.find(attr => {
+      return attr.name = attributeName;
     });
-    if (flag) {
-      return flag.rhs.value;
+    if (attributeValue) {
+      return attributeValue.rhs.value;
     } else {
       return null;
-    }
-    if (!this._sourceData) {
-      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
-      throw new IDLError(msg);
     }
   }
 
   _getFlagStatus(member) {
-    return this._flags[this._getFlag(member)];
+    return this._flags[this._getExtendedAttribute(member, 'RuntimeEnabled')];
   }
 
   _getIdentifiers(separator, type='name') {
@@ -175,19 +171,7 @@ class InterfaceData {
     throw new Error('Cannot find operation key.');
   }
 
-  _getOriginTrial(member) {
-    if (!member.extAttrs) { return null; }
-    const ot = member.extAttrs.items.find(attr => {
-      return attr.name === 'OriginTrialEnabled';
-    });
-    if (ot) {
-      return ot.rhs.value;
-    } else {
-      return null;
-    }
-  }
-
-  _isBurnable(member) {
+  _isFlagged(member) {
     // if (!this._includeTest && (this._getFlagStatus(member) === 'test')) {
     //   return false;
     // }
@@ -217,64 +201,22 @@ class InterfaceData {
   }
 
   _shouldBurn(member) {
-    if (!this._isBurnable) { return false; }
+    if (!this._isFlagged(member)) { return false; }
     const skipList = ['const','iterable','maplike','setlike'];
     if (skipList.includes(member.type)) { return false; }
     if (member.stringifier) { return false; }
     if (member.deleter) { return false; }
-    if (!this._includeOriginTrials) {
-      let isFlagged;
-      switch (member.type) {
-        case "operation":
-          if (member.extAttrs) {
-            isFlagged = member.extAttrs.items.some(ea => {
-              return ea.name === 'OriginTrialEnabled';
-            });
-            if (isFlagged) { return false; }
-          }
-          break;
-        case "attribute":
-          if (member.extAttrs) {
-            isFlagged = member.extAttrs.items.some(ea => {
-              return ea.name === 'OriginTrialEnabled';
-            });
-            if (isFlagged) { return false; }
-          }
-          break;
-      }
-    }
-    if (!this._includeExperimental) {
-      let isFlagged;
-      switch (member.type) {
-        case "operation":
-          if (member.extAttrs) {
-            isFlagged = member.extAttrs.items.some(ea => {
-              return ea.name === 'RuntimeEnabled';
-            });
-            if (isFlagged) { return false; }
-          }
-          break;
-        case "attribute":
-          if (member.extAttrs) {
-            isFlagged = member.extAttrs.items.some(ea => {
-              return ea.name === 'RuntimeEnabled';
-            });
-            if (isFlagged) { return false; }
-          }
-          break;
-      }
-    }
     return true;
   }
 
   get burnable() {
-    return this._isBurnable(this._sourceData);
+    return this._isFlagged(this._sourceData);
   }
 
   get constants() {
     let returns = this._sourceData.members.filter(m => {
       if (!m.type === 'const') { return false; }
-      if (this._isBurnable(m)) { return true; }
+      if (this._isFlagged(m)) { return true; }
     });
     if (returns.length === 0) { return null; }
     return returns;
@@ -295,13 +237,13 @@ class InterfaceData {
   }
 
   get deleter() {
-    throw new IDLError('Time to deal with deleaters.')
+    throw new IDLError('Time to deal with deleaters.');
   }
 
   get eventHandlers() {
     let returns = this._sourceData.members.filter(m => {
       if (m.baseName === 'EventHandler') {
-        return this._isBurnable(m);
+        return this._isFlagged(m);
       }
       return false;
     });
@@ -314,6 +256,7 @@ class InterfaceData {
     return 'stable';
     // if (!this._sourceData.extAttrs) { return null; }
     // return this._flags[this._sourceData.extAttrs.rhs.value];
+      throw new IDLError('Time to deal with flag().');
   }
 
   get flagged() {
@@ -382,7 +325,7 @@ class InterfaceData {
   }
 
   get originTrial() {
-    if (this._getOriginTrial(this._sourceData)) {
+    if (this._getExtendedAttribute(this._sourceData, 'OriginTrialEnabled')) {
       return true;
     }
     return false;
@@ -397,9 +340,10 @@ class InterfaceData {
   }
 
   getSecureContext(member = this._sourceData) {
-    return member.extAttrs.items.some(i => {
-      return i.name == 'SecureContext';
-    })
+    if (this._getExtendedAttribute(this._sourceData, 'SecureContext')) {
+      return true;
+    }
+    return false;
   }
 
   get setters() {
@@ -439,7 +383,7 @@ class InterfaceData {
     records.push(this._generateRecord(options));
     // Get a constructor record.
     if (this.hasConstructor) {
-      if (this._isBurnable(this.constructorBranch)) {
+      if (this._isFlagged(this.constructorBranch)) {
         options.key = `${this._sourceData.name}.${this._sourceData.name}`;
         records.push(this._generateRecord(options));
       }
@@ -458,24 +402,18 @@ class InterfaceData {
     return records;
   }
 
-  getSecureContext(member = this._sourceData) {
-    return member.extAttrs.items.some(i => {
-      return i.name == 'SecureContext';
-    })
-  }
-
   isFlagged(searchRoot) {
-    if (!searchRoot.extAttrs) { return false; }
-    return searchRoot.extAttrs.items.some(attr => {
-      return attr.name === 'RuntimeEnabled';
-    });
+    if (this._getExtendedAttribute(searchRoot, 'RuntimeEnabled')) {
+      return true;
+    }
+    return false;
   }
 
   isOriginTrial(searchRoot) {
-    if (!searchRoot.extAttrs) { return false; }
-    return searchRoot.extAttrs.items.some(attr => {
-      return attr.name == 'OriginTrialEnabled';
-    });
+    if (this._getExtendedAttribute(searchRoot, 'OriginTrialEnabled')) {
+      return true;
+    }
+    return false;
   }
 }
 
