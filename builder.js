@@ -301,7 +301,7 @@ class _IDLBuilder extends Builder {
       }
       p.write();
     }
-    msg = `\nMDN drafts were written to ${utils.OUT}/${this._interfaceData.name}.`
+    msg = `\nMDN drafts were written to ${utils.OUT}${this._interfaceData.name}.`
     console.log(msg);
   }
 
