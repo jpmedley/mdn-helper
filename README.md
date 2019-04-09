@@ -72,11 +72,7 @@ Creates a pages for a CSS property. The results are written to the `*path/to*/md
 
 Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then displays the contents of that file.
 
-<<<<<<< HEAD
-**Syntax:** `find _searchString -- [(-p | --ping)]`
-=======
 **Syntax:** `find _searchString_ -- [(-p | --ping)]`
->>>>>>> b3585054fed4a8cd6c5874c166b77e1c0262e006
 
 **Flag:**
 
