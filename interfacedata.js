@@ -62,17 +62,17 @@ class InterfaceData {
     for (let t of tree) {
       // Currently returns the first item found.
       switch (t.type) {
-        case 'enum':
-        case 'dictionary':
-        case 'typedef':
-          msg = `The ${sourceFile.path()} contains a ${t.type} which is not currently processible.`;
-          if (global.__logger) {
-            global.__logger.info(msg);
-          }
+        case 'eof':
           break;
         case 'interface':
           this._sourceData = t;
           this._type = t.type;
+          break;
+        default:
+          msg = `${t.type},${sourceFile.path()},The type contained in this file is not currently processible.`;
+          if (global.__logger) {
+            global.__logger.info(msg);
+          }
           break;
       }
       if (this._sourceData) { return; }
@@ -102,20 +102,24 @@ class InterfaceData {
     return record;
   }
 
-  _getExtendedAttribute(member, attributeName) {
+  _getFlag(member) {
     if (!member.extAttrs) { return null; }
-    const attributeValue = member.extAttrs.items.find(attr => {
-      return attr.name = attributeName;
+    const flag = member.extAttrs.items.find(attr => {
+      return attr.name === 'RuntimeEnabled';
     });
-    if (attributeValue) {
-      return attributeValue.rhs.value;
+    if (flag) {
+      return flag.rhs.value;
     } else {
       return null;
+    }
+    if (!this._sourceData) {
+      const msg = `The ${sourceFile.path()} file does not contain interface data.`;
+      throw new IDLError(msg);
     }
   }
 
   _getFlagStatus(member) {
-    return this._flags[this._getExtendedAttribute(member, 'RuntimeEnabled')];
+    return this._flags[this._getFlag(member)];
   }
 
   _getIdentifiers(separator, type='name') {
@@ -171,7 +175,19 @@ class InterfaceData {
     throw new Error('Cannot find operation key.');
   }
 
-  _isFlagged(member) {
+  _getOriginTrial(member) {
+    if (!member.extAttrs) { return null; }
+    const ot = member.extAttrs.items.find(attr => {
+      return attr.name === 'OriginTrialEnabled';
+    });
+    if (ot) {
+      return ot.rhs.value;
+    } else {
+      return null;
+    }
+  }
+
+  _isBurnable(member) {
     // if (!this._includeTest && (this._getFlagStatus(member) === 'test')) {
     //   return false;
     // }
@@ -201,22 +217,64 @@ class InterfaceData {
   }
 
   _shouldBurn(member) {
-    if (!this._isFlagged(member)) { return false; }
+    if (!this._isBurnable) { return false; }
     const skipList = ['const','iterable','maplike','setlike'];
     if (skipList.includes(member.type)) { return false; }
     if (member.stringifier) { return false; }
     if (member.deleter) { return false; }
+    if (!this._includeOriginTrials) {
+      let isFlagged;
+      switch (member.type) {
+        case "operation":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'OriginTrialEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+        case "attribute":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'OriginTrialEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+      }
+    }
+    if (!this._includeExperimental) {
+      let isFlagged;
+      switch (member.type) {
+        case "operation":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'RuntimeEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+        case "attribute":
+          if (member.extAttrs) {
+            isFlagged = member.extAttrs.items.some(ea => {
+              return ea.name === 'RuntimeEnabled';
+            });
+            if (isFlagged) { return false; }
+          }
+          break;
+      }
+    }
     return true;
   }
 
   get burnable() {
-    return this._isFlagged(this._sourceData);
+    return this._isBurnable(this._sourceData);
   }
 
   get constants() {
     let returns = this._sourceData.members.filter(m => {
       if (!m.type === 'const') { return false; }
-      if (this._isFlagged(m)) { return true; }
+      if (this._isBurnable(m)) { return true; }
     });
     if (returns.length === 0) { return null; }
     return returns;
@@ -237,13 +295,13 @@ class InterfaceData {
   }
 
   get deleter() {
-    throw new IDLError('Time to deal with deleaters.');
+    throw new IDLError('Time to deal with deleaters.')
   }
 
   get eventHandlers() {
     let returns = this._sourceData.members.filter(m => {
       if (m.baseName === 'EventHandler') {
-        return this._isFlagged(m);
+        return this._isBurnable(m);
       }
       return false;
     });
@@ -256,7 +314,6 @@ class InterfaceData {
     return 'stable';
     // if (!this._sourceData.extAttrs) { return null; }
     // return this._flags[this._sourceData.extAttrs.rhs.value];
-      throw new IDLError('Time to deal with flag().');
   }
 
   get flagged() {
@@ -325,7 +382,7 @@ class InterfaceData {
   }
 
   get originTrial() {
-    if (this._getExtendedAttribute(this._sourceData, 'OriginTrialEnabled')) {
+    if (this._getOriginTrial(this._sourceData)) {
       return true;
     }
     return false;
@@ -340,10 +397,9 @@ class InterfaceData {
   }
 
   getSecureContext(member = this._sourceData) {
-    if (this._getExtendedAttribute(this._sourceData, 'SecureContext')) {
-      return true;
-    }
-    return false;
+    return member.extAttrs.items.some(i => {
+      return i.name == 'SecureContext';
+    })
   }
 
   get setters() {
@@ -383,7 +439,7 @@ class InterfaceData {
     records.push(this._generateRecord(options));
     // Get a constructor record.
     if (this.hasConstructor) {
-      if (this._isFlagged(this.constructorBranch)) {
+      if (this._isBurnable(this.constructorBranch)) {
         options.key = `${this._sourceData.name}.${this._sourceData.name}`;
         records.push(this._generateRecord(options));
       }
@@ -402,18 +458,24 @@ class InterfaceData {
     return records;
   }
 
+  getSecureContext(member = this._sourceData) {
+    return member.extAttrs.items.some(i => {
+      return i.name == 'SecureContext';
+    })
+  }
+
   isFlagged(searchRoot) {
-    if (this._getExtendedAttribute(searchRoot, 'RuntimeEnabled')) {
-      return true;
-    }
-    return false;
+    if (!searchRoot.extAttrs) { return false; }
+    return searchRoot.extAttrs.items.some(attr => {
+      return attr.name === 'RuntimeEnabled';
+    });
   }
 
   isOriginTrial(searchRoot) {
-    if (this._getExtendedAttribute(searchRoot, 'OriginTrialEnabled')) {
-      return true;
-    }
-    return false;
+    if (!searchRoot.extAttrs) { return false; }
+    return searchRoot.extAttrs.items.some(attr => {
+      return attr.name == 'OriginTrialEnabled';
+    });
   }
 }
 
