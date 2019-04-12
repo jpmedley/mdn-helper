@@ -170,7 +170,7 @@ class InterfaceData {
     throw new Error('Cannot find operation key.');
   }
 
-  _isFlagged(member) {
+  _isBurnable(member) {
     // if (!this._includeTest && (this._getFlagStatus(member) === 'test')) {
     //   return false;
     // }
@@ -200,7 +200,7 @@ class InterfaceData {
   }
 
   _shouldBurn(member) {
-    if (!this._isFlagged(member)) { return false; }
+    if (!this._isBurnable(member)) { return false; }
     const skipList = ['const','iterable','maplike','setlike'];
     if (skipList.includes(member.type)) { return false; }
     if (member.stringifier) { return false; }
@@ -209,13 +209,13 @@ class InterfaceData {
   }
 
   get burnable() {
-    return this._isFlagged(this._sourceData);
+    return this._isBurnable(this._sourceData);
   }
 
   get constants() {
     let returns = this._sourceData.members.filter(m => {
       if (!m.type === 'const') { return false; }
-      if (this._isFlagged(m)) { return true; }
+      if (this._isBurnable(m)) { return true; }
     });
     if (returns.length === 0) { return null; }
     return returns;
@@ -242,7 +242,7 @@ class InterfaceData {
   get eventHandlers() {
     let returns = this._sourceData.members.filter(m => {
       if (m.baseName === 'EventHandler') {
-        return this._isFlagged(m);
+        return this._isBurnable(m);
       }
       return false;
     });
@@ -382,7 +382,7 @@ class InterfaceData {
     records.push(this._generateRecord(options));
     // Get a constructor record.
     if (this.hasConstructor) {
-      if (this._isFlagged(this.constructorBranch)) {
+      if (this._isBurnable(this.constructorBranch)) {
         options.key = `${this._sourceData.name}.${this._sourceData.name}`;
         records.push(this._generateRecord(options));
       }
