@@ -106,7 +106,7 @@ class InterfaceData {
     const attributeValue = member.extAttrs.items.find(attr => {
       return attr.name = attributeName;
     });
-    if (attributeValue) {
+    if (attributeValue && (attributeValue.rhs)) {
       return attributeValue.rhs.value;
     } else {
       return null;
