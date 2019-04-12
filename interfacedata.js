@@ -60,19 +60,18 @@ class InterfaceData {
     let tree = webidl2.parse(this._sourceContents);
     let msg;
     for (let t of tree) {
-      // Currently returns the first item found.
       switch (t.type) {
-        case 'enum':
-        case 'dictionary':
-        case 'typedef':
-          msg = `The ${sourceFile.path()} contains a ${t.type} which is not currently processible.`;
-          if (global.__logger) {
-            global.__logger.info(msg);
-          }
+        case 'eof':
           break;
         case 'interface':
           this._sourceData = t;
           this._type = t.type;
+          break;
+        default:
+          msg = `${t.type},${sourceFile.path()},The type contained in this file is not currently processible.`;
+          if (global.__logger) {
+            global.__logger.info(msg);
+          }
           break;
       }
       if (this._sourceData) { return; }
