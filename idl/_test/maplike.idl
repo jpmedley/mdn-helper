@@ -1,0 +1,3 @@
+interface KeyboardLayoutMap {
+    maplike<DOMString, DOMString>;
+};

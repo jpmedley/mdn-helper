@@ -1,5 +1,7 @@
 # Dev/Use
-idl/
+idl/core
+idl/modules
+idl/platform
 in/
 out/
 .DS_Store
