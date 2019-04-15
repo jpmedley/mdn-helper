@@ -21,6 +21,15 @@ const EMPTY_BURN_DATA = Object.freeze({
   type: ''
 });
 
+const ITERABLE = ['entries', 'forEach', 'keys', 'values'];
+const MAPLIKE = ['clear', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values'];
+const READONLY_MAPLIKE = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
+const SYMBOLS = Object.freeze({
+  iterable: ITERABLE,
+  maplike: MAPLIKE,
+  readonlymaplike: READONLY_MAPLIKE
+});
+
 //Cross refences webidl2 types with MDN terminology
 const TYPES = Object.freeze({
   attribute: "property",
@@ -191,9 +200,16 @@ class InterfaceData {
         } else {
           return member.body.name.value;
         }
-        break;
       case 'attribute':
         return member.name;
+      case 'iterable':
+        return member.type;
+      case 'maplike':
+        let type = member.type;
+        if (member.readonly) {
+          type = `readonly${type}`;
+        }
+        return type;
       default:
         return 'what';
     }
@@ -201,8 +217,6 @@ class InterfaceData {
 
   _shouldBurn(member) {
     if (!this._isBurnable(member)) { return false; }
-    const skipList = ['const','iterable','maplike','setlike'];
-    if (skipList.includes(member.type)) { return false; }
     if (member.stringifier) { return false; }
     if (member.deleter) { return false; }
     return true;
@@ -393,8 +407,17 @@ class InterfaceData {
         if (this._shouldBurn(m)) {
           options.idlData = m;
           let name = this._resolveMemberName(m);
-          options.key = `${this._sourceData.name}.${name}`;
-          records.push(this._generateRecord(options));
+          if (SYMBOLS[name]) {
+            SYMBOLS[name].forEach(i => {
+              options.key = `${this._sourceData.name}.${i}`;
+              records.push(this._generateRecord(options));
+            })
+          } else if (name === 'what') {
+            // Do nothing.
+          } else {
+            options.key = `${this._sourceData.name}.${name}`;
+            records.push(this._generateRecord(options));
+          }
         }
       })
     }

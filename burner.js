@@ -438,7 +438,6 @@ class ChromeBurner extends Burner {
       });
       return idlFile;
     } catch(e) {
-      if (TEST_MODE) { throw e; }
       switch (e.constructor.name) {
         case 'IDLError':
         case 'WebIDLParseError':
