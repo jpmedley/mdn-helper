@@ -7,7 +7,8 @@ const { InterfaceData } = require('./interfacedata.js');
 const API_DIRS = ["core/", "modules/"];
 const TEST_DIRS = ["_test/"];
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
-const TEST_MODE = config.get('Application.test');
+const TEST_MODE = config.get('Application.test.active');
+const USE_TESTFILES = config.get('Application.test.useTestFiles');
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
@@ -24,9 +25,11 @@ class IDLFileSet {
         this._processDirectory(dir);
       }
     }
-    for (let d of API_DIRS) {
-      dir = rootDirectory + d;
-      this._processDirectory(dir);
+    if (!USE_TESTFILES) {
+      for (let d of API_DIRS) {
+        dir = rootDirectory + d;
+        this._processDirectory(dir);
+      }
     }
   }
 
