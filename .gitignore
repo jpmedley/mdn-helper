@@ -9,6 +9,7 @@ burn-log.txt
 burn-list.csv
 whitelists/
 config/local.json
+.vscode
 
 # Logs
 logs
