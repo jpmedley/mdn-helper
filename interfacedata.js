@@ -5,6 +5,11 @@ const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
+const EMPTY_BCD_DATA = Object.freeze({
+  key: null,
+  browsers: []
+});
+
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
   bcd: false,
@@ -22,12 +27,7 @@ const TYPES = Object.freeze({
   constructor: "constructor",
   operation: "method",
   interface: "reference",
-})
-
-const EMPTY_BCD_DATA = Object.freeze({
-  key: null,
-  browsers: []
-})
+});
 
 class IDLError extends Error {
   constructor(message='', fileName='', lineNumber='') {
