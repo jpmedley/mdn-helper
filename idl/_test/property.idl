@@ -1,0 +1,3 @@
+interface FontFace {
+    attribute FontFaceLoadStatus status;
+};

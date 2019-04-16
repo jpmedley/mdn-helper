@@ -38,7 +38,6 @@ function getNamedArg(arg) {
   }
 }
 
-
 function pageExists(arg, pageData) {
   let args = arg.split(',');
   let page = pageData.find(aPage=>{

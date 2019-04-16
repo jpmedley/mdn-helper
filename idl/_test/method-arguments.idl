@@ -1,0 +1,3 @@
+interface FontFaceSet : EventTarget {
+    [RaisesException] boolean check(DOMString font, optional DOMString text = " ");
+};

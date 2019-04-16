@@ -1,0 +1,3 @@
+interface BlobEvent : Event {
+    readonly attribute DOMHighResTimeStamp timecode;
+};
