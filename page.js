@@ -1,14 +1,10 @@
 'use strict';
 
-const config = require('config');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Questions } = require('./questions.js');
 const utils = require('./utils.js');
 
-const ANSWER_IS_NO = '';
-const SKIP_KEY = config.get('Application.questionHiding.use');
-const SKIP_KEYS = config.get('Application.questionHiding.' + SKIP_KEY);
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 
 class _Page {

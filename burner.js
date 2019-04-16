@@ -10,7 +10,6 @@ const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 const winston = require('winston');
 const {
-  EMPTY_BCD_DATA,
   EMPTY_BURN_DATA,
   InterfaceData
 } = require('./interfacedata.js');

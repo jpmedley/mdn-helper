@@ -1,6 +1,5 @@
 'use strict';
 
-const utils = require('../utils.js');
 const page = require('../page.js');
 
 async function _run(currentPage, question) {

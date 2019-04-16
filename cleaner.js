@@ -3,7 +3,6 @@
 const fs = require('fs');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
-const radio = require('radio-symbol');
 const utils = require('./utils.js');
 
 const CANCEL = '(cancel)';

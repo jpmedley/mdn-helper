@@ -1,11 +1,8 @@
 'use strict';
 
-const actions = require('./actions');
 const { BCDManager } = require('./bcdmanager.js');
-const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
-const { InterfaceData } = require('./interfacedata.js');
 const { Page } = require('./page.js');
 const { Questions } = require('./questions.js');
 const utils = require('./utils.js');

@@ -6,7 +6,6 @@ const Enquirer = require('enquirer');
 const { IDLFileSet } = require('./idlfileset.js');
 const { InterfaceData } = require('./interfacedata.js');
 const { IDLBuilder } = require('./builder.js');
-const radio = require('prompt-radio');
 const utils = require('./utils.js');
 
 const NOTHING_FOUND = "Could not find matching IDL files."

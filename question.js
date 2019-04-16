@@ -2,7 +2,6 @@
 
 const actions = require('./actions');
 const Enquirer = require('enquirer');
-const { help } = require('./help/help.js');
 const utils = require('./utils.js');
 
 
