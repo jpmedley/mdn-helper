@@ -49,7 +49,7 @@ class InterfaceData {
     this._flags = FlagStatus;
     this._loadTree(sourceFile);
     this._includeExperimental = options.experimental;
-    this._includeOriginTrials = options.originTrials;
+    this._includeOriginTrials = options.originTrial;
   }
 
   async ping() {
@@ -113,7 +113,7 @@ class InterfaceData {
   _getExtendedAttribute(member, attributeName) {
     if (!member.extAttrs) { return null; }
     const attributeValue = member.extAttrs.items.find(attr => {
-      return attr.name = attributeName;
+      return attr.name === attributeName;
     });
     if (attributeValue && (attributeValue.rhs)) {
       return attributeValue.rhs.value;

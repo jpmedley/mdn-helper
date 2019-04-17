@@ -136,7 +136,10 @@ class _Finder {
     args = this._normalizeArguments(args, 'find');
     let file = await this._find(args);
     if (this._ping) {
-      const id = new InterfaceData(file, false, false);
+      const id = new InterfaceData(file, {
+        experimental: false,
+        originTrial: false
+      });
       if (id.type == 'dictionary') {
         console.log('mdn-helper does not yet ping dictionaries.');
       } else {
