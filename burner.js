@@ -343,10 +343,17 @@ class BCDBurner extends Burner {
       this._category = await selectArgument(argQuestion, CATEGORIES);
     }
 
-    pos = args.indexOf('-b');
-    if (pos > -1) { this._browsers = args[pos + 1].split(','); }
-    pos = args.indexOf('--browsers');
-    if (pos > -1) { this._browsers = args[pos + 1].split(','); }
+    pos = args.findIndex(e => {
+      return e.includes('-b');
+    });
+    if (pos >= 0) {
+      this._browsers = args[pos + 1];
+      if (this._browsers.includes('all')) {
+        this._browsers = BROWSERS;
+      } else {
+        this._browsers = this._browsers.split(',');
+      }
+    }
 
     if (!this._browsers) {
       // Interactive path
