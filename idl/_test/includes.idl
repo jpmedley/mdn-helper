@@ -1,0 +1,4 @@
+interface PaintRenderingContext2D {
+    void save(); // push state on state stack
+};
+PaintRenderingContext2D includes CanvasPath;

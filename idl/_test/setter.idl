@@ -1,0 +1,3 @@
+interface CSSUnparsedValue : CSSStyleValue {
+    [RaisesException] setter CSSUnparsedSegment (unsigned long index, CSSUnparsedSegment val);
+};
