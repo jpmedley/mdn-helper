@@ -407,7 +407,7 @@ class InterfaceData {
         if (this._shouldBurn(m)) {
           options.idlData = m;
           let name = this._resolveMemberName(m);
-          if (SYMBOLS[name]) {
+          if (SYMBOLS.hasOwnProperty(name)) {
             SYMBOLS[name].forEach(i => {
               options.key = `${this._sourceData.name}.${i}`;
               records.push(this._generateRecord(options));
