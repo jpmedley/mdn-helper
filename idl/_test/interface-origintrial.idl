@@ -1,0 +1,5 @@
+[
+    OriginTrialEnabled=WebXR
+] interface FontFaceSet {
+    readonly attribute FontFaceSetLoadStatus status;
+};
