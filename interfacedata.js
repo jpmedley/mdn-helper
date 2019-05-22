@@ -154,10 +154,12 @@ class InterfaceData {
         case 'operation':
           let opKey = this._getOperationKey(m);
           identifiers.push(`${this.name}${separator}${opKey}`);
+          break;
         default:
-          throw new IDLError(`Unknown member type found in InterfaceData._sortTree(): ${m.type}.`)
+          throw new IDLError(`Unknown member type found in InterfaceData._getIdentifiers: ${m.type}.`)
       }
-    })
+    });
+    return identifiers;
   }
 
   _getOperationKey(member) {
