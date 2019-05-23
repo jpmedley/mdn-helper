@@ -6,13 +6,13 @@ const json5 = require('json5')
 let flags;
 
 class _FlagStatus {
-  constructor() {
+  constructor(flagPath) {
+    this._flagPath = flagPath;
     this._loadFlags();
   }
 
   _loadFlags() {
-    const flagPath = 'idl/platform/runtime_enabled_features.json5';
-    const flagFileContents = fs.readFileSync(flagPath).toString();
+    const flagFileContents = fs.readFileSync(this._flagPath).toString();
     const flagArray = json5.parse(flagFileContents).data;
     for (let f of flagArray) {
       this[f.name] = f.status;
@@ -35,11 +35,11 @@ class _FlagStatus {
   }
 }
 
-function getFlagObject() {
+function getFlagObject(flagPath) {
   if (!flags) {
-    flags = new _FlagStatus();
+    flags = new _FlagStatus(flagPath);
   }
   return flags;
 }
 
-module.exports.FlagStatus = getFlagObject();
+module.exports.FlagStatus = getFlagObject;

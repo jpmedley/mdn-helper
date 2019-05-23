@@ -1,5 +1,5 @@
 [
-    RuntimeEnabled=WebXR
+    RuntimeEnabled=RTEExperimental
 ] interface FontFaceSet {
     readonly attribute FontFaceSetLoadStatus status;
 };

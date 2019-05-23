@@ -46,7 +46,8 @@ class IDLError extends Error {
 
 class InterfaceData {
   constructor(sourceFile, options) {
-    this._flags = FlagStatus;
+    const flagPath = options.flagPath ? options.flagPath : 'idl/platform/runtime_enabled_features.json5';
+    this._flags = FlagStatus(flagPath);
     this._loadTree(sourceFile);
     this._includeExperimental = options.experimental;
     this._includeOriginTrials = options.originTrial;
@@ -276,9 +277,9 @@ class InterfaceData {
 
   get flagged() {
     if (this._getFlagStatus(this._sourceData) === 'stable') {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   get iterable() {
