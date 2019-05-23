@@ -186,11 +186,11 @@ class InterfaceData {
     // if (!this._includeTest && (this._getFlagStatus(member) === 'test')) {
     //   return false;
     // }
-    if (!this._includeExperimental && (this._getFlagStatus(member) === 'experimental')) {
-      return false;
+    if (this._includeExperimental) {
+      return this._getFlagStatus(member) === 'experimental';
     }
-    if (!this._includeOriginTrials && (this._isOriginTrial(member))) {
-      return false;
+    if (this._includeOriginTrials) {
+      return this._getFlagStatus(member) === 'experimental';
     }
     return true;
   }
