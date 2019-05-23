@@ -29,7 +29,8 @@ for (let f of files) {
   try {
     let idlFile = new InterfaceData(f, {
       experimental: false,
-      originTrial: false
+      originTrial: false,
+      flagPath: `${CURRENT_DIR}platform/runtime_enabled_features.json5`
     });
     let keys = idlFile.keys;
     for (let k in keys) {
