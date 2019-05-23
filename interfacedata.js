@@ -104,8 +104,8 @@ class InterfaceData {
         }
       }
     }
-    record.flag = this.isFlagged(options.idlData);
-    record.origin_trial = this.isOriginTrial(options.idlData);
+    record.flag = this._isFlagged(options.idlData);
+    record.origin_trial = this._isOriginTrial(options.idlData);
     // record.type = options.idlData.type;
     record.type = TYPES[options.idlData.type];
     return record;
@@ -189,7 +189,7 @@ class InterfaceData {
     if (!this._includeExperimental && (this._getFlagStatus(member) === 'experimental')) {
       return false;
     }
-    if (!this._includeOriginTrials && (this.isOriginTrial(member))) {
+    if (!this._includeOriginTrials && (this._isOriginTrial(member))) {
       return false;
     }
     return true;
@@ -427,14 +427,14 @@ class InterfaceData {
     return records;
   }
 
-  isFlagged(searchRoot) {
+  _isFlagged(searchRoot) {
     if (this._getExtendedAttribute(searchRoot, 'RuntimeEnabled')) {
       return true;
     }
     return false;
   }
 
-  isOriginTrial(searchRoot) {
+  _isOriginTrial(searchRoot) {
     if (this._getExtendedAttribute(searchRoot, 'OriginTrialEnabled')) {
       return true;
     }
