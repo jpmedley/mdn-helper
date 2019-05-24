@@ -40,14 +40,10 @@ describe('IDLFileSet', () => {
 });
 
 function find(file, inFiles) {
-  console.log(file);
   for (let f of inFiles) {
-    console.log(`\t${f.name}`);
     if (f.name === file) {
-      // console.log('\tReturn true');
       return true;
     }
   }
-  // console.log('\tReturn false');
   return false;
 }

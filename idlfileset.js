@@ -11,7 +11,7 @@ const TEST_MODE = config.get('Application.test.active');
 const USE_TESTFILES = config.get('Application.test.useTestFiles');
 
 class IDLFileSet {
-  constructor(rootDirectory = 'idl/', options) {
+  constructor(rootDirectory = 'idl/', options = {}) {
     this._experimental = (options.experimental? options.experimental: false);
     this._originTrial = (options.originTrial? options.originTrial: false);
     this._files = [];

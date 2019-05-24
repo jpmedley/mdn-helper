@@ -51,11 +51,11 @@ class IDLFlagError extends IDLError {
 }
 
 class InterfaceData {
-  constructor(sourceFile, options) {
+  constructor(sourceFile, options = {}) {
     const flagPath = options.flagPath ? options.flagPath : 'idl/platform/runtime_enabled_features.json5';
     this._flags = FlagStatus(flagPath);
-    this._includeExperimental = options.experimental;
-    this._includeOriginTrials = options.originTrial;
+    this._includeExperimental = (options.experimental? options.experimental: false);
+    this._includeOriginTrials = (options.originTrial? options.originTrial: false);
     try {
       this._loadTree(sourceFile);
     } catch (error) {
@@ -86,9 +86,12 @@ class InterfaceData {
         case 'interface':
           this._sourceData = t;
           this._type = t.type;
+          if ((!this.originTrial) && (!this.flagged)) { break; }
           const includeRTE = (this.flagged && this._includeExperimental);
           const includeOT = (this.originTrial && this._includeOriginTrials);
-          if (!(includeRTE || includeOT)) {
+          if (includeOT || includeRTE) {
+            break;
+          } else {
             throw new IDLFlagError();
           }
           break;
@@ -139,7 +142,11 @@ class InterfaceData {
   }
 
   _getFlagStatus(member) {
-    return this._flags[this._getExtendedAttribute(member, 'RuntimeEnabled')];
+    const attribute = this._getExtendedAttribute(member, 'RuntimeEnabled')
+    if (attribute) {
+      return this._flags[attribute];
+    } 
+    return false;
   }
 
   _getIdentifiers(separator, type='name') {
@@ -291,10 +298,15 @@ class InterfaceData {
   }
 
   get flagged() {
-    if (this._getFlagStatus(this._sourceData) === 'stable') {
-      return false;
+    const flag = this._getFlagStatus(this._sourceData);
+    switch (flag) {
+      case (flag === 'stable'):
+        return false;
+      case (flag === false):
+        return false;
+      default:
+        return true;
     }
-    return true;
   }
 
   get iterable() {
