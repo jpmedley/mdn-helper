@@ -13,25 +13,26 @@ const USE_TESTFILES = config.get('Application.test.useTestFiles');
 class IDLFileSet {
   constructor(rootDirectory = 'idl/') {
     this._files = [];
-    this._rootDirectory = rootDirectory;
-    this._loadFiles();
+    this._processDirectory(rootDirectory);
+    // this._rootDirectory = rootDirectory;
+    // this._loadFiles();
   }
 
-  _loadFiles(rootDirectory = this._rootDirectory) {
-    let dir;
-    if (TEST_MODE) {
-      for (let d of TEST_DIRS) {
-        dir = rootDirectory + d;
-        this._processDirectory(dir);
-      }
-    }
-    if (!USE_TESTFILES) {
-      for (let d of API_DIRS) {
-        dir = rootDirectory + d;
-        this._processDirectory(dir);
-      }
-    }
-  }
+  // _loadFiles(rootDirectory = this._rootDirectory) {
+  //   let dir;
+  //   if (TEST_MODE) {
+  //     for (let d of TEST_DIRS) {
+  //       dir = rootDirectory + d;
+  //       this._processDirectory(dir);
+  //     }
+  //   }
+  //   if (!USE_TESTFILES) {
+  //     for (let d of API_DIRS) {
+  //       dir = rootDirectory + d;
+  //       this._processDirectory(dir);
+  //     }
+  //   }
+  // }
 
   _processDirectory(rootDirectory) {
     let contents = fs.readdirSync(rootDirectory, {withFileTypes: true});
@@ -69,7 +70,7 @@ class IDLFileSet {
     try {
       let idlFile = new InterfaceData(fileObject, {
         experimental: true,
-        originTrials: true
+        originTrial: true
       });
       return idlFile;
     } catch (e) {
