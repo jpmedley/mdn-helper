@@ -44,13 +44,23 @@ class IDLError extends Error {
   }
 }
 
+class IDLFlagError extends IDLError {
+  constructor(message='', fileName='', lineNumber='') {
+    super(message, fileName, lineNumber);
+  }
+}
+
 class InterfaceData {
   constructor(sourceFile, options) {
     const flagPath = options.flagPath ? options.flagPath : 'idl/platform/runtime_enabled_features.json5';
     this._flags = FlagStatus(flagPath);
-    this._loadTree(sourceFile);
     this._includeExperimental = options.experimental;
     this._includeOriginTrials = options.originTrial;
+    try {
+      this._loadTree(sourceFile);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async ping() {
@@ -76,6 +86,11 @@ class InterfaceData {
         case 'interface':
           this._sourceData = t;
           this._type = t.type;
+          const includeRTE = (this.flagged && this._includeExperimental);
+          const includeOT = (this.originTrial && this._includeOriginTrials);
+          if (!(includeRTE || includeOT)) {
+            throw new IDLFlagError();
+          }
           break;
         default:
           msg = `${t.type},${sourceFile.path()},The type contained in this file is not currently processible.`;
@@ -444,4 +459,5 @@ class InterfaceData {
 
 module.exports.EMPTY_BCD_DATA = EMPTY_BCD_DATA;
 module.exports.EMPTY_BURN_DATA = EMPTY_BURN_DATA;
+module.exports.IDLFlagError = IDLFlagError;
 module.exports.InterfaceData = InterfaceData;

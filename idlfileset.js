@@ -11,7 +11,9 @@ const TEST_MODE = config.get('Application.test.active');
 const USE_TESTFILES = config.get('Application.test.useTestFiles');
 
 class IDLFileSet {
-  constructor(rootDirectory = 'idl/') {
+  constructor(rootDirectory = 'idl/', options) {
+    this._experimental = (options.experimental? options.experimental: false);
+    this._originTrial = (options.originTrial? options.originTrial: false);
     this._files = [];
     this._processDirectory(rootDirectory);
     // this._rootDirectory = rootDirectory;
@@ -52,31 +54,33 @@ class IDLFileSet {
         let idlFile = this._getIDLFile(contents[c]);
         if (idlFile) {
           contents[c].key = idlFile.name;
+          this._files.push(contents[c]);
         } else {
           // console.log('Could not load:');
           // console.log(contents[c]);
         }
-        this._files.push(contents[c]);
       }
     }
   }
 
   get files() {
-    const files = this._files[Symbol.iterator]();
-    return files;
+    // const files = this._files[Symbol.iterator]();
+    // return files;
+    return this._files;
   }
 
   _getIDLFile(fileObject) {
     try {
       let idlFile = new InterfaceData(fileObject, {
-        experimental: true,
-        originTrial: true
+        experimental: this._experimental,
+        originTrial: this._originTrial
       });
       return idlFile;
     } catch (e) {
       switch (e.constructor.name) {
         case 'IDLError':
         case 'WebIDLParseError':
+        case 'IDLFlagError':
           break;
       }
     }
