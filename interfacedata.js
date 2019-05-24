@@ -149,10 +149,10 @@ class InterfaceData {
     return false;
   }
 
-  _getIdentifiers(separator, type='name') {
+  _getIdentifiers(separator, options = { type: 'name', stableOnly: false }) {
     let identifiers = [];
     identifiers.push(this.name);
-    if (type === 'interface') {
+    if (options.type === 'interface') {
       if (this.hasConstructor) {
         let signature = `${this.name}${separator}${this.name}`;
         let signatures = this.signatures.map(sig => {
@@ -162,6 +162,9 @@ class InterfaceData {
       }
     }
     this._sourceData.members.map(m => {
+      if (options.stableOnly === true) {
+        if (!this._isBurnable(m)) { return; }
+      }
       switch (m.type) {
         case 'attribute':
           identifiers.push(`${this.name}${separator}${m.escapedName}`);
@@ -334,11 +337,16 @@ class InterfaceData {
   }
 
   get interfaces() {
-    return this._getIdentifiers(',', 'interface');
+    return this._getIdentifiers(',', { type: 'interface' });
   }
 
   get keys() {
     return this._getIdentifiers('.');
+  }
+
+
+  getkeys(stableOnly = false) {
+    return this._getIdentifiers('.', { stableOnly: stableOnly });
   }
 
   get maplike() {

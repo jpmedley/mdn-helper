@@ -1,0 +1,20 @@
+[
+    Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors)
+] interface MedleyFace {
+    attribute EventHandler onconnect;
+    [RuntimeEnabled=RTEExperimental] attribute EventHandler ondisconnect;
+    getter CSSUnparsedSegment (unsigned long index);
+    [RuntimeEnabled=RTEExperimental] getter CSSParsedSegment (unsigned long index);
+    iterable<CSSUnparsedSegment>;
+    [RuntimeEnabled=RTEExperimental] iterable<CSSParsedSegment>;
+    maplike<DOMString, DOMString>;
+    [RuntimeEnabled=RTEExperimental] maplike<MedleyString, MedleyString>;
+    boolean check(DOMString font, optional DOMString text = " ");
+    [RuntimeEnabled=RTEExperimental] boolean unCheck(DOMString font, optional DOMString text = " ");
+    attribute DOMString family;
+    [RuntimeEnabled=RTEExperimental] attribute DOMString family2;
+    readonly maplike<DOMString, DOMString>;
+    [RuntimeEnabled=RTEExperimental] readonly maplike<MedleyString, MedleyString>;
+    setlike<FontFace>;
+    [RuntimeEnabled=RTEExperimental] setlike<MedleyFace>;
+};

@@ -5,6 +5,10 @@ const assert = require('assert');
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
 
 const FLAGS_JSON = './test/files/test_flags.json5';
+const BURNABLE = {
+  name: 'burnable',
+  path: function() { return './test/files/burn-records.idl'; }
+}
 const FLAGGED = {
   name: 'flagged',
   path: function() { return './test/files/interface-runtimeenabled.idl'; }
@@ -63,6 +67,19 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('keys', () => {
+    const id = new InterfaceData(BURNABLE, {
+      experimental: true,
+      flagPath: FLAGS_JSON
+    });
+    it('Returns true when the returned keys contain all members', () => {
+      assert.equal(id.keys.length, 17);
+    });
+    it('Returns true when the returned keys contain no flagged or OT members', () => {
+      assert.equal(id.getkeys(true).length, 9);
+    })
+  });
+
   describe('originTrial', () => {
     it('Returns true when a whole interface is in an origin trial', () => {
       const id = new InterfaceData(ORIGIN_TRIAL, {
@@ -79,24 +96,4 @@ describe('InterfaceData', () => {
       assert.equal(id.originTrial, false);
     });
   });
-
-  // for (let p of PSEUDO_DIRENTS) {
-  //   id = new InterfaceData(p, {
-  //     experimental: true,
-  //     originTrial: true,
-  //     flagPath: './idl/_test/test_flags.json5'
-  //   });
-
-  //   describe(`${p.name}`, () => {
-  //     it(`Returns true when the source IDL is ${p.name}.`, () => {
-  //       assert.ok(id[p.name]);
-  //     });
-  //   });
-
-  //   describe(`burnable`, () => {
-  //     it(`Returns false when ${p.path()} is not burnable.`, () => {
-  //       assert.equal(id.burnable, false);
-  //     });
-  //   });
-  // };
 });

@@ -32,7 +32,7 @@ for (let f of files) {
       originTrial: false,
       flagPath: `${CURRENT_DIR}platform/runtime_enabled_features.json5`
     });
-    let keys = idlFile.keys;
+    let keys = idlFile.getkeys(true);
     for (let k in keys) {
       console.log(keys[k]);
     }
@@ -51,7 +51,7 @@ for (let f of files) {
 
 
 function _startBurnLogFile() {
-  let fileName = `experiment-${utils.today()}.log`;
+  let fileName = `experiments-${utils.today()}.log`;
 
   const fileTransport = new winston.transports.File({
     filename: fileName
