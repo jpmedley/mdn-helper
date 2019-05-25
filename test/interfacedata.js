@@ -5,6 +5,7 @@ const assert = require('assert');
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
 
 const FLAGS_JSON = './test/files/test_flags.json5';
+const STABLE_JSON = './test/files/stable_flags.json5';
 const BURNABLE = {
   name: 'burnable',
   path: function() { return './test/files/burn-records.idl'; }
