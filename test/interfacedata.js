@@ -4,8 +4,8 @@ const assert = require('assert');
 
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
 
-const FLAGS_JSON = './test/files/test_flags.json5';
-const STABLE_JSON = './test/files/stable_flags.json5';
+global.__Flags = require('../flags.js').FlagStatus('./test/files/test_flags.json5');
+
 const BURNABLE = {
   name: 'burnable',
   path: function() { return './test/files/burn-records.idl'; }
@@ -35,7 +35,6 @@ describe('InterfaceData', () => {
         () => {
           const throws = new InterfaceData(FLAG_AND_OT, {
             experimental: false,
-            flagPath: FLAGS_JSON,
             originTrial: false
           });
         }, IDLFlagError
@@ -54,15 +53,13 @@ describe('InterfaceData', () => {
   describe('flagged', () => {
     it('Returns true when a whole interface is behind the experimental flag', () => {
       const id = new InterfaceData(FLAGGED, {
-        experimental: true,
-        flagPath: FLAGS_JSON
+        experimental: true
       });
       assert.ok(id.flagged);
     });
     it('returns false when a whole interface is not behind the experimental flag', () => {
       const id = new InterfaceData(NO_FLAGS, {
-        experimental: true,
-        flagPath: FLAGS_JSON
+        experimental: true
       });
       assert.equal(id.flagged, false);
     });
@@ -70,8 +67,7 @@ describe('InterfaceData', () => {
 
   describe('keys', () => {
     const id = new InterfaceData(BURNABLE, {
-      experimental: true,
-      flagPath: FLAGS_JSON
+      experimental: true
     });
     it('Returns true when the returned keys contain all members', () => {
       assert.equal(id.keys.length, 17);
@@ -84,15 +80,13 @@ describe('InterfaceData', () => {
   describe('originTrial', () => {
     it('Returns true when a whole interface is in an origin trial', () => {
       const id = new InterfaceData(ORIGIN_TRIAL, {
-        originTrial: true,
-        flagPath: FLAGS_JSON
+        originTrial: true
       });
       assert.ok(id.originTrial);
     });
     it('returns false when a whole interface is not in an origin trial', () => {
       const id = new InterfaceData(NO_FLAGS, {
-        originTrial: true,
-        flagPath: FLAGS_JSON
+        originTrial: true
       });
       assert.equal(id.originTrial, false);
     });

@@ -52,8 +52,6 @@ class IDLFlagError extends IDLError {
 
 class InterfaceData {
   constructor(sourceFile, options = {}) {
-    const flagPath = options.flagPath ? options.flagPath : 'idl/platform/runtime_enabled_features.json5';
-    this._flags = FlagStatus(flagPath);
     this._includeExperimental = (options.experimental? options.experimental: false);
     this._includeOriginTrials = (options.originTrial? options.originTrial: false);
     try {
@@ -144,7 +142,8 @@ class InterfaceData {
   _getFlagStatus(member) {
     const attribute = this._getExtendedAttribute(member, 'RuntimeEnabled')
     if (attribute) {
-      return this._flags[attribute];
+      // return this._flags[attribute];
+      return global.__Flags[attribute];
     } 
     return false;
   }
@@ -294,10 +293,8 @@ class InterfaceData {
 
   get flag() {
     // Temporary implementation.
+    throw new IDLError('Time to deal with flag().');
     return 'stable';
-    // if (!this._sourceData.extAttrs) { return null; }
-    // return this._flags[this._sourceData.extAttrs.rhs.value];
-      throw new IDLError('Time to deal with flag().');
   }
 
   get flagged() {

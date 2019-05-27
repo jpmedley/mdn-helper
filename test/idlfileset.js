@@ -4,6 +4,8 @@ const assert = require('assert');
 
 const { IDLFileSet } = require('../idlfileset.js');
 
+global.__Flags = require('../flags.js').FlagStatus('./test/files/test_flags.json5');
+
 const IDL_FILES = './test/files/';
 
 describe('IDLFileSet', () => {
@@ -24,7 +26,7 @@ describe('IDLFileSet', () => {
     });
 
     const someFiles = new IDLFileSet(IDL_FILES, {
-      experimenal: false,
+      experimental: false,
       originTrial: false
     });
     files = someFiles.files;
@@ -37,6 +39,13 @@ describe('IDLFileSet', () => {
       assert.equal(RTNotFound, false);
     });
   });
+
+  // describe('saveKeys', () => {
+  //   const ketSet = new IDLFileSet(IDL_FILES, {
+  //     experimental: false,
+  //     originTrial: false
+  //   });
+  // });
 });
 
 function find(file, inFiles) {

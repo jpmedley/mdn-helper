@@ -7,7 +7,6 @@ const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/', options = {}) {
-    this._flagPath = options.flagPath ? options.flagPath : 'idl/platform/runtime_enabled_features.json5';
     this._experimental = (options.experimental? options.experimental: false);
     this._originTrial = (options.originTrial? options.originTrial: false);
     this._files = [];
@@ -49,8 +48,7 @@ class IDLFileSet {
     try {
       let idlFile = new InterfaceData(fileObject, {
         experimental: this._experimental,
-        originTrial: this._originTrial,
-        flagPath: this._flagPath
+        originTrial: this._originTrial
       });
       return idlFile;
     } catch (e) {
