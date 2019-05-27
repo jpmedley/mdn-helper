@@ -1,40 +1,18 @@
 'use strict';
 
 const fs = require('fs');
-const config = require('config');
 const { InterfaceData } = require('./interfacedata.js');
 
-const API_DIRS = ["core/", "modules/"];
-const TEST_DIRS = ["_test/"];
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
-const TEST_MODE = config.get('Application.test.active');
-const USE_TESTFILES = config.get('Application.test.useTestFiles');
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/', options = {}) {
+    this._flagPath = options.flagPath ? options.flagPath : 'idl/platform/runtime_enabled_features.json5';
     this._experimental = (options.experimental? options.experimental: false);
     this._originTrial = (options.originTrial? options.originTrial: false);
     this._files = [];
     this._processDirectory(rootDirectory);
-    // this._rootDirectory = rootDirectory;
-    // this._loadFiles();
   }
-
-  // _loadFiles(rootDirectory = this._rootDirectory) {
-  //   let dir;
-  //   if (TEST_MODE) {
-  //     for (let d of TEST_DIRS) {
-  //       dir = rootDirectory + d;
-  //       this._processDirectory(dir);
-  //     }
-  //   }
-  //   if (!USE_TESTFILES) {
-  //     for (let d of API_DIRS) {
-  //       dir = rootDirectory + d;
-  //       this._processDirectory(dir);
-  //     }
-  //   }
-  // }
 
   _processDirectory(rootDirectory) {
     let contents = fs.readdirSync(rootDirectory, {withFileTypes: true});
@@ -64,8 +42,6 @@ class IDLFileSet {
   }
 
   get files() {
-    // const files = this._files[Symbol.iterator]();
-    // return files;
     return this._files;
   }
 
@@ -73,7 +49,8 @@ class IDLFileSet {
     try {
       let idlFile = new InterfaceData(fileObject, {
         experimental: this._experimental,
-        originTrial: this._originTrial
+        originTrial: this._originTrial,
+        flagPath: this._flagPath
       });
       return idlFile;
     } catch (e) {
