@@ -1,6 +1,7 @@
 'use strict';
 
 const { FlagStatus } = require('./flags.js');
+const fs = require('fs');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
@@ -418,6 +419,14 @@ class InterfaceData {
 
   get urls() {
     return this._getIdentifiers('/');
+  }
+
+  writeKeys(keyFile) {
+    const keys = this.getkeys(true);
+    if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
+    for (let k of keys) {
+      fs.appendFileSync(keyFile, `${k}\n`);
+    }
   }
 
   getBurnRecords() {

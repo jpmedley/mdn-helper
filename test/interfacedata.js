@@ -1,6 +1,7 @@
 'use string';
 
 const assert = require('assert');
+const fs = require('fs');
 
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
 
@@ -89,6 +90,22 @@ describe('InterfaceData', () => {
         originTrial: true
       });
       assert.equal(id.originTrial, false);
+    });
+  });
+
+  describe('writeKeys', () => {
+    it('Returns true when the save file contains all unflagged keys', () => {
+      const id = new InterfaceData(BURNABLE, {
+        experimental: false,
+        originTrial: false
+      });
+
+      const keyFile = './keyfile.txt';
+      id.writeKeys(keyFile);
+      const keyFileContents = fs.readFileSync(keyFile).toString();
+      const keys = keyFileContents.split('\n');
+      assert.equal(keys.length, 18);
+      fs.unlinkSync(keyFile);
     });
   });
 });
