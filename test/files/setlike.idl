@@ -1,3 +1,4 @@
-interface FontFaceSet : EventTarget {
+interface MedleyFace {
     setlike<FontFace>;
+    [RuntimeEnabled=RTEExperimental] setlike<MedleyFace>;
 };

@@ -17,7 +17,15 @@ const FLAGGED = {
 }
 const FLAG_AND_OT = {
   name: 'flaggedAndOt',
-  path: function() { return './test/files/interface-flag-and-ot.idl'}
+  path: function() { return './test/files/interface-flag-and-ot.idl'; }
+}
+const ITERABLE = {
+  name: 'iterable',
+  path: function() { return './test/files/iterable.idl'; }
+}
+const MAPLIKE = {
+  name: 'maplike',
+  path: function() { return './test/files/maplike.id'; }
 }
 const NO_FLAGS = {
   name: 'noFlags',
@@ -26,6 +34,14 @@ const NO_FLAGS = {
 const ORIGIN_TRIAL = {
   name: 'originTrial',
   path: function() { return './test/files/interface-origintrial.idl'; }
+}
+const READONLY_MAPLIKE = {
+  name: 'readonly-maplike',
+  path: function() { return './test/files/readonly_maplike.idl'; }
+}
+const SETLIKE = {
+  name: 'setlike',
+  path: function() { return './test/files/setlike.idl'; }
 }
 
 describe('InterfaceData', () => {
@@ -66,15 +82,27 @@ describe('InterfaceData', () => {
     });
   });
 
-  describe('keys', () => {
+  describe('getKeys()', () => {
+    //To Do: Need separate tests for iterable, maplike, read-only maplike, and setlike
     const id = new InterfaceData(BURNABLE, {
       experimental: true
     });
     it('Returns true when the returned keys contain all members', () => {
-      assert.equal(id.keys.length, 17);
+      assert.equal(id.getkeys().length, 9);
     });
     it('Returns true when the returned keys contain no flagged or OT members', () => {
-      assert.equal(id.getkeys(true).length, 9);
+      assert.equal(id.getkeys(true).length, 5);
+    });
+    it('Returns true if all returned keys are valid', () => {
+      const keys = id.getkeys();
+      let valid = true;
+      for (let k of keys) {
+        if (k.includes('[object Object]')) {
+          valid = false;
+          break;
+        }
+      }
+      assert.ok(valid);
     })
   });
 
@@ -103,6 +131,7 @@ describe('InterfaceData', () => {
       const keyFile = './keyfile.txt';
       id.writeKeys(keyFile);
       const keyFileContents = fs.readFileSync(keyFile).toString();
+      console.log(keyFileContents);
       const keys = keyFileContents.split('\n');
       assert.equal(keys.length, 18);
       fs.unlinkSync(keyFile);

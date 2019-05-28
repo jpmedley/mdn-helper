@@ -1,3 +1,4 @@
-interface CSSUnparsedValue : CSSStyleValue {
+interface MedleyFace {
     iterable<CSSUnparsedSegment>;
+    [RuntimeEnabled=RTEExperimental] iterable<CSSParsedSegment>;
 };

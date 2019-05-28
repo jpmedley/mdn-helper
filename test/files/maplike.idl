@@ -1,3 +1,4 @@
-interface KeyboardLayoutMap {
+interface MedleyFace {
     maplike<DOMString, DOMString>;
+    [RuntimeEnabled=RTEExperimental] maplike<MedleyString, MedleyString>;
 };

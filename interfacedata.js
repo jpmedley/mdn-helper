@@ -25,10 +25,12 @@ const EMPTY_BURN_DATA = Object.freeze({
 const ITERABLE = ['entries', 'forEach', 'keys', 'values'];
 const MAPLIKE = ['clear', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values'];
 const READONLY_MAPLIKE = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
+const SETLIKE = ['entries', 'forEach', 'has', 'keys', 'size', 'values'];
 const SYMBOLS = Object.freeze({
   iterable: ITERABLE,
   maplike: MAPLIKE,
-  readonlymaplike: READONLY_MAPLIKE
+  readonlymaplike: READONLY_MAPLIKE,
+  setlike: SETLIKE
 });
 
 //Cross refences webidl2 types with MDN terminology
@@ -173,15 +175,26 @@ class InterfaceData {
           identifiers.push(`${this.name}${separator}${m.name}`);
           break;
         case 'iterable':
+          for (let i of ITERABLE) {
+            identifiers.push(`${this.name}${separator}${i}`);
+          }
+          break;
         case 'maplike':
+          for (let m of MAPLIKE) {
+            identifiers.push(`${this.name}${separator}${m}`);
+          }
+          break;
         case 'setlike':
-          identifiers.push(`${this.name}${separator}${m}`);
+          for (let s of SETLIKE) {
+            identifiers.push(`${this.name}${separator}${s}`);
+          }
           break;
         case 'operation':
           let opKey = this._getOperationKey(m);
           identifiers.push(`${this.name}${separator}${opKey}`);
           break;
         default:
+          console.log(m.type);
           throw new IDLError(`Unknown member type found in InterfaceData._getIdentifiers: ${m.type}.`)
       }
     });
