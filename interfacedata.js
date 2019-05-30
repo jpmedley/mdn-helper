@@ -443,10 +443,6 @@ class InterfaceData {
     throw new IDLError('Time to deal with stringifier.')
   }
 
-  get urls() {
-    return this._getIdentifiers('/');
-  }
-
   writeKeys(keyFile) {
     const keys = this.getkeys(true);
     if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }

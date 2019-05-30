@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const fs = require('fs');
+const { URL } = require('url');
 
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
 
@@ -103,7 +104,7 @@ describe('InterfaceData', () => {
         }
       }
       assert.ok(valid);
-    })
+    });
   });
 
   describe('originTrial', () => {
@@ -123,13 +124,13 @@ describe('InterfaceData', () => {
 
   describe('signatures', () => {
     it('Returns true when the correct number of constructors is returned', () => {
-      const id = new InterfaceData(BURNABLE, {})
+      const id = new InterfaceData(BURNABLE, {});
       const signatures = id.signatures;
       assert.equal(signatures.length, 2);
-    })
-  })
+    });
+  });
 
-  describe('writeKeys', () => {
+  describe('writeKeys()', () => {
     it('Returns true when the save file contains all unflagged keys', () => {
       const id = new InterfaceData(BURNABLE, {
         experimental: false,
