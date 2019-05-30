@@ -151,17 +151,15 @@ class InterfaceData {
     return false;
   }
 
-  _getIdentifiers(separator, options = { type: 'name', stableOnly: false }) {
+  _getIdentifiers(separator, options = { stableOnly: false }) {
     let identifiers = [];
     identifiers.push(this.name);
-    if (options.type === 'interface') {
-      if (this.hasConstructor) {
-        let signature = `${this.name}${separator}${this.name}`;
-        let signatures = this.signatures.map(sig => {
-          return `${signature}(${sig})`;
-        })(signature);
-        identifiers = [identifiers, ...signatures];
-      }
+    if (this.hasConstructor) {
+      let name = this.name;
+      let signatures = this.signatures.map(sig => {
+        return `${name}${separator}${name}${sig}`;
+      });
+      identifiers = [identifiers, ...signatures];
     }
     this._sourceData.members.map(m => {
       if (options.stableOnly === true) {
@@ -190,8 +188,10 @@ class InterfaceData {
           }
           break;
         case 'operation':
-          let opKey = this._getOperationKey(m);
-          identifiers.push(`${this.name}${separator}${opKey}`);
+          if (!m.getter && !m.setter) {
+            let opKey = this._getOperationKey(m);
+            identifiers.push(`${this.name}${separator}${opKey}`);
+          }
           break;
         default:
           console.log(m.type);
@@ -347,9 +347,9 @@ class InterfaceData {
     }
   }
 
-  get interfaces() {
-    return this._getIdentifiers(',', { type: 'interface' });
-  }
+  // get interfaces() {
+  //   return this._getIdentifiers(',', { type: 'interface' });
+  // }
 
   get keys() {
     return this._getIdentifiers('.');
@@ -414,9 +414,22 @@ class InterfaceData {
 
   get signatures() {
     try {
-      return this._sourceData.extAttrs.items.map(i => {
-        return i.name === 'Constructor';
-      })
+      let signatures = [];
+      this._sourceData.extAttrs.items.forEach((item, i, items) => {
+        if (item.name === 'Constructor') {
+          let sigArgs = [];
+          item.signature.arguments.forEach((arg, i, args) => {
+            sigArgs.push(arg.escapedName);
+          });
+          const sig = sigArgs.join(', ');
+          signatures.push(`(${sig})`);
+        }
+      });
+      return signatures;
+
+      // return this._sourceData.extAttrs.items.map(i => {
+      //   return i.name === 'Constructor';
+      // })
     } catch (e) {
       if (e.name === 'TypeError') {
         return null;

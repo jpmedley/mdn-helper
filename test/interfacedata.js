@@ -91,7 +91,7 @@ describe('InterfaceData', () => {
       assert.equal(id.getkeys().length, 9);
     });
     it('Returns true when the returned keys contain no flagged or OT members', () => {
-      assert.equal(id.getkeys(true).length, 5);
+      assert.equal(id.getkeys(true).length, 6);
     });
     it('Returns true if all returned keys are valid', () => {
       const keys = id.getkeys();
@@ -121,6 +121,14 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('signatures', () => {
+    it('Returns true when the correct number of constructors is returned', () => {
+      const id = new InterfaceData(BURNABLE, {})
+      const signatures = id.signatures;
+      assert.equal(signatures.length, 2);
+    })
+  })
+
   describe('writeKeys', () => {
     it('Returns true when the save file contains all unflagged keys', () => {
       const id = new InterfaceData(BURNABLE, {
@@ -131,9 +139,9 @@ describe('InterfaceData', () => {
       const keyFile = './keyfile.txt';
       id.writeKeys(keyFile);
       const keyFileContents = fs.readFileSync(keyFile).toString();
-      console.log(keyFileContents);
+      // console.log(keyFileContents);
       const keys = keyFileContents.split('\n');
-      assert.equal(keys.length, 18);
+      assert.equal(keys.length, 10);
       fs.unlinkSync(keyFile);
     });
   });
