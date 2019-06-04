@@ -64,11 +64,12 @@ class InterfaceData {
     }
   }
 
-  async ping() {
+  async ping(verboseOutput = true) {
     let pingRecords = this.getBurnRecords();
     const pinger = new Pinger(pingRecords);
-    const verboseOutput = false
-    console.log('\nChecking for existing MDN pages. This may take a few minutes.');
+    if (verboseOutput) {
+      console.log('\nChecking for existing MDN pages. This may take a few minutes.');
+    }
     let records = await pinger.pingRecords(verboseOutput)
     .catch(e => {
       throw e;
