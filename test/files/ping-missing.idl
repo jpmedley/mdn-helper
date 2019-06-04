@@ -1,0 +1,8 @@
+[
+    Constructor(DOMString type, optional EventInit eventInitDict),
+    Exposed=(Window,Worker,AudioWorklet)
+] interface Medley {
+    readonly attribute DOMString type;
+
+    [Measure] void stopPropagation();
+};
