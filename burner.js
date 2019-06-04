@@ -17,7 +17,6 @@ const {
 const ALL_STRING = '(all)';
 const BURNABLE_TYPES = ['interface'];
 const CATEGORIES = ['api','css','html','javascript','mathml','svg','webextensions'];
-const TEST_MODE = config.get('Application.test');
 const BROWSERS = [
   'chrome',
   'chrome_android',
