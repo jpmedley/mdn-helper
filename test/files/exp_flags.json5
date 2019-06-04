@@ -91,11 +91,15 @@
   data: [
     {
       name: "RTEExperimental",
+      status: "experimental"
+    },
+    {
+      name: "RTEStable",
       status: "stable"
     },
     {
       name: "OTEEnabled",
-      status: "stable"
+      status: "experimental"
     }
   ],
 }

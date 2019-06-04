@@ -2,11 +2,14 @@
 
 const assert = require('assert');
 const fs = require('fs');
+
+const { BCD } = require('../bcd.js');
 const { URL } = require('url');
 
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
 
-global.__Flags = require('../flags.js').FlagStatus('./test/files/test_flags.json5');
+global._bcd = new BCD();
+global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
 const BURNABLE = {
   name: 'burnable',
@@ -20,14 +23,6 @@ const FLAG_AND_OT = {
   name: 'flaggedAndOt',
   path: function() { return './test/files/interface-flag-and-ot.idl'; }
 }
-const ITERABLE = {
-  name: 'iterable',
-  path: function() { return './test/files/iterable.idl'; }
-}
-const MAPLIKE = {
-  name: 'maplike',
-  path: function() { return './test/files/maplike.id'; }
-}
 const NO_FLAGS = {
   name: 'noFlags',
   path: function() { return './test/files/interface-noinherits.idl'; }
@@ -36,13 +31,17 @@ const ORIGIN_TRIAL = {
   name: 'originTrial',
   path: function() { return './test/files/interface-origintrial.idl'; }
 }
-const READONLY_MAPLIKE = {
-  name: 'readonly-maplike',
-  path: function() { return './test/files/readonly_maplike.idl'; }
+const PING_EXISTS = {
+  name: 'pingExists',
+  path: function() { return './test/files/ping-exists.idl'}
 }
-const SETLIKE = {
-  name: 'setlike',
-  path: function() { return './test/files/setlike.idl'; }
+const PING_MISSING = {
+  name: 'pingMissing',
+  path: function() { return './test/files/ping-missing.idl'}
+}
+const STABLE = {
+  name: 'stable',
+  path: function() { return './test/files/interface-rte-stable.idl'; }
 }
 
 describe('InterfaceData', () => {
@@ -59,7 +58,7 @@ describe('InterfaceData', () => {
       );
     });
 
-    it('Does not throw when a complete interface has no flags.', () => {
+    it('Does not throw when a complete interface has no flags', () => {
       assert.doesNotThrow(
         () => {
           const doesNotThrow = new InterfaceData(NO_FLAGS, {})
@@ -83,18 +82,54 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('getFlag()', () => {
+    it('Returns experimental status for an interface when no argument is passed', () => {
+      const flagged = new InterfaceData(FLAGGED, {
+        experimental: true
+      });
+      assert.equal(flagged.getFlag(), 'experimental');
+    });
+    it('Returns stable status for an interface when no argument is passed', () => {
+      const stable = new InterfaceData(STABLE, {
+        experimental: true
+      });
+      assert.equal(stable.getFlag(), 'stable');
+    });
+  });
+
   describe('getKeys()', () => {
     //To Do: Need separate tests for iterable, maplike, read-only maplike, and setlike
     const id = new InterfaceData(BURNABLE, {
       experimental: true
     });
-    it('Returns true when the returned keys contain all members', () => {
-      assert.equal(id.getkeys().length, 9);
+    it('Confirms that the returned keys contain all members', () => {
+      assert.equal(id.getkeys().length, 8);
     });
-    it('Returns true when the returned keys contain no flagged or OT members', () => {
-      assert.equal(id.getkeys(true).length, 6);
+    it('Confirms that the returned keys contain no flagged or OT members', () => {
+      assert.equal(id.getkeys(true).length, 5);
     });
-    it('Returns true if all returned keys are valid', () => {
+    it('Confirms that returned keys contains a properly formatted conststructor key', () => {
+      const keys = id.getkeys();
+      let valid = false;
+      for (let k of keys) {
+        if (k === 'MedleyFace.MedleyFace') {
+          valid = true;
+          break;
+        }
+      }
+      assert.ok(valid);
+    });
+    it('Confirms that returned keys contains only one conststructor key', () => {
+      const keys = id.getkeys();
+      let keyCount = 0;
+      for (let k of keys) {
+        if (k.includes('MedleyFace.MedleyFace')) {
+          keyCount++;
+        }
+      }
+      assert.equal(keyCount, 1);
+    });
+    it('Confirms that all returned keys are not objects', () => {
       const keys = id.getkeys();
       let valid = true;
       for (let k of keys) {
@@ -122,6 +157,24 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('ping()', () => {
+    it('Confirms the existence of MDN pages for provided URLs', () => {
+      const id = new InterfaceData(PING_EXISTS, {});
+      id.ping(false)
+      .then(burnRecords => {
+        assert.ok(burnRecords[0].mdn_exists);
+      });
+    });
+
+    it('Refutes the existence of MDN pages for provided URLs', () => {
+      const id = new InterfaceData(PING_MISSING, {});
+      id.ping(false)
+      .then(burnRecords => {
+        assert.equal(burnRecords[0].mdn_exists, false);
+      });
+    });
+  });
+
   describe('signatures', () => {
     it('Returns true when the correct number of constructors is returned', () => {
       const id = new InterfaceData(BURNABLE, {});
@@ -138,11 +191,11 @@ describe('InterfaceData', () => {
       });
 
       const keyFile = './keyfile.txt';
+      if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
       id.writeKeys(keyFile);
       const keyFileContents = fs.readFileSync(keyFile).toString();
-      // console.log(keyFileContents);
       const keys = keyFileContents.split('\n');
-      assert.equal(keys.length, 10);
+      assert.equal(keys.length, 9);
       fs.unlinkSync(keyFile);
     });
   });

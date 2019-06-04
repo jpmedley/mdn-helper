@@ -4,12 +4,12 @@ const assert = require('assert');
 
 const { FlagStatus } = require('../flags.js');
 
-const FLAG_FILE = './test/files/test_flags.json5';
+const FLAG_FILE = './test/files/exp_flags.json5';
 
 const flags = FlagStatus(FLAG_FILE);
 
 describe('FlagStatus', () => {
-  it('Returns true.', () => {
+  it('Returns true when the passed flag returns "experimental"', () => {
     assert.equal(flags['RTEExperimental'], 'experimental');
   });
 });

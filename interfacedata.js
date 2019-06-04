@@ -143,10 +143,9 @@ class InterfaceData {
     }
   }
 
-  _getFlagStatus(member) {
-    const attribute = this._getExtendedAttribute(member, 'RuntimeEnabled')
+  _getFlagStatus(root) {
+    const attribute = this._getExtendedAttribute(root, 'RuntimeEnabled')
     if (attribute) {
-      // return this._flags[attribute];
       return global.__Flags[attribute];
     } 
     return false;
@@ -156,11 +155,7 @@ class InterfaceData {
     let identifiers = [];
     identifiers.push(this.name);
     if (this.hasConstructor) {
-      let name = this.name;
-      let signatures = this.signatures.map(sig => {
-        return `${name}${separator}${name}${sig}`;
-      });
-      identifiers = [identifiers, ...signatures];
+      identifiers.push(`${this.name}${separator}${this.name}`);
     }
     this._sourceData.members.map(m => {
       if (options.stableOnly === true) {
@@ -306,12 +301,6 @@ class InterfaceData {
     return returns;
   }
 
-  get flag() {
-    // Temporary implementation.
-    throw new IDLError('Time to deal with flag().');
-    return 'stable';
-  }
-
   get flagged() {
     const flag = this._getFlagStatus(this._sourceData);
     switch (flag) {
@@ -322,6 +311,10 @@ class InterfaceData {
       default:
         return true;
     }
+  }
+
+  getFlag(member = this._sourceData) {
+    return this._getFlagStatus(member);
   }
 
   get iterable() {
@@ -446,7 +439,6 @@ class InterfaceData {
 
   writeKeys(keyFile) {
     const keys = this.getkeys(true);
-    if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
     for (let k of keys) {
       fs.appendFileSync(keyFile, `${k}\n`);
     }
