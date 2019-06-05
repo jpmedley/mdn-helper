@@ -1,5 +1,5 @@
 [
-    OriginTrialEnabled=OTEExperimental
+    RuntimeEnabled=RTEMedley
 ] interface FontFaceSet {
     readonly attribute FontFaceSetLoadStatus status;
 };

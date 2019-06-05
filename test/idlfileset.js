@@ -29,16 +29,6 @@ describe('IDLFileSet', () => {
       const RTFound = find('interface-runtimeenabled.idl', files);
       assert.ok(RTFound);
     });
-
-    it('Confirms that the file set does not include an interface in an origin trials', () => {
-      const someFiles = new IDLFileSet(IDL_FILES, {
-        experimental: false,
-        originTrial: false
-      });
-      let files = someFiles.files;
-      const OTNotFound = find('interface-origintrial.idl', files);
-      assert.equal(OTNotFound, false);
-    });
     it('Confirms that the file set does not include an interface behind a flag', () => {
       const someFiles = new IDLFileSet(IDL_FILES, {
         experimental: false,
@@ -50,12 +40,12 @@ describe('IDLFileSet', () => {
     });
     it('Confirms that all 29 test IDL files are processed', () => {
       const someFiles = new IDLFileSet(IDL_FILES, {
-        experimental: false,
-        originTrial: false
+        experimental: true,
+        originTrial: true
       });
       let files = someFiles.files;
-      assert.equal(files.length, 25);
-    })
+      assert.equal(files.length, 32);
+    });
   });
 
 

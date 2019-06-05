@@ -15,7 +15,7 @@ const BURNABLE = {
   name: 'burnable',
   path: function() { return './test/files/burn-records.idl'; }
 }
-const FLAGGED = {
+const EXPERIMENTAL = {
   name: 'flagged',
   path: function() { return './test/files/interface-runtimeenabled.idl'; }
 }
@@ -43,33 +43,48 @@ const STABLE = {
   name: 'stable',
   path: function() { return './test/files/interface-rte-stable.idl'; }
 }
+const TEST = {
+  name: 'test',
+  path: function() { return './test/files/interface-rte-test.idl'; }
+}
+const UNFAMILLIAR = {
+  name: 'unfamilliarFlag',
+  path: function() { return './test/files/interface-rte-medley.idl'; }
+}
 
 describe('InterfaceData', () => {
-  describe('constructor', () => {
-    // To see this error, both flags and OTs must be excluded.
-    it('Throws when a complete interface is marked both RuntimeEnabled and OriginTrialEnabled', () => {
+  describe('burnable', () => {
+    it('Confirms that a test interface is not burnable', () => {
+      const id = new InterfaceData(TEST, {});
+      assert.equal(id.burnable, false);
+    });
+    it('Confirms that an interface with an experimental flag is burnable', () => {
+      const id = new InterfaceData(EXPERIMENTAL, { experimental: true });
+      assert.ok(id.burnable);
+    });
+    it('Confirms that an interface with an experimental flag is NOT burnable', () => {
+      const id = new InterfaceData(EXPERIMENTAL, { experimental: false });
+      assert.equal(id.burnable, false);
+    });
+    it('Confirms that an interface with a stable flag is burnable when passed experimental:false ', () => {
+      const id = new InterfaceData(STABLE, { experimental: false });
+      assert.ok(id.burnable);
+    });
+    it('Confirms that an interface with a stable flag is burnable when passed experimental:true ', () => {
+      const id = new InterfaceData(STABLE, { experimental: true });
+      assert.ok(id.burnable);
+    });
+    it('Throws when an unrecognized status is found in flags', () => {
+      const id = new InterfaceData(UNFAMILLIAR, { experimental: true });
       assert.throws(
-        () => {
-          const throws = new InterfaceData(FLAG_AND_OT, {
-            experimental: false,
-            originTrial: false
-          });
-        }, IDLFlagError
-      );
-    });
-
-    it('Does not throw when a complete interface has no flags', () => {
-      assert.doesNotThrow(
-        () => {
-          const doesNotThrow = new InterfaceData(NO_FLAGS, {})
-        }, IDLFlagError
+        () => { return id.burnable }, IDLFlagError
       )
-    });
+    })
   });
 
   describe('flagged', () => {
-    it('Returns true when a whole interface is behind the experimental flag', () => {
-      const id = new InterfaceData(FLAGGED, {
+    it('Confirms that the interface is behind a flag', () => {
+      const id = new InterfaceData(EXPERIMENTAL, {
         experimental: true
       });
       assert.ok(id.flagged);
@@ -84,7 +99,7 @@ describe('InterfaceData', () => {
 
   describe('getFlag()', () => {
     it('Returns experimental status for an interface when no argument is passed', () => {
-      const flagged = new InterfaceData(FLAGGED, {
+      const flagged = new InterfaceData(EXPERIMENTAL, {
         experimental: true
       });
       assert.equal(flagged.getFlag(), 'experimental');
@@ -102,6 +117,7 @@ describe('InterfaceData', () => {
     const id = new InterfaceData(BURNABLE, {
       experimental: true
     });
+    console.log(id.getkeys(true));
     it('Confirms that the returned keys contain all members', () => {
       assert.equal(id.getkeys().length, 8);
     });
@@ -183,20 +199,20 @@ describe('InterfaceData', () => {
     });
   });
 
-  describe('writeKeys()', () => {
-    it('Returns true when the save file contains all unflagged keys', () => {
-      const id = new InterfaceData(BURNABLE, {
-        experimental: false,
-        originTrial: false
-      });
+  // describe('writeKeys()', () => {
+  //   it('Returns true when the save file contains all unflagged keys', () => {
+  //     const id = new InterfaceData(BURNABLE, {
+  //       experimental: false,
+  //       originTrial: false
+  //     });
 
-      const keyFile = './keyfile.txt';
-      if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
-      id.writeKeys(keyFile);
-      const keyFileContents = fs.readFileSync(keyFile).toString();
-      const keys = keyFileContents.split('\n');
-      assert.equal(keys.length, 9);
-      fs.unlinkSync(keyFile);
-    });
-  });
+  //     const keyFile = './keyfile.txt';
+  //     if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
+  //     id.writeKeys(keyFile);
+  //     const keyFileContents = fs.readFileSync(keyFile).toString();
+  //     const keys = keyFileContents.split('\n');
+  //     assert.equal(keys.length, 9);
+  //     fs.unlinkSync(keyFile);
+  //   });
+  // });
 });

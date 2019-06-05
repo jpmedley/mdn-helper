@@ -33,6 +33,8 @@ const SYMBOLS = Object.freeze({
   setlike: SETLIKE
 });
 
+const NO_FLAG = 'No flag found';
+
 //Cross refences webidl2 types with MDN terminology
 const TYPES = Object.freeze({
   attribute: "property",
@@ -57,11 +59,7 @@ class InterfaceData {
   constructor(sourceFile, options = {}) {
     this._includeExperimental = (options.experimental? options.experimental: false);
     this._includeOriginTrials = (options.originTrial? options.originTrial: false);
-    try {
-      this._loadTree(sourceFile);
-    } catch (error) {
-      throw error;
-    }
+    this._loadTree(sourceFile);
   }
 
   async ping(verboseOutput = true) {
@@ -88,14 +86,6 @@ class InterfaceData {
         case 'interface':
           this._sourceData = t;
           this._type = t.type;
-          if ((!this.originTrial) && (!this.flagged)) { break; }
-          const includeRTE = (this.flagged && this._includeExperimental);
-          const includeOT = (this.originTrial && this._includeOriginTrials);
-          if (includeOT || includeRTE) {
-            break;
-          } else {
-            throw new IDLFlagError();
-          }
           break;
         default:
           msg = `${t.type},${sourceFile.path()},The type contained in this file is not currently processible.`;
@@ -146,9 +136,13 @@ class InterfaceData {
   _getFlagStatus(root) {
     const attribute = this._getExtendedAttribute(root, 'RuntimeEnabled')
     if (attribute) {
-      return global.__Flags[attribute];
+      // return global.__Flags[attribute];
+      const flagValue = global.__Flags[attribute];
+      if (flagValue) {
+        return flagValue;
+      }
     } 
-    return false;
+    return NO_FLAG;
   }
 
   _getIdentifiers(separator, options = { stableOnly: false }) {
@@ -159,7 +153,7 @@ class InterfaceData {
     }
     this._sourceData.members.map(m => {
       if (options.stableOnly === true) {
-        if (!this._isBurnable(m)) { return; }
+        if (!this._isBurnable(m, {includeExperimental: !options.stableOnly})) { return; }
       }
       switch (m.type) {
         case 'attribute':
@@ -216,17 +210,20 @@ class InterfaceData {
     throw new Error('Cannot find operation key.');
   }
 
-  _isBurnable(member) {
-    // if (!this._includeTest && (this._getFlagStatus(member) === 'test')) {
-    //   return false;
-    // }
-    if (this._includeExperimental) {
-      return this._getFlagStatus(member) === 'experimental';
+  _isBurnable(member, options = { includeExperimental: this._includeExperimental}) {
+    const status = this._getFlagStatus(member);
+    switch (status) {
+      case 'test':
+        return false;
+      case 'experimental':
+        return options.includeExperimental;
+      case 'stable':
+        return true;
+      case NO_FLAG:
+        return true;
+      default:
+        throw new IDLFlagError(`Unrecognized status value: ${status}.`);
     }
-    if (this._includeOriginTrials) {
-      return this._getFlagStatus(member) === 'experimental';
-    }
-    return true;
   }
 
   _resolveMemberName(member) {
@@ -304,9 +301,9 @@ class InterfaceData {
   get flagged() {
     const flag = this._getFlagStatus(this._sourceData);
     switch (flag) {
-      case (flag === 'stable'):
+      case ('stable'):
         return false;
-      case (flag === false):
+      case (NO_FLAG):
         return false;
       default:
         return true;

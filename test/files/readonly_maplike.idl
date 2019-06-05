@@ -1,4 +1,4 @@
-interface KeyboardLayoutMap {MedleyFace {
+interface KeyboardLayoutMap : MedleyFace {
     readonly maplike<DOMString, DOMString>;
     [RuntimeEnabled=RTEExperimental] readonly maplike<MedleyString, MedleyString>;
 };

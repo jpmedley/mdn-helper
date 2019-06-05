@@ -94,12 +94,26 @@
       status: "experimental"
     },
     {
+      name: "RTEMedley",
+      status: "medley"
+    },
+    {
       name: "RTEStable",
       status: "stable"
     },
     {
-      name: "OTEEnabled",
+      name: "RTETest",
+      status: "test"
+    },
+    {
+      name: "OTEExperimental",
+      origin_trial_feature_name: "OTEExperimental",
       status: "experimental"
+    },
+    {
+      name: "OTEEnabled",
+      origin_trial_feature_name: "OTEEnabled",
+      status: "stable"
     }
   ],
 }

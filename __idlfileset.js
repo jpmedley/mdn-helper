@@ -7,12 +7,10 @@ const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 
 class IDLFileSet {
   constructor(rootDirectory = 'idl/', options = {}) {
-    this._includeExperimental = (options.experimental? options.experimental: false);
-    this._includeOriginTrial = (options.originTrial? options.originTrial: false);
+    this._experimental = (options.experimental? options.experimental: false);
+    this._originTrial = (options.originTrial? options.originTrial: false);
     this._files = [];
-    this._keys = [];
     this._processDirectory(rootDirectory);
-    console.log(this._keys);
   }
 
   _processDirectory(rootDirectory) {
@@ -32,12 +30,8 @@ class IDLFileSet {
         path.bind(contents[c]);
         let idlFile = this._getIDLFile(contents[c]);
         if (idlFile) {
-          if (idlFile.flagged) {
-            if (!this._includeExperimental) { continue; }
-          }
           contents[c].key = idlFile.name;
           this._files.push(contents[c]);
-          this._keys.concat(idlFile.getkeys(true));
         } else {
           // console.log('Could not load:');
           // console.log(contents[c]);
@@ -50,17 +44,26 @@ class IDLFileSet {
     return this._files;
   }
 
+  writeKeys(keyFile) {
+    if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
+    const files = this.files;
+    for (let f in files) {
+      f.writeKeys(keyFile)
+    }
+  }
+
   _getIDLFile(fileObject) {
     try {
       let idlFile = new InterfaceData(fileObject, {
-        experimental: this._includeExperimental,
-        originTrial: this._includeOriginTrial
+        experimental: this._experimental,
+        originTrial: this._originTrial
       });
       return idlFile;
     } catch (e) {
       switch (e.constructor.name) {
         case 'IDLError':
         case 'WebIDLParseError':
+        case 'IDLFlagError':
           break;
       }
     }
