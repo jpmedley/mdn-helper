@@ -12,6 +12,7 @@ const NOTHING_FOUND = "Could not find matching IDL files."
 const CANCEL = '(none)';
 
 global._bcd = new BCD();
+global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 class _Finder {
   constructor() {

@@ -34,6 +34,7 @@ const BROWSERS = [
 ];
 
 global._bcd = new BCD();
+global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 //To Do: Every burner class should use some form of isBurnable(). It would
 //       confine whitelist testing to a better place.
