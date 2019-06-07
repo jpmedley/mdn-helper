@@ -70,7 +70,6 @@ describe('IDLFileSet', () => {
 function find(file, inFiles) {
   for (let f of inFiles) {
     if (f.name === file) {
-      console.log(f.name)
       return true;
     }
   }

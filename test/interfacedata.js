@@ -117,7 +117,6 @@ describe('InterfaceData', () => {
     const id = new InterfaceData(BURNABLE, {
       experimental: true
     });
-    console.log(id.getkeys(true));
     it('Confirms that the returned keys contain all members', () => {
       assert.equal(id.getkeys().length, 8);
     });

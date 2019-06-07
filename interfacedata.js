@@ -1,6 +1,5 @@
 'use strict';
 
-const { FlagStatus } = require('./flags.js');
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -135,14 +134,7 @@ class InterfaceData {
 
   _getFlagStatus(root) {
     const attribute = this._getExtendedAttribute(root, 'RuntimeEnabled')
-    if (attribute) {
-      // return global.__Flags[attribute];
-      const flagValue = global.__Flags[attribute];
-      if (flagValue) {
-        return flagValue;
-      }
-    } 
-    return NO_FLAG;
+    return global.__Flags.getHighestResolvedStatus(attribute);
   }
 
   _getIdentifiers(separator, options = { stableOnly: false }) {

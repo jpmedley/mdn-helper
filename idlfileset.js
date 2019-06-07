@@ -12,7 +12,7 @@ class IDLFileSet {
     this._files = [];
     this._keys = [];
     this._processDirectory(rootDirectory);
-    console.log(this._keys);
+    // console.log(this._keys);
   }
 
   _processDirectory(rootDirectory) {

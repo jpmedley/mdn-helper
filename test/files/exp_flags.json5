@@ -90,12 +90,32 @@
 
   data: [
     {
+      name: "RTEDefault",
+      status: {"Android": "", "default": "experimental"},
+    },
+    {
       name: "RTEExperimental",
       status: "experimental"
     },
     {
       name: "RTEMedley",
       status: "medley"
+    },
+    {
+      name: "RTEMixed",
+      status: {
+        "Android": "stable",
+        "ChromeOS": "stable",
+        "MacOSX": "stable",
+        "default": "experimental",
+      },
+    },
+    {
+      name: "RTENoStatus"
+    },
+    {
+      name: "RTESimple",
+      status: "experimental"
     },
     {
       name: "RTEStable",
