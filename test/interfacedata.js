@@ -15,6 +15,10 @@ const BURNABLE = {
   name: 'burnable',
   path: function() { return './test/files/burn-records.idl'; }
 }
+const CONSTRUCTOR = {
+  name: 'constructor',
+  path: function() { return './test/files/constructor-noarguments.idl'; }
+}
 const EXPERIMENTAL = {
   name: 'flagged',
   path: function() { return './test/files/interface-runtimeenabled.idl'; }
@@ -94,6 +98,17 @@ describe('InterfaceData', () => {
         experimental: true
       });
       assert.equal(id.flagged, false);
+    });
+  });
+
+  describe('getBurnRecords()', () => {
+    it('Cofirms that a burn record for a constructor has the type "constructor"', () => {
+      const id = new InterfaceData(CONSTRUCTOR, {});
+      const burnRecords = id.getBurnRecords();
+      const constRecord = burnRecords.find(e => {
+        return e.key === 'FontFace.FontFace';
+      });
+      assert.equal(constRecord.type, 'constructor');
     });
   });
 

@@ -36,10 +36,10 @@ const NO_FLAG = 'No flag found';
 
 //Cross refences webidl2 types with MDN terminology
 const TYPES = Object.freeze({
-  attribute: "property",
-  constructor: "constructor",
-  operation: "method",
-  interface: "reference",
+  "attribute": "property",
+  "extended-attribute": "constructor",
+  "operation": "method",
+  "interface": "reference",
 });
 
 class IDLError extends Error {
@@ -115,8 +115,7 @@ class InterfaceData {
     }
     record.flag = this._isFlagged(options.idlData);
     record.origin_trial = this._isOriginTrial(options.idlData);
-    // record.type = options.idlData.type;
-    record.type = TYPES[options.idlData.type];
+    record.type = TYPES[`${options.idlData.type}`];
     return record;
   }
 
@@ -446,6 +445,7 @@ class InterfaceData {
     if (this.hasConstructor) {
       if (this._isBurnable(this.constructorBranch)) {
         options.key = `${this._sourceData.name}.${this._sourceData.name}`;
+        options.idlData = this.constructorBranch;
         records.push(this._generateRecord(options));
       }
     }
