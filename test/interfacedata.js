@@ -37,11 +37,15 @@ const ORIGIN_TRIAL = {
 }
 const PING_EXISTS = {
   name: 'pingExists',
-  path: function() { return './test/files/ping-exists.idl'}
+  path: function() { return './test/files/ping-exists.idl'; }
 }
 const PING_MISSING = {
   name: 'pingMissing',
-  path: function() { return './test/files/ping-missing.idl'}
+  path: function() { return './test/files/ping-missing.idl'; }
+}
+const SECURE_CONTEXT = {
+  name: 'secureContext',
+  path: function() { return './test/files/securecontext.idl'; }
 }
 const STABLE = {
   name: 'stable',
@@ -202,6 +206,17 @@ describe('InterfaceData', () => {
       .then(burnRecords => {
         assert.equal(burnRecords[0].mdn_exists, false);
       });
+    });
+  });
+
+  describe('getSecureContext', () => {
+    it('Returns true when the selected interface requires a secure context.', () => {
+      const sc = new InterfaceData(SECURE_CONTEXT, {});
+      assert.ok(sc.getSecureContext());
+    });
+    it('Returns false when the selected interface does not require a secure context.', () => {
+      const sc = new InterfaceData(NO_FLAGS, {});
+      assert.equal(sc.getSecureContext(), false);
     });
   });
 

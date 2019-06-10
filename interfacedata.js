@@ -48,7 +48,13 @@ class IDLError extends Error {
   }
 }
 
-class IDLFlagError extends IDLError {
+class IDLAttributeError extends IDLError {
+  constructor(message='', fileName='', lineNumber='') {
+    super(message, fileName, lineNumber);
+  }
+}
+
+class IDLFlagError extends IDLAttributeError {
   constructor(message='', fileName='', lineNumber='') {
     super(message, fileName, lineNumber);
   }
@@ -124,11 +130,31 @@ class InterfaceData {
     const attributeValue = member.extAttrs.items.find(attr => {
       return attr.name === attributeName;
     });
-    if (attributeValue && (attributeValue.rhs)) {
-      return attributeValue.rhs.value;
-    } else {
-      return null;
+    if (!attributeValue) { return null; }
+    switch (attributeName) {
+      case 'OriginTrialEnabled':
+      case 'RuntimeEnabled':
+        return attributeValue.rhs.value;
+      case 'SecureContext':
+        return attributeValue;
+      default:
+        const msg = `Unhandled extended attribute: ${attributeName}.`;
+        throw new IDLAttributeError(msg);
     }
+
+
+
+    // console.log(attributeName);
+    // // Making this work for getSecureContext() breaks for everyone else.
+    // if (!member.extAttrs) { return null; }
+    // const attributeValue = member.extAttrs.items.find(attr => {
+    //   return attr.name === attributeName;
+    // });
+    // if (attributeValue && (attributeValue.rhs)) {
+    //   return attributeValue.rhs.value;
+    // } else {
+    //   return null;
+    // }
   }
 
   _getFlagStatus(root) {
