@@ -109,11 +109,14 @@ function _getWireframes() {
 }
 
 function _makeOutputFolder(dirName) {
-  // const out = _getConfig('outputDirectory');
   const todayFolder = `${OUT}${dirName}/`;
-  if (fs.existsSync(todayFolder)) { return todayFolder; }
-  fs.mkdirSync(todayFolder);
-  return todayFolder;
+  return _makeFolder(todayFolder);
+}
+
+function _makeFolder(dirName) {
+  if (fs.existsSync(dirName)) { return dirName; }
+  fs.mkdirSync(dirName);
+  return dirName;
 }
 
 async function _pause() {
@@ -211,6 +214,7 @@ module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
 module.exports.isBlacklisted = _isBlacklisted;
+module.exports.makeFolder = _makeFolder;
 module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.pause = _pause;
 module.exports.printHelp = _printHelp;

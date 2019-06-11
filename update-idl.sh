@@ -1,7 +1,6 @@
 #!/bin/sh
 
 IDL_ZIP='https://chromium.googlesource.com/chromium/src/+archive/HEAD/third_party/blink/renderer.tar.gz'
-
 if [ ! -z "$1" ]; then
   URL=$1
 else
@@ -26,9 +25,9 @@ fi
 echo '\nDownloading IDL and related data files.\n'
 curl $URL > idl.tar.gz
 
-tar -C $IDL_ROOT/ -xvf idl.tar.gz core/*.idl
-tar -C $IDL_ROOT/ -xvf idl.tar.gz modules/*.idl
-tar -C $IDL_ROOT/ -xvf idl.tar.gz platform/runtime_enabled_features.json5
+tar -C $IDL_ROOT/ -xf idl.tar.gz core/*.idl
+tar -C $IDL_ROOT/ -xf idl.tar.gz modules/*.idl
+tar -C $IDL_ROOT/ -xf idl.tar.gz platform/runtime_enabled_features.json5
 
 rm idl.tar.gz
 
