@@ -1,6 +1,6 @@
 [
     RuntimeEnabled=RTEExperimental,
     OriginTrialEnabled=OTEExperimental
-] interface FontFaceSet {
+] interface InterfaceFlagOT {
     readonly attribute FontFaceSetLoadStatus status;
 };

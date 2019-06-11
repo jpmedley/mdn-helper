@@ -1,3 +1,3 @@
-interface USB : EventTarget {
+interface EventHand : EventTarget {
     attribute EventHandler onconnect;
 };

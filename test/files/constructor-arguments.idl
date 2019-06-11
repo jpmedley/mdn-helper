@@ -1,5 +1,5 @@
 [
     Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors)
-] interface FontFace {
+] interface ConstructorArgs {
     [RaisesException=Setter, SetterCallWith=ExecutionContext] attribute DOMString family;
 };

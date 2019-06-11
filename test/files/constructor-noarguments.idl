@@ -1,5 +1,5 @@
 [
     Constructor()
-] interface FontFace {
+] interface ConstructorNoArgs {
     [RaisesException=Setter, SetterCallWith=ExecutionContext] attribute DOMString family;
 };

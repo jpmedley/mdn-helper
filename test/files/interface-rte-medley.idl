@@ -1,5 +1,5 @@
 [
     RuntimeEnabled=RTEMedley
-] interface FontFaceSet {
+] interface InterfaceRTE {
     readonly attribute FontFaceSetLoadStatus status;
 };

@@ -1,7 +1,7 @@
 [
     SecureContext,
     Exposed=Window
-] interface Clipboard : EventTarget {
+] interface MethodPromise : EventTarget {
     [MeasureAs=AsyncClipboardAPIRead,
      CallWith=ScriptState
     ] Promise<record<DOMString, Blob>> read();

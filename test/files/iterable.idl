@@ -1,4 +1,4 @@
-interface MedleyFace {
+interface IterableInterface {
     iterable<CSSUnparsedSegment>;
     [RuntimeEnabled=RTEExperimental] iterable<CSSParsedSegment>;
 };

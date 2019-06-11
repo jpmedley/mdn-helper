@@ -1,5 +1,5 @@
 [
   Constructor(sequence<CSSUnparsedSegment> members)
-] interface CSSUnparsedValue : CSSStyleValue {
+] interface ConstructorSeqArgs : CSSStyleValue {
     readonly attribute unsigned long length;
 };

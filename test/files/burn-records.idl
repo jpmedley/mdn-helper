@@ -1,7 +1,7 @@
 [
     Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source),
     Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors)
-] interface MedleyFace {
+] interface Burnable {
     attribute EventHandler onconnect;
     [RuntimeEnabled=RTEExperimental] attribute EventHandler ondisconnect;
     getter CSSUnparsedSegment (unsigned long index);

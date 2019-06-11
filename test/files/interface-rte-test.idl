@@ -1,5 +1,5 @@
 [
     RuntimeEnabled=RTETest
-] interface FontFaceSet {
+] interface InterfaceTest {
     readonly attribute FontFaceSetLoadStatus status;
 };
