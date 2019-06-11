@@ -87,15 +87,8 @@ class IDLFileSet {
 
   writeKeys(keyFile) {
     const keys = this.keys;
-    const keyList = keys.join('\n')
-    console.log(keyList);
+    const keyList = keys.join('\n');
     fs.appendFileSync(keyFile, keyList);
-    // const files = this.files;
-    // for (let f of files) {
-    //   let keys = f.keys;
-    //   let keyList = keys.join('\n');
-    //   fs.appendFileSync(keyFile, keyList);
-    // }
   }
 }
 
