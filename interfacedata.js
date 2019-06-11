@@ -431,9 +431,8 @@ class InterfaceData {
 
   writeKeys(keyFile) {
     const keys = this.getkeys(true);
-    for (let k of keys) {
-      fs.appendFileSync(keyFile, `${k}\n`);
-    }
+    const keyList = keys.join('\n');
+    fs.appendFileSync(keyFile, keyList);
   }
 
   getBurnRecords() {

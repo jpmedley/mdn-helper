@@ -228,20 +228,19 @@ describe('InterfaceData', () => {
     });
   });
 
-  // describe('writeKeys()', () => {
-  //   it('Returns true when the save file contains all unflagged keys', () => {
-  //     const id = new InterfaceData(BURNABLE, {
-  //       experimental: false,
-  //       originTrial: false
-  //     });
-
-  //     const keyFile = './keyfile.txt';
-  //     if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
-  //     id.writeKeys(keyFile);
-  //     const keyFileContents = fs.readFileSync(keyFile).toString();
-  //     const keys = keyFileContents.split('\n');
-  //     assert.equal(keys.length, 9);
-  //     fs.unlinkSync(keyFile);
-  //   });
-  // });
+  describe('writeKeys()', () => {
+    it('Returns true when the save file contains all unflagged keys', function() {
+      const id = new InterfaceData(BURNABLE, {
+        experimental: false,
+        originTrial: false
+      });
+      const keyFile = './keyfile.txt';
+      if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
+      id.writeKeys(keyFile);
+      const keyFileContents = fs.readFileSync(keyFile).toString();
+      const keys = keyFileContents.split('\n');
+      fs.unlinkSync(keyFile);
+      assert.equal(keys.length, 5);
+    });
+  });
 });
