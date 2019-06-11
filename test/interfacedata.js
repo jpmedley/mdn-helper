@@ -110,7 +110,7 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(CONSTRUCTOR, {});
       const burnRecords = id.getBurnRecords();
       const constRecord = burnRecords.find(e => {
-        return e.key === 'FontFace.FontFace';
+        return e.key === 'ConstructorNoArgs.ConstructorNoArgs';
       });
       assert.equal(constRecord.type, 'constructor');
     });
@@ -142,22 +142,22 @@ describe('InterfaceData', () => {
     it('Confirms that the returned keys contain no flagged or OT members', () => {
       assert.equal(id.getkeys(true).length, 5);
     });
-    it('Confirms that returned keys contains a properly formatted conststructor key', () => {
+    it('Confirms that returned keys contains a properly formatted constructor key', () => {
       const keys = id.getkeys();
       let valid = false;
       for (let k of keys) {
-        if (k === 'MedleyFace.MedleyFace') {
+        if (k === 'Burnable.Burnable') {
           valid = true;
           break;
         }
       }
       assert.ok(valid);
     });
-    it('Confirms that returned keys contains only one conststructor key', () => {
+    it('Confirms that returned keys contains only one constructor key', () => {
       const keys = id.getkeys();
       let keyCount = 0;
       for (let k of keys) {
-        if (k.includes('MedleyFace.MedleyFace')) {
+        if (k.includes('Burnable.Burnable')) {
           keyCount++;
         }
       }
@@ -173,6 +173,17 @@ describe('InterfaceData', () => {
         }
       }
       assert.ok(valid);
+    });
+  });
+
+  describe('getSecureContext', () => {
+    it('Returns true when the selected interface requires a secure context.', () => {
+      const sc = new InterfaceData(SECURE_CONTEXT, {});
+      assert.ok(sc.getSecureContext());
+    });
+    it('Returns false when the selected interface does not require a secure context.', () => {
+      const sc = new InterfaceData(NO_FLAGS, {});
+      assert.equal(sc.getSecureContext(), false);
     });
   });
 
@@ -206,17 +217,6 @@ describe('InterfaceData', () => {
       .then(burnRecords => {
         assert.equal(burnRecords[0].mdn_exists, false);
       });
-    });
-  });
-
-  describe('getSecureContext', () => {
-    it('Returns true when the selected interface requires a secure context.', () => {
-      const sc = new InterfaceData(SECURE_CONTEXT, {});
-      assert.ok(sc.getSecureContext());
-    });
-    it('Returns false when the selected interface does not require a secure context.', () => {
-      const sc = new InterfaceData(NO_FLAGS, {});
-      assert.equal(sc.getSecureContext(), false);
     });
   });
 
