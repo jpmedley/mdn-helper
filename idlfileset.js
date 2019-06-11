@@ -76,13 +76,26 @@ class IDLFileSet {
     return matches;
   }
 
-  writeKeys(keyFile) {
+  get keys() {
     const files = this.files;
+    const keys = [];
     for (let f of files) {
-      let keys = f.keys;
-      let keyList = keys.join('\n');
-      fs.appendFileSync(keyFile, keyList);
+      keys.push(...f.keys);
     }
+    return keys;
+  }
+
+  writeKeys(keyFile) {
+    const keys = this.keys;
+    const keyList = keys.join('\n')
+    console.log(keyList);
+    fs.appendFileSync(keyFile, keyList);
+    // const files = this.files;
+    // for (let f of files) {
+    //   let keys = f.keys;
+    //   let keyList = keys.join('\n');
+    //   fs.appendFileSync(keyFile, keyList);
+    // }
   }
 }
 
