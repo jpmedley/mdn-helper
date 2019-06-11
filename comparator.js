@@ -22,6 +22,8 @@ class _Comparator {
   constructor(laterHash, earlierHash) {
     this._currentDirectory = `${TMP}current/`;
     this._previousDirectory = `${TMP}previous/`;
+    this._currentKeys = [];
+    this._previousKeys = [];
     this._downloadData(laterHash, earlierHash);
     this._writeKeyFiles();
   }
@@ -31,7 +33,7 @@ class _Comparator {
       if (!delta.includes(item)) {
         return item;
       }
-    })
+    });
   }
 
   _downloadData(laterHash, earlierHash) {
@@ -50,10 +52,10 @@ class _Comparator {
 
   _writeKeyFiles() {
     const currentFileSet = new IDLFileSet(this._currentDirectory);
-    currentFileSet.writeKeys(`${TMP}current.txt`);
+    this._currentKeys.push(...currentFileSet.keys);
 
     const previousFileSet = new IDLFileSet(this._previousDirectory);
-    previousFileSet.writeKeys(`${TMP}previous.txt`);
+    this._previousKeys.push(...previousFileSet.keys);
   }
 
   cleanup() {
@@ -62,13 +64,15 @@ class _Comparator {
 
   getAdditions() {
     return new Promise((resolve, reject) => {
-      
+      const additions = this._compare(this._currentKeys, this._previousKeys);
+      resolve(additions);
     });
   }
 
   getRemovals() {
     return new Promise((resolve, reject) => {
-
+      const removals = this._compare(this._previousKeys, this._currentKeys);
+      resolve(removals);
     });
   }  
 }
