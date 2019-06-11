@@ -10,7 +10,6 @@ class IDLFileSet {
     this._includeExperimental = (options.experimental? options.experimental: false);
     this._includeOriginTrial = (options.originTrial? options.originTrial: false);
     this._files = [];
-    this._keys = [];
     this._processDirectory(rootDirectory);
   }
 
@@ -35,11 +34,10 @@ class IDLFileSet {
             if (!this._includeExperimental) { continue; }
           }
           contents[c].key = idlFile.name;
+          contents[c].keys = [];
+          let keys = idlFile.getkeys(true);
+          contents[c].keys.push(...keys);
           this._files.push(contents[c]);
-          this._keys.concat(idlFile.getkeys(true));
-        } else {
-          // console.log('Could not load:');
-          // console.log(contents[c]);
         }
       }
     }
@@ -76,6 +74,15 @@ class IDLFileSet {
       }
     }
     return matches;
+  }
+
+  writeKeys(keyFile) {
+    const files = this.files;
+    for (let f of files) {
+      let keys = f.keys;
+      let keyList = keys.join('\n');
+      fs.appendFileSync(keyFile, keyList);
+    }
   }
 }
 
