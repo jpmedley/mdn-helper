@@ -141,20 +141,6 @@ class InterfaceData {
         const msg = `Unhandled extended attribute: ${attributeName}.`;
         throw new IDLAttributeError(msg);
     }
-
-
-
-    // console.log(attributeName);
-    // // Making this work for getSecureContext() breaks for everyone else.
-    // if (!member.extAttrs) { return null; }
-    // const attributeValue = member.extAttrs.items.find(attr => {
-    //   return attr.name === attributeName;
-    // });
-    // if (attributeValue && (attributeValue.rhs)) {
-    //   return attributeValue.rhs.value;
-    // } else {
-    //   return null;
-    // }
   }
 
   _getFlagStatus(root) {
@@ -355,10 +341,6 @@ class InterfaceData {
     }
   }
 
-  // get interfaces() {
-  //   return this._getIdentifiers(',', { type: 'interface' });
-  // }
-
   get keys() {
     return this._getIdentifiers('.');
   }
@@ -434,10 +416,6 @@ class InterfaceData {
         }
       });
       return signatures;
-
-      // return this._sourceData.extAttrs.items.map(i => {
-      //   return i.name === 'Constructor';
-      // })
     } catch (e) {
       if (e.name === 'TypeError') {
         return null;

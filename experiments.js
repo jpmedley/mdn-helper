@@ -1,6 +1,5 @@
 'use strict';
 
-const config = require('config');
 const { execSync } = require('child_process');
 const { IDLFileSet } = require('./idlfileset.js');
 const { InterfaceData } = require('./interfacedata.js');

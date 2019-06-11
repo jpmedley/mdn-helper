@@ -2,7 +2,6 @@
 
 const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
-const config = require('config');
 const Enquirer = require('enquirer');
 const { IDLFileSet } = require('./idlfileset.js');
 const fs = require('fs');
