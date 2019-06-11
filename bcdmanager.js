@@ -23,12 +23,12 @@ class _BCDManager {
     fs.close(file, ()=>{});
   }
 
-  getBCD(idl, outFilePath) {
+  getBCD(interfaceData, outFilePath) {
     let members = [];
-    if (idl.hasConstructor) {
+    if (interfaceData.hasConstructor) {
       members.push(_copyString(CONSTR_TEMPLATE));
     }
-    for (let m of idl.members) {
+    for (let m of interfaceData.members) {
       let member = _copyString(MEMBER_TEMPLATE)
                    .replace(/\[\[member-name\]\]/g, m[0]);
       members.push(member);
@@ -37,10 +37,11 @@ class _BCDManager {
     memberString = memberString.replace('\n,', ',');
     this._bcdString = _copyString(API_TEMPLATE);
     this._bcdString = this._bcdString.replace('[[members]]', members);
-    this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, idl.name);
+    this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, interfaceData.name);
     this._write(outFilePath);
     const msg = `BCD boilerplate has been written to ${outFilePath}.`
     console.log(msg);
+    return outFilePath;
   }
 }
 
