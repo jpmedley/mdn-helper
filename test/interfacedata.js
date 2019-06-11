@@ -45,7 +45,7 @@ const PING_MISSING = {
 }
 const SECURE_CONTEXT = {
   name: 'secureContext',
-  path: function() { return './test/files/securecontext.idl'; }
+  path: function() { return './test/files/interface-securecontext.idl'; }
 }
 const STABLE = {
   name: 'stable',
