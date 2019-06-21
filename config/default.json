@@ -6,6 +6,7 @@
     "test": false,
     "update": "daily",
     "useBlacklist": "true",
+    "whitelistDirectory": "whitelists/",
     "questionHiding": {
       "use": "NEW_WRITER",
       "ENG": ["iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"],
