@@ -156,7 +156,8 @@ class Burner {
       return (arg.includes('-w') || (arg.includes('--whitelist')));
     });
     if (whitelist > -1) {
-      this._whitelistPath = args[whitelist +1];
+      const whitelistDir = utils.getConfig('whitelistDirectory');
+      this._whitelistPath = `${whitelistDir}${args[whitelist +1]}`;
     }
   }
 
