@@ -28,7 +28,7 @@
     }
   },
   "author": "Joseph Medley <jmedley@google.com>",
-  "license": "MPL-2.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "config": "^1.31.0",
     "enquirer": "^1.0.3",
