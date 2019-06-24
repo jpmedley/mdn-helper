@@ -41,21 +41,22 @@ describe('BCDManager', () => {
 
     it('Confirms that a BCD file is written', () => {
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager();
+      const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
       assert.ok(fs.existsSync(resultPath));
     });
 
     it('Confirms that the written BCD file is valid', () => {
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager();
+      const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
       let buffer = fs.readFileSync('test/files/compat-data.schema.json');
       const schema = [buffer.toString()];
       buffer = fs.readFileSync(resultPath);
-      const result = JSON.parse(buffer.toString()).api;
+      const burnableBCD = JSON.parse(buffer.toString()).api;
       const validator = new Validator();
-      console.log(validator.validate(result, schema));
+      const result = validator.validate(burnableBCD, schema);
+      assert.ok(result.errors.length === 0);
     })
 
     afterEach(() => {

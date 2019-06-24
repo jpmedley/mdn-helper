@@ -26,9 +26,10 @@ function _copyString(oldString) {
 }
 
 class _BCDManager {
-  constructor(type = 'api') {
+  constructor(type = 'api', options = { verbose: true }) {
     // Later this will need to distinguish BCD categories.
     this._bcdString = '';
+    this._verbose = options.verbose;
   }
 
   _write(outFilePath) {
@@ -53,8 +54,10 @@ class _BCDManager {
     this._bcdString = this._bcdString.replace('[[members]]', members);
     this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, interfaceData.name);
     this._write(outFilePath);
-    const msg = `BCD boilerplate has been written to ${outFilePath}.`
-    console.log(msg);
+    if (this._verbose) {
+      const msg = `BCD boilerplate has been written to ${outFilePath}.`
+      console.log(msg);
+    }
     return outFilePath;
   }
 }
