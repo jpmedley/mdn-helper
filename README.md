@@ -148,3 +148,7 @@ Prints help text to the console.
 ## configuration
 
 When installed, no configuration is needed. [Instructions are provided](help/CONFIGURING.md) for a few options that you may want to change.
+
+## Contributing
+
+We'd love to accept your patches and contributions. See our [contributing page](CONTRIBUTING.md) for instructions on how.
