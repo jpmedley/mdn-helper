@@ -53,6 +53,9 @@ class _BCDManager {
     this._bcdString = _copyString(API_TEMPLATE);
     this._bcdString = this._bcdString.replace('[[members]]', members);
     this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, interfaceData.name);
+    // Poor man's way of fixing the nesting.
+    const temp = JSON.parse(this._bcdString);
+    this._bcdString = JSON.stringify(temp, null, 2);
     this._write(outFilePath);
     if (this._verbose) {
       const msg = `BCD boilerplate has been written to ${outFilePath}.`

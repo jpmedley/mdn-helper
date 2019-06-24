@@ -57,6 +57,15 @@ describe('BCDManager', () => {
       const validator = new Validator();
       const result = validator.validate(burnableBCD, schema);
       assert.ok(result.errors.length === 0);
+    });
+
+    it('Confirms that the written BCD file is correctly nested', () => {
+      const id = new InterfaceData(BURNABLE);
+      const bcdManager = new BCDManager('api', {verbose: false});
+      const resultPath = bcdManager.getBCD(id, jsonPath);
+      const resultString = fs.readFileSync(resultPath).toString();
+      const comparisonString = fs.readFileSync('test/files/properly-nested-bcd.json').toString();
+      assert.equal(resultString, comparisonString);
     })
 
     afterEach(() => {
