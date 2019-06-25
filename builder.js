@@ -293,6 +293,7 @@ class _IDLBuilder extends Builder {
     if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
     let outFilePath = outPath + name + '.json';
     bcdm.getBCD(this._interfaceData, outFilePath);
+    bcdm.write(outFilePath);
   }
 
   async build() {

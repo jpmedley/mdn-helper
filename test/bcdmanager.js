@@ -32,7 +32,7 @@ const BURNABLE = {
 }
 
 describe('BCDManager', () => {
-  describe('getBCD()', () => {
+  describe('write()', () => {
     const tempFolder = 'tmp/';
     const jsonPath = `${tempFolder}test-bcd.json`;
 
@@ -45,6 +45,7 @@ describe('BCDManager', () => {
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
+      bcdManager.write(resultPath);
       assert.ok(fs.existsSync(resultPath));
     });
 
@@ -53,6 +54,7 @@ describe('BCDManager', () => {
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
+      bcdManager.write(resultPath);
       // Load the schema
       let buffer = fs.readFileSync('test/files/compat-data.schema.json');
       const schema = [buffer.toString()];
@@ -70,6 +72,7 @@ describe('BCDManager', () => {
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
+      bcdManager.write(resultPath);
       const resultString = fs.readFileSync(resultPath).toString();
       // Load a correctly-nested version of what was written and compare
       const comparisonString = fs.readFileSync('test/files/properly-nested-bcd.json').toString();
@@ -81,6 +84,7 @@ describe('BCDManager', () => {
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
+      bcdManager.write(resultPath);
       const resultString = fs.readFileSync(resultPath).toString();
       // Cut BCD file into lines and extract user agent names
       const bcdLines = resultString.split('\n');
@@ -100,10 +104,14 @@ describe('BCDManager', () => {
       const alphabetical = [...fileIncludes];
       alphabetical.sort();
       assert.deepStrictEqual(fileIncludes, alphabetical);
-    })
+    });
 
     afterEach(() => {
       utils.deleteUnemptyFolder('tmp/');
     });
   });
+
+  // describe('getBCD()', () => {
+
+  // });
 });

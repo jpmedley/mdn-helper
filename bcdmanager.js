@@ -20,6 +20,7 @@ const utils = require('./utils.js');
 const API_TEMPLATE = fs.readFileSync('templates/bcd-api.txt');
 const CONSTR_TEMPLATE = fs.readFileSync('templates/bcd-constructor.txt');
 const MEMBER_TEMPLATE = fs.readFileSync('templates/bcd-member.txt');
+const NEST_LEVEL = 2;
 
 function _copyString(oldString) {
   return (' ' + oldString).slice(1);
@@ -32,10 +33,14 @@ class _BCDManager {
     this._verbose = options.verbose;
   }
 
-  _write(outFilePath) {
+  write(outFilePath) {
     let file = utils.getOutputFile(outFilePath);
     fs.write(file, this._bcdString, ()=>{});
     fs.close(file, ()=>{});
+    if (this._verbose) {
+      const msg = `BCD boilerplate has been written to ${outFilePath}.`
+      console.log(msg);
+    }
   }
 
   getBCD(interfaceData, outFilePath) {
@@ -55,12 +60,7 @@ class _BCDManager {
     this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, interfaceData.name);
     // Poor man's way of fixing the nesting.
     const temp = JSON.parse(this._bcdString);
-    this._bcdString = JSON.stringify(temp, null, 2);
-    this._write(outFilePath);
-    if (this._verbose) {
-      const msg = `BCD boilerplate has been written to ${outFilePath}.`
-      console.log(msg);
-    }
+    this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
     return outFilePath;
   }
 }
