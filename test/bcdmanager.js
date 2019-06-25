@@ -117,7 +117,17 @@ describe('BCDManager', () => {
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager(id, 'api', {verbose: false});
       const tree = bcdManager.getBCDObject(jsonPath);
-      console.log(tree);
+      // console.log(tree);
+      assert.notEqual(tree, null);
     });
   });
+
+  describe('getKeys()', () => {
+    it('Confirms return of all keys in BCD object', () => {
+      const id = new InterfaceData(BURNABLE);
+      const bcdManager = new BCDManager(id, 'api', {verbose: false});
+
+    });
+  });
+
 });
