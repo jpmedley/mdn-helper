@@ -24,6 +24,8 @@ const utils = require('../utils.js');
 
 // https://www.npmjs.com/package/diff
 
+const EXPECTED_UAS = ["chrome", "chrome_android", "edge", "edge_mobile", "firefox", "firefox_android", "ie", "nodejs", "opera", "opera_android", "qq_android", "safari", "safari_ios", "samsunginternet_android", "uc_android", "uc_chinese_android", "webview_android"];
+
 const BURNABLE = {
   name: 'burnable',
   path: function() { return './test/files/burn-records.idl'; }
@@ -47,25 +49,57 @@ describe('BCDManager', () => {
     });
 
     it('Confirms that the written BCD file is valid', () => {
+      // Write a BCD file
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
+      // Load the schema
       let buffer = fs.readFileSync('test/files/compat-data.schema.json');
       const schema = [buffer.toString()];
+      // Load the new BCD file
       buffer = fs.readFileSync(resultPath);
       const burnableBCD = JSON.parse(buffer.toString()).api;
       const validator = new Validator();
+      // Compare
       const result = validator.validate(burnableBCD, schema);
       assert.ok(result.errors.length === 0);
     });
 
     it('Confirms that the written BCD file is correctly nested', () => {
+      // Write and load a BCD file
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
       const resultPath = bcdManager.getBCD(id, jsonPath);
       const resultString = fs.readFileSync(resultPath).toString();
+      // Load a correctly-nested version of what was written and compare
       const comparisonString = fs.readFileSync('test/files/properly-nested-bcd.json').toString();
       assert.equal(resultString, comparisonString);
+    });
+
+    it('Confirms that browsers are in the correct order in a written BCD file', () => {
+      // Write and load a BCD file
+      const id = new InterfaceData(BURNABLE);
+      const bcdManager = new BCDManager('api', {verbose: false});
+      const resultPath = bcdManager.getBCD(id, jsonPath);
+      const resultString = fs.readFileSync(resultPath).toString();
+      // Cut BCD file into lines and extract user agent names
+      const bcdLines = resultString.split('\n');
+      const regex = /"(\w+)":\s{/;
+      let fileIncludes = [];
+      for (let b of bcdLines) {
+        // Record UA names as they are found 
+        let matches = b.match(regex);
+        if (!matches) { continue; }
+        let possibleUA = matches[1];
+        if (EXPECTED_UAS.includes(possibleUA)) {
+          if (fileIncludes.includes(possibleUA)) { continue; }
+          fileIncludes.push(possibleUA);
+        }
+      }
+      // Test that UA names are alphabetical
+      const alphabetical = [...fileIncludes];
+      alphabetical.sort();
+      assert.deepStrictEqual(fileIncludes, alphabetical);
     })
 
     afterEach(() => {
