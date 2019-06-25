@@ -31,10 +31,11 @@ const BURNABLE = {
   path: function() { return './test/files/burn-records.idl'; }
 }
 
+const tempFolder = 'tmp/';
+const jsonPath = `${tempFolder}test-bcd.json`;
+
 describe('BCDManager', () => {
   describe('write()', () => {
-    const tempFolder = 'tmp/';
-    const jsonPath = `${tempFolder}test-bcd.json`;
 
     beforeEach(() => {
       utils.deleteUnemptyFolder(tempFolder);
@@ -44,22 +45,22 @@ describe('BCDManager', () => {
     it('Confirms that a BCD file is written', () => {
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
-      const resultPath = bcdManager.getBCD(id, jsonPath);
-      bcdManager.write(resultPath);
-      assert.ok(fs.existsSync(resultPath));
+      bcdManager.getBCDObject(id, jsonPath);
+      bcdManager.write(jsonPath);
+      assert.ok(fs.existsSync(jsonPath));
     });
 
     it('Confirms that the written BCD file is valid', () => {
       // Write a BCD file
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
-      const resultPath = bcdManager.getBCD(id, jsonPath);
-      bcdManager.write(resultPath);
+      bcdManager.getBCDObject(id, jsonPath);
+      bcdManager.write(jsonPath);
       // Load the schema
       let buffer = fs.readFileSync('test/files/compat-data.schema.json');
       const schema = [buffer.toString()];
       // Load the new BCD file
-      buffer = fs.readFileSync(resultPath);
+      buffer = fs.readFileSync(jsonPath);
       const burnableBCD = JSON.parse(buffer.toString()).api;
       const validator = new Validator();
       // Compare
@@ -71,9 +72,9 @@ describe('BCDManager', () => {
       // Write and load a BCD file
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
-      const resultPath = bcdManager.getBCD(id, jsonPath);
-      bcdManager.write(resultPath);
-      const resultString = fs.readFileSync(resultPath).toString();
+      bcdManager.getBCDObject(id, jsonPath);
+      bcdManager.write(jsonPath);
+      const resultString = fs.readFileSync(jsonPath).toString();
       // Load a correctly-nested version of what was written and compare
       const comparisonString = fs.readFileSync('test/files/properly-nested-bcd.json').toString();
       assert.equal(resultString, comparisonString);
@@ -83,9 +84,9 @@ describe('BCDManager', () => {
       // Write and load a BCD file
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDManager('api', {verbose: false});
-      const resultPath = bcdManager.getBCD(id, jsonPath);
-      bcdManager.write(resultPath);
-      const resultString = fs.readFileSync(resultPath).toString();
+      bcdManager.getBCDObject(id, jsonPath);
+      bcdManager.write(jsonPath);
+      const resultString = fs.readFileSync(jsonPath).toString();
       // Cut BCD file into lines and extract user agent names
       const bcdLines = resultString.split('\n');
       const regex = /"(\w+)":\s{/;
@@ -111,7 +112,12 @@ describe('BCDManager', () => {
     });
   });
 
-  // describe('getBCD()', () => {
-
-  // });
+  describe('getBCD()', () => {
+    it('Confirms that it returns a structure', () => {
+      const id = new InterfaceData(BURNABLE);
+      const bcdManager = new BCDManager('api', {verbose: false});
+      const tree = bcdManager.getBCDObject(id, jsonPath);
+      console.log(typeof tree);
+    })
+  });
 });

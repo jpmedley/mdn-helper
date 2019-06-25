@@ -33,7 +33,10 @@ class _BCDManager {
     this._verbose = options.verbose;
   }
 
-  write(outFilePath) {
+  write(outFilePath) {    
+    // Poor man's way of fixing the nesting.
+    const temp = JSON.parse(this._bcdString);
+    this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
     let file = utils.getOutputFile(outFilePath);
     fs.write(file, this._bcdString, ()=>{});
     fs.close(file, ()=>{});
@@ -43,7 +46,16 @@ class _BCDManager {
     }
   }
 
-  getBCD(interfaceData, outFilePath) {
+  getBCDObject(interfaceData) {
+    const msg = 'BCDManager.getBCD() is deprecated. Use getBCDObject() instead.'
+    return JSON.parse(this.getRawBCD(interfaceData));
+  }
+
+  getBCDObject(interfaceData) {
+    return JSON.parse(this.getRawBCD(interfaceData));
+  }
+
+  getRawBCD(interfaceData) {
     let members = [];
     if (interfaceData.hasConstructor) {
       members.push(_copyString(CONSTR_TEMPLATE));
@@ -58,11 +70,9 @@ class _BCDManager {
     this._bcdString = _copyString(API_TEMPLATE);
     this._bcdString = this._bcdString.replace('[[members]]', members);
     this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, interfaceData.name);
-    // Poor man's way of fixing the nesting.
-    const temp = JSON.parse(this._bcdString);
-    this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
-    return outFilePath;
+    return this._bcdString;
   }
+
 }
 
 module.exports.BCDManager = _BCDManager;
