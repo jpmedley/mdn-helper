@@ -288,11 +288,11 @@ class _IDLBuilder extends Builder {
       console.log(msg);
       return;
     }
-    let bcdm = new BCDManager();
+    let bcdm = new BCDManager(this._interfaceData);
     let outPath = utils.OUT + name + '/';
     if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
     let outFilePath = outPath + name + '.json';
-    bcdm.getBCD(this._interfaceData, outFilePath);
+    // bcdm.getBCD(this._interfaceData, outFilePath);
     bcdm.write(outFilePath);
   }
 

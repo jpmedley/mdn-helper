@@ -27,10 +27,12 @@ function _copyString(oldString) {
 }
 
 class _BCDManager {
-  constructor(type = 'api', options = { verbose: true }) {
+  constructor(interfaceData, type = 'api', options = { verbose: true }) {
     // Later this will need to distinguish BCD categories.
     this._bcdString = '';
     this._verbose = options.verbose;
+    this._interfaceData = interfaceData;
+    this._loadBCD();
   }
 
   write(outFilePath) {    
@@ -46,21 +48,25 @@ class _BCDManager {
     }
   }
 
-  getBCDObject(interfaceData) {
+  getBCD() {
     const msg = 'BCDManager.getBCD() is deprecated. Use getBCDObject() instead.'
-    return JSON.parse(this.getRawBCD(interfaceData));
+    return this.getBCDObject();
   }
 
-  getBCDObject(interfaceData) {
-    return JSON.parse(this.getRawBCD(interfaceData));
+  getBCDObject() {
+    return JSON.parse(this.getRawBCD());
   }
 
-  getRawBCD(interfaceData) {
+  getRawBCD() {
+    return this._bcdString;
+  }
+
+  _loadBCD() {
     let members = [];
-    if (interfaceData.hasConstructor) {
+    if (this._interfaceData.hasConstructor) {
       members.push(_copyString(CONSTR_TEMPLATE));
     }
-    for (let m of interfaceData.members) {
+    for (let m of this._interfaceData.members) {
       let member = _copyString(MEMBER_TEMPLATE)
                    .replace(/\[\[member-name\]\]/g, m[0]);
       members.push(member);
@@ -69,7 +75,7 @@ class _BCDManager {
     memberString = memberString.replace('\n,', ',');
     this._bcdString = _copyString(API_TEMPLATE);
     this._bcdString = this._bcdString.replace('[[members]]', members);
-    this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, interfaceData.name);
+    this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, this._interfaceData.name);
     return this._bcdString;
   }
 
