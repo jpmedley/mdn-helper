@@ -239,11 +239,17 @@ class _CLIBuilder extends Builder {
 }
 
 class _IDLBuilder extends Builder {
-  constructor(options) {
+  constructor(options = { verbose: true }) {
     super(options);
     this._interfaceData = options.interfaceData;
     this._jsonOnly = options.jsonOnly || false;
     this._interactive = options.interactive || false;
+    this._verbose = options.verbose;
+    if (!options.outPath) {
+      this._outPath = utils.OUT;
+    } else {
+      this._outPath = options.outPath;
+    }
   }
 
   async _initPages() {
@@ -282,17 +288,15 @@ class _IDLBuilder extends Builder {
 
   _writeBCD() {
     let name = this._interfaceData.name;
-    // const bcd = new BCD();
     if (global._bcd.api[name]) {
       const msg = `\nA BCD file already exists for ${name}. You will need to manually\nverify it for completeness.\n`;
       console.log(msg);
       return;
     }
     let bcdm = new BCDManager(this._interfaceData);
-    let outPath = utils.OUT + name + '/';
+    let outPath = `${this._outPath}${name}/`;
     if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
     let outFilePath = outPath + name + '.json';
-    // bcdm.getBCD(this._interfaceData, outFilePath);
     bcdm.write(outFilePath);
   }
 
@@ -312,8 +316,10 @@ class _IDLBuilder extends Builder {
       }
       p.write();
     }
-    msg = `\nMDN drafts were written to ${utils.OUT}${this._interfaceData.name}.`
-    console.log(msg);
+    if (this._verbose) {
+      msg = `\nMDN drafts were written to ${utils.OUT}${this._interfaceData.name}.`
+      console.log(msg);
+    }
   }
 
 }
