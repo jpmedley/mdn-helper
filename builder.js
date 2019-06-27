@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { BCDManager } = require('./bcdmanager.js');
+const { BCDBuilder } = require('./bcdbuilder.js');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Page } = require('./page.js');
@@ -293,7 +293,7 @@ class _IDLBuilder extends Builder {
       console.log(msg);
       return;
     }
-    let bcdm = new BCDManager(this._interfaceData);
+    let bcdm = new BCDBuilder(this._interfaceData);
     let outPath = `${this._outPath}${name}/`;
     if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
     let outFilePath = outPath + name + '.json';

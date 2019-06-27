@@ -18,7 +18,7 @@ const assert = require('assert');
 const fs = require('fs');
 const Validator = require('jsonschema').Validator;
 
-const { BCDManager } = require('../bcdmanager.js');
+const { BCDBuilder } = require('../bcdbuilder.js');
 const { InterfaceData } = require('../interfacedata.js');
 const utils = require('../utils.js');
 
@@ -34,7 +34,7 @@ const BURNABLE = {
 const tempFolder = 'tmp/';
 const jsonPath = `${tempFolder}test-bcd.json`;
 
-describe('BCDManager', () => {
+describe('BCDBuilder', () => {
   describe('write()', () => {
 
     beforeEach(() => {
@@ -44,7 +44,7 @@ describe('BCDManager', () => {
 
     it('Confirms that a BCD file is written', () => {
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       assert.ok(fs.existsSync(jsonPath));
@@ -53,7 +53,7 @@ describe('BCDManager', () => {
     it('Confirms that the written BCD file is valid', () => {
       // Write a BCD file
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       // Load the schema
@@ -71,7 +71,7 @@ describe('BCDManager', () => {
     it('Confirms that the written BCD file is correctly nested', () => {
       // Write and load a BCD file
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       const resultString = fs.readFileSync(jsonPath).toString();
@@ -83,7 +83,7 @@ describe('BCDManager', () => {
     it('Confirms that browsers are in the correct order in a written BCD file', () => {
       // Write and load a BCD file
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       const resultString = fs.readFileSync(jsonPath).toString();
@@ -115,19 +115,10 @@ describe('BCDManager', () => {
   describe('getBCDObject()', () => {
     it('Confirms that it returns a structure', () => {
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       const tree = bcdManager.getBCDObject(jsonPath);
       // console.log(tree);
       assert.notEqual(tree, null);
     });
   });
-
-  describe('getKeys()', () => {
-    it('Confirms return of all keys in BCD object', () => {
-      const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDManager(id, 'api', {verbose: false});
-
-    });
-  });
-
 });

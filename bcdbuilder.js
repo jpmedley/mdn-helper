@@ -26,7 +26,7 @@ function _copyString(oldString) {
   return (' ' + oldString).slice(1);
 }
 
-class _BCDManager {
+class _BCDBuilder {
   constructor(interfaceData, type = 'api', options = { verbose: true }) {
     // Later this will need to distinguish BCD categories.
     this._bcdString = '';
@@ -49,7 +49,7 @@ class _BCDManager {
   }
 
   getBCD() {
-    const msg = 'BCDManager.getBCD() is deprecated. Use getBCDObject() instead.'
+    const msg = 'BCDBuilder.getBCD() is deprecated. Use getBCDObject() instead.'
     return this.getBCDObject();
   }
 
@@ -81,4 +81,4 @@ class _BCDManager {
 
 }
 
-module.exports.BCDManager = _BCDManager;
+module.exports.BCDBuilder = _BCDBuilder;
