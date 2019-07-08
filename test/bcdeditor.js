@@ -17,44 +17,69 @@
 const assert = require('assert');
 const fs = require('fs');
 
+const { BCDBuilder } = require('../bcdbuilder.js');
 const { BCDEditor } = require('../bcdeditor.js');
+const { InterfaceData } = require('../interfacedata.js');
+
+const BURNABLE = {
+  name: 'burnable',
+  path: function() { return './test/files/burn-records.idl'; }
+}
 
 describe('BCDEditor()', () => {
-  describe('updateValues()', () => {
-    it('Confirms that the BCD\'s interface level is updated', () => {
+  describe('tree', () => {
+    it('Confirms that a passed InterfaceData returns a tree', () => {
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
-
+      const bcdEditor = new BCDEditor(id);
+      // console.log(typeof bcdEditor.tree.api);
+      assert.equal((typeof bcdEditor.tree.api.Burnable), 'object');
     });
 
-    it('Confirms that the BCD\'s constructor data is updated', () => {
+    it('Confirms that a passed JSON string returns a tree', () => {
       const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
-
-    });
-
-    it('Confirms that an existing BCD member entry is updated', () => {
-      const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
-
-    });
-
-    it('Confirms that a BCD entry is created if one does not exist', () => {
-      const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
-
-    });
-
-    it('Confirms that a constructor is inserted if one does not exist', () => {
-      const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
-
-    });
-
-    it('Confirms that an interface member is inserted if one does not exist', () => {
-      const id = new InterfaceData(BURNABLE);
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
-
+      const bcdBuilder = new BCDBuilder(id, 'api', {verbose: false});
+      const bcdString = bcdBuilder.getRawBCD();
+      const bcdEditor = new BCDEditor(bcdString);
+      // console.log(typeof bcdEditor.tree.api);
+      assert.equal((typeof bcdEditor.tree.api.Burnable), 'object');
     });
   });
+
+  // describe('updateValues()', () => {
+  //   it('Confirms that the BCD\'s interface level is updated', () => {
+  //     const id = new InterfaceData(BURNABLE);
+  //     const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+
+  //   });
+
+  //   it('Confirms that the BCD\'s constructor data is updated', () => {
+  //     const id = new InterfaceData(BURNABLE);
+  //     const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+
+  //   });
+
+  //   it('Confirms that an existing BCD member entry is updated', () => {
+  //     const id = new InterfaceData(BURNABLE);
+  //     const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+
+  //   });
+
+  //   it('Confirms that a BCD entry is created if one does not exist', () => {
+  //     const id = new InterfaceData(BURNABLE);
+  //     const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+
+  //   });
+
+  //   it('Confirms that a constructor is inserted if one does not exist', () => {
+  //     const id = new InterfaceData(BURNABLE);
+  //     const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+
+  //   });
+
+  //   it('Confirms that an interface member is inserted if one does not exist', () => {
+  //     const id = new InterfaceData(BURNABLE);
+  //     const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+
+  //   });
+  // });
 })
