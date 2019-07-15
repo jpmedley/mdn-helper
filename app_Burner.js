@@ -15,7 +15,7 @@
 'use-strict';
 
 const { BurnerFactory } = require('./burner.js');
-const { OUT, printWelcome, update, today } = require('./utils.js');
+const { printWelcome, update } = require('./utils.js');
 const { initiateLogger } = require('./log.js');
 
 initiateLogger();

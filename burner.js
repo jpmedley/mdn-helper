@@ -329,11 +329,11 @@ class BCDBurner extends Burner {
 
   _recordBCD(records) {
     for (let r of records) {
-      let line = r.key + ',';
+      let line = `${r.key},`;
       for (let b of this._browsers) {
-        line += (r.browsers[b] + ',');
+        line = `${line}${r.browsers[b]},`;
       }
-      line += '\n';
+      line = `${line}\n`;
       fs.write(this._outFileHandle, line, ()=>{});
       this._outputLines++;
     }
