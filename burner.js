@@ -29,7 +29,19 @@ const {
 
 const ALL_STRING = '(all)';
 const BURNABLE_TYPES = ['interface'];
-const CATEGORIES = ['api','css','html','javascript','mathml','svg','webextensions'];
+const CATEGORIES = [
+  'api',
+  'css',
+  'html',
+  'http',
+  'javascript',
+  'mathml',
+  'svg',
+  'webdriver',
+  'webextensions',
+  'xpath',
+  'xslt',
+];
 const BROWSERS = [
   'chrome',
   'chrome_android',
