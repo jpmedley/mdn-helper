@@ -31,7 +31,8 @@ class _FlagStatus {
     const flagFileContents = fs.readFileSync(this._flagPath).toString();
     const flagArray = json5.parse(flagFileContents).data;
     for (let f of flagArray) {
-      this[f.name] = f.status;
+      // this[f.name] = f.status;
+      this[f.name] = f;
     }
   }
 
@@ -51,15 +52,19 @@ class _FlagStatus {
   }
 
   getActualStatus(key) {
-    const flagValue = this[key];
-    if (flagValue) {
-      return flagValue;
+    if (this[key]) {
+      if (this[key].status) {
+        return this[key].status;
+      }
     }
     return NO_FLAG;
   }
 
   getHighestResolvedStatus(key) {
     const actualStatus = this.getActualStatus(key);
+    if (actualStatus === NO_FLAG) {
+      return 'stable';
+    }
     if (typeof actualStatus === 'object') {
       // If any part of the interface is stable, 
       if (Object.values(actualStatus).includes('stable')) {
@@ -68,7 +73,11 @@ class _FlagStatus {
 
       // If stable isn't found, check if any part is experimental then
       if (Object.values(actualStatus).includes('experimental')) {
-        return 'experimental';
+        if (Object.values(actualStatus).includes('origin_trial_feature_name')) {
+          return 'origintrial'
+        } else {
+          return 'experimental';
+        }
       }
 
       if (Object.values(actualStatus).includes('test')) {
@@ -79,9 +88,12 @@ class _FlagStatus {
       if (Object.values(actualStatus).includes('')) {
         return 'stable';
       }
-    } else if (actualStatus === NO_FLAG) {
-      return 'stable';
     } else {
+      if (this[key]) {
+        if (this[key].origin_trial_feature_name) {
+          return 'origintrial';
+        }
+      }
       return actualStatus;
     }
   }

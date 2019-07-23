@@ -38,6 +38,9 @@ describe('FlagStatus', () => {
     it ('Confirms that a key returns "experimental" on a simple flag', () => {
       assert.equal(global.__Flags.getHighestResolvedStatus('RTEExperimental'), 'experimental');
     });
+    it ('Confirms that a key returns "origintrial" on an origin trial flag', () => {
+      assert.equal(global.__Flags.getHighestResolvedStatus('OTEExperimental'), 'origintrial');
+    })
     it('Confirms that "stable" is returned when key is not in JSON file', () => {
       assert.equal(global.__Flags.getHighestResolvedStatus('RTENotInJSON'), 'stable');
     });
@@ -46,6 +49,6 @@ describe('FlagStatus', () => {
     });
     it('Confirmst that "stable" is returned when flag object values are mixed', () => {
       assert.equal(global.__Flags.getHighestResolvedStatus('RTEMixed'), 'stable');
-    })
-  })
+    });
+  });
 });
