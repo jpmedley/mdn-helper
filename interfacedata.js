@@ -391,10 +391,15 @@ class InterfaceData {
   }
 
   get originTrial() {
-    if (this._getExtendedAttribute(this._sourceData, 'OriginTrialEnabled')) {
-      return true;
+    const flag = this._getFlagStatus(this._sourceData);
+    switch (flag) {
+      case ('stable'):
+        return false;
+      case (NO_FLAG):
+        return false;
+      default:
+        return true;
     }
-    return false;
   }
 
   get properties() {
