@@ -111,8 +111,14 @@ describe('InterfaceData', () => {
       });
       assert.ok(id.flagged);
     });
-    it('returns false when a whole interface is not behind the experimental flag', () => {
+    it('Returns false when a whole interface is not behind the experimental flag', () => {
       const id = new InterfaceData(NO_FLAGS, {
+        experimental: true
+      });
+      assert.equal(id.flagged, false);
+    });
+    it('Returns false when the flag file value is "stable".', () => {
+      const id = new InterfaceData(STABLE, {
         experimental: true
       });
       assert.equal(id.flagged, false);

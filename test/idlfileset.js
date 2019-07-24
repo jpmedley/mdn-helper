@@ -76,7 +76,7 @@ describe('IDLFileSet', () => {
       const keyFileContents = fs.readFileSync(keyFile).toString();
       const keys = keyFileContents.split('\n');
       fs.unlinkSync(keyFile);
-      assert.equal(keys.length, 96);
+      assert.equal(keys.length, 94);
     })
   });
 });
