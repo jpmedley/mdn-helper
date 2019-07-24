@@ -29,8 +29,12 @@ global._bcd = new BCD();
 global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 class _Finder {
-  constructor() {
-    this.idlSet = new IDLFileSet();
+  constructor(args) {
+    this._processArguments(args)
+    this.idlSet = new IDLFileSet('idl/', {
+      experimental: this._includeFlags,
+      originTrial: this._includeOriginTrials
+    });
   }
 
   async _confirm(message) {
@@ -79,7 +83,8 @@ class _Finder {
     }
   }
 
-  _normalizeArguments(args, mode) {
+  _processArguments(args) {
+    this._searchString = args[2];
     this._interactive = args.some(arg => {
       return (arg.includes('-i') || (arg.includes('--interactive')));
     });
@@ -89,27 +94,14 @@ class _Finder {
     this._includeOriginTrials = args.some(arg => {
       return (arg.includes('-o') || (arg.includes('--origin-trials')));
     });
-    // Remove -j if we're finding instead of building
-    if (mode == 'find') {
-      this._ping = args.some(arg=>{
+    this._jsonOnly = args.some(arg => {
+      return (arg.includes('-j') || (arg.includes('--jsonOnly')));
+    })
+    if (args[1].includes('app_Finder.js')) {
+      this._ping = args.some(arg => {
         return (arg.includes('-p') || (arg.includes('--ping')));
       });
-      for (let i in args) {
-        if (args[i] == '-j') {
-          args.splice(i, 1);
-          return args;
-        }
-      }
-    }
-    // Make sure args in the correct order
-    for (let i in args) {
-      if ((args[i] == '-j') && (i == (args.length-1))) {
-        args.splice((args.length - 2), 0, '-j');
-        args.splice((args.length - 1), 1);
-        return args;
-      }
-    }
-    return args;
+    };
   }
 
   async _select(matches) {
@@ -129,8 +121,8 @@ class _Finder {
     return answer;
   }
 
-  async _find(args) {
-    const matches = this._findInterfaces(args[2]);
+  async _find() {
+    const matches = this._findInterfaces(this._searchString);
     const answers = await this._select(matches);
     if (answers.idlFile[0] === CANCEL) { process.exit(); }
     let file = answers.idlFile[0].match(/\((\w+\.idl)\)/);
@@ -147,9 +139,8 @@ class _Finder {
     console.log(`File located at ${file.path()}.`);
   }
 
-  async findAndShow(args) {
-    args = this._normalizeArguments(args, 'find');
-    let file = await this._find(args);
+  async findAndShow() {
+    let file = await this._find();
     if (this._ping) {
       const id = new InterfaceData(file, {
         experimental: false,
@@ -173,9 +164,8 @@ class _Finder {
     this._show(file);
   }
 
-  async findAndBuild(args) {
-    args = this._normalizeArguments(args, 'build');
-    let file = await this._find(args);
+  async findAndBuild() {
+    let file = await this._find();
     const id = new InterfaceData(file, {
       experimental: this._includeFlags,
       originTrial: this._includeOriginTrials
@@ -186,10 +176,9 @@ class _Finder {
       this._show(file);
       return;
     }
-    // const builder = new Builder(id, (args.includes('-j')));
     const options = {
       interfaceData: id,
-      jsonOnly: args.includes('-j'),
+      jsonOnly: this._jsonOnly,
       interactive: this._interactive
     };
     const builder = new IDLBuilder(options);

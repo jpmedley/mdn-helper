@@ -227,13 +227,17 @@ class InterfaceData {
     throw new Error('Cannot find operation key.');
   }
 
-  _isBurnable(member, options = { includeExperimental: this._includeExperimental}) {
+  _isBurnable(member, options = {
+    includeExperimental: this._includeExperimental,
+    includeOriginTrials: this._includeOriginTrials}) {
     const status = this._getFlagStatus(member);
     switch (status) {
       case 'test':
         return false;
       case 'experimental':
         return options.includeExperimental;
+      case 'origintrial':
+        return options.includeOriginTrials;
       case 'stable':
         return true;
       case NO_FLAG:

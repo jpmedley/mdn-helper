@@ -20,5 +20,5 @@ const { printWelcome, update } = require('./utils.js');
 printWelcome();
 update();
 
-const finder = new Finder();
-finder.findAndShow(process.argv);
+const finder = new Finder(process.argv);
+finder.findAndShow();
