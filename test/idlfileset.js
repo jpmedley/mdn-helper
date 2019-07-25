@@ -52,21 +52,55 @@ describe('IDLFileSet', () => {
       const RTNotFound = find('interface-runtimeenabled.idl', files);
       assert.equal(RTNotFound, false);
     });
-    it('Confirms that all 29 test IDL files are processed', () => {
+    it('Confirms that all test IDL files are processed', () => {
+      const fileCount = (function countFiles(dir) {
+        const files = fs.readdirSync(dir, {withFileTypes: true});
+        let count = 0;
+        for (let f of files) {
+          if (f.isDirectory()) {
+            count += countFiles(`${dir}${f.name}/`);
+          } else {
+            if (f.name.endsWith('.idl')) { count++; }
+          }
+        }
+        return count;
+      })(IDL_FILES);
       const someFiles = new IDLFileSet(IDL_FILES, {
         experimental: true,
         originTrial: true
       });
       let files = someFiles.files;
-      assert.equal(files.length, 32);
+      assert.equal(files.length, fileCount);
     });
   });
 
-
+  describe('keys', () => {
+    it('Confirms that all unflagged keys in a test file are returned', () => {
+      const fileSet = new IDLFileSet(`${IDL_FILES}keystest/`, {
+        experimental: false,
+        originTrial: false
+      });
+      const keyString = "Burnable,Burnable.Burnable,Burnable.onconnect,Burnable.check,Burnable.family";
+      assert.equal(fileSet.keys.join(','), keyString);
+    });
+  });
 
   describe('writeKeys()', () => {
-    it('Returns true when the save file contains all unflagged keys', () => {
-      const fileSet = new IDLFileSet(IDL_FILES, {
+    it('Confirms that all keys are written to a file', () => {
+      const fileSet = new IDLFileSet(`${IDL_FILES}keystest/`, {
+        experimental: true,
+        originTrial: true
+      });
+      const keyFile = './keyfile.txt';
+      if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
+      fileSet.writeKeys(keyFile);
+      const keyFileContents = fs.readFileSync(keyFile).toString();
+      const keys = keyFileContents.split('\n');
+      fs.unlinkSync(keyFile);
+      assert.equal(keys.length, 8);
+    });
+    it('Confirms that all unflagged keys are written to a file', () => {
+      const fileSet = new IDLFileSet(`${IDL_FILES}keystest/`, {
         experimental: false,
         originTrial: false
       });
@@ -76,8 +110,8 @@ describe('IDLFileSet', () => {
       const keyFileContents = fs.readFileSync(keyFile).toString();
       const keys = keyFileContents.split('\n');
       fs.unlinkSync(keyFile);
-      assert.equal(keys.length, 94);
-    })
+      assert.equal(keys.length, 5);
+    });
   });
 });
 

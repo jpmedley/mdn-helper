@@ -382,7 +382,6 @@ class InterfaceData {
     }
     const methods = this.methods;
     for (let m of methods) {
-      console.log(m);
       if (m.body.name) {
         members.set(m.body.name.value, m);
       }

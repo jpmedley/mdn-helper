@@ -155,7 +155,7 @@ describe('InterfaceData', () => {
     });
   });
 
-  describe('getKeys()', () => {
+  describe('getkeys()', () => {
     //To Do: Need separate tests for iterable, maplike, read-only maplike, and setlike
     const id = new InterfaceData(BURNABLE, {
       experimental: true
@@ -215,7 +215,6 @@ describe('InterfaceData', () => {
     it('Confirms that members returns all methods and properties', () => {
       const m = new InterfaceData(BURNABLE, {});
       const members = m.members;
-      // console.log(members.keys());
       const count = ((keys) => {
         let count = 0;
         for (let k of keys) {
