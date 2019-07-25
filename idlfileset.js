@@ -49,7 +49,8 @@ class IDLFileSet {
           }
           contents[c].key = idlFile.name;
           contents[c].keys = [];
-          let keys = idlFile.getkeys(true);
+          const includeExperimental = !(this._includeExperimental || this._includeOriginTrial);
+          let keys = idlFile.getkeys(includeExperimental);
           contents[c].keys.push(...keys);
           this._files.push(contents[c]);
         }
