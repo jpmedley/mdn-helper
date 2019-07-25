@@ -37,9 +37,9 @@ const EXPERIMENTAL = {
   name: 'flagged',
   path: function() { return './test/files/interface-runtimeenabled.idl'; }
 }
-const FLAG_AND_OT = {
-  name: 'flaggedAndOt',
-  path: function() { return './test/files/interface-flag-and-ot.idl'; }
+const METHODS = {
+  name: 'methods',
+  path: function() { return './test/files/methods.idl'; }
 }
 const NO_FLAGS = {
   name: 'noFlags',
@@ -56,6 +56,10 @@ const PING_EXISTS = {
 const PING_MISSING = {
   name: 'pingMissing',
   path: function() { return './test/files/ping-missing.idl'; }
+}
+const PROPERTIES = {
+  name: 'properties',
+  path: function() { return './test/files/properties.idl'; }
 }
 const SECURE_CONTEXT = {
   name: 'secureContext',
@@ -197,13 +201,37 @@ describe('InterfaceData', () => {
   });
 
   describe('getSecureContext', () => {
-    it('Returns true when the selected interface requires a secure context.', () => {
+    it('Returns true when the selected interface requires a secure context', () => {
       const sc = new InterfaceData(SECURE_CONTEXT, {});
       assert.ok(sc.getSecureContext());
     });
-    it('Returns false when the selected interface does not require a secure context.', () => {
+    it('Returns false when the selected interface does not require a secure context', () => {
       const sc = new InterfaceData(NO_FLAGS, {});
       assert.equal(sc.getSecureContext(), false);
+    });
+  });
+
+  describe('members', () => {
+    it('Confirms that members returns all methods and properties', () => {
+      const m = new InterfaceData(BURNABLE, {});
+      const members = m.members;
+      // console.log(members.keys());
+      const count = ((keys) => {
+        let count = 0;
+        for (let k of keys) {
+          count++;
+        }
+        return count;
+      })(members.keys());
+      assert.equal(count, 6);
+    });
+  });
+
+  describe('methods', () => {
+    it('Confirms that operations (methods) are correctly read from the IDL data', () => {
+      const m = new InterfaceData(METHODS, {});
+      const methods = m.methods;
+      assert.equal(methods[0].body.name.value, 'check');
     });
   });
 
@@ -239,6 +267,14 @@ describe('InterfaceData', () => {
       });
     });
   });
+
+  describe('properties', () => {
+    it('Confirms that attributes (properties) are correctly read from the IDL data', () => {
+      const p = new InterfaceData(PROPERTIES, {});
+      const properties = p.properties;
+      assert.equal(properties[0].name, 'status');
+    })
+  })
 
   describe('signatures', () => {
     it('Returns true when the correct number of constructors is returned', () => {

@@ -376,8 +376,16 @@ class InterfaceData {
 
   get members() {
     let members = new Map();
-    for (let m of this._sourceData.members) {
-      members.set(m.name, m);
+    const properties = this.properties;
+    for (let p of properties) {
+      members.set(p.name, p);
+    }
+    const methods = this.methods;
+    for (let m of methods) {
+      console.log(m);
+      if (m.body.name) {
+        members.set(m.body.name.value, m);
+      }
     }
     return members;
   }

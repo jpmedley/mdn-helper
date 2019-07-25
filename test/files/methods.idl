@@ -1,0 +1,22 @@
+interface MethodArgs : EventTarget {
+    [RaisesException] boolean check(DOMString font, optional DOMString text = " ");
+    [RaisesException] boolean checks();
+
+    [MeasureAs=AsyncClipboardAPIRead,
+     CallWith=ScriptState
+    ] Promise<record<DOMString, Blob>> read();
+
+    [MeasureAs=AsyncClipboardAPIReadText,
+     CallWith=ScriptState
+    ] Promise<DOMString> readText();
+
+
+    [MeasureAs=AsyncClipboardAPIWrite,
+     CallWith=ScriptState,
+     RuntimeEnabled=AsyncClipboard
+    ] Promise<void> write(record<DOMString, Blob> data);
+
+    [MeasureAs=AsyncClipboardAPIWriteText,
+     CallWith=ScriptState
+    ] Promise<void> writeText(DOMString data);
+};
