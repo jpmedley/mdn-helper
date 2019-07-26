@@ -377,13 +377,17 @@ class InterfaceData {
   get members() {
     let members = new Map();
     const properties = this.properties;
-    for (let p of properties) {
-      members.set(p.name, p);
+    if (properties) {
+      for (let p of properties) {
+        members.set(p.name, p);
+      }
     }
     const methods = this.methods;
-    for (let m of methods) {
-      if (m.body.name) {
-        members.set(m.body.name.value, m);
+    if (methods) {
+      for (let m of methods) {
+        if (m.body.name) {
+          members.set(m.body.name.value, m);
+        }
       }
     }
     return members;
