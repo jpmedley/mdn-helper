@@ -36,7 +36,9 @@ class _BCDBuilder {
   }
 
   write(outFilePath) {    
-    // Poor man's way of fixing the nesting.
+    // // Poor man's way of fixing the nesting.
+    // console.log(this._bcdString);
+    // process.exit();
     const temp = JSON.parse(this._bcdString);
     this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
     let file = utils.getOutputFile(outFilePath);
@@ -71,14 +73,17 @@ class _BCDBuilder {
                    .replace(/\[\[member-name\]\]/g, m[0]);
       members.push(member);
     }
-    let memberString = members.join(',\n');
-    memberString = memberString.replace('\n,', ',');
     this._bcdString = _copyString(API_TEMPLATE);
-    this._bcdString = this._bcdString.replace('[[members]]', members);
+    let memberString = '';
+    if (members.length) {
+      memberString = members.join(',\n');
+      memberString = memberString.replace('\n,', ',');
+      memberString = `,${memberString}`;
+    }
+    this._bcdString = this._bcdString.replace('[[members]]', memberString);
     this._bcdString = this._bcdString.replace(/\[\[api-name\]\]/g, this._interfaceData.name);
     return this._bcdString;
   }
-
 }
 
 module.exports.BCDBuilder = _BCDBuilder;
