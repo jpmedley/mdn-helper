@@ -314,7 +314,7 @@ class _IDLBuilder extends Builder {
       if (this._interactive) {
         await p.askQuestions();
       }
-      p.write();
+      await p.write();
     }
     if (this._verbose) {
       msg = `\nMDN drafts were written to ${utils.OUT}${this._interfaceData.name}.`

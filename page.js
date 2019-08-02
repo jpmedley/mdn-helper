@@ -14,6 +14,7 @@
 
 'use strict';
 
+const Enquirer = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Questions } = require('./questions.js');
@@ -91,11 +92,31 @@ class _Page {
     }
   }
 
-  write() {
+  async write() {
     this.render();
     let outFolder = utils.OUT + '/' + this.sharedQuestions.name + '/';
     if (!fs.existsSync(outFolder)) { fs.mkdirSync(outFolder); }
     let outPath = outFolder + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
+    if (fs.existsSync(outPath)) {
+      let msg = `A file already exits for ${this.name}. `;
+      msg += 'Do you want to overwrite it?'
+      let enq = new Enquirer();
+      let options = { 
+        message: msg,
+        default: "n",
+        validate: (value) => {
+          if (!['y','Y','n','N'].includes(value)) {
+            return "Please enter one of 'y','Y','n', or 'N'";
+          } else {
+            value = value.toLowerCase();
+            return true;
+          }
+        }
+      };
+      enq.question('prompt', options);
+      let answer = await enq.prompt('prompt');
+      if (answer.prompt === 'n') { return; }
+    }
     fs.writeFileSync(outPath, this.contents);
   }
 }
