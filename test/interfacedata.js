@@ -166,16 +166,13 @@ describe('InterfaceData', () => {
     it('Confirms that the returned keys contain no flagged or OT members', () => {
       assert.equal(id.getkeys(true).length, 5);
     });
+    it('Confirms that returned keys contains the interface name as a separate item', () => {
+      const keys = id.getkeys();
+      assert.ok(keys.includes('Burnable'));
+    })
     it('Confirms that returned keys contains a properly formatted constructor key', () => {
       const keys = id.getkeys();
-      let valid = false;
-      for (let k of keys) {
-        if (k === 'Burnable.Burnable') {
-          valid = true;
-          break;
-        }
-      }
-      assert.ok(valid);
+      assert.ok(keys.includes('Burnable.Burnable'));
     });
     it('Confirms that returned keys contains only one constructor key', () => {
       const keys = id.getkeys();
