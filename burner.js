@@ -427,8 +427,10 @@ class ChromeBurner extends Burner {
     await this._resolveArguments(this._args);
     this._loadWhitelist();
     this._startBurnLogFile();
-    this._openResultsFile();
-    let idlFiles = new IDLFileSet();
+    this._openResultsFile();let idlFiles = new IDLFileSet('idl/', {
+      experimental: this._includeFlags,
+      originTrial: this._includeOriginTrials
+    });
     let files = idlFiles.files
     console.log('Looking for browser compatibility data and MDN pages.');
     for (let f of files) {
@@ -450,10 +452,21 @@ class ChromeBurner extends Burner {
   }
 
   _isBurnable(idlFile) {
+    console.log(idlFile.name);
     if (!idlFile) { return false; }
-    if ((this._whitelistName) && (!this._whitelist.includes(idlFile.name))) {
+    let found = false;
+    if (this._whitelistName) {
+      const keys = idlFile.getkeys();
+      for (let w of this._whitelist) {
+        if (keys.includes(w)) { found = true; }
+      }
+    }
+    if (this._whitelistName && (!found)) {
       return false;
     }
+    // if ((this._whitelistName) && (!this._whitelist.includes(idlFile.name))) {
+    //   return false;
+    // }
     if (utils.isBlacklisted(idlFile._sourceData.name)) { return false; }
     if (!BURNABLE_TYPES.includes(idlFile._type)) { return false; }
     if (!this._includeFlags && idlFile.flagged) { return false; }
