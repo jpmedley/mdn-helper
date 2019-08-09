@@ -76,6 +76,7 @@ describe('BCDBuilder', () => {
       bcdManager.write(jsonPath);
       const resultString = fs.readFileSync(jsonPath).toString();
       // Load a correctly-nested version of what was written and compare
+      console.log(resultString);
       const comparisonString = fs.readFileSync('test/files/properly-nested-bcd.json').toString();
       assert.equal(resultString, comparisonString);
     });

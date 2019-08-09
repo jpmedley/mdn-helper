@@ -5,48 +5,45 @@
         "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable",
         "support": {
           "chrome": {
-            "version_added": null
+            "version_added": false
           },
           "chrome_android": {
-            "version_added": null
+            "version_added": false
           },
           "edge": {
-            "version_added": null
-          },
-          "edge_mobile": {
-            "version_added": null
+            "version_added": false
           },
           "firefox": {
-            "version_added": null
+            "version_added": false
           },
           "firefox_android": {
-            "version_added": null
+            "version_added": false
           },
           "ie": {
-            "version_added": null
+            "version_added": false
           },
           "opera": {
-            "version_added": null
+            "version_added": false
           },
           "opera_android": {
-            "version_added": null
+            "version_added": false
           },
           "safari": {
-            "version_added": null
+            "version_added": false
           },
           "safari_ios": {
-            "version_added": null
+            "version_added": false
           },
           "samsunginternet_android": {
-            "version_added": null
+            "version_added": false
           },
           "webview_android": {
-            "version_added": null
+            "version_added": false
           }
         },
         "status": {
-          "experimental": null,
-          "standard_track": null,
+          "experimental": false,
+          "standard_track": false,
           "deprecated": false
         }
       },
@@ -56,48 +53,45 @@
           "description": "<code>Burnable()</code> constructor",
           "support": {
             "chrome": {
-              "version_added": null
+              "version_added": false
             },
             "chrome_android": {
-              "version_added": null
+              "version_added": false
             },
             "edge": {
-              "version_added": null
-            },
-            "edge_mobile": {
-              "version_added": null
+              "version_added": false
             },
             "firefox": {
-              "version_added": null
+              "version_added": false
             },
             "firefox_android": {
-              "version_added": null
+              "version_added": false
             },
             "ie": {
-              "version_added": null
+              "version_added": false
             },
             "opera": {
-              "version_added": null
+              "version_added": false
             },
             "opera_android": {
-              "version_added": null
+              "version_added": false
             },
             "safari": {
-              "version_added": null
+              "version_added": false
             },
             "safari_ios": {
-              "version_added": null
+              "version_added": false
             },
             "samsunginternet_android": {
-              "version_added": null
+              "version_added": false
             },
             "webview_android": {
-              "version_added": null
+              "version_added": false
             }
           },
           "status": {
-            "experimental": null,
-            "standard_track": null,
+            "experimental": false,
+            "standard_track": false,
             "deprecated": false
           }
         }
@@ -107,48 +101,45 @@
           "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable/onconnect",
           "support": {
             "chrome": {
-              "version_added": null
+              "version_added": false
             },
             "chrome_android": {
-              "version_added": null
+              "version_added": false
             },
             "edge": {
-              "version_added": null
-            },
-            "edge_mobile": {
-              "version_added": null
+              "version_added": false
             },
             "firefox": {
-              "version_added": null
+              "version_added": false
             },
             "firefox_android": {
-              "version_added": null
+              "version_added": false
             },
             "ie": {
-              "version_added": null
+              "version_added": false
             },
             "opera": {
-              "version_added": null
+              "version_added": false
             },
             "opera_android": {
-              "version_added": null
+              "version_added": false
             },
             "safari": {
-              "version_added": null
+              "version_added": false
             },
             "safari_ios": {
-              "version_added": null
+              "version_added": false
             },
             "samsunginternet_android": {
-              "version_added": null
+              "version_added": false
             },
             "webview_android": {
-              "version_added": null
+              "version_added": false
             }
           },
           "status": {
-            "experimental": null,
-            "standard_track": null,
+            "experimental": false,
+            "standard_track": false,
             "deprecated": false
           }
         }
@@ -158,99 +149,45 @@
           "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable/ondisconnect",
           "support": {
             "chrome": {
-              "version_added": null
+              "version_added": false
             },
             "chrome_android": {
-              "version_added": null
+              "version_added": false
             },
             "edge": {
-              "version_added": null
-            },
-            "edge_mobile": {
-              "version_added": null
+              "version_added": false
             },
             "firefox": {
-              "version_added": null
+              "version_added": false
             },
             "firefox_android": {
-              "version_added": null
+              "version_added": false
             },
             "ie": {
-              "version_added": null
+              "version_added": false
             },
             "opera": {
-              "version_added": null
+              "version_added": false
             },
             "opera_android": {
-              "version_added": null
+              "version_added": false
             },
             "safari": {
-              "version_added": null
+              "version_added": false
             },
             "safari_ios": {
-              "version_added": null
+              "version_added": false
             },
             "samsunginternet_android": {
-              "version_added": null
+              "version_added": false
             },
             "webview_android": {
-              "version_added": null
+              "version_added": false
             }
           },
           "status": {
-            "experimental": null,
-            "standard_track": null,
-            "deprecated": false
-          }
-        }
-      },
-      "undefined": {
-        "__compat": {
-          "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable/undefined",
-          "support": {
-            "chrome": {
-              "version_added": null
-            },
-            "chrome_android": {
-              "version_added": null
-            },
-            "edge": {
-              "version_added": null
-            },
-            "edge_mobile": {
-              "version_added": null
-            },
-            "firefox": {
-              "version_added": null
-            },
-            "firefox_android": {
-              "version_added": null
-            },
-            "ie": {
-              "version_added": null
-            },
-            "opera": {
-              "version_added": null
-            },
-            "opera_android": {
-              "version_added": null
-            },
-            "safari": {
-              "version_added": null
-            },
-            "safari_ios": {
-              "version_added": null
-            },
-            "samsunginternet_android": {
-              "version_added": null
-            },
-            "webview_android": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": null,
-            "standard_track": null,
+            "experimental": false,
+            "standard_track": false,
             "deprecated": false
           }
         }
@@ -260,48 +197,45 @@
           "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable/family",
           "support": {
             "chrome": {
-              "version_added": null
+              "version_added": false
             },
             "chrome_android": {
-              "version_added": null
+              "version_added": false
             },
             "edge": {
-              "version_added": null
-            },
-            "edge_mobile": {
-              "version_added": null
+              "version_added": false
             },
             "firefox": {
-              "version_added": null
+              "version_added": false
             },
             "firefox_android": {
-              "version_added": null
+              "version_added": false
             },
             "ie": {
-              "version_added": null
+              "version_added": false
             },
             "opera": {
-              "version_added": null
+              "version_added": false
             },
             "opera_android": {
-              "version_added": null
+              "version_added": false
             },
             "safari": {
-              "version_added": null
+              "version_added": false
             },
             "safari_ios": {
-              "version_added": null
+              "version_added": false
             },
             "samsunginternet_android": {
-              "version_added": null
+              "version_added": false
             },
             "webview_android": {
-              "version_added": null
+              "version_added": false
             }
           },
           "status": {
-            "experimental": null,
-            "standard_track": null,
+            "experimental": false,
+            "standard_track": false,
             "deprecated": false
           }
         }
@@ -311,48 +245,141 @@
           "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable/family2",
           "support": {
             "chrome": {
-              "version_added": null
+              "version_added": false
             },
             "chrome_android": {
-              "version_added": null
+              "version_added": false
             },
             "edge": {
-              "version_added": null
-            },
-            "edge_mobile": {
-              "version_added": null
+              "version_added": false
             },
             "firefox": {
-              "version_added": null
+              "version_added": false
             },
             "firefox_android": {
-              "version_added": null
+              "version_added": false
             },
             "ie": {
-              "version_added": null
+              "version_added": false
             },
             "opera": {
-              "version_added": null
+              "version_added": false
             },
             "opera_android": {
-              "version_added": null
+              "version_added": false
             },
             "safari": {
-              "version_added": null
+              "version_added": false
             },
             "safari_ios": {
-              "version_added": null
+              "version_added": false
             },
             "samsunginternet_android": {
-              "version_added": null
+              "version_added": false
             },
             "webview_android": {
-              "version_added": null
+              "version_added": false
             }
           },
           "status": {
-            "experimental": null,
-            "standard_track": null,
+            "experimental": false,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "check": {
+        "__compat": {
+          "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable/check",
+          "support": {
+            "chrome": {
+              "version_added": false
+            },
+            "chrome_android": {
+              "version_added": false
+            },
+            "edge": {
+              "version_added": false
+            },
+            "firefox": {
+              "version_added": false
+            },
+            "firefox_android": {
+              "version_added": false
+            },
+            "ie": {
+              "version_added": false
+            },
+            "opera": {
+              "version_added": false
+            },
+            "opera_android": {
+              "version_added": false
+            },
+            "safari": {
+              "version_added": false
+            },
+            "safari_ios": {
+              "version_added": false
+            },
+            "samsunginternet_android": {
+              "version_added": false
+            },
+            "webview_android": {
+              "version_added": false
+            }
+          },
+          "status": {
+            "experimental": false,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "unCheck": {
+        "__compat": {
+          "mdn_url": "https://developer.mozilla.org/docs/Web/API/Burnable/unCheck",
+          "support": {
+            "chrome": {
+              "version_added": false
+            },
+            "chrome_android": {
+              "version_added": false
+            },
+            "edge": {
+              "version_added": false
+            },
+            "firefox": {
+              "version_added": false
+            },
+            "firefox_android": {
+              "version_added": false
+            },
+            "ie": {
+              "version_added": false
+            },
+            "opera": {
+              "version_added": false
+            },
+            "opera_android": {
+              "version_added": false
+            },
+            "safari": {
+              "version_added": false
+            },
+            "safari_ios": {
+              "version_added": false
+            },
+            "samsunginternet_android": {
+              "version_added": false
+            },
+            "webview_android": {
+              "version_added": false
+            }
+          },
+          "status": {
+            "experimental": false,
+            "standard_track": false,
             "deprecated": false
           }
         }
