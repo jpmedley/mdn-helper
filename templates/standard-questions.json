@@ -246,19 +246,6 @@
       "before": "",
       "action": {"name": "add_string"}
     },
-    "isStandard": {
-      "question": "Is this API a candidate recomendation of the W3C? If so,\npress return to make the pages display a blurb declaring the API experimental.\nOtherwise, enter 'n' and press return.",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y|{{SeeCompatTable}})",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
-      "message": "",
-      "hidden": false,
-      "replace": "*",
-      "default": "{{SeeCompatTable}}",
-      "required": true,
-      "before": "",
-      "action": {"name": "add_string"}
-    },
     "iterableMemberLink": {
       "question": "What is this interface's anchor for iterable/maplike in the spec?",
       "type": "string",
