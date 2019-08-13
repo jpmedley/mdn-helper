@@ -1,0 +1,16 @@
+{
+  "whitelist": [
+    "Navigator.canShare",
+    "Navigator.getInstalledRelatedApps",
+    "Navigator.getWakeLock",
+    "Navigator.share",
+    "PeriodicSyncEvent",
+    "PeriodicSyncManager",
+    "ServiceWorkerGlobalScope.onperiodicsync",
+    "ServiceWorkerRegistration.periodicSync",
+    "SyncEvent",
+    "WakeLock",
+    "WakeLockRequest",
+    "Window.chooseFileSystemEntries"
+  ]
+}

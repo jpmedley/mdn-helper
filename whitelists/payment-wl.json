@@ -1,0 +1,16 @@
+{
+  "whitelist": [
+    "AbortPaymentEvent",
+    "AndroidPayMethodData",
+    "AndroidPayTokenization",
+    "CanMakePaymentEvent",
+    "PaymentAddress",
+    "PaymentInstruments",
+    "PaymentManager",
+    "PaymentMethodChangeEvent",
+    "PaymentRequest",
+    "PaymentRequestEvent",
+    "PaymentRequestUpdateEvent",
+    "PaymentResponse"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "whitelist": [
+    "Performance",
+    "PerformanceElementTiming",
+    "PerformanceEntry",
+    "PerformanceEventTiming",
+    "PerformanceLayoutJank",
+    "PerformanceLongTaskTiming",
+    "PerformanceMark",
+    "PerformanceMeasure",
+    "PerformanceNavigation",
+    "PerformanceNavigationTiming",
+    "PerformanceObserver",
+    "PerformanceObserverEntryList",
+    "PerformancePaintTiming",
+    "PerformanceResourceTiming",
+    "PerformanceServerTiming",
+    "PerformanceTiming",
+    "TaskAttributionTiming"
+  ]
+}
