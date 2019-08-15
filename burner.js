@@ -427,7 +427,8 @@ class ChromeBurner extends Burner {
     await this._resolveArguments(this._args);
     this._loadWhitelist();
     this._startBurnLogFile();
-    this._openResultsFile();let idlFiles = new IDLFileSet('idl/', {
+    this._openResultsFile();
+    let idlFiles = new IDLFileSet('idl/', {
       experimental: this._includeFlags,
       originTrial: this._includeOriginTrials
     });
