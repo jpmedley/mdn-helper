@@ -312,6 +312,18 @@ class CallbackData extends IDLData {
   }
 }
 
+class DictionaryData extends IDLData {
+  constructor(source, options = {}) {
+    super(source, options);
+  }
+}
+
+class EnumData extends IDLData {
+  constructor(source, options = {}) {
+    super(source, options);
+  }
+}
+
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
@@ -561,14 +573,16 @@ class InterfaceData extends IDLData {
 
 const TREE_TYPES = Object.freeze({
   callback: CallbackData,
-  dictionary: undefined,
-  enum: undefined,
+  dictionary: DictionaryData,
+  enum: EnumData,
   interface: InterfaceData
 });
 
 module.exports.CallbackData = CallbackData;
+module.exports.DictionaryData = DictionaryData;
 module.exports.EMPTY_BCD_DATA = EMPTY_BCD_DATA;
 module.exports.EMPTY_BURN_DATA = EMPTY_BURN_DATA;
+module.exports.EnumData = EnumData;
 module.exports.IDLFlagError = IDLFlagError;
 module.exports.InterfaceData = InterfaceData;
 module.exports.TREE_TYPES = TREE_TYPES;
