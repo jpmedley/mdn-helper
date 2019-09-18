@@ -16,8 +16,9 @@
 
 const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
+const { DirectoryManager } = require('./directorymanager.js');
 const Enquirer = require('enquirer');
-const { IDLFileSet } = require('./idlfileset.js');
+// const { IDLFileSet } = require('./idlfileset.js');
 const { InterfaceData } = require('./interfacedata.js');
 const { IDLBuilder } = require('./builder.js');
 const utils = require('./utils.js');
@@ -31,10 +32,15 @@ global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enable
 class _Finder {
   constructor(args) {
     this._processArguments(args)
-    this.idlSet = new IDLFileSet('idl/', {
+    // this.idlSet = new IDLFileSet('idl/', {
+    //   experimental: this._includeFlags,
+    //   originTrial: this._includeOriginTrials
+    // });
+    let dm = new DirectoryManager('idl/', {
       experimental: this._includeFlags,
       originTrial: this._includeOriginTrials
     });
+    this._interfaces = dm.interfaceSet;
   }
 
   async _confirm(message) {
@@ -56,7 +62,8 @@ class _Finder {
   }
 
   _findInterfaces(interfacesNamed) {
-    const matches = this.idlSet.findMatching(interfacesNamed);
+    // const matches = this.idlSet.findMatching(interfacesNamed);
+    const matches = this._interfaces.findMatching(interfacesNamed);
     if (!matches.length) {
       console.log(NOTHING_FOUND);
       process.exit();
@@ -107,7 +114,9 @@ class _Finder {
   async _select(matches) {
     let names = [];
     for (let m of matches) {
-      names.push(m.key + ` (${m.name})`);
+      // names.push(m.key + ` (${m.name})`);
+      let steps = m.path.split('/');
+      names.push(`${m.keys[0]} (${steps[steps.length-1]})`);
     }
     names = names.sort();
     names.push(CANCEL);
@@ -118,6 +127,7 @@ class _Finder {
       choices: names
     });
     let answer = await enq.prompt('idlFile');
+    // answer = answer.idlFile[0].split(' ')[0];
     return answer;
   }
 
@@ -126,40 +136,47 @@ class _Finder {
     const answers = await this._select(matches);
     if (answers.idlFile[0] === CANCEL) { process.exit(); }
     let file = answers.idlFile[0].match(/\((\w+\.idl)\)/);
+    let match;
     for (let m of matches) {
-      if (file[1] == m.name) {
-        return m;
+      if (m.path.includes(file[1])) {
+        match = m;
+        break;
       }
     }
+
+    // let match = matches.find((match, index, matches) => {
+    //   match.path.includes(this[0]);
+    // }, file);
+    return match;
   }
 
   _show(file) {
-    let idlFile = utils.getIDLFile(file.path());
+    let idlFile = utils.getIDLFile(file.path);
     console.log(idlFile);
-    console.log(`File located at ${file.path()}.`);
+    console.log(`File located at ${file.path}.`);
   }
 
   async findAndShow() {
     let file = await this._find();
-    if (this._ping) {
-      const id = new InterfaceData(file, {
-        experimental: false,
-        originTrial: false
-      });
-      if (id.type == 'dictionary') {
-        console.log('mdn-helper does not yet ping dictionaries.');
-      } else {
-        const pingRecords = await id.ping();
-        console.log('Exists?   Interface');
-        console.log('-'.repeat(51));
-        pingRecords.forEach(r => {
-          // console.log(r);
-          let exists = r.mdn_exists.toString().padEnd(10);
-          console.log(exists + r.key);
-        });
-        await utils.pause();
-      }
-    }
+    // if (this._ping) {
+    //   const id = new InterfaceData(file, {
+    //     experimental: false,
+    //     originTrial: false
+    //   });
+    //   if (id.type == 'dictionary') {
+    //     console.log('mdn-helper does not yet ping dictionaries.');
+    //   } else {
+    //     const pingRecords = await id.ping();
+    //     console.log('Exists?   Interface');
+    //     console.log('-'.repeat(51));
+    //     pingRecords.forEach(r => {
+    //       // console.log(r);
+    //       let exists = r.mdn_exists.toString().padEnd(10);
+    //       console.log(exists + r.key);
+    //     });
+    //     await utils.pause();
+    //   }
+    // }
 
     this._show(file);
   }

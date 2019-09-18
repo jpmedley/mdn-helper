@@ -17,8 +17,7 @@
 const assert = require('assert');
 const fs = require('fs');
 
-const { BCD } = require('../bcd.js');
-const { URL } = require('url');
+const { BCD } = require('./bcd.js');
 
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
 

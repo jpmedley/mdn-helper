@@ -74,11 +74,17 @@ class IDLFlagError extends IDLAttributeError {
   }
 }
 
-class InterfaceData {
-  constructor(sourceFile, options = {}) {
+class IDLData {
+  constructor(source, options = {}) {
+    this._sourcePath = options.sourcePath;
     this._includeExperimental = (options.experimental? options.experimental: false);
     this._includeOriginTrials = (options.originTrial? options.originTrial: false);
-    this._loadTree(sourceFile);
+    this._storeTree(source);
+  }
+
+  _storeTree(source) {
+    this._sourceData = source;
+    this._type = source.type;
   }
 
   async ping(verboseOutput = true) {
@@ -94,31 +100,16 @@ class InterfaceData {
     return records;
   }
 
-  _loadTree(sourceFile) {
-    this._sourceContents = utils.getIDLFile(sourceFile.path());
-    let tree = webidl2.parse(this._sourceContents);
-    let msg;
-    for (let t of tree) {
-      switch (t.type) {
-        case 'eof':
-          break;
-        case 'interface':
-          this._sourceData = t;
-          this._type = t.type;
-          break;
-        default:
-          msg = `${t.type},${sourceFile.path()},The type contained in this file is not currently processible.`;
-          if (global.__logger) {
-            global.__logger.info(msg);
-          }
-          break;
-      }
-      if (this._sourceData) { return; }
-    }
-    if (!this._sourceData) {
-      const msg = `The ${sourceFile.path()} file is invalid or does not contain interface data.`;
-      throw new IDLError(msg);
-    }
+  get sourcePath() {
+    return this._sourcePath;
+  }
+
+  set sourcePath(path) {
+    this._sourcePath = path;
+  }
+
+  get type() {
+    return this._type;
   }
 
   _generateRecord(options) {
@@ -160,6 +151,196 @@ class InterfaceData {
   _getFlagStatus(root) {
     const attribute = this._getExtendedAttribute(root, 'RuntimeEnabled')
     return global.__Flags.getHighestResolvedStatus(attribute);
+  }
+
+  _isBurnable(member, options = {
+    includeExperimental: this._includeExperimental,
+    includeOriginTrials: this._includeOriginTrials}) {
+    const status = this._getFlagStatus(member);
+    switch (status) {
+      case 'test':
+        return false;
+      case 'experimental':
+        return options.includeExperimental;
+      case 'origintrial':
+        return options.includeOriginTrials;
+      case 'stable':
+        return true;
+      case NO_FLAG:
+        return true;
+      default:
+        throw new IDLFlagError(`Unrecognized status value: ${status}.`);
+    }
+  }
+
+  _shouldBurn(member) {
+    if (!this._isBurnable(member)) { return false; }
+    if (member.stringifier) { return false; }
+    if (member.deleter) { return false; }
+    return true;
+  }
+
+  get burnable() {
+    return this._isBurnable(this._sourceData);
+  }
+
+  get constants() {
+    let returns = this._sourceData.members.filter(m => {
+      if (!m.type === 'const') { return false; }
+      if (this._isBurnable(m)) { return true; }
+    });
+    if (returns.length === 0) { return null; }
+    return returns;
+  }
+
+  get flagged() {
+    const flag = this._getFlagStatus(this._sourceData);
+    switch (flag) {
+      case ('stable'):
+        return false;
+      case (NO_FLAG):
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  getFlag(member = this._sourceData) {
+    return this._getFlagStatus(member);
+  }
+
+  get key() {
+    let keys = this.keys;
+    return keys[0];
+  }
+
+  get keys() {
+    return this._getIdentifiers('.');
+  }
+
+  getkeys(stableOnly = false) {
+    return this._getIdentifiers('.', { stableOnly: stableOnly });
+  }
+
+  get name() {
+    return this._sourceData.name;
+  }
+
+  get originTrial() {
+    const flag = this._getFlagStatus(this._sourceData);
+    switch (flag) {
+      case ('stable'):
+        return false;
+      case (NO_FLAG):
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  getSecureContext(member = this._sourceData) {
+    if (this._getExtendedAttribute(this._sourceData, 'SecureContext')) {
+      return true;
+    }
+    return false;
+  }
+
+  writeKeys(keyFile) {
+    const keys = this.getkeys(true);
+    const keyList = keys.join('\n');
+    fs.appendFileSync(keyFile, keyList);
+  }
+
+  getBurnRecords() {
+    let records = [];
+    // Get an interface record.
+    // We wouldn't be here if interface was not burnable.
+    let options = {
+      idlData: this._sourceData,
+      key: this._sourceData.name
+    }
+    records.push(this._generateRecord(options));
+    // Get a constructor record.
+    if (this.hasConstructor) {
+      if (this._isBurnable(this.constructorBranch)) {
+        options.key = `${this._sourceData.name}.${this._sourceData.name}`;
+        options.idlData = this.constructorBranch;
+        records.push(this._generateRecord(options));
+      }
+    }
+    // Get member records.
+    if (this._sourceData.members) {
+      this._sourceData.members.forEach(m => {
+        if (this._shouldBurn(m)) {
+          options.idlData = m;
+          let name = this._resolveMemberName(m);
+          if (SYMBOLS.hasOwnProperty(name)) {
+            SYMBOLS[name].forEach(i => {
+              options.key = `${this._sourceData.name}.${i}`;
+              records.push(this._generateRecord(options));
+            })
+          } else if (name === 'what') {
+            // Do nothing.
+          } else {
+            options.key = `${this._sourceData.name}.${name}`;
+            records.push(this._generateRecord(options));
+          }
+        }
+      })
+    }
+    return records;
+  }
+
+  _isFlagged(searchRoot) {
+    if (this._getExtendedAttribute(searchRoot, 'RuntimeEnabled')) {
+      return true;
+    }
+    return false;
+  }
+
+  _isOriginTrial(searchRoot) {
+    if (this._getExtendedAttribute(searchRoot, 'OriginTrialEnabled')) {
+      return true;
+    }
+    return false;
+  }
+}
+
+class CallbackData extends IDLData {
+  constructor(source, options = {}) {
+    super(source, options);
+  }
+}
+
+class InterfaceData extends IDLData {
+  constructor(source, options = {}) {
+    super(source, options);
+  }
+
+  _loadTree(sourceFile) {
+    this._sourceContents = utils.getIDLFile(sourceFile.path());
+    let tree = webidl2.parse(this._sourceContents);
+    let msg;
+    for (let t of tree) {
+      switch (t.type) {
+        case 'eof':
+          break;
+        case 'interface':
+          this._storeTree(t);
+          break;
+        default:
+          msg = `${t.type},${sourceFile.path()},The type contained in this file is not currently processible.`;
+          if (global.__logger) {
+            global.__logger.info(msg);
+          }
+          break;
+      }
+      if (this._sourceData) { return; }
+    }
+    if (!this._sourceData) {
+      const msg = `The ${sourceFile.path()} file is invalid or does not contain interface data.`;
+      throw new IDLError(msg);
+    }
   }
 
   _getIdentifiers(separator, options = { stableOnly: false }) {
@@ -227,26 +408,6 @@ class InterfaceData {
     throw new Error('Cannot find operation key.');
   }
 
-  _isBurnable(member, options = {
-    includeExperimental: this._includeExperimental,
-    includeOriginTrials: this._includeOriginTrials}) {
-    const status = this._getFlagStatus(member);
-    switch (status) {
-      case 'test':
-        return false;
-      case 'experimental':
-        return options.includeExperimental;
-      case 'origintrial':
-        return options.includeOriginTrials;
-      case 'stable':
-        return true;
-      case NO_FLAG:
-        return true;
-      default:
-        throw new IDLFlagError(`Unrecognized status value: ${status}.`);
-    }
-  }
-
   _resolveMemberName(member) {
     switch (member.type) {
       case 'operation':
@@ -268,26 +429,6 @@ class InterfaceData {
       default:
         return 'what';
     }
-  }
-
-  _shouldBurn(member) {
-    if (!this._isBurnable(member)) { return false; }
-    if (member.stringifier) { return false; }
-    if (member.deleter) { return false; }
-    return true;
-  }
-
-  get burnable() {
-    return this._isBurnable(this._sourceData);
-  }
-
-  get constants() {
-    let returns = this._sourceData.members.filter(m => {
-      if (!m.type === 'const') { return false; }
-      if (this._isBurnable(m)) { return true; }
-    });
-    if (returns.length === 0) { return null; }
-    return returns;
   }
 
   get constructorBranch() {
@@ -319,22 +460,6 @@ class InterfaceData {
     return returns;
   }
 
-  get flagged() {
-    const flag = this._getFlagStatus(this._sourceData);
-    switch (flag) {
-      case ('stable'):
-        return false;
-      case (NO_FLAG):
-        return false;
-      default:
-        return true;
-    }
-  }
-
-  getFlag(member = this._sourceData) {
-    return this._getFlagStatus(member);
-  }
-
   get iterable() {
     return this._sourceData.members.some(m => {
       return m.type === 'iterable';
@@ -357,15 +482,6 @@ class InterfaceData {
         throw e;
       }
     }
-  }
-
-  get keys() {
-    return this._getIdentifiers('.');
-  }
-
-
-  getkeys(stableOnly = false) {
-    return this._getIdentifiers('.', { stableOnly: stableOnly });
   }
 
   get maplike() {
@@ -395,26 +511,12 @@ class InterfaceData {
 
   get methods() {
     let returns = this._sourceData.members.filter(item => {
+      if (item.getter) { return false; }
+      if (item.setter) { return false; }
       return item.type === 'operation';
     });
     if (returns.length === 0) { return null; }
     return returns;
-  }
-
-  get name() {
-    return this._sourceData.name;
-  }
-
-  get originTrial() {
-    const flag = this._getFlagStatus(this._sourceData);
-    switch (flag) {
-      case ('stable'):
-        return false;
-      case (NO_FLAG):
-        return false;
-      default:
-        return true;
-    }
   }
 
   get properties() {
@@ -423,13 +525,6 @@ class InterfaceData {
     });
     if (returns.length === 0) { return null; }
     return returns;
-  }
-
-  getSecureContext(member = this._sourceData) {
-    if (this._getExtendedAttribute(this._sourceData, 'SecureContext')) {
-      return true;
-    }
-    return false;
   }
 
   get setters() {
@@ -462,69 +557,18 @@ class InterfaceData {
   get stringifier() {
     throw new IDLError('Time to deal with stringifier.')
   }
-
-  writeKeys(keyFile) {
-    const keys = this.getkeys(true);
-    const keyList = keys.join('\n');
-    fs.appendFileSync(keyFile, keyList);
-  }
-
-  getBurnRecords() {
-    let records = [];
-    // Get an interface record.
-    // We wouldn't be here if interface was not burnable.
-    let options = {
-      idlData: this._sourceData,
-      key: this._sourceData.name
-    }
-    records.push(this._generateRecord(options));
-    // Get a constructor record.
-    if (this.hasConstructor) {
-      if (this._isBurnable(this.constructorBranch)) {
-        options.key = `${this._sourceData.name}.${this._sourceData.name}`;
-        options.idlData = this.constructorBranch;
-        records.push(this._generateRecord(options));
-      }
-    }
-    // Get member records.
-    if (this._sourceData.members) {
-      this._sourceData.members.forEach(m => {
-        if (this._shouldBurn(m)) {
-          options.idlData = m;
-          let name = this._resolveMemberName(m);
-          if (SYMBOLS.hasOwnProperty(name)) {
-            SYMBOLS[name].forEach(i => {
-              options.key = `${this._sourceData.name}.${i}`;
-              records.push(this._generateRecord(options));
-            })
-          } else if (name === 'what') {
-            // Do nothing.
-          } else {
-            options.key = `${this._sourceData.name}.${name}`;
-            records.push(this._generateRecord(options));
-          }
-        }
-      })
-    }
-    return records;
-  }
-
-  _isFlagged(searchRoot) {
-    if (this._getExtendedAttribute(searchRoot, 'RuntimeEnabled')) {
-      return true;
-    }
-    return false;
-  }
-
-  _isOriginTrial(searchRoot) {
-    if (this._getExtendedAttribute(searchRoot, 'OriginTrialEnabled')) {
-      return true;
-    }
-    return false;
-  }
 }
 
+const TREE_TYPES = Object.freeze({
+  callback: CallbackData,
+  dictionary: undefined,
+  enum: undefined,
+  interface: InterfaceData
+});
+
+module.exports.CallbackData = CallbackData;
 module.exports.EMPTY_BCD_DATA = EMPTY_BCD_DATA;
 module.exports.EMPTY_BURN_DATA = EMPTY_BURN_DATA;
 module.exports.IDLFlagError = IDLFlagError;
 module.exports.InterfaceData = InterfaceData;
+module.exports.TREE_TYPES = TREE_TYPES;
