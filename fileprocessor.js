@@ -57,3 +57,4 @@ class FileProcesser {
 }
 
 module.exports.FileProcesser = FileProcesser;
+module.exports.METAFILE = METAFILE;
