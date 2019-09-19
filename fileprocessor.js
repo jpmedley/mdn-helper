@@ -33,7 +33,7 @@ class FileProcesser {
     this._loadTree();
   }
 
-  process(options) {
+  process(options = {}) {
     for (let t of this._sourceTree) {
       if (t.type === 'eof') { continue; }
       let im = Object.assign({}, METAFILE);
@@ -56,5 +56,5 @@ class FileProcesser {
   }
 }
 
-module.exports.FileProcesser = FileProcesser;
+module.exports.FileProcessor = FileProcesser;
 module.exports.METAFILE = METAFILE;

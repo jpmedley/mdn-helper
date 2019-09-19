@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 
-const { FileProcesser } = require('../fileprocessor.js');
+const { FileProcessor } = require('../fileprocessor.js');
 const { InterfaceSet } = require('../interfaceset.js');
 
 const IDL_FILES = './test/files/';
@@ -28,7 +28,7 @@ describe('FileProcessor', () => {
     it('Confirms that the four interface data objects are in the resulting fileset', ()=> {
       const is = new InterfaceSet();
       const testFile = `${IDL_FILES}multiple-structures.idl`;
-      let fp = new FileProcesser(testFile, is);
+      let fp = new FileProcessor(testFile, is);
       fp.process({});
       assert.equal(is.count, 4);
     });

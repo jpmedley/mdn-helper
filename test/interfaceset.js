@@ -37,7 +37,7 @@ describe('InterfaceSet', () => {
       mf.type = 'interface';
       INTERFACE_SET.add(mf);
     }
-  })
+  });
 
   describe('findMatching', () => {
     it('Confirms return of matching items', ()=> {

@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { FileProcesser } = require('./fileprocessor.js')
+const { FileProcessor } = require('./fileprocessor.js')
 const fs = require('fs');
 const { InterfaceSet } = require('./interfaceset.js');
 
@@ -40,7 +40,7 @@ class DirectoryManager {
         if (!contents[c].name.endsWith('.idl')) { continue; }
         if (contents[c].name.startsWith('test_')) { continue; }
         try {
-          let fp = new FileProcesser(`${root}${contents[c].name}`, this._interfaceSet);
+          let fp = new FileProcessor(`${root}${contents[c].name}`, this._interfaceSet);
           fp.process(this._options);
         } catch (error) {      
           // console.log(`A webidl2 bug currently prevents processing of ${root}${contents[c].name}.`)
