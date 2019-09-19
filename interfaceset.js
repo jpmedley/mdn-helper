@@ -14,9 +14,6 @@
 
 'use strict';
 
-const assert = require('assert');
-const fs = require('fs');
-
 const { BCD } = require('./bcd.js');
 
 global._bcd = new BCD();
@@ -40,13 +37,16 @@ class InterfaceSet {
     const matches = [];
     const lcName = name.toLowerCase();
     for (let i of this._interfaces) {
-      // if (!i.keys) { continue; }
       let lcKey = i.keys[0].toLowerCase();
       if (lcKey.includes(lcName)) {
         matches.push(i);
       }
     }
     return matches;
+  }
+
+  get count() {
+    return this._interfaces.length;
   }
 
   // get keys() {
