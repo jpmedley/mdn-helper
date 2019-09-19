@@ -16,91 +16,64 @@
 
 const assert = require('assert');
 const fs = require('fs');
+const utils = require('../utils.js');
+const webidl2 = require('webidl2');
 
-const { BCD } = require('./bcd.js');
-
+const { BCD } = require('../bcd.js');
 const { InterfaceData, IDLFlagError } = require('../interfacedata.js');
+
+const BURNABLE = './test/files/burn-records.idl';
+const CONSTRUCTOR = './test/files/constructor-noarguments.idl';
+const EXPERIMENTAL = './test/files/interface-runtimeenabled.idl';
+const METHODS = './test/files/methods.idl';
+const NO_FLAGS = './test/files/interface-noinherits.idl';
+const ORIGIN_TRIAL = './test/files/interface-origintrial.idl';
+const PING_EXISTS = './test/files/ping-exists.idl';
+const PING_MISSING = './test/files/ping-missing.idl';
+const PROPERTIES = './test/files/properties.idl';
+const SECURE_CONTEXT = './test/files/interface-securecontext.idl';
+const STABLE = './test/files/interface-rte-stable.idl';
+const TEST = './test/files/interface-rte-test.idl';
+const UNFAMILLIAR = './test/files/interface-rte-medley.idl';
 
 global._bcd = new BCD();
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
-const BURNABLE = {
-  name: 'burnable',
-  path: function() { return './test/files/burn-records.idl'; }
-}
-const CONSTRUCTOR = {
-  name: 'constructor',
-  path: function() { return './test/files/constructor-noarguments.idl'; }
-}
-const EXPERIMENTAL = {
-  name: 'flagged',
-  path: function() { return './test/files/interface-runtimeenabled.idl'; }
-}
-const METHODS = {
-  name: 'methods',
-  path: function() { return './test/files/methods.idl'; }
-}
-const NO_FLAGS = {
-  name: 'noFlags',
-  path: function() { return './test/files/interface-noinherits.idl'; }
-}
-const ORIGIN_TRIAL = {
-  name: 'originTrial',
-  path: function() { return './test/files/interface-origintrial.idl'; }
-}
-const PING_EXISTS = {
-  name: 'pingExists',
-  path: function() { return './test/files/ping-exists.idl'; }
-}
-const PING_MISSING = {
-  name: 'pingMissing',
-  path: function() { return './test/files/ping-missing.idl'; }
-}
-const PROPERTIES = {
-  name: 'properties',
-  path: function() { return './test/files/properties.idl'; }
-}
-const SECURE_CONTEXT = {
-  name: 'secureContext',
-  path: function() { return './test/files/interface-securecontext.idl'; }
-}
-const STABLE = {
-  name: 'stable',
-  path: function() { return './test/files/interface-rte-stable.idl'; }
-}
-const TEST = {
-  name: 'test',
-  path: function() { return './test/files/interface-rte-test.idl'; }
-}
-const UNFAMILLIAR = {
-  name: 'unfamilliarFlag',
-  path: function() { return './test/files/interface-rte-medley.idl'; }
+function loadTree(sourcePath) {
+  const contents = utils.getIDLFile(sourcePath);
+  return webidl2.parse(contents);
 }
 
 describe('InterfaceData', () => {
   describe('burnable', () => {
     it('Confirms that a test interface is not burnable', () => {
-      const id = new InterfaceData(TEST, {});
+      const source = loadTree(TEST);
+      const id = new InterfaceData(source[0], {});
       assert.equal(id.burnable, false);
     });
     it('Confirms that an interface with an experimental flag is burnable', () => {
-      const id = new InterfaceData(EXPERIMENTAL, { experimental: true });
+      const source = loadTree(EXPERIMENTAL);
+      const id = new InterfaceData(source[0], { experimental: true });
       assert.ok(id.burnable);
     });
     it('Confirms that an interface with an experimental flag is NOT burnable', () => {
-      const id = new InterfaceData(EXPERIMENTAL, { experimental: false });
+      const source = loadTree(EXPERIMENTAL);
+      const id = new InterfaceData(source[0], { experimental: false });
       assert.equal(id.burnable, false);
     });
     it('Confirms that an interface with a stable flag is burnable when passed experimental:false ', () => {
-      const id = new InterfaceData(STABLE, { experimental: false });
+      const source = loadTree(STABLE);
+      const id = new InterfaceData(source[0], { experimental: false });
       assert.ok(id.burnable);
     });
     it('Confirms that an interface with a stable flag is burnable when passed experimental:true ', () => {
-      const id = new InterfaceData(STABLE, { experimental: true });
+      const source = loadTree(STABLE);
+      const id = new InterfaceData(source[0], { experimental: true });
       assert.ok(id.burnable);
     });
     it('Throws when an unrecognized status is found in flags', () => {
-      const id = new InterfaceData(UNFAMILLIAR, { experimental: true });
+      const source = loadTree(UNFAMILLIAR);
+      const id = new InterfaceData(source[0], { experimental: true });
       assert.throws(
         () => { return id.burnable }, IDLFlagError
       )
@@ -109,19 +82,22 @@ describe('InterfaceData', () => {
 
   describe('flagged', () => {
     it('Confirms that the interface is behind a flag', () => {
-      const id = new InterfaceData(EXPERIMENTAL, {
+      const source = loadTree(EXPERIMENTAL);
+      const id = new InterfaceData(source[0], {
         experimental: true
       });
       assert.ok(id.flagged);
     });
     it('Returns false when a whole interface is not behind the experimental flag', () => {
-      const id = new InterfaceData(NO_FLAGS, {
+      const source = loadTree(NO_FLAGS);
+      const id = new InterfaceData(source[0], {
         experimental: true
       });
       assert.equal(id.flagged, false);
     });
     it('Returns false when the flag file value is "stable".', () => {
-      const id = new InterfaceData(STABLE, {
+      const source = loadTree(STABLE);
+      const id = new InterfaceData(source[0], {
         experimental: true
       });
       assert.equal(id.flagged, false);
@@ -130,7 +106,8 @@ describe('InterfaceData', () => {
 
   describe('getBurnRecords()', () => {
     it('Cofirms that a burn record for a constructor has the type "constructor"', () => {
-      const id = new InterfaceData(CONSTRUCTOR, {});
+      const source = loadTree(CONSTRUCTOR);
+      const id = new InterfaceData(source[0], {});
       const burnRecords = id.getBurnRecords();
       const constRecord = burnRecords.find(e => {
         return e.key === 'ConstructorNoArgs.ConstructorNoArgs';
@@ -141,13 +118,15 @@ describe('InterfaceData', () => {
 
   describe('getFlag()', () => {
     it('Returns experimental status for an interface when no argument is passed', () => {
-      const flagged = new InterfaceData(EXPERIMENTAL, {
+      const source = loadTree(EXPERIMENTAL);
+      const flagged = new InterfaceData(source[0], {
         experimental: true
       });
       assert.equal(flagged.getFlag(), 'experimental');
     });
     it('Returns stable status for an interface when no argument is passed', () => {
-      const stable = new InterfaceData(STABLE, {
+      const source = loadTree(STABLE);
+      const stable = new InterfaceData(source[0], {
         experimental: true
       });
       assert.equal(stable.getFlag(), 'stable');
@@ -156,7 +135,8 @@ describe('InterfaceData', () => {
 
   describe('getkeys()', () => {
     //To Do: Need separate tests for iterable, maplike, read-only maplike, and setlike
-    const id = new InterfaceData(BURNABLE, {
+    const source = loadTree(BURNABLE);
+    const id = new InterfaceData(source[0], {
       experimental: true
     });
     it('Confirms that the returned keys contain all members', () => {
@@ -198,18 +178,21 @@ describe('InterfaceData', () => {
 
   describe('getSecureContext', () => {
     it('Returns true when the selected interface requires a secure context', () => {
-      const sc = new InterfaceData(SECURE_CONTEXT, {});
+      const source = loadTree(SECURE_CONTEXT);
+      const sc = new InterfaceData(source[0]);
       assert.ok(sc.getSecureContext());
     });
     it('Returns false when the selected interface does not require a secure context', () => {
-      const sc = new InterfaceData(NO_FLAGS, {});
+      const source = loadTree(NO_FLAGS);
+      const sc = new InterfaceData(source[0]);
       assert.equal(sc.getSecureContext(), false);
     });
   });
 
   describe('members', () => {
     it('Confirms that members returns all methods and properties', () => {
-      const m = new InterfaceData(BURNABLE, {});
+      const source = loadTree(BURNABLE);
+      const m = new InterfaceData(source[0]);
       const members = m.members;
       const count = ((keys) => {
         let count = 0;
@@ -224,7 +207,8 @@ describe('InterfaceData', () => {
 
   describe('methods', () => {
     it('Confirms that operations (methods) are correctly read from the IDL data', () => {
-      const m = new InterfaceData(METHODS, {});
+      const source = loadTree(METHODS);
+      const m = new InterfaceData(source[0]);
       const methods = m.methods;
       assert.equal(methods[0].body.name.value, 'check');
     });
@@ -232,13 +216,15 @@ describe('InterfaceData', () => {
 
   describe('originTrial', () => {
     it('Returns true when a whole interface is in an origin trial', () => {
-      const id = new InterfaceData(ORIGIN_TRIAL, {
+      const source = loadTree(ORIGIN_TRIAL);
+      const id = new InterfaceData(source[0], {
         originTrial: true
       });
       assert.ok(id.originTrial);
     });
     it('returns false when a whole interface is not in an origin trial', () => {
-      const id = new InterfaceData(NO_FLAGS, {
+      const source = loadTree(NO_FLAGS);
+      const id = new InterfaceData(source[0], {
         originTrial: true
       });
       assert.equal(id.originTrial, false);
@@ -247,7 +233,8 @@ describe('InterfaceData', () => {
 
   describe('ping()', () => {
     it('Confirms the existence of MDN pages for provided URLs', () => {
-      const id = new InterfaceData(PING_EXISTS, {});
+      const source = loadTree(PING_EXISTS);
+      const id = new InterfaceData(source[0]);
       id.ping(false)
       .then(burnRecords => {
         assert.ok(burnRecords[0].mdn_exists);
@@ -255,7 +242,8 @@ describe('InterfaceData', () => {
     });
 
     it('Refutes the existence of MDN pages for provided URLs', () => {
-      const id = new InterfaceData(PING_MISSING, {});
+      const source = loadTree(PING_MISSING);
+      const id = new InterfaceData(source[0]);
       id.ping(false)
       .then(burnRecords => {
         assert.equal(burnRecords[0].mdn_exists, false);
@@ -265,7 +253,8 @@ describe('InterfaceData', () => {
 
   describe('properties', () => {
     it('Confirms that attributes (properties) are correctly read from the IDL data', () => {
-      const p = new InterfaceData(PROPERTIES, {});
+      const source = loadTree(PROPERTIES);
+      const p = new InterfaceData(source[0]);
       const properties = p.properties;
       assert.equal(properties[0].name, 'status');
     })
@@ -273,7 +262,8 @@ describe('InterfaceData', () => {
 
   describe('signatures', () => {
     it('Returns true when the correct number of constructors is returned', () => {
-      const id = new InterfaceData(BURNABLE, {});
+      const source = loadTree(BURNABLE);
+      const id = new InterfaceData(source[0]);
       const signatures = id.signatures;
       assert.equal(signatures.length, 2);
     });
@@ -281,12 +271,12 @@ describe('InterfaceData', () => {
 
   describe('writeKeys()', () => {
     it('Returns true when the save file contains all unflagged keys', function() {
-      const id = new InterfaceData(BURNABLE, {
-        experimental: false,
-        originTrial: false
-      });
       const keyFile = './keyfile.txt';
-      if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile) }
+      if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile); }
+      const source = loadTree(BURNABLE);
+
+
+      const id = new InterfaceData(source[0]);
       id.writeKeys(keyFile);
       const keyFileContents = fs.readFileSync(keyFile).toString();
       const keys = keyFileContents.split('\n');

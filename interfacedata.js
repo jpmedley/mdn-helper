@@ -75,14 +75,18 @@ class IDLFlagError extends IDLAttributeError {
 }
 
 class IDLData {
-  constructor(source, options = {}) {
+  constructor(sourceTree, options = {}) {
     this._sourcePath = options.sourcePath;
     this._includeExperimental = (options.experimental? options.experimental: false);
     this._includeOriginTrials = (options.originTrial? options.originTrial: false);
-    this._storeTree(source);
+    this._storeTree(sourceTree);
   }
 
   _storeTree(source) {
+    // if ((!typeof source == 'object') || (!source.type)) {
+    //   let msg = 'The passed data source does not appear to be an IDL tree.';
+    //   throw new TypeError(msg);
+    // }
     this._sourceData = source;
     this._type = source.type;
   }
@@ -310,11 +314,22 @@ class CallbackData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
   }
+
+  _getIdentifiers(separator, options = { stableOnly: false }) {
+    let identifiers = [];
+    identifiers.push(this._sourceData.name);
+    return identifiers;
+  }
 }
 
 class DictionaryData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+  }
+
+  _getIdentifiers(separator, options = { stableOnly: false }) {
+    const msg = 'Time to deal with Dictionary.';
+    throw new Error(msg);
   }
 }
 
@@ -322,37 +337,20 @@ class EnumData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
   }
+
+  _getIdentifiers(separator, options = { stableOnly: false }) {
+    let identifiers = [];
+    identifiers.push(this._sourceData.name);
+    for (let v of this._sourceData.values) {
+      identifiers.push(`${this._sourceData.name}${separator}${v.value}`);
+    }
+    return identifiers;
+  }
 }
 
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
-  }
-
-  _loadTree(sourceFile) {
-    this._sourceContents = utils.getIDLFile(sourceFile.path());
-    let tree = webidl2.parse(this._sourceContents);
-    let msg;
-    for (let t of tree) {
-      switch (t.type) {
-        case 'eof':
-          break;
-        case 'interface':
-          this._storeTree(t);
-          break;
-        default:
-          msg = `${t.type},${sourceFile.path()},The type contained in this file is not currently processible.`;
-          if (global.__logger) {
-            global.__logger.info(msg);
-          }
-          break;
-      }
-      if (this._sourceData) { return; }
-    }
-    if (!this._sourceData) {
-      const msg = `The ${sourceFile.path()} file is invalid or does not contain interface data.`;
-      throw new IDLError(msg);
-    }
   }
 
   _getIdentifiers(separator, options = { stableOnly: false }) {
