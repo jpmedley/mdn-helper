@@ -183,10 +183,6 @@ class IDLData {
     return true;
   }
 
-  get burnable() {
-    return this._isBurnable(this._sourceData);
-  }
-
   get constants() {
     let returns = this._sourceData.members.filter(m => {
       if (!m.type === 'const') { return false; }

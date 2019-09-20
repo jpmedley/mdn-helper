@@ -45,40 +45,6 @@ function loadTree(sourcePath) {
 }
 
 describe('InterfaceData', () => {
-  describe('burnable', () => {
-    it('Confirms that a test interface is not burnable', () => {
-      const source = loadTree(TEST);
-      const id = new InterfaceData(source[0]);
-      assert.equal(id.burnable, false);
-    });
-    it('Confirms that an interface with an experimental flag is burnable', () => {
-      const source = loadTree(EXPERIMENTAL);
-      const id = new InterfaceData(source[0]);
-      assert.ok(id.burnable);
-    });
-    it('Confirms that an interface with an experimental flag is NOT burnable', () => {
-      const source = loadTree(EXPERIMENTAL);
-      const id = new InterfaceData(source[0]);
-      assert.equal(id.burnable, false);
-    });
-    it('Confirms that an interface with a stable flag is burnable when passed experimental:false ', () => {
-      const source = loadTree(STABLE);
-      const id = new InterfaceData(source[0]);
-      assert.ok(id.burnable);
-    });
-    it('Confirms that an interface with a stable flag is burnable when passed experimental:true ', () => {
-      const source = loadTree(STABLE);
-      const id = new InterfaceData(source[0]);
-      assert.ok(id.burnable);
-    });
-    it('Throws when an unrecognized status is found in flags', () => {
-      const source = loadTree(UNFAMILLIAR);
-      const id = new InterfaceData(source[0]);
-      assert.throws(
-        () => { return id.burnable }, IDLFlagError
-      )
-    })
-  });
 
   describe('flagged', () => {
     it('Confirms that the interface is behind a flag', () => {
