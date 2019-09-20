@@ -77,8 +77,8 @@ class IDLFlagError extends IDLAttributeError {
 class IDLData {
   constructor(sourceTree, options = {}) {
     this._sourcePath = options.sourcePath;
-    this._includeExperimental = (options.experimental? options.experimental: false);
-    this._includeOriginTrials = (options.originTrial? options.originTrial: false);
+    // this._includeExperimental = (options.experimental? options.experimental: false);
+    // this._includeOriginTrials = (options.originTrial? options.originTrial: false);
     this._storeTree(sourceTree);
   }
 
@@ -153,9 +153,12 @@ class IDLData {
     return global.__Flags.getHighestResolvedStatus(attribute);
   }
 
+  // _isBurnable(member, options = {
+  //   includeExperimental: this._includeExperimental,
+  //   includeOriginTrials: this._includeOriginTrials}) {
   _isBurnable(member, options = {
-    includeExperimental: this._includeExperimental,
-    includeOriginTrials: this._includeOriginTrials}) {
+    includeExperimental: false,
+    includeOriginTrials: false }) {
     const status = this._getFlagStatus(member);
     switch (status) {
       case 'test':

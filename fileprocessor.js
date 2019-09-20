@@ -33,7 +33,8 @@ class FileProcesser {
     this._loadTree();
   }
 
-  process(options = {}) {
+  // process(options = {}) {
+  process() {
     for (let t of this._sourceTree) {
       if (t.type === 'eof') { continue; }
       let im = Object.assign({}, METAFILE);
@@ -41,8 +42,9 @@ class FileProcesser {
       let className = (t.type.split(' '))[0];
       im.type = TREE_TYPES[className];
 
-      options.sourcePath = this._sourceFile;
-      let interfaceInstance = new im.type(t, options);
+      // options.sourcePath = this._sourceFile;
+      // let interfaceInstance = new im.type(t, options);
+      let interfaceInstance = new im.type(t, { sourcePath: this._sourceFile });
       im.keys = [];
       im.keys.push(...interfaceInstance.keys);
       im.key = im.keys[0];

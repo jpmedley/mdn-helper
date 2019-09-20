@@ -48,32 +48,32 @@ describe('InterfaceData', () => {
   describe('burnable', () => {
     it('Confirms that a test interface is not burnable', () => {
       const source = loadTree(TEST);
-      const id = new InterfaceData(source[0], {});
+      const id = new InterfaceData(source[0]);
       assert.equal(id.burnable, false);
     });
     it('Confirms that an interface with an experimental flag is burnable', () => {
       const source = loadTree(EXPERIMENTAL);
-      const id = new InterfaceData(source[0], { experimental: true });
+      const id = new InterfaceData(source[0]);
       assert.ok(id.burnable);
     });
     it('Confirms that an interface with an experimental flag is NOT burnable', () => {
       const source = loadTree(EXPERIMENTAL);
-      const id = new InterfaceData(source[0], { experimental: false });
+      const id = new InterfaceData(source[0]);
       assert.equal(id.burnable, false);
     });
     it('Confirms that an interface with a stable flag is burnable when passed experimental:false ', () => {
       const source = loadTree(STABLE);
-      const id = new InterfaceData(source[0], { experimental: false });
+      const id = new InterfaceData(source[0]);
       assert.ok(id.burnable);
     });
     it('Confirms that an interface with a stable flag is burnable when passed experimental:true ', () => {
       const source = loadTree(STABLE);
-      const id = new InterfaceData(source[0], { experimental: true });
+      const id = new InterfaceData(source[0]);
       assert.ok(id.burnable);
     });
     it('Throws when an unrecognized status is found in flags', () => {
       const source = loadTree(UNFAMILLIAR);
-      const id = new InterfaceData(source[0], { experimental: true });
+      const id = new InterfaceData(source[0]);
       assert.throws(
         () => { return id.burnable }, IDLFlagError
       )
@@ -83,23 +83,17 @@ describe('InterfaceData', () => {
   describe('flagged', () => {
     it('Confirms that the interface is behind a flag', () => {
       const source = loadTree(EXPERIMENTAL);
-      const id = new InterfaceData(source[0], {
-        experimental: true
-      });
+      const id = new InterfaceData(source[0]);
       assert.ok(id.flagged);
     });
     it('Returns false when a whole interface is not behind the experimental flag', () => {
       const source = loadTree(NO_FLAGS);
-      const id = new InterfaceData(source[0], {
-        experimental: true
-      });
+      const id = new InterfaceData(source[0]);
       assert.equal(id.flagged, false);
     });
     it('Returns false when the flag file value is "stable".', () => {
       const source = loadTree(STABLE);
-      const id = new InterfaceData(source[0], {
-        experimental: true
-      });
+      const id = new InterfaceData(source[0]);
       assert.equal(id.flagged, false);
     });
   });
@@ -107,7 +101,7 @@ describe('InterfaceData', () => {
   describe('getBurnRecords()', () => {
     it('Cofirms that a burn record for a constructor has the type "constructor"', () => {
       const source = loadTree(CONSTRUCTOR);
-      const id = new InterfaceData(source[0], {});
+      const id = new InterfaceData(source[0]);
       const burnRecords = id.getBurnRecords();
       const constRecord = burnRecords.find(e => {
         return e.key === 'ConstructorNoArgs.ConstructorNoArgs';
@@ -119,16 +113,12 @@ describe('InterfaceData', () => {
   describe('getFlag()', () => {
     it('Returns experimental status for an interface when no argument is passed', () => {
       const source = loadTree(EXPERIMENTAL);
-      const flagged = new InterfaceData(source[0], {
-        experimental: true
-      });
+      const flagged = new InterfaceData(source[0]);
       assert.equal(flagged.getFlag(), 'experimental');
     });
     it('Returns stable status for an interface when no argument is passed', () => {
       const source = loadTree(STABLE);
-      const stable = new InterfaceData(source[0], {
-        experimental: true
-      });
+      const stable = new InterfaceData(source[0]);
       assert.equal(stable.getFlag(), 'stable');
     });
   });
@@ -136,9 +126,7 @@ describe('InterfaceData', () => {
   describe('getkeys()', () => {
     //To Do: Need separate tests for iterable, maplike, read-only maplike, and setlike
     const source = loadTree(BURNABLE);
-    const id = new InterfaceData(source[0], {
-      experimental: true
-    });
+    const id = new InterfaceData(source[0]);
     it('Confirms that the returned keys contain all members', () => {
       assert.equal(id.getkeys().length, 8);
     });
@@ -217,16 +205,12 @@ describe('InterfaceData', () => {
   describe('originTrial', () => {
     it('Returns true when a whole interface is in an origin trial', () => {
       const source = loadTree(ORIGIN_TRIAL);
-      const id = new InterfaceData(source[0], {
-        originTrial: true
-      });
+      const id = new InterfaceData(source[0]);
       assert.ok(id.originTrial);
     });
     it('returns false when a whole interface is not in an origin trial', () => {
       const source = loadTree(NO_FLAGS);
-      const id = new InterfaceData(source[0], {
-        originTrial: true
-      });
+      const id = new InterfaceData(source[0]);
       assert.equal(id.originTrial, false);
     });
   });

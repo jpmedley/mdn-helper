@@ -22,9 +22,9 @@ const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 
 class DirectoryManager {
   constructor(rootDirectory = 'idl/', options) {
-    options._includeExperimental = (options.experimental? options.experimental: false);
-    options._includeOriginTrial = (options.originTrial? options.originTrial: false);
-    this._options = options;
+    // options._includeExperimental = (options.experimental? options.experimental: false);
+    // options._includeOriginTrial = (options.originTrial? options.originTrial: false);
+    // this._options = options;
     this._root = rootDirectory;
   }
 
@@ -39,7 +39,8 @@ class DirectoryManager {
         if (contents[c].name.startsWith('test_')) { continue; }
         try {
           let fp = new FileProcessor(`${root}${contents[c].name}`, this._interfaceSet);
-          fp.process(this._options);
+          // fp.process(this._options);
+          fp.process();
         } catch (error) {      
           // console.log(`A webidl2 bug currently prevents processing of ${root}${contents[c].name}.`)
         }
