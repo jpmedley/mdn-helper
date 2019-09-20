@@ -83,10 +83,6 @@ class IDLData {
   }
 
   _storeTree(source) {
-    // if ((!typeof source == 'object') || (!source.type)) {
-    //   let msg = 'The passed data source does not appear to be an IDL tree.';
-    //   throw new TypeError(msg);
-    // }
     this._sourceData = source;
     this._type = source.type;
   }

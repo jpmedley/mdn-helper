@@ -32,10 +32,6 @@ global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enable
 class _Finder {
   constructor(args) {
     this._processArguments(args)
-    // this.idlSet = new IDLFileSet('idl/', {
-    //   experimental: this._includeFlags,
-    //   originTrial: this._includeOriginTrials
-    // });
     let dm = new DirectoryManager('idl/', {
       experimental: this._includeFlags,
       originTrial: this._includeOriginTrials

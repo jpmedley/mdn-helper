@@ -21,7 +21,6 @@ global.__Flags = require('./flags.js').FlagStatus('./test/files/exp_flags.json5'
 
 const TYPES = ["interface", "interface mixin", "callback"];
 
-// class InterfaceCatalog {
 class InterfaceSet {
   constructor() {
     this._interfaces = [];

@@ -22,8 +22,6 @@ const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 
 class DirectoryManager {
   constructor(rootDirectory = 'idl/', options) {
-    // this._includeExperimental = (options.experimental? options.experimental: false);
-    // this._includeOriginTrial = (options.originTrial? options.originTrial: false);
     options._includeExperimental = (options.experimental? options.experimental: false);
     options._includeOriginTrial = (options.originTrial? options.originTrial: false);
     this._options = options;

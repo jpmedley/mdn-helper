@@ -46,5 +46,3 @@ describe('InterfaceSet', () => {
     });
   });
 });
-
-//= Object.assign({}, METAFILE);
