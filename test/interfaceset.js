@@ -16,6 +16,7 @@
 
 const assert = require('assert');
 
+const { DirectoryManager } = require('../directorymanager.js')
 const { InterfaceSet } = require('../interfaceset.js');
 const { METAFILE } = require('../fileprocessor.js');
 
@@ -28,21 +29,30 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 describe('InterfaceSet', () => {
 
   before(() => {
-    INTERFACE_SET = new InterfaceSet();
-    for (let i=0; i < 4; i++) {
-      let mf = Object.assign({}, METAFILE);
-      mf.path = 'one.idl';
-      mf.key = 'Widget';
-      mf.keys = ['Widget', 'Widget.method', 'method.property'];
-      mf.type = 'interface';
-      INTERFACE_SET.add(mf);
-    }
+    const dm = new DirectoryManager(IDL_FILES);
+    INTERFACE_SET = dm.interfaceSet;
   });
 
   describe('findMatching', () => {
     it('Confirms return of matching items', ()=> {
-      const matches = INTERFACE_SET.findMatching('get');
-      assert.equal(matches.length, 4);
+      const matches = INTERFACE_SET.findMatching('Burnable');
+      assert.equal(matches.length, 2);
+    });
+    it('Confirms flags returned', () => {
+      const matches = INTERFACE_SET.findMatching('InterfaceRTE2', true);
+      assert.equal(matches.length, 1);
+    });
+    it('Confirms flags not returned when not requested', () => {
+      const matches = INTERFACE_SET.findMatching('InterfaceRTE2', false);
+      assert.equal(matches.length, 0);
+    });
+    it('Confirms origin trials returned,', () => {
+      const matches = INTERFACE_SET.findMatching('InterfaceOT', false, true);
+      assert.equal(matches.length, 1);
+    });
+    it('Confirms origin trials not returned when not requested', () => {
+      const matches = INTERFACE_SET.findMatching('InterfaceOT', false, false);
+      assert.equal(matches.length, 0);
     });
   });
 });

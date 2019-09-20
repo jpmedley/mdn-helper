@@ -32,10 +32,7 @@ global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enable
 class _Finder {
   constructor(args) {
     this._processArguments(args)
-    let dm = new DirectoryManager('idl/', {
-      experimental: this._includeFlags,
-      originTrial: this._includeOriginTrials
-    });
+    let dm = new DirectoryManager('idl/');
     this._interfaces = dm.interfaceSet;
   }
 
@@ -59,7 +56,11 @@ class _Finder {
 
   _findInterfaces(interfacesNamed) {
     // const matches = this.idlSet.findMatching(interfacesNamed);
-    const matches = this._interfaces.findMatching(interfacesNamed);
+    const matches = this._interfaces.findMatching(
+      interfacesNamed,
+      this._includeFlags,
+      this._includeOriginTrials
+    );
     if (!matches.length) {
       console.log(NOTHING_FOUND);
       process.exit();

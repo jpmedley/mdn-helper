@@ -77,8 +77,6 @@ class IDLFlagError extends IDLAttributeError {
 class IDLData {
   constructor(sourceTree, options = {}) {
     this._sourcePath = options.sourcePath;
-    // this._includeExperimental = (options.experimental? options.experimental: false);
-    // this._includeOriginTrials = (options.originTrial? options.originTrial: false);
     this._storeTree(sourceTree);
   }
 
@@ -195,7 +193,9 @@ class IDLData {
   get flagged() {
     const flag = this._getFlagStatus(this._sourceData);
     switch (flag) {
-      case ('stable'):
+      case 'experimental':
+        return true;
+      case 'stable':
         return false;
       case (NO_FLAG):
         return false;

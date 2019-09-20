@@ -19,9 +19,11 @@ const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
 const METAFILE = Object.freeze({
+  flag: null,
   path: '',
   key: '',
   keys: null,
+  originTrial: null,
   type: ''
 });
 
@@ -48,6 +50,8 @@ class FileProcesser {
       im.keys = [];
       im.keys.push(...interfaceInstance.keys);
       im.key = im.keys[0];
+      im.flag = interfaceInstance.flagged;
+      im.originTrial = interfaceInstance.originTrial;
       this._interfaces.add(im);
     }
   }

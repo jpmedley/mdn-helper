@@ -16,8 +16,8 @@
 
 const { BCD } = require('./bcd.js');
 
-global._bcd = new BCD();
-global.__Flags = require('./flags.js').FlagStatus('./test/files/exp_flags.json5');
+// global._bcd = new BCD();
+// global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 const TYPES = ["interface", "interface mixin", "callback"];
 
@@ -32,12 +32,31 @@ class InterfaceSet {
     this._interfaces.push(interfaceMetaObject);
   }
 
-  findMatching(name) {
+  findMatching(name, includeFlags=false, includeOriginTrials=false) {
     const matches = [];
     const lcName = name.toLowerCase();
+    if (includeFlags) {
+      matches.push(...this._findSubset(lcName, 'flag'));
+    }
+    if (includeOriginTrials) {
+      matches.push(...this._findSubset(lcName, 'originTrial'));
+    }
     for (let i of this._interfaces) {
+      if (i.flag || i.originTrial) { continue; }
       let lcKey = i.keys[0].toLowerCase();
       if (lcKey.includes(lcName)) {
+        matches.push(i);
+      }
+    }
+    return matches;
+  }
+
+  _findSubset(name, flag) {
+    let matches = [];
+    for (let i of this._interfaces) {
+      if (i[flag] == false) { continue; }
+      let lcKey = i.keys[0].toLowerCase();
+      if (lcKey.includes(name)) {
         matches.push(i);
       }
     }
