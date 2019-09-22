@@ -19,24 +19,29 @@ const fs = require('fs');
 
 const { BCDBuilder } = require('../bcdbuilder.js');
 const { BCDEditor } = require('../bcdeditor.js');
-const { InterfaceData } = require('../interfacedata.js');
+const { FileProcessor } = require('../fileprocessor.js');
 
-const BURNABLE = {
-  name: 'burnable',
-  path: function() { return './test/files/burn-records.idl'; }
-}
+const BURNABLE = './test/files/burn-records.idl';
 
 describe('BCDEditor()', () => {
   describe('tree', () => {
     it('Confirms that a passed InterfaceData returns a tree', () => {
-      const id = new InterfaceData(BURNABLE);
+      let id;
+      const fp = new FileProcessor(BURNABLE);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path);
+      }, true)
       const bcdEditor = new BCDEditor(id);
       // console.log(typeof bcdEditor.tree.api);
       assert.equal((typeof bcdEditor.tree.api.Burnable), 'object');
     });
 
     it('Confirms that a passed JSON string returns a tree', () => {
-      const id = new InterfaceData(BURNABLE);
+      let id;
+      const fp = new FileProcessor(BURNABLE);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path);
+      }, true)
       const bcdBuilder = new BCDBuilder(id, 'api', {verbose: false});
       const bcdString = bcdBuilder.getRawBCD();
       const bcdEditor = new BCDEditor(bcdString);
