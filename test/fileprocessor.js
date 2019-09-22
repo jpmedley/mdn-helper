@@ -28,8 +28,10 @@ describe('FileProcessor', () => {
     it('Confirms that the four interface data objects are in the resulting fileset', ()=> {
       const is = new InterfaceSet();
       const testFile = `${IDL_FILES}multiple-structures.idl`;
-      let fp = new FileProcessor(testFile, is);
-      fp.process({});
+      let fp = new FileProcessor(testFile);
+      fp.process((result) => {
+        is.add(result);
+      });
       assert.equal(is.count, 4);
     });
   });

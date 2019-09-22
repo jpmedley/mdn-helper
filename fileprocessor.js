@@ -24,40 +24,43 @@ const METAFILE = Object.freeze({
   key: '',
   keys: null,
   originTrial: null,
+  tree: null,
   type: ''
 });
 
 class FileProcesser {
-  constructor(sourceFile, interfaceSet) {
-    this._sourceFile = sourceFile;
-    this._interfaces = interfaceSet;
+  constructor(sourcePath) {
+    this._sourcePath = sourcePath;
     this._sourceTree;
     this._loadTree();
   }
 
   // process(options = {}) {
-  process() {
+  process(resultCallback, returnTree=false) {
     for (let t of this._sourceTree) {
       if (t.type === 'eof') { continue; }
       let im = Object.assign({}, METAFILE);
-      im.path = this._sourceFile;
+      im.path = this._sourcePath;
       let className = (t.type.split(' '))[0];
       im.type = TREE_TYPES[className];
 
       // options.sourcePath = this._sourceFile;
       // let interfaceInstance = new im.type(t, options);
-      let interfaceInstance = new im.type(t, { sourcePath: this._sourceFile });
+      let interfaceInstance = new im.type(t, { sourcePath: this._sourcePath });
       im.keys = [];
       im.keys.push(...interfaceInstance.keys);
       im.key = im.keys[0];
       im.flag = interfaceInstance.flagged;
       im.originTrial = interfaceInstance.originTrial;
-      this._interfaces.add(im);
+      if (returnTree) {
+        im.tree = t
+      } 
+      resultCallback(im);
     }
   }
 
   _loadTree() {
-    this._sourceContents = utils.getIDLFile(this._sourceFile);
+    this._sourceContents = utils.getIDLFile(this._sourcePath);
     this._sourceTree = webidl2.parse(this._sourceContents);
   }
 }

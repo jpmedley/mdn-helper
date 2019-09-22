@@ -38,9 +38,11 @@ class DirectoryManager {
         if (!contents[c].name.endsWith('.idl')) { continue; }
         if (contents[c].name.startsWith('test_')) { continue; }
         try {
-          let fp = new FileProcessor(`${root}${contents[c].name}`, this._interfaceSet);
+          let fp = new FileProcessor(`${root}${contents[c].name}`);
           // fp.process(this._options);
-          fp.process();
+          fp.process((result) => {
+            this._interfaceSet.add(result);
+          });
         } catch (error) {      
           // console.log(`A webidl2 bug currently prevents processing of ${root}${contents[c].name}.`)
         }
