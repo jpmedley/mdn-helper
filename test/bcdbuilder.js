@@ -19,6 +19,7 @@ const fs = require('fs');
 const Validator = require('jsonschema').Validator;
 
 const { BCDBuilder } = require('../bcdbuilder.js');
+const { FileProcessor } = require('../fileprocessor.js');
 const { InterfaceData } = require('../interfacedata.js');
 const utils = require('../utils.js');
 
@@ -44,7 +45,11 @@ describe('BCDBuilder', () => {
     });
 
     it('Confirms that a BCD file is written', () => {
-      const id = new InterfaceData(BURNABLE);
+      let id;
+      const fp = new FileProcessor(BURNABLE);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path);
+      }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
@@ -53,7 +58,11 @@ describe('BCDBuilder', () => {
 
     it('Confirms that the written BCD file is valid', () => {
       // Write a BCD file
-      const id = new InterfaceData(BURNABLE);
+      let id;
+      const fp = new FileProcessor(BURNABLE);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path);
+      }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
@@ -71,20 +80,27 @@ describe('BCDBuilder', () => {
 
     it('Confirms that the written BCD file is correctly nested', () => {
       // Write and load a BCD file
-      const id = new InterfaceData(BURNABLE);
+      let id;
+      const fp = new FileProcessor(BURNABLE);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path);
+      }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       const resultString = fs.readFileSync(jsonPath).toString();
       // Load a correctly-nested version of what was written and compare
-      console.log(resultString);
       const comparisonString = fs.readFileSync('test/files/properly-nested-bcd.json').toString();
       assert.equal(resultString, comparisonString);
     });
 
     it('Confirms that browsers are in the correct order in a written BCD file', () => {
       // Write and load a BCD file
-      const id = new InterfaceData(BURNABLE);
+      let id;
+      const fp = new FileProcessor(BURNABLE);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path);
+      }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
@@ -116,10 +132,13 @@ describe('BCDBuilder', () => {
 
   describe('getBCDObject()', () => {
     it('Confirms that it returns a structure', () => {
-      const id = new InterfaceData(BURNABLE);
+      let id;
+      const fp = new FileProcessor(BURNABLE);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path);
+      }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
       const bcd = bcdManager.getBCDObject(jsonPath);
-      // console.log(tree);
       assert.notEqual(bcd, null);
     });
   });
