@@ -18,8 +18,7 @@ const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const { DirectoryManager } = require('./directorymanager.js');
 const Enquirer = require('enquirer');
-// const { IDLFileSet } = require('./idlfileset.js');
-const { InterfaceData } = require('./interfacedata.js');
+const { FileProcessor } = require('./fileprocessor.js');
 const { IDLBuilder } = require('./builder.js');
 const utils = require('./utils.js');
 
@@ -111,7 +110,6 @@ class _Finder {
   async _select(matches) {
     let names = [];
     for (let m of matches) {
-      // names.push(m.key + ` (${m.name})`);
       let steps = m.path.split('/');
       names.push(`${m.keys[0]} (${steps[steps.length-1]})`);
     }
@@ -124,7 +122,6 @@ class _Finder {
       choices: names
     });
     let answer = await enq.prompt('idlFile');
-    // answer = answer.idlFile[0].split(' ')[0];
     return answer;
   }
 
@@ -140,10 +137,6 @@ class _Finder {
         break;
       }
     }
-
-    // let match = matches.find((match, index, matches) => {
-    //   match.path.includes(this[0]);
-    // }, file);
     return match;
   }
 
@@ -154,7 +147,7 @@ class _Finder {
   }
 
   async findAndShow() {
-    let file = await this._find();
+    let metaFile = await this._find();
     // if (this._ping) {
     //   const id = new InterfaceData(file, {
     //     experimental: false,
@@ -175,21 +168,16 @@ class _Finder {
     //   }
     // }
 
-    this._show(file);
+    this._show(metaFile);
   }
 
   async findAndBuild() {
-    let file = await this._find();
-    const id = new InterfaceData(file, {
-      experimental: this._includeFlags,
-      originTrial: this._includeOriginTrials
-    });
-    if (id.type == 'dictionary') {
-      console.log('mdn-helper does not yet process dictionaries.');
-      console.log('Printing the interface instead.\n');
-      this._show(file);
-      return;
-    }
+    let metaFile = await this._find();
+    let id;
+    const fp = new FileProcessor(metaFile.path);
+    fp.process((result) => {
+      id = new result.type(result.tree, result.path);
+    }, true)
     const options = {
       interfaceData: id,
       jsonOnly: this._jsonOnly,

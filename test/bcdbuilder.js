@@ -26,10 +26,11 @@ const utils = require('../utils.js');
 
 const EXPECTED_UAS = ["chrome", "chrome_android", "edge", "edge_mobile", "firefox", "firefox_android", "ie", "nodejs", "opera", "opera_android", "qq_android", "safari", "safari_ios", "samsunginternet_android", "uc_android", "uc_chinese_android", "webview_android"];
 
-const BURNABLE = {
-  name: 'burnable',
-  path: function() { return './test/files/burn-records.idl'; }
-}
+// const BURNABLE = {
+//   name: 'burnable',
+//   path: function() { return './test/files/burn-records.idl'; }
+// }
+const BURNABLE = './test/files/burn-records.idl';
 
 const tempFolder = 'tmp/';
 const jsonPath = `${tempFolder}test-bcd.json`;
@@ -117,9 +118,9 @@ describe('BCDBuilder', () => {
     it('Confirms that it returns a structure', () => {
       const id = new InterfaceData(BURNABLE);
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
-      const tree = bcdManager.getBCDObject(jsonPath);
+      const bcd = bcdManager.getBCDObject(jsonPath);
       // console.log(tree);
-      assert.notEqual(tree, null);
+      assert.notEqual(bcd, null);
     });
   });
 });
