@@ -148,25 +148,23 @@ class _Finder {
 
   async findAndShow() {
     let metaFile = await this._find();
-    // if (this._ping) {
-    //   const id = new InterfaceData(file, {
-    //     experimental: false,
-    //     originTrial: false
-    //   });
-    //   if (id.type == 'dictionary') {
-    //     console.log('mdn-helper does not yet ping dictionaries.');
-    //   } else {
-    //     const pingRecords = await id.ping();
-    //     console.log('Exists?   Interface');
-    //     console.log('-'.repeat(51));
-    //     pingRecords.forEach(r => {
-    //       // console.log(r);
-    //       let exists = r.mdn_exists.toString().padEnd(10);
-    //       console.log(exists + r.key);
-    //     });
-    //     await utils.pause();
-    //   }
-    // }
+    if (this._ping) {
+      let id;
+      const fp = new FileProcessor(metaFile.path);
+      fp.process((result) => {
+        id = new result.type(result.tree, result.path)
+      }, true);
+      console.log('Checking for existing MDN pages. This may take a few minutes.\n');
+      const pingRecords = await id.ping(false);
+      console.log('Exists?   Interface');
+      console.log('-'.repeat(51));
+      pingRecords.forEach(r => {
+        let exists = r.mdn_exists.toString().padEnd(10);
+        console.log(`${exists}${r.key}`);
+      })
+      console.log();
+      await utils.pause();
+    }
 
     this._show(metaFile);
   }
