@@ -67,7 +67,7 @@ class Builder {
   }
 
   _normalizeArguments(args) {
-    // Remove 'node index.js' from args.
+    // Remove 'node _command.js_' from args.
     args.shift();
     args.shift();
     switch (args[0]) {
