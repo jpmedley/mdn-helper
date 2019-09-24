@@ -44,9 +44,8 @@ class InterfaceSet {
     for (let i of this._interfaces) {
       if (i.flag || i.originTrial) { continue; }
       let lcKey = i.keys[0].toLowerCase();
-      if (lcKey.includes(lcName)) {
-        matches.push(i);
-      }
+      if (!lcKey.includes(lcName)) { continue; }
+      matches.push(i);
     }
     return matches;
   }
