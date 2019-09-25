@@ -1,5 +1,17 @@
 {
   "templates": {
+    "abstract": {
+      "question": "Write or supply an abstract for the interface",
+      "type": "string",
+      "help": "The abstract can sometimes be copied from the spec.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "action": null
+    },
     "accessibility": {
       "question": "Does this interface have accessibility concerns? Yes or No?",
       "type": "boolean",
@@ -232,6 +244,18 @@
       "required": true,
       "before": "",
       "action": null
+    },
+    "interfaces": {
+      "question": "Enter a comma-separated list of interfaces.",
+      "type": "string",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": "",
+      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "isSecureContext": {
       "question": "Does this API require a secure context? If so, press return to make the pages\ndisplay a blurb declaring it as such. Otherwise, enter 'n' and press return.\n",
