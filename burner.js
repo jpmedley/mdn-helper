@@ -17,7 +17,9 @@
 const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
+const { DirectoryManager } = require('./directorymanager.js');
 const { IDLFileSet } = require('./idlfileset.js');
+const { FileProcessor } = require('./fileprocessor.js');
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -428,11 +430,15 @@ class ChromeBurner extends Burner {
     this._loadWhitelist();
     this._startBurnLogFile();
     this._openResultsFile();
-    let idlFiles = new IDLFileSet('idl/', {
-      experimental: this._includeFlags,
-      originTrial: this._includeOriginTrials
-    });
-    let files = idlFiles.files
+    // let idlFiles = new IDLFileSet('idl/', {
+    //   experimental: this._includeFlags,
+    //   originTrial: this._includeOriginTrials
+    // });
+    // let files = idlFiles.files
+    const dm = new DirectoryManager('idl/');
+    const idlFiles = dm.interfaceSet;
+    let files = idlFiles.files;
+
     console.log('Looking for browser compatibility data and MDN pages.');
     for (let f of files) {
       let idlFile = this._getIDLFile(f);
