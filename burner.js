@@ -18,8 +18,6 @@ const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const { DirectoryManager } = require('./directorymanager.js');
-const { IDLFileSet } = require('./idlfileset.js');
-const { FileProcessor } = require('./fileprocessor.js');
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -101,8 +99,6 @@ async function selectArgument(question, choices, returnAll= false) {
   const answer = await enq.prompt('chose');
   if (returnAll) { return answer.chose; }
   else { return answer.chose[0]; }
-
-  return answer.category[0];
 }
 
 function _burnerFactory(args) {
@@ -117,15 +113,12 @@ function _burnerFactory(args) {
   const burnerType = args[0].toLowerCase();
   args.shift();
   switch (burnerType) {
-    case 'chrome':
-      return new ChromeBurner({ args: args });
-      break;
     case 'bcd':
       return new BCDBurner({ args: args });
-      break;
+    case 'chrome':
+      return new ChromeBurner({ args: args });
     case 'urls':
       return new URLBurner({ args: args });
-      break;
     default:
       eMsg = 'Burner type is invalid or misspelled. ' + eMsg;
       throw new Error(eMsg);
@@ -134,7 +127,6 @@ function _burnerFactory(args) {
 
 class Burner {
   constructor(options) {
-    // this.options = options;
     this._args = options.args;
     this._outFileHandle;
     this._outfileName
@@ -355,7 +347,6 @@ class BCDBurner extends Burner {
 
   async _resolveArguments(args) {
     await super._resolveArguments(args);
-    // -c css -b chrome
     let pos;
     pos = args.indexOf('-c');
     if (pos > -1) { this._category = args[pos + 1]; }
@@ -538,3 +529,6 @@ class ChromeBurner extends Burner {
 }
 
 module.exports.BurnerFactory = _burnerFactory;
+module.exports.BCDBurner = BCDBurner;
+module.exports.ChromeBurner = ChromeBurner;
+module.exports.URLBurner = URLBurner;
