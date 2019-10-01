@@ -220,11 +220,13 @@ class _CLIBuilder extends Builder {
     args.shift();
     args.shift();
 
-    // Process remaining arguments.
+    // Create an array for the question objects.
     this._pages = new Array();
+
+    // Process remaining arguments.
     args.forEach((arg, index, args) => {
       let members = arg.split(',');
-      let aPage = new Page(members[1], members[0], sharedQuestions);
+      aPage = new Page(members[1], members[0], sharedQuestions);
       this._pages.push(aPage);
     });
   }
@@ -241,9 +243,10 @@ class _CLIBuilder extends Builder {
 class _IDLBuilder extends Builder {
   constructor(options = { verbose: true }) {
     super(options);
+    this._interactive = options.interactive || false;
     this._interfaceData = options.interfaceData;
     this._jsonOnly = options.jsonOnly || false;
-    this._interactive = options.interactive || false;
+    this._landingPageOnly = options.landingPageOnly || false;
     this._verbose = options.verbose;
     if (!options.outPath) {
       this._outPath = utils.OUT;
@@ -260,8 +263,16 @@ class _IDLBuilder extends Builder {
     sharedQuestions['name'] = this._interfaceData.name;
     sharedQuestions.add('interface', this._interfaceData.name);
 
-    // Process remaining arguments.
+    // Create an array for the question objects.
     this._pages = new Array();
+
+    // Add an object for the landing page.
+    let aPage = new Page('landing', 'landing', sharedQuestions);
+    this._pages.push(aPage);
+    if (this._landingPageOnly) { return; }
+
+    // Process remaining arguments.
+    // this._pages = new Array();
     let skippingPages = new Array();
     const missingPages = await this._interfaceData.ping();
     missingPages.forEach((page, index, pages) => {

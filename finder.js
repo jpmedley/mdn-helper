@@ -99,7 +99,12 @@ class _Finder {
     });
     this._jsonOnly = args.some(arg => {
       return (arg.includes('-j') || (arg.includes('--jsonOnly')));
-    })
+    });
+    if (args[1].includes('app_Builder.js')) {
+      this._landingPageOnly = args.some(arg => {
+        return (arg.includes('-') || (arg.includes('--landing-page')));
+      });
+    };
     if (args[1].includes('app_Finder.js')) {
       this._ping = args.some(arg => {
         return (arg.includes('-p') || (arg.includes('--ping')));
@@ -177,10 +182,11 @@ class _Finder {
       id = new result.type(result.tree, result.path);
     }, true)
     const options = {
+      interactive: this._interactive,
       interfaceData: id,
       jsonOnly: this._jsonOnly,
-      interactive: this._interactive
-    };
+      landingPageOnly: this._landingPageOnly
+    }; 
     const builder = new IDLBuilder(options);
     builder.build();
   }
