@@ -219,6 +219,15 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('type', () => {
+    it('Returns true when the correct type is returned', () => {
+      const source = loadTree(BURNABLE);
+      const id = new InterfaceData(source[0]);
+      const type = id.type;
+      assert.equal(type, 'interface');
+    })
+  })
+
   describe('writeKeys()', () => {
     it('Returns true when the save file contains all unflagged keys', function() {
       const keyFile = './keyfile.txt';

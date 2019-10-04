@@ -17,9 +17,13 @@
 const assert = require('assert');
 const fs = require('fs');
 
-const { BurnerFactory } = require('../burner.js');
+const { BCDBurner } = require('../burner.js');
 const utils = require('../utils.js');
 
-describe('BurnerFactory', () => {
-  
-})
+describe('BCDBurner', () => {
+  describe('burn()', () => {
+    it('Confirms the number of lines in a test result file', () => {
+      
+    });
+  });
+});

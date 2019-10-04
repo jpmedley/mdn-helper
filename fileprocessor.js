@@ -43,9 +43,7 @@ class FileProcesser {
       im.path = this._sourcePath;
       let className = (t.type.split(' '))[0];
       im.type = TREE_TYPES[className];
-
-      // options.sourcePath = this._sourceFile;
-      // let interfaceInstance = new im.type(t, options);
+      if (!im.type) { continue; }
       let interfaceInstance = new im.type(t, { sourcePath: this._sourcePath });
       im.keys = [];
       im.keys.push(...interfaceInstance.keys);

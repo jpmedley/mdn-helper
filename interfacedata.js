@@ -566,8 +566,9 @@ class InterfaceData extends IDLData {
 
 const TREE_TYPES = Object.freeze({
   callback: CallbackData,
-  dictionary: DictionaryData,
+  dictionary: undefined,
   enum: EnumData,
+  includes: undefined,
   interface: InterfaceData
 });
 

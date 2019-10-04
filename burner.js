@@ -18,6 +18,7 @@ const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const { DirectoryManager } = require('./directorymanager.js');
+const { FileProcessor } = require('./fileprocessor.js');
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -421,23 +422,21 @@ class ChromeBurner extends Burner {
     this._loadWhitelist();
     this._startBurnLogFile();
     this._openResultsFile();
-    // let idlFiles = new IDLFileSet('idl/', {
-    //   experimental: this._includeFlags,
-    //   originTrial: this._includeOriginTrials
-    // });
-    // let files = idlFiles.files
     const dm = new DirectoryManager('idl/');
-    const idlFiles = dm.interfaceSet;
-    let files = idlFiles.files;
+    const interfaceSet = dm.interfaceSet;
+    const interfaces = interfaceSet.interfaces;
 
     console.log('Looking for browser compatibility data and MDN pages.');
-    for (let f of files) {
-      let idlFile = this._getIDLFile(f);
+    for (let i of interfaces) {
+      let idlFile;
+      let fp = new FileProcessor(i.path);
+      fp.process((result) => {
+        idlFile = new result.type(result.tree, result.path)
+      }, true);
+
+
       if (!this._isBurnable(idlFile)) { continue; }
-      let burnRecords = idlFile.getBurnRecords({
-        includeFlags: this._includeFlags,
-        includeOriginTrials: this._includeOriginTrials
-      });
+      let burnRecords = idlFile.getBurnRecords();
       if (!burnRecords) { continue; }
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()
@@ -446,11 +445,11 @@ class ChromeBurner extends Burner {
       });
       this._record(burnRecords);
     }
+
     this._closeOutputFile();
   }
 
   _isBurnable(idlFile) {
-    console.log(idlFile.name);
     if (!idlFile) { return false; }
     let found = false;
     if (this._whitelistName) {
@@ -462,9 +461,9 @@ class ChromeBurner extends Burner {
     if (this._whitelistName && (!found)) {
       return false;
     }
-    // if ((this._whitelistName) && (!this._whitelist.includes(idlFile.name))) {
-    //   return false;
-    // }
+    if ((this._whitelistName) && (!this._whitelist.includes(idlFile.name))) {
+      return false;
+    }
     if (utils.isBlacklisted(idlFile._sourceData.name)) { return false; }
     if (!BURNABLE_TYPES.includes(idlFile._type)) { return false; }
     if (!this._includeFlags && idlFile.flagged) { return false; }

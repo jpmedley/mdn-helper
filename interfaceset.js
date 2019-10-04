@@ -66,6 +66,10 @@ class InterfaceSet {
     return this._interfaces.length;
   }
 
+  get interfaces() {
+    return this._interfaces;
+  }
+  
   // get keys() {
   //   const keys = [];
   //   for (let i of this._interfaces) {
