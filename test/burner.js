@@ -20,6 +20,8 @@ const fs = require('fs');
 const { BCDBurner } = require('../burner.js');
 const utils = require('../utils.js');
 
+global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
+
 describe('BCDBurner', () => {
   describe('burn()', () => {
     it('Confirms the number of lines in a test result file', () => {

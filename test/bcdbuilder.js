@@ -36,6 +36,8 @@ const BURNABLE = './test/files/burn-records.idl';
 const tempFolder = 'tmp/';
 const jsonPath = `${tempFolder}test-bcd.json`;
 
+global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
+
 describe('BCDBuilder', () => {
   describe('write()', () => {
 

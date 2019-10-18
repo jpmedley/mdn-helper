@@ -23,6 +23,8 @@ const { FileProcessor } = require('../fileprocessor.js');
 
 const BURNABLE = './test/files/burn-records.idl';
 
+global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
+
 describe('BCDEditor()', () => {
   describe('tree', () => {
     it('Confirms that a passed InterfaceData returns a tree', () => {

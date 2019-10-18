@@ -244,8 +244,8 @@ class IDLData {
     return false;
   }
 
-  writeKeys(keyFile) {
-    const keys = this.getkeys(true);
+  writeKeys(keyFile, stableOnly = true) {
+    const keys = this.getkeys(stableOnly);
     const keyList = keys.join('\n');
     fs.appendFileSync(keyFile, keyList);
   }
@@ -354,9 +354,11 @@ class InterfaceData extends IDLData {
     if (this.hasConstructor) {
       identifiers.push(`${this.name}${separator}${this.name}`);
     }
-    this._sourceData.members.map(m => {
-      if (options.stableOnly === true) {
-        if (!this._isBurnable(m, {includeExperimental: !options.stableOnly})) { return; }
+    this._sourceData.members.forEach(m => {
+      if (options.stableOnly) {
+        if (!this._isBurnable(m, {includeExperimental: !options.stableOnly})) {
+          return;
+        }
       }
       switch (m.type) {
         case 'attribute':
@@ -390,7 +392,7 @@ class InterfaceData extends IDLData {
           console.log(m.type);
           throw new IDLError(`Unknown member type found in InterfaceData._getIdentifiers: ${m.type}.`)
       }
-    });
+    }, this);
     return identifiers;
   }
 

@@ -18,6 +18,7 @@ const assert = require('assert');
 const fs = require('fs');
 
 const { BCD } = require('../bcd.js')
+global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
 describe('BCD', () => {
   describe('getByKey()', () => {

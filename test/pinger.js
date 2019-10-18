@@ -19,6 +19,7 @@ const assert = require('assert');
 const { EMPTY_BURN_DATA } = require('../interfacedata.js');
 const { Pinger } = require('../pinger.js');
 
+global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
 describe('Pinger', () => {
   describe('pingRecords', () => {

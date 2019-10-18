@@ -21,6 +21,7 @@ const { IDLBuilder } = require('../builder.js');
 const { InterfaceData } = require('../interfacedata.js');
 const utils = require('../utils.js');
 
+global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
 const BURNABLE = {
   name: 'burnable',
