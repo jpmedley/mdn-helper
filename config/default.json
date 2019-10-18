@@ -19,7 +19,16 @@
       "MojoInterfaceInterceptor",
       "MojoInterfaceRequestEVent",
       "MojoWatcher",
-      "Plugin"
+      "Plugin",
+      "VRDisplay",
+      "VRDisplayCapabilities",
+      "VRDisplayEvent",
+      "VRDisplayEventReason",
+      "VREye",
+      "VRFrameData",
+      "VRPose",
+      "VRStateParameters"
+
     ]
   },
   "User": {
