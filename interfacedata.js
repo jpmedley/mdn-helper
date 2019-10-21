@@ -226,6 +226,8 @@ class IDLData {
   }
 
   get originTrial() {
+    // Origin Trial is now a type of flag. If there's no flag, there's no origin trial.
+    if (!this.flagged) { return false; }
     const flag = this._getFlagStatus(this._sourceData);
     switch (flag) {
       case ('stable'):

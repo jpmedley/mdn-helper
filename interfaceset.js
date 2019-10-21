@@ -35,29 +35,18 @@ class InterfaceSet {
   findMatching(name, includeFlags=false, includeOriginTrials=false) {
     const matches = [];
     const lcName = name.toLowerCase();
-    if (includeFlags) {
-      matches.push(...this._findSubset(lcName, 'flag'));
-    }
-    if (includeOriginTrials) {
-      matches.push(...this._findSubset(lcName, 'originTrial'));
-    }
+    // Origin trials do not have their own flag.
+    // It's a status of runtime flags.
+    let flag = (includeFlags || includeOriginTrials);
+
     for (let i of this._interfaces) {
-      if (i.flag || i.originTrial) { continue; }
+      if (flag != i.flag) { continue; }
+      if (includeOriginTrials) {
+        if (!i.originTrial) { continue; }
+      }
       let lcKey = i.keys[0].toLowerCase();
       if (!lcKey.includes(lcName)) { continue; }
       matches.push(i);
-    }
-    return matches;
-  }
-
-  _findSubset(name, flag) {
-    let matches = [];
-    for (let i of this._interfaces) {
-      if (i[flag] == false) { continue; }
-      let lcKey = i.keys[0].toLowerCase();
-      if (lcKey.includes(name)) {
-        matches.push(i);
-      }
     }
     return matches;
   }
