@@ -102,7 +102,7 @@ class _Finder {
     });
     if (args[1].includes('app_Builder.js')) {
       this._landingPageOnly = args.some(arg => {
-        return (arg.includes('-') || (arg.includes('--landing-page')));
+        return (arg.includes('-l') || (arg.includes('--landing-page')));
       });
     };
     if (args[1].includes('app_Finder.js')) {
