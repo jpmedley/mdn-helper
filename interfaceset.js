@@ -40,10 +40,13 @@ class InterfaceSet {
     let flag = (includeFlags || includeOriginTrials);
 
     for (let i of this._interfaces) {
-      if (flag != i.flag) { continue; }
+      if (i.flag) {
+        if (!flag) { continue; }
+      }
       if (includeOriginTrials) {
         if (!i.originTrial) { continue; }
       }
+
       let lcKey = i.keys[0].toLowerCase();
       if (!lcKey.includes(lcName)) { continue; }
       matches.push(i);
