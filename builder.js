@@ -262,6 +262,9 @@ class _IDLBuilder extends Builder {
     sharedQuestions['interface'] = this._interfaceData.name;
     sharedQuestions['name'] = this._interfaceData.name;
     sharedQuestions.add('interface', this._interfaceData.name);
+    if (this._interfaceData.getSecureContext()) {
+      sharedQuestions.add('isSecureContext', '{{securecontext_header}}');
+    }
 
     // Create an array for the question objects.
     this._pages = new Array();
