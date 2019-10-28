@@ -327,10 +327,8 @@ class _IDLBuilder extends Builder {
       }
       await p.write();
     }
-    if (this._verbose) {
-      msg = `\nMDN drafts were written to ${utils.OUT}${this._interfaceData.name}.`
-      console.log(msg);
-    }
+    msg = `\nMDN drafts were written to ${utils.OUT}${this._interfaceData.name}.`
+    console.log(msg);
   }
 
 }
