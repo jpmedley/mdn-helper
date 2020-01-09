@@ -127,7 +127,7 @@ class IDLData {
     let type;
     if (options.idlData.body) {
       if (options.idlData.body.idlType) {
-        if (options.idlData.body.idlType.idlType === 'Constructor') {
+        if (options.idlData.body.idlType.idlType === 'constructor') {
           type = options.idlData.body.idlType.type;
         }
       }
@@ -397,6 +397,9 @@ class InterfaceData extends IDLData {
   }
 
   _getOperationKey(member) {
+    if (member.body.idlType.idlType === 'constructor') {
+      return 'constructor';
+    }
     if (member.deleter) {
       return 'deleter';
     }
@@ -443,7 +446,7 @@ class InterfaceData extends IDLData {
   get constructorBranch() {
     try {
       return this._sourceData.members.find(i => {
-        return i.body.idlType.baseName === 'Constructor';
+        return i.body.idlType.baseName === 'constructor';
       });
     } catch (e) {
       if (e.name === 'TypeError') {
@@ -487,7 +490,7 @@ class InterfaceData extends IDLData {
   get hasConstructor() {
     try {
       return this._sourceData.members.some(i => {
-        return i.body.idlType.baseName === 'Constructor';
+        return i.body.idlType.baseName === 'constructor';
       });
     } catch (e) {
       if (e.name === 'TypeError') {
@@ -549,7 +552,7 @@ class InterfaceData extends IDLData {
     try {
       let signatures = [];
       this._sourceData.extAttrs.items.forEach((item, i, items) => {
-        if (item.name === 'Constructor') {
+        if (item.name === 'constructor') {
           let sigArgs = [];
           item.signature.arguments.forEach((arg, i, args) => {
             sigArgs.push(arg.escapedName);

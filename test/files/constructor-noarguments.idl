@@ -2,6 +2,6 @@
     Exposed=Window,
     ActiveScriptWrappable
 ] interface ConstructorNoArgs {
-    Constructor();
+    constructor();
     [RaisesException=Setter, SetterCallWith=ExecutionContext] attribute DOMString family;
 };
