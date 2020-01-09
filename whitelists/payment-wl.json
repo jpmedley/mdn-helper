@@ -1,16 +1,17 @@
 {
   "whitelist": [
     "AbortPaymentEvent",
-    "AndroidPayMethodData",
-    "AndroidPayTokenization",
     "CanMakePaymentEvent",
     "PaymentAddress",
+    "PaymentComplete",
+    "PaymentDelegation",
     "PaymentInstruments",
     "PaymentManager",
     "PaymentMethodChangeEvent",
     "PaymentRequest",
     "PaymentRequestEvent",
     "PaymentRequestUpdateEvent",
-    "PaymentResponse"
+    "PaymentResponse",
+    "PaymentShippingType"
   ]
 }

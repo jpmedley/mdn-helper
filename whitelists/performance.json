@@ -1,0 +1,27 @@
+{
+  "whitelist": [
+    "IntersectionObserver",
+    "IntersectionObserverCallback",
+    "IntersectionObserverEntry",
+    "MutationObserver",
+    "Performance",
+    "PerformanceElementTiming",
+    "PerformanceEntry",
+    "PerformanceEventTiming",
+    "PerformanceLongTaskTiming",
+    "PerformanceMark",
+    "PerformanceMeasure",
+    "PerformanceNavigation",
+    "PerformanceNavigationTiming",
+    "PerformanceObserver",
+    "PerformanceObserverCallback",
+    "PerformanceObserverEntryList",
+    "PerformancePaintTiming",
+    "PerformanceResourceTiming",
+    "PerformanceServerTiming",
+    "PerformanceTiming",
+    "ResizeObserver",
+    "ResizeObserverCallback",
+    "ResizeObserverEntry"
+  ]
+}
