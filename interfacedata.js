@@ -51,7 +51,7 @@ const NO_FLAG = 'No flag found';
 //Cross refences webidl2 types with MDN terminology
 const TYPES = Object.freeze({
   "attribute": "property",
-  "extended-attribute": "constructor",
+  "return-type": "constructor",
   "operation": "method",
   "interface": "reference",
 });
@@ -124,7 +124,17 @@ class IDLData {
     }
     record.flag = this._isFlagged(options.idlData);
     record.origin_trial = this._isOriginTrial(options.idlData);
-    record.type = TYPES[`${options.idlData.type}`];
+    let type;
+    if (options.idlData.body) {
+      if (options.idlData.body.idlType) {
+        if (options.idlData.body.idlType.idlType === 'Constructor') {
+          type = options.idlData.body.idlType.type;
+        }
+      }
+    } else {
+      type = options.idlData.type;
+    }
+    record.type = TYPES[`${type}`];
     return record;
   }
 
@@ -151,9 +161,6 @@ class IDLData {
     return global.__Flags.getHighestResolvedStatus(attribute);
   }
 
-  // _isBurnable(member, options = {
-  //   includeExperimental: this._includeExperimental,
-  //   includeOriginTrials: this._includeOriginTrials}) {
   _isBurnable(member, options = {
     includeExperimental: false,
     includeOriginTrials: false }) {
@@ -261,15 +268,6 @@ class IDLData {
       key: this._sourceData.name
     }
     records.push(this._generateRecord(options));
-    // Get a constructor record.
-    if (this.hasConstructor) {
-      if (this._isBurnable(this.constructorBranch)) {
-        options.key = `${this._sourceData.name}.${this._sourceData.name}`;
-        options.idlData = this.constructorBranch;
-        records.push(this._generateRecord(options));
-      }
-    }
-    // Get member records.
     if (this._sourceData.members) {
       this._sourceData.members.forEach(m => {
         if (this._shouldBurn(m)) {
@@ -422,6 +420,8 @@ class InterfaceData extends IDLData {
       case 'operation':
         if (member.getter || member.setter) {
           return member.body.idlType.baseName;
+        } else if (this.hasConstructor) {
+          return this.constructorName;
         } else {
           return member.body.name.value;
         }
@@ -442,9 +442,9 @@ class InterfaceData extends IDLData {
 
   get constructorBranch() {
     try {
-      return this._sourceData.extAttrs.items.find(i => {
-        return i.name === 'Constructor';
-      })
+      return this._sourceData.members.find(i => {
+        return i.body.idlType.baseName === 'Constructor';
+      });
     } catch (e) {
       if (e.name === 'TypeError') {
         return null;
@@ -452,6 +452,11 @@ class InterfaceData extends IDLData {
         throw e;
       }
     }
+  }
+
+  get constructorName() {
+    if (!this.hasConstructor) { return null; }
+    return `${this._sourceData.name}`;
   }
 
   get deleter() {
@@ -481,9 +486,9 @@ class InterfaceData extends IDLData {
 
   get hasConstructor() {
     try {
-      return this._sourceData.extAttrs.items.some(i => {
-        return i.name === 'Constructor';
-      })
+      return this._sourceData.members.some(i => {
+        return i.body.idlType.baseName === 'Constructor';
+      });
     } catch (e) {
       if (e.name === 'TypeError') {
         return false;

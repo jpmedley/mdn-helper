@@ -1,5 +1,7 @@
 [
-  Constructor(sequence<CSSUnparsedSegment> members)
+    Exposed=Window,
+    ActiveScriptWrappable
 ] interface ConstructorSeqArgs : CSSStyleValue {
+    Constructor(sequence<CSSUnparsedSegment> members);
     readonly attribute unsigned long length;
 };

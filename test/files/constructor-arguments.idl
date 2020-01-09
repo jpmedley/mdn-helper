@@ -1,5 +1,7 @@
 [
-    Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors)
+    Exposed=Window,
+    ActiveScriptWrappable
 ] interface ConstructorArgs {
+    Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors);
     [RaisesException=Setter, SetterCallWith=ExecutionContext] attribute DOMString family;
 };
