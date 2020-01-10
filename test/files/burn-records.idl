@@ -1,7 +1,6 @@
-[
-    Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source),
-    Constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors)
-] interface Burnable {
+interface Burnable {
+    constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source);
+    constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors);
     attribute EventHandler onconnect;
     [RuntimeEnabled=RTEExperimental] attribute EventHandler ondisconnect;
     getter CSSUnparsedSegment (unsigned long index);

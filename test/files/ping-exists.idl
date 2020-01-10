@@ -1,7 +1,7 @@
 [
-    Constructor(DOMString type, optional EventInit eventInitDict),
     Exposed=(Window,Worker,AudioWorklet)
 ] interface Event {
+    constructor(DOMString type, optional EventInit eventInitDict);
     readonly attribute DOMString type;
 
     [Measure] void stopPropagation();

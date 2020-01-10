@@ -351,9 +351,9 @@ class InterfaceData extends IDLData {
   _getIdentifiers(separator, options = { stableOnly: false }) {
     let identifiers = [];
     identifiers.push(this.name);
-    if (this.hasConstructor) {
-      identifiers.push(`${this.name}${separator}${this.name}`);
-    }
+    // if (this.hasConstructor) {
+    //   identifiers.push(`${this.name}${separator}${this.name}`);
+    // }
     this._sourceData.members.forEach(m => {
       if (options.stableOnly) {
         if (!this._isBurnable(m, {includeExperimental: !options.stableOnly})) {
@@ -383,9 +383,11 @@ class InterfaceData extends IDLData {
           }
           break;
         case 'operation':
-          if (!m.getter && !m.setter) {
-            let opKey = this._getOperationKey(m);
-            identifiers.push(`${this.name}${separator}${opKey}`);
+          if (m.getter || m.setter) { return; }
+          let opName = this._getOperationKey(m);
+          let opKey = `${this.name}${separator}${opName}`
+          if (!identifiers.includes(opKey)) {
+            identifiers.push(opKey);
           }
           break;
         default:
@@ -398,7 +400,7 @@ class InterfaceData extends IDLData {
 
   _getOperationKey(member) {
     if (member.body.idlType.idlType === 'constructor') {
-      return 'constructor';
+      return this.name;
     }
     if (member.deleter) {
       return 'deleter';
@@ -549,17 +551,19 @@ class InterfaceData extends IDLData {
   }
 
   get signatures() {
+    if (!this.hasConstructor) { return [] ; }
     try {
       let signatures = [];
-      this._sourceData.extAttrs.items.forEach((item, i, items) => {
-        if (item.name === 'constructor') {
-          let sigArgs = [];
-          item.signature.arguments.forEach((arg, i, args) => {
-            sigArgs.push(arg.escapedName);
-          });
-          const sig = sigArgs.join(', ');
-          signatures.push(`(${sig})`);
-        }
+      this._sourceData.members.forEach((m, i, members) => {
+        if (!m.body) { return; }
+        if (!m.body.idlType) { return; }
+        if (m.body.idlType.baseName !== 'constructor') { return; }
+        let sigArgs = [];
+        m.body.arguments.forEach((arg, i, args) => {
+          sigArgs.push(arg.escapedName);
+        });
+        const sig = sigArgs.join(', ');
+        signatures.push(`(${sig})`);
       });
       return signatures;
     } catch (e) {
