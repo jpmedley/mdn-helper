@@ -134,10 +134,10 @@ class _Finder {
     const matches = this._findInterfaces(this._searchString);
     const answers = await this._select(matches);
     if (answers.idlFile[0] === CANCEL) { process.exit(); }
-    let file = answers.idlFile[0].match(/\((\w+\.idl)\)/);
+    let key = answers.idlFile[0].match(/(\w+)\s/);
     let match;
     for (let m of matches) {
-      if (m.path.includes(file[1])) {
+      if (m.key === key[1]) {
         match = m;
         break;
       }
