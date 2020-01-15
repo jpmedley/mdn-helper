@@ -35,26 +35,44 @@ class FileProcesser {
     this._loadTree();
   }
 
-  // process(options = {}) {
   process(resultCallback, returnTree=false) {
+    let intface = this._sourceTree.find(elem => {
+      return elem.type === 'interface';
+    });
+    let interfaceData = new InterfaceData(intface, { sourcePath: this._sourcePath });
+    let flagged = interfaceData.flagged;
+    let originTrial = interfaceData.originTrial;
+    let className = (interfaceData.type.split(' '))[0];
+    let interfaceMeta = this._getInterfaceMeta(interfaceData);
+    if (returnTree) { interfaceMeta.tree = intface; }
+    interfaceMeta.flag = flagged;
+    interfaceMeta.originTrial = originTrial;
+    interfaceMeta.type = TREE_TYPES[className];
+    resultCallback(interfaceMeta);
+
     for (let t of this._sourceTree) {
       if (t.type === 'eof') { continue; }
-      let im = Object.assign({}, METAFILE);
-      im.path = this._sourcePath;
-      let className = (t.type.split(' '))[0];
-      im.type = TREE_TYPES[className];
-      if (!im.type) { continue; }
-      let interfaceInstance = new im.type(t, { sourcePath: this._sourcePath });
-      im.keys = [];
-      im.keys.push(...interfaceInstance.keys);
-      im.key = im.keys[0];
-      im.flag = interfaceInstance.flagged;
-      im.originTrial = interfaceInstance.originTrial;
-      if (returnTree) {
-        im.tree = t
-      } 
-      resultCallback(im);
+      if (t.type === 'interface') { continue; }
+      className = (t.type.split(' '))[0];
+      let metaType = TREE_TYPES[className];
+      if (!metaType) { continue; }
+      interfaceData = new metaType(t, { sourcePath: this._sourcePath });
+      interfaceMeta = this._getInterfaceMeta(interfaceData);
+      if (returnTree) { interfaceMeta.tree = t; }
+      interfaceMeta.flag = flagged;
+      interfaceMeta.originTrial = originTrial;
+      interfaceMeta.type = metaType;
+      resultCallback(interfaceMeta);
     }
+  }
+
+  _getInterfaceMeta(interfaceData) {
+    let im = Object.assign({}, METAFILE);
+    im.path = this._sourcePath;
+    im.keys = [];
+    im.keys.push(...interfaceData.keys);
+    im.key = im.keys[0];
+    return im;
   }
 
   _loadTree() {
