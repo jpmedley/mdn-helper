@@ -50,6 +50,22 @@ describe('Pinger', () => {
       pinger.pingRecords(false)
       .then(records => {
         assert.equal(records[0].mdn_exists, false);
+      });
+    });
+
+    it('verifies response for something that could exist', () => {
+      let record = Object.assign({}, EMPTY_BURN_DATA);
+      record.bcd = true;
+      record.key = "Event";
+      // This will need to change if the page is ever created.
+      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/TransitionEvent/propertyName'
+      record.type = "property"
+      let records = [];
+      records.push(record);
+      const pinger = new Pinger(records);
+      pinger.pingRecords(false)
+      .then(records => {
+        assert.equal(records[0].mdn_exists, false);
       })
     })
   });
