@@ -29,10 +29,10 @@ describe('FileProcessor', () => {
       const is = new InterfaceSet();
       const testFile = `${IDL_FILES}multiple-structures.idl`;
       let fp = new FileProcessor(testFile);
-      fp.process((result) => {
+      fp.__process((result) => {
         is.add(result);
       });
-      assert.equal(is.count, 4);
+      assert.equal(is.count, 5);
     });
   });
 });

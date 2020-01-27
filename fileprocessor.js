@@ -28,11 +28,50 @@ const METAFILE = Object.freeze({
   type: ''
 });
 
+const CALLBACK_RE = /callback([^=]*)([^(]*)\(([^)]*)\)/gm;
+const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
+const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
+const EXTENDED_ATRIB_RE = /\[\n([^\]]*)\]/gm;
+const INTERFACE_RE = /interface([^{]*){([^}]*)}/gm;
+
 class FileProcesser {
   constructor(sourcePath) {
     this._sourcePath = sourcePath;
+    this._sourceContents;
     this._sourceTree;
+    this._validSource;
     this._loadTree();
+    this._loadSource();
+  }
+
+  __process(resultCallback, returnSource) {
+    let match;
+    let interfaceMeta;
+    match = this._sourceContents.match(CALLBACK_RE);
+    if (match) {
+      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      resultCallback(interfaceMeta);
+    }
+    match = this._sourceContents.match(DICTIONARY_RE);
+    if (match) {
+      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      resultCallback(interfaceMeta);
+    }
+    match = this._sourceContents.match(ENUM_RE);
+    if (match) {
+      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      resultCallback(interfaceMeta);
+    }
+    match = this._sourceContents.match(EXTENDED_ATRIB_RE);
+    if (match) {
+      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      resultCallback(interfaceMeta);
+    }
+    match = this._sourceContents.match(INTERFACE_RE);
+    if (match) {
+      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      resultCallback(interfaceMeta);
+    }
   }
 
   process(resultCallback, returnTree=false) {
@@ -66,6 +105,15 @@ class FileProcesser {
     }
   }
 
+  __getInterfaceMeta(source) {
+    let im = Object.assign({}, METAFILE);
+    im.path = this._sourcePath;
+    im.keys = [];
+    im.key = im.keys[0];
+    im.tree = source;
+    return im;
+  }
+
   _getInterfaceMeta(interfaceData) {
     let im = Object.assign({}, METAFILE);
     im.path = this._sourcePath;
@@ -73,6 +121,20 @@ class FileProcesser {
     im.keys.push(...interfaceData.keys);
     im.key = im.keys[0];
     return im;
+  }
+
+  _loadSource() {
+    this._sourceContents = utils.getIDLFile(this._sourcePath);
+    let sourceTree;
+    try {
+      // Use webidl2 only for crude validation.
+      sourceTree = webidl2.parse(this._sourceContents);
+    } catch(e) {
+      global.__logger.error(e.message);
+      throw e;
+    } finally {
+      sourceTree = null;
+    }
   }
 
   _loadTree() {

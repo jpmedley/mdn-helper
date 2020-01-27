@@ -1,0 +1,6 @@
+interface Deleters {
+  [CEReactions] void getStuff(DOMString name);
+  [LogActivity, RaisesException, MeasureAs=DOMStorageWrite] void removeItem(DOMString key);
+  void removeSomething(DOMString key);
+  void removeAnother(DOMString key, DOMSTring value);
+};

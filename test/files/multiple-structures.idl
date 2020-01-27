@@ -11,7 +11,15 @@ enum AudioContextState {
 };
 
 callback DecodeErrorCallback = void (DOMException error);
-callback DecodeSuccessCallback = void (AudioBuffer decodedData);
+
+dictionary USBDeviceFilter {
+    unsigned short vendorId;
+    unsigned short productId;
+    octet classCode;
+    octet subclassCode;
+    octet protocolCode;
+    DOMString serialNumber;
+};
 
 [
     Exposed=Window,
