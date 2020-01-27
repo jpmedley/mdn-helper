@@ -42,7 +42,9 @@ const PROPERTY_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
 const CONSTRUCTOR_RE = /constructor\(([^)]*)\)/g;
 
 const DELETER_NAME_RE = /void([^(]*)\(/;
-const DELETER_SELF = '';
+const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
+const DELETER_UNNAMED = '';
+// const EVENT_NAME_RE
 
 class IDLData {
   constructor(source, options = {}) {
@@ -142,6 +144,7 @@ class InterfaceData extends IDLData {
     super(source, options);
     this._type = "interface";
     this._deleters = null;
+    this._eventHandlers = null;
   }
 
   get deleters() {
@@ -155,10 +158,27 @@ class InterfaceData extends IDLData {
           if (!this._deleters.includes(deleter)) {
             this._deleters.push(deleter);
           }
-        })
+        });
       }
     }
     return this._deleters;
+  }
+
+  get eventHandlers() {
+    if (!this._eventHandlers) {
+      let matches = this._sourceData.match(EVENTHANDLER_RE);
+      if (matches) {
+        this._eventHandlers = [];
+        matches.forEach(elem => {
+          let eventHandlers = elem.match(EVENT_NAME_RE);
+          let eventHandler = eventHandlers[1].trim();
+          if (!this._eventHandlers.includes(eventHandler)) {
+            this._eventHandlers.push(eventHandler);
+          }
+        });
+      }
+    }
+    return this._eventHandlers;
   }
 
   get methods() {

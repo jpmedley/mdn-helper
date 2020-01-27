@@ -25,7 +25,11 @@ const { initiateLogger } = require('../log.js');
 initiateLogger();
 
 const DELETERS = './test/files/all-deleters.idl';
+const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const NO_DELETERS = './test/files/no-deleters.idl';
+const NO_EVENTHANDLERS = './test/files/no-event-handlers.idl';
+
+const UNNAMED_MEMBER = '';
 
 function loadSource(sourcePath) {
   let sourceContents = utils.getIDLFile(sourcePath);
@@ -55,6 +59,23 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.deleters, null);
     });
+    it('Confirms that an unnamed deleter is processed from the IDL file', () => {
+      const source = loadSource(DELETERS);
+      const id = new InterfaceData(source);
+      assert.ok(id.deleters.includes(UNNAMED_MEMBER));
+    });
   });
 
+  describe('eventHandlers', () => {
+    it('Confirms that all known variations of EventHandler IDL are counted', () => {
+      const source = loadSource(EVENTHANDLERS);
+      const id = new InterfaceData(source);
+      assert.equal(id.eventHandlers.length, 3);
+    });
+    it('Confirms that null is returned when there are no event handlers', () => {
+      const source = loadSource(NO_EVENTHANDLERS);
+      const id = new InterfaceData(source);
+      assert.equal(id.eventHandlers, null);
+    });
+  });
 })
