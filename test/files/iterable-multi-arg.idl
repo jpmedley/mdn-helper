@@ -1,0 +1,5 @@
+interface Iterables {
+  iterable<CSSOMString, sequence<CSSStyleValue>>;
+
+  attribute octet notDeleter;
+};

@@ -26,8 +26,14 @@ initiateLogger();
 
 const DELETERS = './test/files/all-deleters.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
+const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
+const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
+const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
+const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
+
 const NO_DELETERS = './test/files/no-deleters.idl';
 const NO_EVENTHANDLERS = './test/files/no-event-handlers.idl';
+const NO_ITERABLE = './test/files/no-iterable.idl';
 
 const UNNAMED_MEMBER = '';
 
@@ -76,6 +82,34 @@ describe('InterfaceData', () => {
       const source = loadSource(NO_EVENTHANDLERS);
       const id = new InterfaceData(source);
       assert.equal(id.eventHandlers, null);
+    });
+  });
+
+  describe('iterable', () => {
+    it('Confirms that an iterable with a sequence as one of several args is recognized', () => {
+      const source = loadSource(ITERABLE_MULTI_ARG_SEQ);
+      const id = new InterfaceData(source);
+      assert.ok(id.iterable);
+    });
+    it('Confirms that an iterable with several args is recognized', () => {
+      const source = loadSource(ITERABLE_MULTI_ARG);
+      const id = new InterfaceData(source);
+      assert.ok(id.iterable);
+    });
+    it('Confirms that an iterable with one arg is recognized', () => {
+      const source = loadSource(ITERABLE_ONE_ARG);
+      const id = new InterfaceData(source);
+      assert.ok(id.iterable);
+    });
+    it('Confirms that an iterable with a sequence as its one arg is recognized', () => {
+      const source = loadSource(ITERABLE_SEQUENCE_ARG);
+      const id = new InterfaceData(source);
+      assert.ok(id.iterable);
+    });
+    it('Confirms that iterable returns false when the IDL contains no iterable', () => {
+      const source = loadSource(NO_ITERABLE);
+      const id = new InterfaceData(source);
+      assert.ok(id.iterable);
     });
   });
 })

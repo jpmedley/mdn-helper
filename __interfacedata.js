@@ -145,6 +145,7 @@ class InterfaceData extends IDLData {
     this._type = "interface";
     this._deleters = null;
     this._eventHandlers = null;
+    this._interable = null;
   }
 
   get deleters() {
@@ -179,6 +180,18 @@ class InterfaceData extends IDLData {
       }
     }
     return this._eventHandlers;
+  }
+
+  get iterable() {
+    if (!this._iterable) {
+      let matches = this._sourceData.match();
+      if (matches) {
+        this._iterable = true;
+      } else {
+        this._iterable = false;
+      }
+    }
+    return this._iterable;
   }
 
   get methods() {
