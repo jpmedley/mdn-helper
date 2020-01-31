@@ -26,6 +26,9 @@ initiateLogger();
 
 const DELETERS = './test/files/all-deleters.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
+const GETTERS_BOTH = './test/files/getters-both.idl';
+const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
+const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
@@ -33,6 +36,7 @@ const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
 
 const NO_DELETERS = './test/files/no-deleters.idl';
 const NO_EVENTHANDLERS = './test/files/no-event-handlers.idl';
+const NO_GETTERS = './test/files/no-getters.idl';
 const NO_ITERABLE = './test/files/no-iterable.idl';
 
 const UNNAMED_MEMBER = '';
@@ -44,6 +48,9 @@ function loadSource(sourcePath) {
     // Use webidl2 only for crude validation.
     sourceTree = webidl2.parse(sourceContents);
   } catch(e) {
+    // if (e instanceof SyntaxError) {
+    //   global.__logger.info(`Unable to parse ${sourcePath}.`);
+    // }
     global.__logger.error(e.message);
     throw e;
   } finally {
@@ -85,6 +92,29 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('getter', () => {
+    it('Confirms that getter returns true when file contains named and unnamed getters', () => {
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
+      assert.ok(id.getter);
+    });
+    it('Confirms that getter returns true when file contains only an unnamed getter', () => {
+      const source = loadSource(GETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(id.getter);
+    });
+    it('Confirms that getter returns false when file contains only named getters', () => {
+      const source = loadSource(GETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(!id.getter);
+    });
+    it('Cofirms that getter returns false when file contains no getters', () => {
+      const source = loadSource(NO_GETTERS);
+      const id = new InterfaceData(source);
+      assert.ok(!id.getter);
+    });
+  });
+
   describe('iterable', () => {
     it('Confirms that an iterable with a sequence as one of several args is recognized', () => {
       const source = loadSource(ITERABLE_MULTI_ARG_SEQ);
@@ -109,7 +139,13 @@ describe('InterfaceData', () => {
     it('Confirms that iterable returns false when the IDL contains no iterable', () => {
       const source = loadSource(NO_ITERABLE);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable);
+      assert.ok(!id.iterable);
+    });
+  });
+
+  describe('members', () => {
+    it('Confirms that named getters are returned with other members', () => {
+      
     });
   });
 })

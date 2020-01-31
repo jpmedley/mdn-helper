@@ -34,7 +34,7 @@ const INTERFACE_NAME_RE = /interface\s(\w+)/;
 
 const DELETER_RE = /(^.*deleter).*;/gm;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
-const GETTER_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\s?\(([^\)]*)\)/g;
+const GETTERS_RE = /getter([^(]+)\(/g;
 const ITERABLE_RE = /iterable\<[^\>]*>/g;
 const MAPLIKE_RE = /maplike\<[^\>]*>/g;
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(\)/g;
@@ -42,8 +42,10 @@ const PROPERTY_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
 const CONSTRUCTOR_RE = /constructor\(([^)]*)\)/g;
 
 const DELETER_NAME_RE = /void([^(]*)\(/;
-const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
 const DELETER_UNNAMED = '';
+const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
+const GETTER_NAME_RE = /getter(\s([^\s^(]+)){2}/;
+const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
 // const EVENT_NAME_RE
 
 class IDLData {
@@ -145,6 +147,7 @@ class InterfaceData extends IDLData {
     this._type = "interface";
     this._deleters = null;
     this._eventHandlers = null;
+    this._getter = null;
     this._interable = null;
   }
 
@@ -182,9 +185,28 @@ class InterfaceData extends IDLData {
     return this._eventHandlers;
   }
 
+  get getter() {
+    if (!this._getter) {
+      let matches = this._sourceData.match(GETTERS_RE);
+      if (matches) {
+        const getter = matches.find(elem => {
+          return elem.match(GETTER_UNAMED_RE);
+        });
+        if (getter) {
+          this._getter = true;
+        } else {
+          this._getter = false;
+        }
+      } else {
+        this._getter = false;
+      }
+    }
+    return this._getter
+  }
+
   get iterable() {
     if (!this._iterable) {
-      let matches = this._sourceData.match();
+      let matches = this._sourceData.match(ITERABLE_RE);
       if (matches) {
         this._iterable = true;
       } else {

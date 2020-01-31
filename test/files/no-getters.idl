@@ -1,0 +1,4 @@
+interface Getters {
+
+  attribute octet notDeleter;
+};

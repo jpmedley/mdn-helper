@@ -1,0 +1,5 @@
+interface Getters {
+  [Affects=Nothing] getter DOMString (DOMString name);
+
+  attribute octet notDeleter;
+};
