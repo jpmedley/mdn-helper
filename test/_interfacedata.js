@@ -26,6 +26,9 @@ initiateLogger();
 
 const DELETERS = './test/files/all-deleters.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
+const CONSTRUCTORS = './test/files/all-constructors.idl';
+const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
+const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
@@ -34,6 +37,7 @@ const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
 const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
 
+const NO_CONSTRUCTOR = './test/files/no-constructor.idl';
 const NO_DELETERS = './test/files/no-deleters.idl';
 const NO_EVENTHANDLERS = './test/files/no-event-handlers.idl';
 const NO_GETTERS = './test/files/no-getters.idl';
@@ -59,7 +63,32 @@ function loadSource(sourcePath) {
   return sourceContents;
 }
 
+// To Do: Account for runtime flags
+
 describe('InterfaceData', () => {
+
+  describe('constructors', () => {
+    it('Confirms that constructors returns null when no constructors are present', () => {
+      const source = loadSource(NO_CONSTRUCTOR);
+      const id = new InterfaceData(source);
+      assert.equal(id.constructors, null);
+    });
+    it('Confirms that a constructor without arguments can be found', () => {
+      const source = loadSource(CONSTRUCTOR_NO_ARGS);
+      const id = new InterfaceData(source);
+      assert.equal(id.constructors.length, 1);
+    });
+    it('Confirms that a constructor with arguments can be found', () => {
+      const source = loadSource(CONSTRUCTOR_ARGUMENTS);
+      const id = new InterfaceData(source);
+      assert.equal(id.constructors.length, 1);
+    });
+    it('Confirms that all constructor interfacess are counted', () => {
+      const source = loadSource(CONSTRUCTORS);
+      const id = new InterfaceData(source);
+      assert.equal(id.constructors.length, 3);
+    })
+  });
 
   describe('deleters', () => {
     it('Confirms that all known variations of deleter IDL are counted', () => {
@@ -106,12 +135,25 @@ describe('InterfaceData', () => {
     it('Confirms that getter returns false when file contains only named getters', () => {
       const source = loadSource(GETTERS_NAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.ok(!id.getter);
+      assert.ok(id.getter === false);
     });
     it('Cofirms that getter returns false when file contains no getters', () => {
       const source = loadSource(NO_GETTERS);
       const id = new InterfaceData(source);
-      assert.ok(!id.getter);
+      assert.ok(id.getter === false);
+    });
+  });
+
+  describe('hasConstructor', () => {
+    it('Confirms that hasConstructor returns false when a constructor is missing', () => {
+      const source = loadSource(NO_CONSTRUCTOR);
+      const id = new InterfaceData(source);
+      assert.ok(id.hasConstructor === false);
+    });
+    it('Confirms that hasConstructor returns true when a constructor is present', () => {
+      const source = loadSource(CONSTRUCTOR_NO_ARGS);
+      const id = new InterfaceData(source);
+      assert.ok(id.hasConstructor === true);
     });
   });
 
@@ -139,7 +181,7 @@ describe('InterfaceData', () => {
     it('Confirms that iterable returns false when the IDL contains no iterable', () => {
       const source = loadSource(NO_ITERABLE);
       const id = new InterfaceData(source);
-      assert.ok(!id.iterable);
+      assert.ok(id.iterable === false);
     });
   });
 

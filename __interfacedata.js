@@ -32,6 +32,8 @@ const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
 const INTERFACE_NAME_RE = /interface\s(\w+)/;
 
+
+const CONSTRUCTOR_RE = /constructor\(([^)]*)\)/g;
 const DELETER_RE = /(^.*deleter).*;/gm;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
 const GETTERS_RE = /getter([^(]+)\(/g;
@@ -39,7 +41,6 @@ const ITERABLE_RE = /iterable\<[^\>]*>/g;
 const MAPLIKE_RE = /maplike\<[^\>]*>/g;
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(\)/g;
 const PROPERTY_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
-const CONSTRUCTOR_RE = /constructor\(([^)]*)\)/g;
 
 const DELETER_NAME_RE = /void([^(]*)\(/;
 const DELETER_UNNAMED = '';
@@ -145,10 +146,29 @@ class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
     this._type = "interface";
+    this._constructors = null;
     this._deleters = null;
     this._eventHandlers = null;
     this._getter = null;
+    this._hasConstructor = null;
     this._interable = null;
+  }
+
+  get constructors() {
+    if (!this._constructors) {
+      let matches = this._sourceData.match(CONSTRUCTOR_RE);
+      if (matches) {
+        this._constructors = [];
+        matches.forEach(elem => {
+          let constructors = elem.match(CONSTRUCTOR_RE);
+          let constructor_ = constructors[0].trim();
+          if (!this._constructors.includes(constructor_)) {
+            this._constructors.push(constructor_);
+          }
+        });
+      }
+    }
+    return this._constructors;
   }
 
   get deleters() {
@@ -202,6 +222,18 @@ class InterfaceData extends IDLData {
       }
     }
     return this._getter
+  }
+
+  get hasConstructor() {
+    if (!this._hasConstructor) {
+      let matches = this._sourceData.match(CONSTRUCTOR_RE);
+      if (matches) {
+        this._hasConstructor = true;
+      } else {
+        this._hasConstructor = false;
+      }
+    }
+    return this._hasConstructor;
   }
 
   get iterable() {
