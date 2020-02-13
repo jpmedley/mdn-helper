@@ -39,7 +39,8 @@ const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s
 const GETTERS_RE = /getter([^(]+)\(/g;
 const ITERABLE_RE = /iterable\<[^\>]*>/g;
 const MAPLIKE_RE = /maplike\<[^\>]*>/g;
-const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(\)/g;
+const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/g; // Name at index 3
+const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(([^\)]*)/g; // Name at index 3
 const PROPERTY_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
 const SETTERS_RE = /setter([^(]+)\(/g;
 
@@ -51,6 +52,13 @@ const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
 // const EVENT_NAME_RE
 const SETTER_NAME_RE = /setter(\s([^\s^(]+)){2}/;
 const SETTER_UNAMED_RE = /setter\svoid\s\(/;
+
+const METHOD = Object.freeze({
+  "name": null,
+  "returnType": null,
+  "resolutions": null,
+  "arguments": []
+});
 
 class IDLData {
   constructor(source, options = {}) {
@@ -155,6 +163,7 @@ class InterfaceData extends IDLData {
     this._getter = null;
     this._hasConstructor = null;
     this._interable = null;
+    this._methods = null;
     this._setter = null;
   }
 
@@ -253,7 +262,35 @@ class InterfaceData extends IDLData {
   }
 
   get methods() {
-    // Be sure to exclude EventHandlers, getters(?), setters(?)
+    if (!this._methods) {
+      this._methods = [];
+      let matches = this._sourceData.matchAll(METHOD_RE);
+      let match = matches.next();
+      while (!match.done) {
+        let method = Object.assign({}, METHOD);
+        method.returnType = match.value[2];
+        method.name = `${match.value[3]}()`;
+        if (match.value[4]) {
+          method.arguments = match.value[4].split(',');
+        }
+        this._methods.push(method);
+        match = matches.next();
+      }
+      matches = this._sourceData.matchAll(METHOD_PROMISE_RE);
+      match = matches.next();
+      while (!match.done) {
+        let method = Object.assign({}, METHOD);
+        method.resolutions = match.value[2];
+        method.name = `${match.value[3]}()`;
+        method.returnType = "Promise";
+        if (match.value[4]) {
+          method.arguments = match.value[4].split(',');
+        }
+        this._methods.push(method);
+        match = matches.next();
+      }
+    }
+    return this._methods
   }
 
   get name() {

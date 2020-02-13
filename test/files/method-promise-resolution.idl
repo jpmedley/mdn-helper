@@ -1,0 +1,8 @@
+[
+    SecureContext,
+    Exposed=Window
+] interface MethodPromise : EventTarget {
+    [MeasureAs=AsyncClipboardAPIReadText,
+     CallWith=ScriptState
+    ] Promise<DOMString> readText();
+};

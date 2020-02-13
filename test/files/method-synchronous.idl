@@ -1,0 +1,4 @@
+interface MethodArgs : EventTarget {
+    [RaisesException] boolean check(DOMString font, optional DOMString text = " ");
+    [RaisesException] boolean checks();
+};

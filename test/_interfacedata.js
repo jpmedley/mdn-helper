@@ -36,6 +36,12 @@ const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
 const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
+const METHOD_ARGUMENTS_COUNT = './test/files/method-argument-count.idl';
+const METHOD_NO_ARGUMENTS = './test/files/method-noarguments.idl';
+const METHOD_PROMISES = './test/files/method-promises.idl';
+const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
+const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
+const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
 const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
@@ -189,16 +195,56 @@ describe('InterfaceData', () => {
     });
   });
 
-  describe('members', () => {
-    it('Confirms that named getters are returned with other members', () => {
-      
+  describe('methods', () => {
+    it('confirms that the correct number of promise-based methods are returned', () => {
+      const source = loadSource(METHOD_PROMISES);
+      const id = new InterfaceData(source);
+      assert.equal(id.methods.length, 4);
     });
-
-    it('Confirms that named setters are returned with other members', () => {
-      
+    it('Confirms that the correct number of synchronous methods are returned', () => {
+      const source = loadSource(METHOD_SYNCHRONOUS);
+      const id = new InterfaceData(source);
+      assert.equal(id.methods.length, 2);
+    });
+    it('Confirms that methods with arguments are found', () => {
+      const source = loadSource(METHOD_SYNCHRONOUS);
+      const id = new InterfaceData(source);
+      let methodsWithArguments = 0;
+      id.methods.forEach(method => {
+        if (method.arguments.length > 0) { methodsWithArguments++; }
+      });
+      assert.equal(methodsWithArguments, 1);
+    });
+    it('Confirms that methods without arguments are found', () => {
+      const source = loadSource(METHOD_SYNCHRONOUS);
+      const id = new InterfaceData(source);
+      let methodsWithoutArguments = 0;
+      id.methods.forEach(method => {
+        if (method.arguments.length == 0) { methodsWithoutArguments++; }
+      });
+      assert.equal(methodsWithoutArguments, 1);
+    });
+    it('Confirms that method.args returns the correct number of args, when present', () => {
+      const source = loadSource(METHOD_ARGUMENTS_COUNT);
+      const id = new InterfaceData(source);
+      assert.equal(id.methods[0].arguments.length, 2);
+    });
+    it('Confirms that method.args equals 0 when there are no args present', () => {
+      const source = loadSource(METHOD_NO_ARGUMENTS);
+      const id = new InterfaceData(source);
+      assert.equal(id.methods[0].arguments.length, 0);
+    });
+    it('Confirms that method.resolutions returns a value', () => {
+      const source = loadSource(METHOD_PROMISE_RESOLUTION);
+      const id = new InterfaceData(source);
+      assert.equal(id.methods[0].resolutions, "DOMString");
+    });
+    it('Confirms that method.resolutions returns "void"', () => {
+      const source = loadSource(METHOD_PROMISE_VOID);
+      const id = new InterfaceData(source);
+      assert.equal(id.methods[0].resolutions, "void");
     });
   });
-
 
   describe('setter', () => {
     it('Confirms that setter returns true when file contains named and unnamed setters', () => {
