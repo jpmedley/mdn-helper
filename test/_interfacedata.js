@@ -36,12 +36,16 @@ const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
 const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
+const SETTERS_BOTH = './test/files/setters-both.idl';
+const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
+const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
 
 const NO_CONSTRUCTOR = './test/files/no-constructor.idl';
 const NO_DELETERS = './test/files/no-deleters.idl';
 const NO_EVENTHANDLERS = './test/files/no-event-handlers.idl';
 const NO_GETTERS = './test/files/no-getters.idl';
 const NO_ITERABLE = './test/files/no-iterable.idl';
+const NO_SETTERS = './test/files/no-setters.idl';
 
 const UNNAMED_MEMBER = '';
 
@@ -137,7 +141,7 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.getter === false);
     });
-    it('Cofirms that getter returns false when file contains no getters', () => {
+    it('Confirms that getter returns false when file contains no getters', () => {
       const source = loadSource(NO_GETTERS);
       const id = new InterfaceData(source);
       assert.ok(id.getter === false);
@@ -188,6 +192,34 @@ describe('InterfaceData', () => {
   describe('members', () => {
     it('Confirms that named getters are returned with other members', () => {
       
+    });
+
+    it('Confirms that named setters are returned with other members', () => {
+      
+    });
+  });
+
+
+  describe('setter', () => {
+    it('Confirms that setter returns true when file contains named and unnamed setters', () => {
+      const source = loadSource(SETTERS_BOTH);
+      const id = new InterfaceData(source);
+      assert.ok(id.setter);
+    });
+    it('Confirms that setter returns true when file contains only an unnamed setter', () => {
+      const source = loadSource(SETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(id.setter);
+    });
+    it('Confirms that setter returns false when file contains only named setters', () => {
+      const source = loadSource(SETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(id.setter === false);
+    });
+    it('Confirms that setter returns false when file contains no setters', () => {
+      const source = loadSource(NO_SETTERS);
+      const id = new InterfaceData(source);
+      assert.ok(id.setter === false);
     });
   });
 })

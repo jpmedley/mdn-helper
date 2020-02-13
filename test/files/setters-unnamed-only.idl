@@ -1,0 +1,5 @@
+interface Setters {
+  [RaisesException] setter void (unsigned long index, SVGPoint newItem);
+
+  attribute octet notDeleter;
+};

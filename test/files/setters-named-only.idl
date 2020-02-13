@@ -1,0 +1,5 @@
+interface Setters {
+  [RaisesException] setter CSSUnparsedSegment (unsigned long index, CSSUnparsedSegment val);
+
+  attribute octet notDeleter;
+};

@@ -41,6 +41,7 @@ const ITERABLE_RE = /iterable\<[^\>]*>/g;
 const MAPLIKE_RE = /maplike\<[^\>]*>/g;
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(\)/g;
 const PROPERTY_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
+const SETTERS_RE = /setter([^(]+)\(/g;
 
 const DELETER_NAME_RE = /void([^(]*)\(/;
 const DELETER_UNNAMED = '';
@@ -48,6 +49,8 @@ const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
 const GETTER_NAME_RE = /getter(\s([^\s^(]+)){2}/;
 const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
 // const EVENT_NAME_RE
+const SETTER_NAME_RE = /setter(\s([^\s^(]+)){2}/;
+const SETTER_UNAMED_RE = /setter\svoid\s\(/;
 
 class IDLData {
   constructor(source, options = {}) {
@@ -152,6 +155,7 @@ class InterfaceData extends IDLData {
     this._getter = null;
     this._hasConstructor = null;
     this._interable = null;
+    this._setter = null;
   }
 
   get constructors() {
@@ -258,6 +262,25 @@ class InterfaceData extends IDLData {
       this._name = matches[1];
     }
     return this._name;
+  }
+
+  get setter() {
+    if (!this._setter) {
+      let matches = this._sourceData.match(SETTERS_RE);
+      if (matches) {
+        const setter = matches.find(elem => {
+          return elem.match(SETTER_UNAMED_RE);
+        });
+        if (setter) {
+          this._setter = true;
+        } else {
+          this._setter = false;
+        }
+      } else {
+        this._setter = false;
+      }
+    }
+    return this._setter
   }
 
   getBurnRecords() {
