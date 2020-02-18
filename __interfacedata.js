@@ -41,7 +41,8 @@ const ITERABLE_RE = /iterable\<[^\>]*>/g;
 const MAPLIKE_RE = /maplike\<[^\>]*>/g;
 const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/g; // Name at index 3
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(([^\)]*)/g; // Name at index 3
-const PROPERTY_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
+const PROPERTY_READONLY_RE = /(\[([^\]]*)\])?(\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
+const PROPERTY_READWRITE_RE = /(\[([^\]]*)\])?[^(\sreadonly)]\sattribute\s(\w+)\s(\w+)/g;
 const SETTERS_RE = /setter([^(]+)\(/g;
 
 const DELETER_NAME_RE = /void([^(]*)\(/;
@@ -59,6 +60,12 @@ const METHOD = Object.freeze({
   "resolutions": null,
   "arguments": []
 });
+
+const PROPERTY = Object.freeze({
+  "name": null,
+  "returnType": null,
+  "readOnly": null
+})
 
 class IDLData {
   constructor(source, options = {}) {
@@ -157,6 +164,7 @@ class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
     this._type = "interface";
+    this._allProperties = null;
     this._constructors = null;
     this._deleters = null;
     this._eventHandlers = null;
@@ -164,6 +172,8 @@ class InterfaceData extends IDLData {
     this._hasConstructor = null;
     this._interable = null;
     this._methods = null;
+    this._readOnlyProperties = null;
+    this._readWriteProperties = null;
     this._setter = null;
   }
 
@@ -316,6 +326,53 @@ class InterfaceData extends IDLData {
       this._name = matches[1];
     }
     return this._name;
+  }
+
+  get properties() {
+    if (!this._allProperties) {
+      this._allProperties = [];
+      let props = this.readOnlyProperties;
+      if (props) { this._allProperties.push(...props); }
+      props = this.readWriteProperties;
+      if (props) { this._allProperties.push(...props); }
+    }
+    return this._allProperties;
+  }
+
+  get readOnlyProperties() {
+    if (!this._readOnlyProperties) {
+      let matches = this._sourceData.matchAll(PROPERTY_READONLY_RE);
+      // if (matches) {}
+      let match = matches.next();
+      if (!match.done) { this._readOnlyProperties = []; }
+      while (!match.done) {
+        let prop = Object.assign({}, PROPERTY);
+        prop.name = match.value[5];
+        prop.readOnly = true;
+        prop.returnType = match.value[4];
+        this._readOnlyProperties.push(prop);
+        match = matches.next();
+      }
+    }
+    return this._readOnlyProperties;
+  }
+
+  get readWriteProperties() {
+    if (!this._readWriteProperties) {
+      let matches = this._sourceData.matchAll(PROPERTY_READWRITE_RE);
+      // if (matches) {}
+      let match = matches.next();
+      if (!match.done) { this._readWriteProperties = []; }
+      while (!match.done) {
+        let prop = Object.assign({}, PROPERTY);
+        prop.name = match.value[4];
+        prop.readOnly = false;
+        prop.returnType = match.value[3];
+        this._readWriteProperties.push(prop);
+        match = matches.next();
+      }
+    }
+    return this._readWriteProperties;
   }
 
   get setter() {
