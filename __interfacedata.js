@@ -342,7 +342,6 @@ class InterfaceData extends IDLData {
   get readOnlyProperties() {
     if (!this._readOnlyProperties) {
       let matches = this._sourceData.matchAll(PROPERTY_READONLY_RE);
-      // if (matches) {}
       let match = matches.next();
       if (!match.done) { this._readOnlyProperties = []; }
       while (!match.done) {
@@ -360,15 +359,16 @@ class InterfaceData extends IDLData {
   get readWriteProperties() {
     if (!this._readWriteProperties) {
       let matches = this._sourceData.matchAll(PROPERTY_READWRITE_RE);
-      // if (matches) {}
       let match = matches.next();
       if (!match.done) { this._readWriteProperties = []; }
       while (!match.done) {
-        let prop = Object.assign({}, PROPERTY);
-        prop.name = match.value[4];
-        prop.readOnly = false;
-        prop.returnType = match.value[3];
-        this._readWriteProperties.push(prop);
+        if (match.value[3] != 'EventHandler') {
+          let prop = Object.assign({}, PROPERTY);
+          prop.name = match.value[4];
+          prop.readOnly = false;
+          prop.returnType = match.value[3];
+          this._readWriteProperties.push(prop);
+        }
         match = matches.next();
       }
     }

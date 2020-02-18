@@ -253,11 +253,11 @@ describe('InterfaceData', () => {
     it('Confirms that all basic properties are counted, excluding event handlers', () => {
       const source = loadSource(PROPERTIES_BASIC);
       const id = new InterfaceData(source);
-      assert.equal(id.properties.length, 3);
+      assert.equal(id.properties.length, 2);
     });
-    // it ('Confirms that event handlers are not returned', () => {
+    it ('Confirms that event handlers are not returned', () => {
 
-    // });
+    });
   });
 
   describe('setter', () => {
