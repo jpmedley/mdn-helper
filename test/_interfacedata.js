@@ -43,6 +43,7 @@ const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
 const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
+const PROPERTIES_ALL = './test/files/properties-all.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
 const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
@@ -197,9 +198,16 @@ describe('InterfaceData', () => {
   });
 
   // Need to deal with tiems like: readonly maplike<DOMString, DOMString>;
+  describe('maplikeProperties', () => {
+    it('Confirms that all seven maplike properties are returned', () => {
+      const source = loadSource(PROPERTIES_ALL);
+      const id = new InterfaceData(source);
+      assert.equal(id.maplikeMethods.length, 7);
+    });
+  });
 
   describe('methods', () => {
-    it('confirms that the correct number of promise-based methods are returned', () => {
+    it('Confirms that the correct number of promise-based methods are returned', () => {
       const source = loadSource(METHOD_PROMISES);
       const id = new InterfaceData(source);
       assert.equal(id.methods.length, 4);
@@ -255,6 +263,9 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.properties.length, 2);
     });
+    it('Confirms that properties for "maplike" attributes are included', () => {
+
+    })
   });
 
   describe('readOnlyProperties', () => {

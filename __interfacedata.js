@@ -171,6 +171,7 @@ class InterfaceData extends IDLData {
     this._getter = null;
     this._hasConstructor = null;
     this._interable = null;
+    this._maplike = null;
     this._methods = null;
     this._readOnlyProperties = null;
     this._readWriteProperties = null;
@@ -286,6 +287,22 @@ class InterfaceData extends IDLData {
       }
     }
     return this._iterable;
+  }
+
+  get maplikeMethods() {
+    if (this._maplike) { return this._maplike; }
+    if (this._sourceData.includes("maplike")) {
+      this._maplike = [];
+      let mlMethods = ["entries", "forEach", "get", "has", "keys", "size", "values"];
+      let mlReturns = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
+      mlMethods.forEach((method, index) => {
+        let meth = Object.assign({}, METHOD);
+        meth.name = `${method}()`;
+        meth.returnType = mlReturns[index];
+        this._maplike.push(meth);
+      })
+    }
+    return this._maplike;
   }
 
   get methods() {
