@@ -255,10 +255,23 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.properties.length, 2);
     });
-    it ('Confirms that event handlers are not returned', () => {
+  });
 
+  describe('readOnlyProperties', () => {
+    it ('Confirms that all readonly properties are counted', () => {
+      const source = loadSource(PROPERTIES_BASIC);
+      const id = new InterfaceData(source);
+      assert.equal(id.readOnlyProperties.length, 1);
     });
   });
+
+  describe('readWriteProperties', () => {
+    it ('Confirms that all read/write properties are counted', () => {
+      const source = loadSource(PROPERTIES_BASIC);
+      const id = new InterfaceData(source);
+      assert.equal(id.readWriteProperties.length, 1);
+    });
+  })
 
   describe('setter', () => {
     it('Confirms that setter returns true when file contains named and unnamed setters', () => {
