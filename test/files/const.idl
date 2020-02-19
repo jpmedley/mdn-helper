@@ -1,3 +1,0 @@
-interface ConstAttribute {
-    const unsigned short TIMEOUT_ERR = 7;
-};

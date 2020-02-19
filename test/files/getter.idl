@@ -1,3 +1,0 @@
-interface GetterAttribute : CSSStyleValue {
-    [RaisesException] getter CSSUnparsedSegment (unsigned long index);
-};

@@ -1,3 +1,0 @@
-interface EventNotInherits : Event {
-    readonly attribute DOMHighResTimeStamp timecode;
-};
