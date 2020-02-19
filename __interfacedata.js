@@ -38,7 +38,7 @@ const DELETER_RE = /(^.*deleter).*;/gm;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
 const GETTERS_RE = /getter([^(]+)\(/g;
 const ITERABLE_RE = /iterable\<[^\>]*>/g;
-const MAPLIKE_RE = /maplike\<[^\>]*>/g;
+const MAPLIKE_RE = /(readonly)?\smaplike\<[^\>]*>/g;
 const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/g; // Name at index 3
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(([^\)]*)/g; // Name at index 3
 const PROPERTY_READONLY_RE = /(\[([^\]]*)\])?(\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
@@ -289,18 +289,24 @@ class InterfaceData extends IDLData {
     return this._iterable;
   }
 
+  // "clear", "delete", or "set"
   get maplikeMethods() {
     if (this._maplike) { return this._maplike; }
-    if (this._sourceData.includes("maplike")) {
+    let matches = this._sourceData.match(MAPLIKE_RE);
+    if (matches) {
       this._maplike = [];
       let mlMethods = ["entries", "forEach", "get", "has", "keys", "size", "values"];
       let mlReturns = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
+      if (!matches[0].includes('readonly')) {
+        mlMethods.push(...["clear", "delete", "set"]);
+        mlReturns.push(...["void", "void", "void"]);
+      }
       mlMethods.forEach((method, index) => {
         let meth = Object.assign({}, METHOD);
         meth.name = `${method}()`;
         meth.returnType = mlReturns[index];
         this._maplike.push(meth);
-      })
+      });
     }
     return this._maplike;
   }
@@ -333,6 +339,8 @@ class InterfaceData extends IDLData {
         this._methods.push(method);
         match = matches.next();
       }
+    let maplikes = this.maplikeMethods;
+    if (maplikes) { this._methods.push(...maplikes); }
     }
     return this._methods
   }
@@ -409,6 +417,11 @@ class InterfaceData extends IDLData {
       }
     }
     return this._setter
+  }
+
+  get signatures() {
+    // Needed for backward comapatibility.
+    return this.constructors;
   }
 
   getBurnRecords() {

@@ -43,7 +43,9 @@ const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
 const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
-const PROPERTIES_ALL = './test/files/properties-all.idl';
+const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
+const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
+const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
 const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
@@ -99,7 +101,7 @@ describe('InterfaceData', () => {
       const source = loadSource(CONSTRUCTORS);
       const id = new InterfaceData(source);
       assert.equal(id.constructors.length, 3);
-    })
+    });
   });
 
   describe('deleters', () => {
@@ -197,12 +199,17 @@ describe('InterfaceData', () => {
     });
   });
 
-  // Need to deal with tiems like: readonly maplike<DOMString, DOMString>;
-  describe('maplikeProperties', () => {
-    it('Confirms that all seven maplike properties are returned', () => {
-      const source = loadSource(PROPERTIES_ALL);
+  // Needs to read out of a test file that contains methods.
+  describe('maplikeMethods', () => {
+    it('Confirms that only readonly properties are returned', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE_READONLY);
       const id = new InterfaceData(source);
       assert.equal(id.maplikeMethods.length, 7);
+    });
+    it('Confirms that all methods are returned', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE);
+      const id = new InterfaceData(source);
+      assert.equal(id.maplikeMethods.length, 10);
     });
   });
 
@@ -258,14 +265,21 @@ describe('InterfaceData', () => {
   });
   
   describe('properties', () => {
-    it('Confirms that all basic properties are counted, excluding event handlers', () => {
+    it('Confirms that all basic properties are counted', () => {
       const source = loadSource(PROPERTIES_BASIC);
       const id = new InterfaceData(source);
       assert.equal(id.properties.length, 2);
     });
-    it('Confirms that properties for "maplike" attributes are included', () => {
-
-    })
+    it('Confirms that eventHandler is excluded', () => {
+      const source = loadSource(PROPERTIES_EVENTHANDLER);
+      const id = new InterfaceData(source);
+      assert.equal(id.properties.length, 2);
+    });
+    it('Confirms that the maplike attribute is excluded', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE_READONLY);
+      const id = new InterfaceData(source);
+      assert.equal(id.properties.length, 2);
+    });
   });
 
   describe('readOnlyProperties', () => {
@@ -282,7 +296,7 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.readWriteProperties.length, 1);
     });
-  })
+  });
 
   describe('setter', () => {
     it('Confirms that setter returns true when file contains named and unnamed setters', () => {
@@ -306,4 +320,4 @@ describe('InterfaceData', () => {
       assert.ok(id.setter === false);
     });
   });
-})
+});
