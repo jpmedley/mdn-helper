@@ -29,6 +29,8 @@ const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
+const EXPOSED_MANY = './test/files/exposed-many.idl';
+const EXPOSED_ONE = './test/files/exposed-one.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
@@ -132,6 +134,20 @@ describe('InterfaceData', () => {
       const source = loadSource(NO_EVENTHANDLERS);
       const id = new InterfaceData(source);
       assert.equal(id.eventHandlers, null);
+    });
+  });
+
+  describe('exposed', () => {
+    it('Confirms one exposed interface is returned', () => {
+      const source = loadSource(EXPOSED_ONE);
+      const id = new InterfaceData(source);
+      assert.equal(id.exposed.length, 1);
+    });
+    it('Confirms multiple exposed interfaces are returned', () => {
+      const source = loadSource(EXPOSED_MANY);
+      const id = new InterfaceData(source);
+      console.log(id.exposed);
+      assert.equal(id.exposed.length, 2);
     });
   });
 

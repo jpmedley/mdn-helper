@@ -36,7 +36,11 @@ const INTERFACE_NAME_RE = /interface\s(\w+)/;
 const CONSTRUCTOR_RE = /constructor\(([^)]*)\)/g;
 const DELETER_RE = /(^.*deleter).*;/gm;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
+const EXPOSED_RE = /Exposed=?([^\n]*)/;
+const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
+const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]*)\]/;
 const GETTERS_RE = /getter([^(]+)\(/g;
+const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const ITERABLE_RE = /iterable\<[^\>]*>/g;
 const MAPLIKE_RE = /(readonly)?\smaplike\<[^\>]*>/g;
 const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/g; // Name at index 3
@@ -168,6 +172,8 @@ class InterfaceData extends IDLData {
     this._constructors = null;
     this._deleters = null;
     this._eventHandlers = null;
+    this._exposed = null;
+    this._extendedAttributes = null;
     this._getter = null;
     this._hasConstructor = null;
     this._interable = null;
@@ -176,6 +182,17 @@ class InterfaceData extends IDLData {
     this._readOnlyProperties = null;
     this._readWriteProperties = null;
     this._setter = null;
+  }
+
+  _getInterfaceExtendedAttributes() {
+    if (this._extendedAttributes) { return this._extendedAttributes; }
+    let matches = this._sourceData.match(EXTENDED_ATTRIBUTES_INTERFACE_RE);
+    if (matches) {
+      let match = matches[0];
+      let attributes = match.match(EXTENDED_ATTRIBUTES_RE);
+      this._extendedAttributes = attributes[0];
+    }
+    return this._extendedAttributes;
   }
 
   get constructors() {
@@ -244,6 +261,27 @@ class InterfaceData extends IDLData {
       }
     }
     return this._eventHandlers;
+  }
+
+  get exposed() {
+    if (this._exposed) { return this._exposed; }
+    let extAttributes = this._getInterfaceExtendedAttributes();
+    if (extAttributes) {
+      let matches = extAttributes.match(EXPOSED_RE);
+      if (matches) {
+        let match = matches[0];
+        if (match.includes("=")) {
+          match = match.split('=')[1];
+        }
+        if (match.includes("(")) {
+          let subMatches = match.match(INSIDE_PARENS_RE);
+          match = subMatches[1];
+        }
+        if (match.endsWith(",")) { match = match.substring(0, match.length-1) }
+        this._exposed = match.split(',');
+      }
+    }
+    return this._exposed;
   }
 
   get getter() {
