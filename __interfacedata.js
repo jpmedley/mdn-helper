@@ -438,6 +438,11 @@ class InterfaceData extends IDLData {
     return this._readWriteProperties;
   }
 
+  get secureContext() {
+    let extAttributes = this._getInterfaceExtendedAttributes();
+    return extAttributes.includes("SecureContext");
+  }
+
   get setter() {
     if (!this._setter) {
       let matches = this._sourceData.match(SETTERS_RE);

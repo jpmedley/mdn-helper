@@ -1,0 +1,5 @@
+[
+    SecureContext
+] interface SecureContext {
+    readonly attribute FontFaceSetLoadStatus status;
+};

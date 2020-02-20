@@ -48,6 +48,7 @@ const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
 const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
+const SECURE_CONTEXT = './test/files/secure-context.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
 const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
@@ -311,6 +312,19 @@ describe('InterfaceData', () => {
       const source = loadSource(PROPERTIES_BASIC);
       const id = new InterfaceData(source);
       assert.equal(id.readWriteProperties.length, 1);
+    });
+  });
+
+  describe('secureContext', () => {
+    it('Confirms that secureContext returns true when present', () => {
+      const source = loadSource(SECURE_CONTEXT);
+      const id = new InterfaceData(source);
+      assert.ok(id.secureContext);
+    });
+    it('Confirms that secureContext returns false when not present', () => {
+      const source = loadSource(EXPOSED_ONE);
+      const id = new InterfaceData(source);
+      assert.ok(!id.secureContext);
     });
   });
 
