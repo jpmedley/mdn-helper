@@ -54,6 +54,7 @@ const DELETER_UNNAMED = '';
 const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
 const GETTER_NAME_RE = /getter(\s([^\s^(]+)){2}/;
 const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
+const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
 // const EVENT_NAME_RE
 const SETTER_NAME_RE = /setter(\s([^\s^(]+)){2}/;
 const SETTER_UNAMED_RE = /setter\svoid\s\(/;
@@ -179,6 +180,7 @@ class InterfaceData extends IDLData {
     this._interable = null;
     this._maplike = null;
     this._methods = null;
+    this._parentClass = null;
     this._readOnlyProperties = null;
     this._readWriteProperties = null;
     this._setter = null;
@@ -389,6 +391,18 @@ class InterfaceData extends IDLData {
       this._name = matches[1];
     }
     return this._name;
+  }
+
+  get parentClass() {
+    if (this._parentClass) { return this._parentClass; }
+    let matches = this._sourceData.match(INTERFACE_INHERITANCE_RE);
+    if (matches) {
+      let names = matches[1].split(":");
+      if (names[1]) { this._parentClass = names[1].trim(); }
+    }
+
+    // this._parentClass = "no";
+    return this._parentClass;
   }
 
   get properties() {

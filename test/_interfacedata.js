@@ -34,6 +34,8 @@ const EXPOSED_ONE = './test/files/exposed-one.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
+const INTERFACE_PARENT = './test/files/interface-parent.idl';
+const INTERFACE_NOPARENT = './test/files/interface-noparent.idl';
 const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
@@ -147,7 +149,6 @@ describe('InterfaceData', () => {
     it('Confirms multiple exposed interfaces are returned', () => {
       const source = loadSource(EXPOSED_MANY);
       const id = new InterfaceData(source);
-      console.log(id.exposed);
       assert.equal(id.exposed.length, 2);
     });
   });
@@ -279,6 +280,19 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.methods[0].resolutions, "void");
     });
+  });
+
+  describe('parentClass', () => {
+    it('Confirms that the name of a parent class is returned if present', () => {
+      const source = loadSource(INTERFACE_PARENT);
+      const id = new InterfaceData(source);
+      assert.equal(id.parentClass, "EventTarget");
+    });
+    it('Confirms that null is returned if an interface has no parent class', () => {
+      const source = loadSource(INTERFACE_NOPARENT);
+      const id = new InterfaceData(source);
+      assert.equal(id.parentClass, null);
+    })
   });
   
   describe('properties', () => {
