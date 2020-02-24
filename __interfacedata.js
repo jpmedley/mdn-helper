@@ -214,23 +214,6 @@ class InterfaceData extends IDLData {
     return this._constructors;
   }
 
-  get constructors() {
-    if (!this._constructors) {
-      let matches = this._sourceData.match(CONSTRUCTOR_RE);
-      if (matches) {
-        this._constructors = [];
-        matches.forEach(elem => {
-          let constructors = elem.match(CONSTRUCTOR_RE);
-          let constructor_ = constructors[0].trim();
-          if (!this._constructors.includes(constructor_)) {
-            this._constructors.push(constructor_);
-          }
-        });
-      }
-    }
-    return this._constructors;
-  }
-
   get deleters() {
     if (!this._deleters) {
       let matches = this._sourceData.match(DELETER_RE);
