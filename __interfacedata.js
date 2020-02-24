@@ -59,6 +59,12 @@ const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
 const SETTER_NAME_RE = /setter(\s([^\s^(]+)){2}/;
 const SETTER_UNAMED_RE = /setter\svoid\s\(/;
 
+const CONSTRUCTOR = Object.freeze({
+  "signature": null,
+  "flag": null,
+  "originTrial": null
+})
+
 const METHOD = Object.freeze({
   "name": null,
   "returnType": null,

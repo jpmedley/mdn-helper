@@ -364,4 +364,12 @@ describe('InterfaceData', () => {
       assert.ok(id.setter === false);
     });
   });
+
+  describe('signatures', () => {
+    it('Confirms that signatures returns an array', () => {
+      const source = loadSource(CONSTRUCTORS);
+      const id = new InterfaceData(source);
+      assert.ok(Array.isArray(id.signatures));
+    })
+  })
 });
