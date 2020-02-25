@@ -211,6 +211,7 @@ class InterfaceData extends IDLData {
         this._constructors = [];
         matches.forEach(elem => {
           let constructor_ = Object.assign({}, CONSTRUCTOR);
+          constructor_.source = elem;
           let constructorString = elem.match(CONSTRUCTOR_ARGS_RE);
           if (constructorString) {
             if (!constructorString.input.includes("()")) {
@@ -474,7 +475,12 @@ class InterfaceData extends IDLData {
 
   get signatures() {
     // Needed for backward comapatibility.
-    return this.constructors;
+    let signatures = [];
+    let constrs = this.constructors;
+    constrs.forEach(elem => {
+      signatures.push(elem.source);
+    });
+    return signatures;
   }
 
   getBurnRecords() {
