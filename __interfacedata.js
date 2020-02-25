@@ -33,7 +33,8 @@ const ENUM_NAME_RE = /enum\s(\w+)/;
 const INTERFACE_NAME_RE = /interface\s(\w+)/;
 
 
-const CONSTRUCTOR_RE = /constructor\(([^)]*)\)/g;
+const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
+const CONSTRUCTOR_ARGS_RE = /\(([^\n]*)/;
 const DELETER_RE = /(^.*deleter).*;/gm;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
@@ -60,7 +61,7 @@ const SETTER_NAME_RE = /setter(\s([^\s^(]+)){2}/;
 const SETTER_UNAMED_RE = /setter\svoid\s\(/;
 
 const CONSTRUCTOR = Object.freeze({
-  "signature": null,
+  "arguments": [],
   "flag": null,
   "originTrial": null
 })
@@ -209,11 +210,17 @@ class InterfaceData extends IDLData {
       if (matches) {
         this._constructors = [];
         matches.forEach(elem => {
-          let constructors = elem.match(CONSTRUCTOR_RE);
-          let constructor_ = constructors[0].trim();
-          if (!this._constructors.includes(constructor_)) {
-            this._constructors.push(constructor_);
+          let constructor_ = Object.assign({}, CONSTRUCTOR);
+          let constructorString = elem.match(CONSTRUCTOR_ARGS_RE);
+          if (constructorString) {
+            if (!constructorString.input.includes("()")) {
+              constructor_.arguments = constructorString[1].split(',');
+              for (let i = 0; i < constructor_.arguments.length; i++) {
+                constructor_.arguments[i] = constructor_.arguments[i].trim();
+              }
+            }
           }
+          this._constructors.push(constructor_);
         });
       }
     }

@@ -95,12 +95,22 @@ describe('InterfaceData', () => {
     it('Confirms that a constructor without arguments can be found', () => {
       const source = loadSource(CONSTRUCTOR_NO_ARGS);
       const id = new InterfaceData(source);
-      assert.equal(id.constructors.length, 1);
+      // assert.equal(id.constructors.length, 1);
+      const constructors = id.constructors;
+      const found = constructors.findIndex(elem => {
+        return elem.arguments.length == 0;
+      });
+      assert.ok(found == 0);
     });
     it('Confirms that a constructor with arguments can be found', () => {
       const source = loadSource(CONSTRUCTOR_ARGUMENTS);
       const id = new InterfaceData(source);
-      assert.equal(id.constructors.length, 1);
+      // assert.equal(id.constructors.length, 1);
+      const constructors = id.constructors;
+      const found = constructors.find(elem => {
+        return elem.arguments.length > 0;
+      });
+      assert.ok(found.arguments.length > -1);
     });
     it('Confirms that all constructor interfacess are counted', () => {
       const source = loadSource(CONSTRUCTORS);
