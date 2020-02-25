@@ -36,13 +36,17 @@ const INTERFACE_NAME_RE = /interface\s(\w+)/;
 const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
 const CONSTRUCTOR_ARGS_RE = /\(([^\n]*)/;
 const DELETER_RE = /(^.*deleter).*;/gm;
+const DELETER_NAME_RE = /void([^(]*)\(/;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
+const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
 const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
 const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]*)\]/;
 const GETTERS_RE = /getter([^(]+)\(/g;
+const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const ITERABLE_RE = /iterable\<[^\>]*>/g;
+const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
 const MAPLIKE_RE = /(readonly)?\smaplike\<[^\>]*>/g;
 const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/g; // Name at index 3
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(([^\)]*)/g; // Name at index 3
@@ -50,15 +54,6 @@ const PROPERTY_READONLY_RE = /(\[([^\]]*)\])?(\sreadonly)\sattribute\s(\w+)\s(\w
 const PROPERTY_READWRITE_RE = /(\[([^\]]*)\])?[^(\sreadonly)]\sattribute\s(\w+)\s(\w+)/g;
 const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
 const SETTERS_RE = /setter([^(]+)\(/g;
-
-const DELETER_NAME_RE = /void([^(]*)\(/;
-const DELETER_UNNAMED = '';
-const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
-const GETTER_NAME_RE = /getter(\s([^\s^(]+)){2}/;
-const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
-const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
-// const EVENT_NAME_RE
-const SETTER_NAME_RE = /setter(\s([^\s^(]+)){2}/;
 const SETTER_UNAMED_RE = /setter\svoid\s\(/;
 
 const CONSTRUCTOR = Object.freeze({
@@ -135,7 +130,6 @@ class IDLData {
     });
     return records;
   }
-  // Original line 113
 }
 
 class CallbackData extends IDLData {
@@ -234,59 +228,56 @@ class InterfaceData extends IDLData {
   }
 
   get constructors() {
-    if (!this._constructors) {
-      let matches = this._sourceData.match(CONSTRUCTOR_RE);
-      if (matches) {
-        this._constructors = [];
-        matches.forEach(elem => {
-          let constructor_ = Object.assign({}, CONSTRUCTOR);
-          constructor_.source = elem;
-          let constructorString = elem.match(CONSTRUCTOR_ARGS_RE);
-          if (constructorString) {
-            if (!constructorString.input.includes("()")) {
-              constructor_.arguments = constructorString[1].split(',');
-              for (let i = 0; i < constructor_.arguments.length; i++) {
-                constructor_.arguments[i] = constructor_.arguments[i].trim();
-              }
+    if (this._constructors) { return this._constructors; }
+    let matches = this._sourceData.match(CONSTRUCTOR_RE);
+    if (matches) {
+      this._constructors = [];
+      matches.forEach(elem => {
+        let constructor_ = Object.assign({}, CONSTRUCTOR);
+        constructor_.source = elem;
+        let constructorString = elem.match(CONSTRUCTOR_ARGS_RE);
+        if (constructorString) {
+          if (!constructorString.input.includes("()")) {
+            constructor_.arguments = constructorString[1].split(',');
+            for (let i = 0; i < constructor_.arguments.length; i++) {
+              constructor_.arguments[i] = constructor_.arguments[i].trim();
             }
           }
-          this._constructors.push(constructor_);
-        });
-      }
+        }
+        this._constructors.push(constructor_);
+      });
     }
     return this._constructors;
   }
 
   get deleters() {
-    if (!this._deleters) {
-      let matches = this._sourceData.match(DELETER_RE);
-      if (matches) {
-        this._deleters = [];
-        matches.forEach(elem => {
-          let deleters = elem.match(DELETER_NAME_RE);
-          let deleter = deleters[1].trim();
-          if (!this._deleters.includes(deleter)) {
-            this._deleters.push(deleter);
-          }
-        });
-      }
+    if (this._deleters) { return this._deleters; }
+    let matches = this._sourceData.match(DELETER_RE);
+    if (matches) {
+      this._deleters = [];
+      matches.forEach(elem => {
+        let deleters = elem.match(DELETER_NAME_RE);
+        let deleter = deleters[1].trim();
+        if (!this._deleters.includes(deleter)) {
+          this._deleters.push(deleter);
+        }
+      });
     }
     return this._deleters;
   }
 
   get eventHandlers() {
-    if (!this._eventHandlers) {
-      let matches = this._sourceData.match(EVENTHANDLER_RE);
-      if (matches) {
-        this._eventHandlers = [];
-        matches.forEach(elem => {
-          let eventHandlers = elem.match(EVENT_NAME_RE);
-          let eventHandler = eventHandlers[1].trim();
-          if (!this._eventHandlers.includes(eventHandler)) {
-            this._eventHandlers.push(eventHandler);
-          }
-        });
-      }
+    if (this._eventHandlers) { return this._eventHandlers; }
+    let matches = this._sourceData.match(EVENTHANDLER_RE);
+    if (matches) {
+      this._eventHandlers = [];
+      matches.forEach(elem => {
+        let eventHandlers = elem.match(EVENT_NAME_RE);
+        let eventHandler = eventHandlers[1].trim();
+        if (!this._eventHandlers.includes(eventHandler)) {
+          this._eventHandlers.push(eventHandler);
+        }
+      });
     }
     return this._eventHandlers;
   }
@@ -319,49 +310,45 @@ class InterfaceData extends IDLData {
   }
 
   get getter() {
-    if (!this._getter) {
-      let matches = this._sourceData.match(GETTERS_RE);
-      if (matches) {
-        const getter = matches.find(elem => {
-          return elem.match(GETTER_UNAMED_RE);
-        });
-        if (getter) {
-          this._getter = true;
-        } else {
-          this._getter = false;
-        }
+    if (this._getter) { return this._getter; }
+    let matches = this._sourceData.match(GETTERS_RE);
+    if (matches) {
+      const getter = matches.find(elem => {
+        return elem.match(GETTER_UNAMED_RE);
+      });
+      if (getter) {
+        this._getter = true;
       } else {
         this._getter = false;
       }
+    } else {
+      this._getter = false;
     }
     return this._getter
   }
 
   get hasConstructor() {
-    if (!this._hasConstructor) {
-      let matches = this._sourceData.match(CONSTRUCTOR_RE);
-      if (matches) {
-        this._hasConstructor = true;
-      } else {
-        this._hasConstructor = false;
-      }
+    if (this._hasConstructor) { return this._hasConstructor; }
+    let matches = this._sourceData.match(CONSTRUCTOR_RE);
+    if (matches) {
+      this._hasConstructor = true;
+    } else {
+      this._hasConstructor = false;
     }
     return this._hasConstructor;
   }
 
   get iterable() {
-    if (!this._iterable) {
-      let matches = this._sourceData.match(ITERABLE_RE);
-      if (matches) {
-        this._iterable = true;
-      } else {
-        this._iterable = false;
-      }
+    if (this._iterable) { this._iterable; }
+    let matches = this._sourceData.match(ITERABLE_RE);
+    if (matches) {
+      this._iterable = true;
+    } else {
+      this._iterable = false;
     }
     return this._iterable;
   }
 
-  // "clear", "delete", or "set"
   get maplikeMethods() {
     if (this._maplike) { return this._maplike; }
     let matches = this._sourceData.match(MAPLIKE_RE);
@@ -384,48 +371,44 @@ class InterfaceData extends IDLData {
   }
 
   get methods() {
-    if (!this._methods) {
-      this._methods = [];
-      let matches = this._sourceData.matchAll(METHOD_RE);
-      let match = matches.next();
-      while (!match.done) {
-        let method = Object.assign({}, METHOD);
-        method.returnType = match.value[2];
-        method.name = `${match.value[3]}()`;
-        if (match.value[4]) {
-          method.arguments = match.value[4].split(',');
-        }
-        this._methods.push(method);
-        match = matches.next();
+    if (this._methods) { return this._methods; }
+    this._methods = [];
+    let matches = this._sourceData.matchAll(METHOD_RE);
+    let match = matches.next();
+    while (!match.done) {
+      let method = Object.assign({}, METHOD);
+      method.returnType = match.value[2];
+      method.name = `${match.value[3]}()`;
+      if (match.value[4]) {
+        method.arguments = match.value[4].split(',');
       }
-      matches = this._sourceData.matchAll(METHOD_PROMISE_RE);
+      this._methods.push(method);
       match = matches.next();
-      while (!match.done) {
-        let method = Object.assign({}, METHOD);
-        method.resolutions = match.value[2];
-        method.name = `${match.value[3]}()`;
-        method.returnType = "Promise";
-        if (match.value[4]) {
-          method.arguments = match.value[4].split(',');
-        }
-        this._methods.push(method);
-        match = matches.next();
+    }
+    matches = this._sourceData.matchAll(METHOD_PROMISE_RE);
+    match = matches.next();
+    while (!match.done) {
+      let method = Object.assign({}, METHOD);
+      method.resolutions = match.value[2];
+      method.name = `${match.value[3]}()`;
+      method.returnType = "Promise";
+      if (match.value[4]) {
+        method.arguments = match.value[4].split(',');
       }
+      this._methods.push(method);
+      match = matches.next();
+    }
     let maplikes = this.maplikeMethods;
     if (maplikes) { this._methods.push(...maplikes); }
-    }
     return this._methods
   }
 
   get name() {
-    if (!this._name) {
-      let matches = this._sourceData.match(INTERFACE_NAME_RE);
-      this._name = matches[1];
-    }
+    if (this._name) { return this._name; }
+    let matches = this._sourceData.match(INTERFACE_NAME_RE);
+    this._name = matches[1];
     return this._name;
   }
-
-  
 
   get originTrial() {
     if (this._originTrial) { return this._originTrial}
@@ -440,54 +423,49 @@ class InterfaceData extends IDLData {
       let names = matches[1].split(":");
       if (names[1]) { this._parentClass = names[1].trim(); }
     }
-
-    // this._parentClass = "no";
     return this._parentClass;
   }
 
   get properties() {
-    if (!this._allProperties) {
-      this._allProperties = [];
-      let props = this.readOnlyProperties;
-      if (props) { this._allProperties.push(...props); }
-      props = this.readWriteProperties;
-      if (props) { this._allProperties.push(...props); }
-    }
+    if (this._allProperties) { return this._allProperties; }
+    this._allProperties = [];
+    let props = this.readOnlyProperties;
+    if (props) { this._allProperties.push(...props); }
+    props = this.readWriteProperties;
+    if (props) { this._allProperties.push(...props); }
     return this._allProperties;
   }
 
   get readOnlyProperties() {
-    if (!this._readOnlyProperties) {
-      let matches = this._sourceData.matchAll(PROPERTY_READONLY_RE);
-      let match = matches.next();
-      if (!match.done) { this._readOnlyProperties = []; }
-      while (!match.done) {
-        let prop = Object.assign({}, PROPERTY);
-        prop.name = match.value[5];
-        prop.readOnly = true;
-        prop.returnType = match.value[4];
-        this._readOnlyProperties.push(prop);
-        match = matches.next();
-      }
+    if (this._readOnlyProperties) { return this._readWriteProperties; }
+    let matches = this._sourceData.matchAll(PROPERTY_READONLY_RE);
+    let match = matches.next();
+    if (!match.done) { this._readOnlyProperties = []; }
+    while (!match.done) {
+      let prop = Object.assign({}, PROPERTY);
+      prop.name = match.value[5];
+      prop.readOnly = true;
+      prop.returnType = match.value[4];
+      this._readOnlyProperties.push(prop);
+      match = matches.next();
     }
     return this._readOnlyProperties;
   }
 
   get readWriteProperties() {
-    if (!this._readWriteProperties) {
-      let matches = this._sourceData.matchAll(PROPERTY_READWRITE_RE);
-      let match = matches.next();
-      if (!match.done) { this._readWriteProperties = []; }
-      while (!match.done) {
-        if (match.value[3] != 'EventHandler') {
-          let prop = Object.assign({}, PROPERTY);
-          prop.name = match.value[4];
-          prop.readOnly = false;
-          prop.returnType = match.value[3];
-          this._readWriteProperties.push(prop);
-        }
-        match = matches.next();
+    if (this._readWriteProperties) { return this._readWriteProperties; }
+    let matches = this._sourceData.matchAll(PROPERTY_READWRITE_RE);
+    let match = matches.next();
+    if (!match.done) { this._readWriteProperties = []; }
+    while (!match.done) {
+      if (match.value[3] != 'EventHandler') {
+        let prop = Object.assign({}, PROPERTY);
+        prop.name = match.value[4];
+        prop.readOnly = false;
+        prop.returnType = match.value[3];
+        this._readWriteProperties.push(prop);
       }
+      match = matches.next();
     }
     return this._readWriteProperties;
   }
@@ -498,20 +476,19 @@ class InterfaceData extends IDLData {
   }
 
   get setter() {
-    if (!this._setter) {
-      let matches = this._sourceData.match(SETTERS_RE);
-      if (matches) {
-        const setter = matches.find(elem => {
-          return elem.match(SETTER_UNAMED_RE);
-        });
-        if (setter) {
-          this._setter = true;
-        } else {
-          this._setter = false;
-        }
+    if (this._setter) { return this._setter; }
+    let matches = this._sourceData.match(SETTERS_RE);
+    if (matches) {
+      const setter = matches.find(elem => {
+        return elem.match(SETTER_UNAMED_RE);
+      });
+      if (setter) {
+        this._setter = true;
       } else {
         this._setter = false;
       }
+    } else {
+      this._setter = false;
     }
     return this._setter
   }
