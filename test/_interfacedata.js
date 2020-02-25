@@ -50,6 +50,9 @@ const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
 const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
+const RUNTIMEENABLED_IFACE_EXPER_RE = './test/files/runtimeenabled-interface-exper.idl';
+const RUNTIMEENABLED_IFACE_MISSING_RE = './test/files/runtimeenabled-interface-missing.idl';
+const RUNTIMEENABLED_IFACE_OT_RE = './test/files/runtimeenabled-interface-ot.idl';
 const SECURE_CONTEXT = './test/files/secure-context.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
@@ -160,6 +163,24 @@ describe('InterfaceData', () => {
       const source = loadSource(EXPOSED_MANY);
       const id = new InterfaceData(source);
       assert.equal(id.exposed.length, 2);
+    });
+  });
+
+  describe('flagged', () => {
+    it('Confirms that flagged returns a boolean', () => {
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
+      assert.ok(typeof id.flagged === "boolean");
+    });
+    it('Confirms that false is returned when the flag name is not found', () => {
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
+      assert.ok(!id.flagged);
+    });
+    it('Confirms that true is returned when the flag name is found', () => {
+      const source = loadSource(RUNTIMEENABLED_IFACE_EXPER_RE);
+      const id = new InterfaceData(source);
+      assert.ok(id.flagged);
     });
   });
 
@@ -289,6 +310,24 @@ describe('InterfaceData', () => {
       const source = loadSource(METHOD_PROMISE_VOID);
       const id = new InterfaceData(source);
       assert.equal(id.methods[0].resolutions, "void");
+    });
+  });
+
+  describe('originTrial', () => {
+    it('Confirms that originTrial returns a boolean', () => {
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
+      assert.ok(typeof id.originTrial === "boolean");
+    });
+    it('Confirms that false is returned when the origin trial name is not found', () => {
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
+      assert.ok(!id.flagged);
+    });
+    it('Confirms that true is returned when the origin trial name is found', () => {
+      const source = loadSource(RUNTIMEENABLED_IFACE_OT_RE);
+      const id = new InterfaceData(source);
+      assert.ok(id.flagged);
     });
   });
 

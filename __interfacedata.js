@@ -48,6 +48,7 @@ const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(([^\)]*)/g; // Name at index 3
 const PROPERTY_READONLY_RE = /(\[([^\]]*)\])?(\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
 const PROPERTY_READWRITE_RE = /(\[([^\]]*)\])?[^(\sreadonly)]\sattribute\s(\w+)\s(\w+)/g;
+const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
 const SETTERS_RE = /setter([^(]+)\(/g;
 
 const DELETER_NAME_RE = /void([^(]*)\(/;
@@ -64,20 +65,30 @@ const CONSTRUCTOR = Object.freeze({
   "arguments": [],
   "flag": null,
   "originTrial": null
+});
+
+const EVENT_HANDLER = Object.freeze({
+  "flag": null,
+  "name": null,
+  "originTrial": null
 })
 
 const METHOD = Object.freeze({
+  "arguments": [],
+  "flag": null,
   "name": null,
+  "originTrial": null,
   "returnType": null,
-  "resolutions": null,
-  "arguments": []
+  "resolutions": null
 });
 
 const PROPERTY = Object.freeze({
+  "flag": null,
   "name": null,
-  "returnType": null,
-  "readOnly": null
-})
+  "originTrial": null,
+  "readOnly": null,
+  "returnType": null
+});
 
 class IDLData {
   constructor(source, options = {}) {
@@ -182,15 +193,33 @@ class InterfaceData extends IDLData {
     this._eventHandlers = null;
     this._exposed = null;
     this._extendedAttributes = null;
+    this._flagged = null;
     this._getter = null;
     this._hasConstructor = null;
     this._interable = null;
     this._maplike = null;
     this._methods = null;
+    this._originTrial = null;
     this._parentClass = null;
     this._readOnlyProperties = null;
     this._readWriteProperties = null;
     this._setter = null;
+  }
+
+  _getFlagValue(expectedStatus) {
+    let extAttributes = this._getInterfaceExtendedAttributes();
+    if (extAttributes) {
+      let matches = extAttributes.match(RUNTIMEENABLED_RE);
+      if (matches) {
+        let flag = matches[1];
+        let status = global.__Flags.getActualStatus(flag);
+        return (status == expectedStatus);
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   _getInterfaceExtendedAttributes() {
@@ -281,6 +310,12 @@ class InterfaceData extends IDLData {
       }
     }
     return this._exposed;
+  }
+
+  get flagged() {
+    if (this._flagged) { return this._flagged}
+    this._flagged = this._getFlagValue("experimental");
+    return this._flagged;
   }
 
   get getter() {
@@ -388,6 +423,14 @@ class InterfaceData extends IDLData {
       this._name = matches[1];
     }
     return this._name;
+  }
+
+  
+
+  get originTrial() {
+    if (this._originTrial) { return this._originTrial}
+    this._originTrial = this._getFlagValue("origintrial");
+    return this._originTrial;
   }
 
   get parentClass() {
