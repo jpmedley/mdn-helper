@@ -207,7 +207,7 @@ class InterfaceData extends IDLData {
       let matches = extAttributes.match(RUNTIMEENABLED_RE);
       if (matches) {
         let flag = matches[1];
-        let status = global.__Flags.getActualStatus(flag);
+        let status = global.__Flags.getHighestResolvedStatus(flag);
         return (status == expectedStatus);
       } else {
         return false;
@@ -417,7 +417,7 @@ class InterfaceData extends IDLData {
 
   get originTrial() {
     if (this._originTrial) { return this._originTrial}
-    this._originTrial = this._getFlagValue("experimental");
+    this._originTrial = this._getFlagValue("origintrial");
     return this._originTrial;
   }
 
