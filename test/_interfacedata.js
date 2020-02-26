@@ -148,7 +148,9 @@ describe('InterfaceData', () => {
     it('Confirms that an unnamed deleter is processed from the IDL file', () => {
       const source = loadSource(DELETERS);
       const id = new InterfaceData(source);
-      assert.ok(id.deleters.includes(UNNAMED_MEMBER));
+      const found = id.deleters.some(elem => {
+        return elem.name == UNNAMED_MEMBER;
+      });
     });
   });
 

@@ -63,6 +63,12 @@ const CONSTRUCTOR = Object.freeze({
   "source": null
 });
 
+const DELETER = Object.freeze({
+  "flagged": null,
+  "name": null,
+  "originTrial": null
+})
+
 const EVENT_HANDLER = Object.freeze({
   "flagged": null,
   "name": null,
@@ -260,10 +266,12 @@ class InterfaceData extends IDLData {
       this._deleters = [];
       matches.forEach(elem => {
         let deleters = elem.match(DELETER_NAME_RE);
-        let deleter = deleters[1].trim();
-        if (!this._deleters.includes(deleter)) {
-          this._deleters.push(deleter);
-        }
+        let deleter = Object.assign({}, DELETER);
+        deleter.name = deleters[1].trim();
+        let found = this._deleters.some(elem => {
+          return elem.name == deleter.name;
+        });
+        if (!found) { this._deleters.push(deleter); }
       });
     }
     return this._deleters;
