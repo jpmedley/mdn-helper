@@ -334,12 +334,12 @@ describe('InterfaceData', () => {
     it('Confirms that false is returned when the origin trial name is not found', () => {
       const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
       const id = new InterfaceData(source);
-      assert.ok(!id.flagged);
+      assert.ok(!id.originTrial);
     });
     it('Confirms that true is returned when the origin trial name is found', () => {
       const source = loadSource(RUNTIMEENABLED_IFACE_OT_RE);
       const id = new InterfaceData(source);
-      assert.ok(id.flagged);
+      assert.ok(id.originTrial);
     });
   });
 
