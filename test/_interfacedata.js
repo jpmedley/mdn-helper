@@ -25,6 +25,8 @@ const { initiateLogger } = require('../log.js');
 initiateLogger();
 
 const DELETERS = './test/files/all-deleters.idl';
+const DELETERS_IFACE_FLAGGED = './test/files/deleters-iface-flagged.idl';
+const DELETERS_IFACE_OT = './test/files/deleters-iface-ot.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_IFACE_FLAGGED = './test/files/constructor-iface-flagged.idl';
@@ -151,6 +153,16 @@ describe('InterfaceData', () => {
       const found = id.deleters.some(elem => {
         return elem.name == UNNAMED_MEMBER;
       });
+    });
+    it('Confirms that the deleters are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(DELETERS_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.deleters[0].flagged);
+    });
+    it('Confirms that the deleters are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(DELETERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.deleters[0].originTrial);
     });
   });
 

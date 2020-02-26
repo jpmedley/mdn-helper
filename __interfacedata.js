@@ -268,6 +268,8 @@ class InterfaceData extends IDLData {
         let deleters = elem.match(DELETER_NAME_RE);
         let deleter = Object.assign({}, DELETER);
         deleter.name = deleters[1].trim();
+        deleter.flagged = this.flagged;
+        deleter.originTrial = this.originTrial;
         let found = this._deleters.some(elem => {
           return elem.name == deleter.name;
         });
