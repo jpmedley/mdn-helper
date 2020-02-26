@@ -27,6 +27,8 @@ initiateLogger();
 const DELETERS = './test/files/all-deleters.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
+const CONSTRUCTOR_IFACE_FLAGGED = './test/files/constructor-iface-flagged.idl';
+const CONSTRUCTOR_IFACE_OT = './test/files/constructor-iface-ot.idl';
 const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
 const EXPOSED_MANY = './test/files/exposed-many.idl';
@@ -119,6 +121,16 @@ describe('InterfaceData', () => {
       const source = loadSource(CONSTRUCTORS);
       const id = new InterfaceData(source);
       assert.equal(id.constructors.length, 3);
+    });
+    it('Confirms that the constructor is marked as flagged when the interface is flagged', () => {
+      const source = loadSource(CONSTRUCTOR_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].flagged);
+    });
+    it('Confirms that the constructor is marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(CONSTRUCTOR_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].originTrial);
     });
   });
 

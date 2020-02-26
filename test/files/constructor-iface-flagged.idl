@@ -1,0 +1,6 @@
+[
+    RuntimeEnabled=RTEExperimental
+] interface ConstructorNoArgs {
+    constructor();
+    [RaisesException=Setter, SetterCallWith=ExecutionContext] attribute DOMString family;
+};

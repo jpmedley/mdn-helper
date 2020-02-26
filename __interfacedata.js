@@ -58,19 +58,20 @@ const SETTER_UNAMED_RE = /setter\svoid\s\(/;
 
 const CONSTRUCTOR = Object.freeze({
   "arguments": [],
-  "flag": null,
-  "originTrial": null
+  "flagged": null,
+  "originTrial": null,
+  "source": null
 });
 
 const EVENT_HANDLER = Object.freeze({
-  "flag": null,
+  "flagged": null,
   "name": null,
   "originTrial": null
 });
 
 const METHOD = Object.freeze({
   "arguments": [],
-  "flag": null,
+  "flagged": null,
   "name": null,
   "originTrial": null,
   "returnType": null,
@@ -78,7 +79,7 @@ const METHOD = Object.freeze({
 });
 
 const PROPERTY = Object.freeze({
-  "flag": null,
+  "flagged": null,
   "name": null,
   "originTrial": null,
   "readOnly": null,
@@ -235,6 +236,8 @@ class InterfaceData extends IDLData {
       matches.forEach(elem => {
         let constructor_ = Object.assign({}, CONSTRUCTOR);
         constructor_.source = elem;
+        constructor_.flagged = this.flagged;
+        constructor_.originTrial = this.originTrial;
         let constructorString = elem.match(CONSTRUCTOR_ARGS_RE);
         if (constructorString) {
           if (!constructorString.input.includes("()")) {
@@ -414,7 +417,7 @@ class InterfaceData extends IDLData {
 
   get originTrial() {
     if (this._originTrial) { return this._originTrial}
-    this._originTrial = this._getFlagValue("origintrial");
+    this._originTrial = this._getFlagValue("experimental");
     return this._originTrial;
   }
 
