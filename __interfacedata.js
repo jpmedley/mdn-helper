@@ -66,7 +66,7 @@ const EVENT_HANDLER = Object.freeze({
   "flag": null,
   "name": null,
   "originTrial": null
-})
+});
 
 const METHOD = Object.freeze({
   "arguments": [],
@@ -272,11 +272,13 @@ class InterfaceData extends IDLData {
     if (matches) {
       this._eventHandlers = [];
       matches.forEach(elem => {
+        let eventHandler = Object.assign({}, EVENT_HANDLER);
         let eventHandlers = elem.match(EVENT_NAME_RE);
-        let eventHandler = eventHandlers[1].trim();
-        if (!this._eventHandlers.includes(eventHandler)) {
-          this._eventHandlers.push(eventHandler);
-        }
+        eventHandler.name = eventHandlers[1].trim();
+        let found = this._eventHandlers.some(elem => {
+          return elem.name == eventHandler.name;
+        });
+        if (!found) { this._eventHandlers.push(eventHandler); }
       });
     }
     return this._eventHandlers;
