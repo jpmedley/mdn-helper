@@ -288,6 +288,8 @@ class InterfaceData extends IDLData {
         let eventHandler = Object.assign({}, EVENT_HANDLER);
         let eventHandlers = elem.match(EVENT_NAME_RE);
         eventHandler.name = eventHandlers[1].trim();
+        eventHandler.flagged = this.flagged;
+        eventHandler.originTrial = this.originTrial;
         let found = this._eventHandlers.some(elem => {
           return elem.name == eventHandler.name;
         });

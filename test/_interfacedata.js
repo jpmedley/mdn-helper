@@ -27,12 +27,14 @@ initiateLogger();
 const DELETERS = './test/files/all-deleters.idl';
 const DELETERS_IFACE_FLAGGED = './test/files/deleters-iface-flagged.idl';
 const DELETERS_IFACE_OT = './test/files/deleters-iface-ot.idl';
-const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_IFACE_FLAGGED = './test/files/constructor-iface-flagged.idl';
 const CONSTRUCTOR_IFACE_OT = './test/files/constructor-iface-ot.idl';
 const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
+const EVENTHANDLERS = './test/files/all-event-handlers.idl';
+const EVENTHANDLERS_IFACE_FLAGGED = './test/files/event-iface-flagged.idl';
+const EVENTHANDLERS_IFACE_OT = './test/files/event-iface-ot.idl';
 const EXPOSED_MANY = './test/files/exposed-many.idl';
 const EXPOSED_ONE = './test/files/exposed-one.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
@@ -176,6 +178,16 @@ describe('InterfaceData', () => {
       const source = loadSource(NO_EVENTHANDLERS);
       const id = new InterfaceData(source);
       assert.equal(id.eventHandlers, null);
+    });
+    it('Confirms that event handlers are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(EVENTHANDLERS_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.eventHandlers[0].flagged);
+    });
+    it('Confirms that event handlers are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(EVENTHANDLERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.eventHandlers[0].originTrial);
     });
   });
 
