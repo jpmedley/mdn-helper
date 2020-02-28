@@ -400,6 +400,8 @@ class InterfaceData extends IDLData {
       mlMethods.forEach((method, index) => {
         let meth = Object.assign({}, METHOD);
         meth.name = `${method}()`;
+        meth.flagged = this.flagged;
+        meth.originTrial = this.originTrial;
         meth.returnType = mlReturns[index];
         this._maplike.push(meth);
       });

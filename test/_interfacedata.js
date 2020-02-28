@@ -59,6 +59,8 @@ const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
+const PROPERTIES_MAPLIKE_IFACE_FLAGGED = './test/files/maplike-iface-flagged.idl';
+const PROPERTIES_MAPLIKE_IFACE_OT = './test/files/maplike-iface-ot.idl';
 const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
 const RUNTIMEENABLED_IFACE_EXPER_RE = './test/files/runtimeenabled-interface-exper.idl';
 const RUNTIMEENABLED_IFACE_MISSING_RE = './test/files/runtimeenabled-interface-missing.idl';
@@ -321,6 +323,16 @@ describe('InterfaceData', () => {
       const source = loadSource(PROPERTIES_MAPLIKE);
       const id = new InterfaceData(source);
       assert.equal(id.maplikeMethods.length, 10);
+    });
+    it('Confirms that maplike methods are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.maplikeMethods[0].flagged);
+    });
+    it('Confirms that maplike methods are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.maplikeMethods[0].originTrial);
     });
   });
 
