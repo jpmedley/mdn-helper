@@ -38,6 +38,8 @@ const EVENTHANDLERS_IFACE_OT = './test/files/event-iface-ot.idl';
 const EXPOSED_MANY = './test/files/exposed-many.idl';
 const EXPOSED_ONE = './test/files/exposed-one.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
+const GETTERS_IFACE_FLAGGED = './test/files/getters-iface-flagged.idl';
+const GETTERS_IFACE_OT = './test/files/getters-iface-ot.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
@@ -226,22 +228,32 @@ describe('InterfaceData', () => {
     it('Confirms that getter returns true when file contains named and unnamed getters', () => {
       const source = loadSource(GETTERS_BOTH);
       const id = new InterfaceData(source);
-      assert.ok(id.getter);
+      assert.ok(id.getter.exists);
     });
     it('Confirms that getter returns true when file contains only an unnamed getter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.ok(id.getter);
+      assert.ok(id.getter.exists);
     });
     it('Confirms that getter returns false when file contains only named getters', () => {
       const source = loadSource(GETTERS_NAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.ok(id.getter === false);
+      assert.ok(id.getter.exists === false);
     });
     it('Confirms that getter returns false when file contains no getters', () => {
       const source = loadSource(NO_GETTERS);
       const id = new InterfaceData(source);
-      assert.ok(id.getter === false);
+      assert.ok(id.getter.exists === false);
+    });
+    it('Confirms that getters are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(GETTERS_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.getter.flagged);
+    });
+    it('Confirms that getters are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(GETTERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.getter.originTrial);
     });
   });
 

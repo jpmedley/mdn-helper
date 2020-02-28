@@ -75,6 +75,12 @@ const EVENT_HANDLER = Object.freeze({
   "originTrial": null
 });
 
+const GETTER = Object.freeze({
+  "flagged": null,
+  "exists": null,
+  "originTrial": null
+});
+
 const METHOD = Object.freeze({
   "arguments": [],
   "flagged": null,
@@ -328,19 +334,23 @@ class InterfaceData extends IDLData {
 
   get getter() {
     if (this._getter) { return this._getter; }
+    let getterObj = Object.assign({}, GETTER);
     let matches = this._sourceData.match(GETTERS_RE);
     if (matches) {
       const getter = matches.find(elem => {
         return elem.match(GETTER_UNAMED_RE);
       });
       if (getter) {
-        this._getter = true;
+        getterObj.exists = true;
+        getterObj.flagged = this.flagged;
+        getterObj.originTrial = this.originTrial
       } else {
-        this._getter = false;
+        getterObj.exists = false;
       }
     } else {
-      this._getter = false;
+      getterObj.exists = false;
     }
+    this._getter = getterObj;
     return this._getter
   }
 
