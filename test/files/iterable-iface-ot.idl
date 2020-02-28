@@ -1,0 +1,7 @@
+[
+    RuntimeEnabled=OTEExperimental
+] interface Iterables {
+  iterable<CSSUnparsedSegment>;
+
+  attribute octet notDeleter;
+};

@@ -81,6 +81,12 @@ const GETTER = Object.freeze({
   "originTrial": null
 });
 
+const ITERABLE = Object.freeze({
+  "flagged": null,
+  "exists": null,
+  "originTrial": null
+});
+
 const METHOD = Object.freeze({
   "arguments": [],
   "flagged": null,
@@ -367,12 +373,16 @@ class InterfaceData extends IDLData {
 
   get iterable() {
     if (this._iterable) { this._iterable; }
+    let iterableObj = Object.assign({}, ITERABLE);
     let matches = this._sourceData.match(ITERABLE_RE);
     if (matches) {
-      this._iterable = true;
+      iterableObj.exists = true;
+      iterableObj.flagged = this.flagged;
+      iterableObj.originTrial = this.originTrial;
     } else {
-      this._iterable = false;
+      iterableObj.exists = false;
     }
+    this._iterable = iterableObj;
     return this._iterable;
   }
 

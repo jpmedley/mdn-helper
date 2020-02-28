@@ -44,6 +44,8 @@ const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
 const INTERFACE_NOPARENT = './test/files/interface-noparent.idl';
+const ITERABLE_IFACE_FLAGGED = './test/files/iterable-iface-flagged.idl';
+const ITERABLE_IFACE_OT = './test/files/iterable-iface-ot.idl';
 const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
@@ -274,27 +276,37 @@ describe('InterfaceData', () => {
     it('Confirms that an iterable with a sequence as one of several args is recognized', () => {
       const source = loadSource(ITERABLE_MULTI_ARG_SEQ);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable);
+      assert.ok(id.iterable.exists);
     });
     it('Confirms that an iterable with several args is recognized', () => {
       const source = loadSource(ITERABLE_MULTI_ARG);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable);
+      assert.ok(id.iterable.exists);
     });
     it('Confirms that an iterable with one arg is recognized', () => {
       const source = loadSource(ITERABLE_ONE_ARG);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable);
+      assert.ok(id.iterable.exists);
     });
     it('Confirms that an iterable with a sequence as its one arg is recognized', () => {
       const source = loadSource(ITERABLE_SEQUENCE_ARG);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable);
+      assert.ok(id.iterable.exists);
     });
     it('Confirms that iterable returns false when the IDL contains no iterable', () => {
       const source = loadSource(NO_ITERABLE);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable === false);
+      assert.ok(id.iterable.exists === false);
+    });
+    it('Confirms that iterables are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(ITERABLE_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.iterable.flagged);
+    });
+    it('Confirms that iterables are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(ITERABLE_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.iterable.originTrial);
     });
   });
 
