@@ -418,6 +418,8 @@ class InterfaceData extends IDLData {
       let method = Object.assign({}, METHOD);
       method.returnType = match.value[2];
       method.name = `${match.value[3]}()`;
+      method.flagged = this.flagged;
+      method.originTrial = this.originTrial;
       if (match.value[4]) {
         method.arguments = match.value[4].split(',');
       }
@@ -430,6 +432,8 @@ class InterfaceData extends IDLData {
       let method = Object.assign({}, METHOD);
       method.resolutions = match.value[2];
       method.name = `${match.value[3]}()`;
+      method.flagged = this.flagged;
+      method.originTrial = this.originTrial;
       method.returnType = "Promise";
       if (match.value[4]) {
         method.arguments = match.value[4].split(',');

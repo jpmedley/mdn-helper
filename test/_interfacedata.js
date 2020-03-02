@@ -51,6 +51,8 @@ const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
 const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
 const METHOD_ARGUMENTS_COUNT = './test/files/method-argument-count.idl';
+const METHOD_IFACE_FLAGGED = './test/files/method-iface-flagged.idl';
+const METHOD_IFACE_OT = './test/files/method-iface-ot.idl';
 const METHOD_NO_ARGUMENTS = './test/files/method-noarguments.idl';
 const METHOD_PROMISES = './test/files/method-promises.idl';
 const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
@@ -384,6 +386,16 @@ describe('InterfaceData', () => {
       const source = loadSource(METHOD_PROMISE_VOID);
       const id = new InterfaceData(source);
       assert.equal(id.methods[0].resolutions, "void");
+    });
+    it('Confirms that maplike methods are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(METHOD_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.methods[0].flagged);
+    });
+    it('Confirms that maplike methods are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(METHOD_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.methods[0].originTrial);
     });
   });
 
