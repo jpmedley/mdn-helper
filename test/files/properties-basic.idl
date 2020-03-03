@@ -1,4 +1,4 @@
-interface Properties {
+interface PropertiesBasic {
     [RuntimeEnabled=RTEExperimental] attribute FontFaceLoadStatus status;
     [RuntimeEnabled=RTEExperimental] readonly attribute boolean raw;
 };

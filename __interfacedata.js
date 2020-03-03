@@ -50,8 +50,12 @@ const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
 const MAPLIKE_RE = /(readonly)?\smaplike\<[^\>]*>/g;
 const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/g; // Name at index 3
 const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(([^\)]*)/g; // Name at index 3
-const PROPERTY_READONLY_RE = /(\[([^\]]*)\])?(\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
-const PROPERTY_READWRITE_RE = /(\[([^\]]*)\])?[^(\sreadonly)]\sattribute\s(\w+)\s(\w+)/g;
+
+const PROPERTIES = /(\[(\w+=\w+)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
+const PROPERTY_READONLY_RE = /(\[(\w+=\w+)\])?(\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
+const PROPERTY_READWRITE_RE = /(\[(\w+=\w+)\])?(?!\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
+
+
 const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
 const SETTERS_RE = /setter([^(]+)\(/g;
 const SETTER_UNAMED_RE = /setter\svoid\s\(/;
@@ -472,44 +476,43 @@ class InterfaceData extends IDLData {
   get properties() {
     if (this._allProperties) { return this._allProperties; }
     this._allProperties = [];
-    let props = this.readOnlyProperties;
-    if (props) { this._allProperties.push(...props); }
-    props = this.readWriteProperties;
-    if (props) { this._allProperties.push(...props); }
+    let matches = this._sourceData.matchAll(PROPERTIES);
+    let match = matches.next();
+    if (!match.done) { this._allProperties = [];}
+    while (!match.done) {
+      let returnType = match.value[4];
+      if (returnType === 'EventHandler') {
+        match = matches.next();
+        continue;
+      }
+      let prop = Object.assign({}, PROPERTY);
+      prop.name = match.value[5];
+      prop.flagged = this.flagged;
+      prop.originTrial = this.originTrial;
+      prop.readOnly = (match.value[3]? false: true);
+      // prop.returnType = match.value[4];
+      prop.returnType = (returnType? returnType: 'void');
+      this._allProperties.push(prop);
+      match = matches.next();
+    }
     return this._allProperties;
   }
 
   get readOnlyProperties() {
     if (this._readOnlyProperties) { return this._readWriteProperties; }
-    let matches = this._sourceData.matchAll(PROPERTY_READONLY_RE);
-    let match = matches.next();
-    if (!match.done) { this._readOnlyProperties = []; }
-    while (!match.done) {
-      let prop = Object.assign({}, PROPERTY);
-      prop.name = match.value[5];
-      prop.readOnly = true;
-      prop.returnType = match.value[4];
-      this._readOnlyProperties.push(prop);
-      match = matches.next();
-    }
+    this._readOnlyProperties = [];
+    this._readOnlyProperties = this.properties.filter(prop => {
+      return prop.readOnly == true;
+    });
     return this._readOnlyProperties;
   }
 
   get readWriteProperties() {
     if (this._readWriteProperties) { return this._readWriteProperties; }
-    let matches = this._sourceData.matchAll(PROPERTY_READWRITE_RE);
-    let match = matches.next();
-    if (!match.done) { this._readWriteProperties = []; }
-    while (!match.done) {
-      if (match.value[3] != 'EventHandler') {
-        let prop = Object.assign({}, PROPERTY);
-        prop.name = match.value[4];
-        prop.readOnly = false;
-        prop.returnType = match.value[3];
-        this._readWriteProperties.push(prop);
-      }
-      match = matches.next();
-    }
+    this._readWriteProperties = [];
+    this._readWriteProperties = this.properties.filter(prop => {
+      return prop.readOnly == false;
+    });
     return this._readWriteProperties;
   }
 

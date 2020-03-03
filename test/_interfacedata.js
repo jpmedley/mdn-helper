@@ -60,6 +60,8 @@ const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
+const PROPERTIES_IFACE_FLAGGED = './test/files/properties-iface-flagged.idl';
+const PROPERTIES_IFACE_OT = './test/files/properties-iface-ot.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
 const PROPERTIES_MAPLIKE_IFACE_FLAGGED = './test/files/maplike-iface-flagged.idl';
 const PROPERTIES_MAPLIKE_IFACE_OT = './test/files/maplike-iface-ot.idl';
@@ -445,6 +447,22 @@ describe('InterfaceData', () => {
       const source = loadSource(PROPERTIES_MAPLIKE_READONLY);
       const id = new InterfaceData(source);
       assert.equal(id.properties.length, 2);
+    });
+    it('Confirms that return type is recorded', () => {
+      const source = loadSource(PROPERTIES_BASIC);
+      const id = new InterfaceData(source);
+      const properties = id.properties;
+      assert.equal(id.properties[0].returnType, 'FontFaceLoadStatus');
+    });
+    it('Confirms that maplike methods are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(PROPERTIES_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.properties[0].flagged);
+    });
+    it('Confirms that maplike methods are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(PROPERTIES_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.properties[0].originTrial);
     });
   });
 
