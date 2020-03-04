@@ -230,10 +230,9 @@ class InterfaceData extends IDLData {
     this._setter = null;
   }
 
-  _getFlagValue(expectedStatus) {
-    let extAttributes = this._getInterfaceExtendedAttributes();
-    if (extAttributes) {
-      let matches = extAttributes.match(RUNTIMEENABLED_RE);
+  _getFlagValue(expectedStatus, fromAttributes) {
+    if (fromAttributes) {
+      let matches = fromAttributes.match(RUNTIMEENABLED_RE);
       if (matches) {
         let flag = matches[1];
         let status = global.__Flags.getHighestResolvedStatus(flag);
@@ -345,7 +344,7 @@ class InterfaceData extends IDLData {
 
   get flagged() {
     if (this._flagged) { return this._flagged}
-    this._flagged = this._getFlagValue("experimental");
+    this._flagged = this._getFlagValue("experimental", this._getInterfaceExtendedAttributes());
     return this._flagged;
   }
 
@@ -466,7 +465,7 @@ class InterfaceData extends IDLData {
 
   get originTrial() {
     if (this._originTrial) { return this._originTrial}
-    this._originTrial = this._getFlagValue("origintrial");
+    this._originTrial = this._getFlagValue("origintrial", this._getInterfaceExtendedAttributes());
     return this._originTrial;
   }
 
