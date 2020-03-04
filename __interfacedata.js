@@ -33,7 +33,8 @@ const ENUM_NAME_RE = /enum\s(\w+)/;
 const INTERFACE_NAME_RE = /interface\s(\w+)/;
 
 
-const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
+// const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
+const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor\(([^;]*)/g;
 const CONSTRUCTOR_ARGS_RE = /\(([^\n]*)/;
 const DELETER_RE = /(^.*deleter).*;/gm;
 const DELETER_NAME_RE = /void([^(]*)\(/;

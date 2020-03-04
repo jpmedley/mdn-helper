@@ -36,18 +36,12 @@ class _FlagStatus {
     }
   }
 
-  getBooleanStatus(key) {
+  getStableAsBoolean(key) {
     const flagData = this[key];
-    switch (typeof flagData) {
-      case 'string':
-        if (flagData === 'stable') { return true; }
-        return false;
-        break;
-      default:
-        for (let g in flagData) {
-          if (flagData[g] === 'stable') { return true; }
-        }
-        return false;
+    if (flagData.status === 'stable') {
+      return true;
+    } else {
+      return false;
     }
   }
 

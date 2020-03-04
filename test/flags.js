@@ -31,6 +31,21 @@ describe('FlagStatus', () => {
     });
   })
 
+  describe('getStableAsBoolean()', () => {
+    it('Confirms that a key returns "true" on stable flag', () => {
+      assert.ok(global.__Flags.getStableAsBoolean('RTEStable'));
+    });
+    it('Confirms that a key returns "true" on a stable origin trial', () => {
+      assert.ok(global.__Flags.getStableAsBoolean('OTEEnabled'));
+    });
+    it('Confirms that a key returns "false" on experimental flag', () => {
+      assert.ok(!global.__Flags.getStableAsBoolean('RTEExperimental'));
+    });
+    it('Confirms that a key returns "true" on a experimental origin trial', () => {
+      assert.ok(!global.__Flags.getStableAsBoolean('OTEExperimental'));
+    });
+  });
+
   describe('getHighestResolvedStatus()', () => {
     it('Confirms that a key returns "experimental" on flag object', () => {
       assert.equal(global.__Flags.getHighestResolvedStatus('RTEDefault'), 'experimental');
