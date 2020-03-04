@@ -148,6 +148,16 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.constructors[0].originTrial);
     });
+    it('Confirms that the constructor is marked as flagged only when its line is flagged', () => {
+      const source = loadSource(CONSTRUCTORS);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].flagged);
+    });
+    it('Confirms that the constructor is marked as in an OT only when its line is in an OT', () => {
+      const source = loadSource(CONSTRUCTORS);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].originTrial);
+    });
   });
 
   describe('deleters', () => {

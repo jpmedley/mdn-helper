@@ -34,8 +34,7 @@ const INTERFACE_NAME_RE = /interface\s(\w+)/;
 
 
 // const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
-const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor\(([^;]*)/g;
-const CONSTRUCTOR_ARGS_RE = /\(([^\n]*)/;
+const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
 const DELETER_RE = /(^.*deleter).*;/gm;
 const DELETER_NAME_RE = /void([^(]*)\(/;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
@@ -230,7 +229,7 @@ class InterfaceData extends IDLData {
     this._setter = null;
   }
 
-  _getFlagValue(expectedStatus, fromAttributes) {
+  _getRuntimeEnabledValue(expectedStatus, fromAttributes) {
     if (fromAttributes) {
       let matches = fromAttributes.match(RUNTIMEENABLED_RE);
       if (matches) {
@@ -258,25 +257,25 @@ class InterfaceData extends IDLData {
 
   get constructors() {
     if (this._constructors) { return this._constructors; }
-    let matches = this._sourceData.match(CONSTRUCTOR_RE);
-    if (matches) {
-      this._constructors = [];
-      matches.forEach(elem => {
-        let constructor_ = Object.assign({}, CONSTRUCTOR);
-        constructor_.source = elem;
-        constructor_.flagged = this.flagged;
-        constructor_.originTrial = this.originTrial;
-        let constructorString = elem.match(CONSTRUCTOR_ARGS_RE);
-        if (constructorString) {
-          if (!constructorString.input.includes("()")) {
-            constructor_.arguments = constructorString[1].split(',');
-            for (let i = 0; i < constructor_.arguments.length; i++) {
-              constructor_.arguments[i] = constructor_.arguments[i].trim();
-            }
+    let matches = this._sourceData.matchAll(CONSTRUCTOR_RE);
+    let match = matches.next();
+    if (!match.done) { this._constructors = []; }
+    while (!match.done) {
+      let constructor_ = Object.assign({}, CONSTRUCTOR);
+      constructor_.source = match.value[0];
+      constructor_.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
+      constructor_.originTrial = this.originTrial || this._getRuntimeEnabledValue("experimental", match.value[1]);
+      let constructorString = match.value[4];
+      if (constructorString) {
+        if (!constructorString.includes("()")) {
+          constructor_.arguments = constructorString.split(',');
+          for (let i = 0; i < constructor_.arguments.length; i++) {
+            constructor_.arguments[i] = constructor_.arguments[i].trim();
           }
         }
-        this._constructors.push(constructor_);
-      });
+      }
+      this._constructors.push(constructor_);
+      match = matches.next();
     }
     return this._constructors;
   }
@@ -344,7 +343,7 @@ class InterfaceData extends IDLData {
 
   get flagged() {
     if (this._flagged) { return this._flagged}
-    this._flagged = this._getFlagValue("experimental", this._getInterfaceExtendedAttributes());
+    this._flagged = this._getRuntimeEnabledValue("experimental", this._getInterfaceExtendedAttributes());
     return this._flagged;
   }
 
@@ -465,7 +464,7 @@ class InterfaceData extends IDLData {
 
   get originTrial() {
     if (this._originTrial) { return this._originTrial}
-    this._originTrial = this._getFlagValue("origintrial", this._getInterfaceExtendedAttributes());
+    this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
     return this._originTrial;
   }
 
