@@ -1,0 +1,8 @@
+[
+    RuntimeEnabled=OTEExperimental
+] interface Setters {
+  [RaisesException] setter CSSUnparsedSegment (unsigned long index, CSSUnparsedSegment val);
+  [RaisesException] setter void (unsigned long index, SVGPoint newItem);
+
+  attribute octet notDeleter;
+};

@@ -108,6 +108,12 @@ const PROPERTY = Object.freeze({
   "returnType": null
 });
 
+const SETTER = Object.freeze({
+  "flagged": null,
+  "exists": null,
+  "originTrial": null
+});
+
 class IDLData {
   constructor(source, options = {}) {
     this._sourceData = source;
@@ -523,20 +529,35 @@ class InterfaceData extends IDLData {
 
   get setter() {
     if (this._setter) { return this._setter; }
+    let setterObj = Object.assign({}, SETTER);
     let matches = this._sourceData.match(SETTERS_RE);
     if (matches) {
       const setter = matches.find(elem => {
         return elem.match(SETTER_UNAMED_RE);
       });
       if (setter) {
-        this._setter = true;
+        setterObj.exists = true;
+        setterObj.flagged = this.flagged;
+        setterObj.originTrial = this.originTrial;
       } else {
-        this._setter = false;
+        setterObj.exists = false;
       }
     } else {
-      this._setter = false;
+      setterObj.exists = false;
     }
-    return this._setter
+    this._setter = setterObj;
+    return this._setter;
+
+
+    //   if (setter) {
+    //     this._setter = true;
+    //   } else {
+    //     this._setter = false;
+    //   }
+    // } else {
+    //   this._setter = false;
+    // }
+    // return this._setter
   }
 
   get signatures() {

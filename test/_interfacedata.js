@@ -71,6 +71,8 @@ const RUNTIMEENABLED_IFACE_MISSING_RE = './test/files/runtimeenabled-interface-m
 const RUNTIMEENABLED_IFACE_OT_RE = './test/files/runtimeenabled-interface-ot.idl';
 const SECURE_CONTEXT = './test/files/secure-context.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
+const SETTERS_IFACE_FLAGGED = './test/files/setters-iface-flagged.idl';
+const SETTERS_IFACE_OT = './test/files/setters-iface-ot.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
 const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
 
@@ -499,22 +501,32 @@ describe('InterfaceData', () => {
     it('Confirms that setter returns true when file contains named and unnamed setters', () => {
       const source = loadSource(SETTERS_BOTH);
       const id = new InterfaceData(source);
-      assert.ok(id.setter);
+      assert.ok(id.setter.exists);
     });
     it('Confirms that setter returns true when file contains only an unnamed setter', () => {
       const source = loadSource(SETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.ok(id.setter);
+      assert.ok(id.setter.exists);
     });
     it('Confirms that setter returns false when file contains only named setters', () => {
       const source = loadSource(SETTERS_NAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.ok(id.setter === false);
+      assert.ok(id.setter.exists === false);
     });
     it('Confirms that setter returns false when file contains no setters', () => {
       const source = loadSource(NO_SETTERS);
       const id = new InterfaceData(source);
-      assert.ok(id.setter === false);
+      assert.ok(id.setter.exists === false);
+    });
+    it('Confirms that setters are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(SETTERS_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.setter.flagged);
+    });
+    it('Confirms that setters are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(SETTERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.setter.originTrial);
     });
   });
 
