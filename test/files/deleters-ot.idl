@@ -1,0 +1,8 @@
+interface Deleters {
+  [RuntimeEnabled=OTEExperimental] deleter void (DOMString name);
+  [LogActivity, RaisesException, MeasureAs=DOMStorageWrite] deleter void removeItem(DOMString key);
+  deleter void removeSomething(DOMString key);
+  deleter void removeAnother(DOMString key, DOMSTring value);
+
+  attribute octet notDeleter;
+};

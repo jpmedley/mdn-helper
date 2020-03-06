@@ -1,4 +1,4 @@
-interface Deleters {
+interface NoDeleters {
   [CEReactions] void getStuff(DOMString name);
   [LogActivity, RaisesException, MeasureAs=DOMStorageWrite] void removeItem(DOMString key);
   void removeSomething(DOMString key);

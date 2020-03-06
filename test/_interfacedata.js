@@ -24,14 +24,16 @@ const { initiateLogger } = require('../log.js');
 
 initiateLogger();
 
-const DELETERS = './test/files/all-deleters.idl';
-const DELETERS_IFACE_FLAGGED = './test/files/deleters-iface-flagged.idl';
-const DELETERS_IFACE_OT = './test/files/deleters-iface-ot.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_IFACE_FLAGGED = './test/files/constructor-iface-flagged.idl';
 const CONSTRUCTOR_IFACE_OT = './test/files/constructor-iface-ot.idl';
 const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
+const DELETERS = './test/files/all-deleters.idl';
+const DELETERS_FLAGGED = './test/files/deleters-flagged.idl';
+const DELETERS_IFACE_FLAGGED = './test/files/deleters-iface-flagged.idl';
+const DELETERS_IFACE_OT = './test/files/deleters-iface-ot.idl';
+const DELETERS_OT = './test/files/deleters-ot.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const EVENTHANDLERS_IFACE_FLAGGED = './test/files/event-iface-flagged.idl';
 const EVENTHANDLERS_IFACE_OT = './test/files/event-iface-ot.idl';
@@ -184,6 +186,16 @@ describe('InterfaceData', () => {
       assert.ok(id.deleters[0].flagged);
     });
     it('Confirms that the deleters are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(DELETERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.deleters[0].originTrial);
+    });
+    it('Confirms that the constructor is marked as flagged only when its line is flagged', () => {
+      const source = loadSource(DELETERS_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.deleters[0].flagged);
+    });
+    it('Confirms that the constructor is marked as in an OT only when its line is in an OT', () => {
       const source = loadSource(DELETERS_IFACE_OT);
       const id = new InterfaceData(source);
       assert.ok(id.deleters[0].originTrial);

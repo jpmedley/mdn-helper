@@ -35,7 +35,7 @@ const INTERFACE_NAME_RE = /interface\s(\w+)/;
 
 // const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
-const DELETER_RE = /(^.*deleter).*;/gm;
+const DELETER_RE = /(\[(([^\]]*))\])?\sdeleter\svoid\s([^(]+)?\(([^)]+)\)/g;
 const DELETER_NAME_RE = /void([^(]*)\(/;
 const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
 const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
@@ -282,20 +282,20 @@ class InterfaceData extends IDLData {
 
   get deleters() {
     if (this._deleters) { return this._deleters; }
-    let matches = this._sourceData.match(DELETER_RE);
-    if (matches) {
-      this._deleters = [];
-      matches.forEach(elem => {
-        let deleters = elem.match(DELETER_NAME_RE);
-        let deleter = Object.assign({}, DELETER);
-        deleter.name = deleters[1].trim();
-        deleter.flagged = this.flagged;
-        deleter.originTrial = this.originTrial;
-        let found = this._deleters.some(elem => {
-          return elem.name == deleter.name;
-        });
-        if (!found) { this._deleters.push(deleter); }
+    let matches = this._sourceData.matchAll(DELETER_RE);
+    let match = matches.next();
+    if (!match.done) { this._deleters = []; }
+    while (!match.done) {
+      let deleter = Object.assign({}, DELETER);
+      // deleter.name = match.value[4].trim();
+      deleter.name = (match.value[4]? match.value[4].trim(): null);
+      deleter.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
+      deleter.originTrial = this.originTrial || this._getRuntimeEnabledValue("experimental", match.value[1]);
+      let found = this._deleters.some(elem => {
+        return elem.name == deleter.name;
       });
+      if (!found) { this._deleters.push(deleter); }
+      match = matches.next();
     }
     return this._deleters;
   }
