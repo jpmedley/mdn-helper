@@ -42,7 +42,7 @@ const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
 const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
 const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]*)\]/;
-const GETTERS_RE = /getter([^(]+)\(/g;
+const GETTERS_RE = /(\[(([^\]]*))\])?\sgetter\s([^ ]+)\s([^(]+)?\(([^)]+)\)/g;
 const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const ITERABLE_RE = /iterable\<[^\>]*>/g;
@@ -217,7 +217,7 @@ class InterfaceData extends IDLData {
     this._exposed = null;
     this._extendedAttributes = null;
     this._flagged = null;
-    this._getter = null;
+    this._getters = null;
     this._hasConstructor = null;
     this._interable = null;
     this._maplike = null;
@@ -345,26 +345,23 @@ class InterfaceData extends IDLData {
     return this._flagged;
   }
 
-  get getter() {
-    if (this._getter) { return this._getter; }
-    let getterObj = Object.assign({}, GETTER);
-    let matches = this._sourceData.match(GETTERS_RE);
-    if (matches) {
-      const getter = matches.find(elem => {
-        return elem.match(GETTER_UNAMED_RE);
+  get getters() {
+    if (this._getters) { return this._getters; }
+    let matches = this._sourceData.matchAll(GETTERS_RE);
+    let match = matches.next();
+    if (!match.done) { this._getters = []; }
+    while(!match.done) {
+      let getter = Object.assign({}, GETTER);
+      getter.name = (match.value[5]? match.value[5].trim(): null);
+      getter.flagged = this.flagged;
+      getter.originTrial = this.originTrial;
+      let found = this._getters.some(elem => {
+        return elem.name == getter.name;
       });
-      if (getter) {
-        getterObj.exists = true;
-        getterObj.flagged = this.flagged;
-        getterObj.originTrial = this.originTrial
-      } else {
-        getterObj.exists = false;
-      }
-    } else {
-      getterObj.exists = false;
+      if (!found) { this._getters.push(getter); }
+      match = matches.next();
     }
-    this._getter = getterObj;
-    return this._getter
+    return this._getters
   }
 
   get hasConstructor() {
@@ -460,6 +457,14 @@ class InterfaceData extends IDLData {
     return this._name;
   }
 
+  get namedGetters() {
+    if (!this._getters) { this.getters; }
+    const namedGetters = this._getters.filter(elem => {
+      return (elem.name? true: false);
+    });
+    return namedGetters;
+  }
+
   get originTrial() {
     if (this._originTrial) { return this._originTrial}
     this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
@@ -544,17 +549,6 @@ class InterfaceData extends IDLData {
     }
     this._setter = setterObj;
     return this._setter;
-
-
-    //   if (setter) {
-    //     this._setter = true;
-    //   } else {
-    //     this._setter = false;
-    //   }
-    // } else {
-    //   this._setter = false;
-    // }
-    // return this._setter
   }
 
   get signatures() {
@@ -565,6 +559,13 @@ class InterfaceData extends IDLData {
       signatures.push(elem.source);
     });
     return signatures;
+  }
+
+  get unnamedGetter() {
+    if (!this._getters) { this.getters; }
+    return this._getters.find(elem => {
+      return (!elem.name? true: false);
+    });
   }
 
   getBurnRecords() {

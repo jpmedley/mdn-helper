@@ -270,36 +270,38 @@ describe('InterfaceData', () => {
     });
   });
 
-  describe('getter', () => {
-    it('Confirms that getter returns true when file contains named and unnamed getters', () => {
+  describe('getters', () => {
+    it('Confirms that getter returns returns all named and unnamed getters', () => {
       const source = loadSource(GETTERS_BOTH);
       const id = new InterfaceData(source);
-      assert.ok(id.getter.exists);
+      assert.ok(id.getters.length === 3);
     });
-    it('Confirms that getter returns true when file contains only an unnamed getter', () => {
+    it('Confirms that getter returns all getters when file contains only an unnamed getter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.ok(id.getter.exists);
+      assert.ok(id.getters.length === 1);
     });
-    it('Confirms that getter returns false when file contains only named getters', () => {
-      const source = loadSource(GETTERS_NAMED_ONLY);
-      const id = new InterfaceData(source);
-      assert.ok(id.getter.exists === false);
-    });
-    it('Confirms that getter returns false when file contains no getters', () => {
+    it('Confirms that getter returns null when file contains no getters', () => {
       const source = loadSource(NO_GETTERS);
       const id = new InterfaceData(source);
-      assert.ok(id.getter.exists === false);
+      assert.ok(id.getters === null);
     });
     it('Confirms that getters are marked as flagged when the interface is flagged', () => {
       const source = loadSource(GETTERS_IFACE_FLAGGED);
       const id = new InterfaceData(source);
-      assert.ok(id.getter.flagged);
+      const missing = id.getters.find(elem => {
+        return elem.flagged != id.flagged;
+      });
+      assert.ok(!missing);
+
     });
     it('Confirms that getters are marked as in an OT when the interface is in an OT', () => {
       const source = loadSource(GETTERS_IFACE_OT);
       const id = new InterfaceData(source);
-      assert.ok(id.getter.originTrial);
+      const missing = id.getters.find(elem => {
+        return elem.originTrial != id.originTrial;
+      });
+      assert.ok(!missing);
     });
   });
 
@@ -439,6 +441,24 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('namedGetters', () => {
+    it('Confirms that namedGetters returns items when file contains named and unnamed getters', () => {
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
+      assert.ok(id.namedGetters.length === 2);
+    });
+    it('Confirms that namedGetters returns items when file contains only named getters', () => {
+      const source = loadSource(GETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(id.namedGetters.length > 0);
+    });
+    it('Confirms that namedGetters returns no items when file contains no named getters', () => {
+      const source = loadSource(GETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(id.namedGetters.length === 0);
+    });
+  });
+
   describe('originTrial', () => {
     it('Confirms that originTrial returns a boolean', () => {
       const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
@@ -571,6 +591,24 @@ describe('InterfaceData', () => {
       const source = loadSource(CONSTRUCTORS);
       const id = new InterfaceData(source);
       assert.ok(Array.isArray(id.signatures));
-    })
-  })
+    });
+  });
+
+  describe('unnamedGetters', () => {
+    it('Confirms that unnamedGetter returns true when file contains named and unnamed getters', () => {
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
+      assert.ok(id.unnamedGetter);
+    });
+    it('Confirms that unnamedGetter returns false when file contains only named getters', () => {
+      const source = loadSource(GETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(!id.unnamedGetter);
+    });
+    it('Confirms that namedGetters returns true when file contains only an unamed getter', () => {
+      const source = loadSource(GETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.ok(id.unnamedGetter);
+    });
+  });
 });

@@ -1,0 +1,7 @@
+interface Getters {
+  [RuntimeEnabled=OTEExperimental] getter SVGPoint getItem(unsigned long index);
+  [Affects=Nothing] getter DOMString item(unsigned long index);
+  [Affects=Nothing] getter DOMString (DOMString name);
+
+  attribute octet notDeleter;
+};
