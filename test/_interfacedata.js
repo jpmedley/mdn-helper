@@ -625,10 +625,26 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.unnamedGetter.length === 0);
     });
-    it('Confirms that namedGetters returns true when file contains only an unamed getter', () => {
+    it('Confirms that unnamedGetter returns true when file contains only an unamed getter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.unnamedGetter);
+    });
+    it('Confirms that unnamedGetter are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(GETTERS_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      const missing = id.unnamedGetter.find(elem => {
+        return elem.flagged != id.flagged;
+      });
+      assert.ok(!missing);
+    });
+    it('Confirms that unnamedGetter are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(GETTERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      const missing = id.unnamedGetter.find(elem => {
+        return elem.originTrial != id.originTrial;
+      });
+      assert.ok(!missing);
     });
   });
 });
