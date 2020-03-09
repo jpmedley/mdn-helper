@@ -447,6 +447,8 @@ class InterfaceData extends IDLData {
     }
     let maplikes = this.maplikeMethods;
     if (maplikes) { this._methods.push(...maplikes); }
+    let namedGetters = this.namedGetters;
+    if (namedGetters) { this._methods.push(...namedGetters); }
     return this._methods
   }
 
@@ -459,9 +461,12 @@ class InterfaceData extends IDLData {
 
   get namedGetters() {
     if (!this._getters) { this.getters; }
-    const namedGetters = this._getters.filter(elem => {
-      return (elem.name? true: false);
-    });
+    let namedGetters;
+    if (this._getters) {
+      namedGetters = this._getters.filter(elem => {
+        return (elem.name? true: false);
+      });
+    }
     return namedGetters;
   }
 

@@ -429,12 +429,17 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.methods[0].resolutions, "void");
     });
-    it('Confirms that maplike methods are marked as flagged when the interface is flagged', () => {
+    it('Confirms that named getter methods are are returned by methods property', () => {
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
+      assert.ok(id.methods.length === 2);
+    });
+    it('Confirms that methods are marked as flagged when the interface is flagged', () => {
       const source = loadSource(METHOD_IFACE_FLAGGED);
       const id = new InterfaceData(source);
       assert.ok(id.methods[0].flagged);
     });
-    it('Confirms that maplike methods are marked as in an OT when the interface is in an OT', () => {
+    it('Confirms that methods are marked as in an OT when the interface is in an OT', () => {
       const source = loadSource(METHOD_IFACE_OT);
       const id = new InterfaceData(source);
       assert.ok(id.methods[0].originTrial);
