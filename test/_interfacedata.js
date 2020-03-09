@@ -293,7 +293,6 @@ describe('InterfaceData', () => {
         return elem.flagged != id.flagged;
       });
       assert.ok(!missing);
-
     });
     it('Confirms that getters are marked as in an OT when the interface is in an OT', () => {
       const source = loadSource(GETTERS_IFACE_OT);
@@ -462,6 +461,22 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.namedGetters.length === 0);
     });
+    it('Confirms that namedGetters are marked as flagged when the interface is flagged', () => {
+      const source = loadSource(GETTERS_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      const missing = id.namedGetters.find(elem => {
+        return elem.flagged != id.flagged;
+      });
+      assert.ok(!missing);
+    });
+    it('Confirms that namedGetters are marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(GETTERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      const missing = id.namedGetters.find(elem => {
+        return elem.originTrial != id.originTrial;
+      });
+      assert.ok(!missing);
+    });
   });
 
   describe('originTrial', () => {
@@ -608,7 +623,7 @@ describe('InterfaceData', () => {
     it('Confirms that unnamedGetter returns false when file contains only named getters', () => {
       const source = loadSource(GETTERS_NAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.ok(!id.unnamedGetter);
+      assert.ok(id.unnamedGetter.length === 0);
     });
     it('Confirms that namedGetters returns true when file contains only an unamed getter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);

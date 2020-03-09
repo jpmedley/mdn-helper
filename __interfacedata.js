@@ -461,13 +461,13 @@ class InterfaceData extends IDLData {
 
   get namedGetters() {
     if (!this._getters) { this.getters; }
-    let namedGetters;
     if (this._getters) {
-      namedGetters = this._getters.filter(elem => {
+      let namedGetters = this._getters.filter(elem => {
         return (elem.name? true: false);
       });
+      return namedGetters;
     }
-    return namedGetters;
+    return null;
   }
 
   get originTrial() {
@@ -566,11 +566,29 @@ class InterfaceData extends IDLData {
     return signatures;
   }
 
+
+
+
+  get namedGetters() {
+    if (!this._getters) { this.getters; }
+    if (this._getters) {
+      let namedGetters = this._getters.filter(elem => {
+        return (elem.name? true: false);
+      });
+      return namedGetters;
+    }
+    return null;
+  }
+
   get unnamedGetter() {
     if (!this._getters) { this.getters; }
-    return this._getters.find(elem => {
-      return (!elem.name? true: false);
-    });
+    if (this._getters) {
+      let unnamedGetter = this._getters.filter(elem => {
+        return (elem.name? false: true);
+      });
+      return unnamedGetter;
+    }
+    return null;
   }
 
   getBurnRecords() {

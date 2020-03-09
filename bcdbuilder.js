@@ -40,8 +40,6 @@ class _BCDBuilder {
     const temp = JSON.parse(this._bcdString);
     this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
     let file = utils.getOutputFile(outFilePath);
-    // fs.write(file, this._bcdString, ()=>{});
-    // fs.close(file, ()=>{});
     fs.writeSync(file, this._bcdString);
     fs.closeSync(file);
     if (this._verbose) {
