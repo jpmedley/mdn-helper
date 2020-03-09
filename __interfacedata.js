@@ -287,7 +287,6 @@ class InterfaceData extends IDLData {
     if (!match.done) { this._deleters = []; }
     while (!match.done) {
       let deleter = Object.assign({}, DELETER);
-      // deleter.name = match.value[4].trim();
       deleter.name = (match.value[4]? match.value[4].trim(): null);
       deleter.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
       deleter.originTrial = this.originTrial || this._getRuntimeEnabledValue("origintrial", match.value[1]);
@@ -302,20 +301,19 @@ class InterfaceData extends IDLData {
 
   get eventHandlers() {
     if (this._eventHandlers) { return this._eventHandlers; }
-    let matches = this._sourceData.match(EVENTHANDLER_RE);
-    if (matches) {
-      this._eventHandlers = [];
-      matches.forEach(elem => {
-        let eventHandler = Object.assign({}, EVENT_HANDLER);
-        let eventHandlers = elem.match(EVENT_NAME_RE);
-        eventHandler.name = eventHandlers[1].trim();
-        eventHandler.flagged = this.flagged;
-        eventHandler.originTrial = this.originTrial;
-        let found = this._eventHandlers.some(elem => {
-          return elem.name == eventHandler.name;
-        });
-        if (!found) { this._eventHandlers.push(eventHandler); }
+    let matches = this._sourceData.matchAll(EVENTHANDLER_RE);
+    let match = matches.next();
+    if (!match.done) { this._eventHandlers = []; }
+    while (!match.done) {
+      let eventHandler = Object.assign({}, EVENT_HANDLER);
+      eventHandler.name = match.value[4].trim();
+      eventHandler.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
+      eventHandler.originTrial = this.originTrial || this._getRuntimeEnabledValue("origintrial", match.value[1]);
+      let found = this._eventHandlers.some(elem => {
+        return elem.name == eventHandler.name;
       });
+      if (!found) { this._eventHandlers.push(eventHandler); }
+      match = matches.next();
     }
     return this._eventHandlers;
   }
