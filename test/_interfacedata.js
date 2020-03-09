@@ -25,9 +25,11 @@ const { initiateLogger } = require('../log.js');
 initiateLogger();
 
 const CONSTRUCTORS = './test/files/all-constructors.idl';
+const CONSTRUCTOR_FLAGGED = './test/files/constructor-flagged.idl';
 const CONSTRUCTOR_IFACE_FLAGGED = './test/files/constructor-iface-flagged.idl';
 const CONSTRUCTOR_IFACE_OT = './test/files/constructor-iface-ot.idl';
 const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
+const CONSTRUCTOR_OT = './test/files/constructor-ot.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
 const DELETERS = './test/files/all-deleters.idl';
 const DELETERS_FLAGGED = './test/files/deleters-flagged.idl';
@@ -138,7 +140,7 @@ describe('InterfaceData', () => {
     it('Confirms that all constructor interfacess are counted', () => {
       const source = loadSource(CONSTRUCTORS);
       const id = new InterfaceData(source);
-      assert.equal(id.constructors.length, 3);
+      assert.equal(id.constructors.length, 2);
     });
     it('Confirms that the constructor is marked as flagged when the interface is flagged', () => {
       const source = loadSource(CONSTRUCTOR_IFACE_FLAGGED);
@@ -151,12 +153,12 @@ describe('InterfaceData', () => {
       assert.ok(id.constructors[0].originTrial);
     });
     it('Confirms that the constructor is marked as flagged only when its line is flagged', () => {
-      const source = loadSource(CONSTRUCTORS);
+      const source = loadSource(CONSTRUCTOR_FLAGGED);
       const id = new InterfaceData(source);
       assert.ok(id.constructors[0].flagged);
     });
     it('Confirms that the constructor is marked as in an OT only when its line is in an OT', () => {
-      const source = loadSource(CONSTRUCTORS);
+      const source = loadSource(CONSTRUCTOR_OT);
       const id = new InterfaceData(source);
       assert.ok(id.constructors[0].originTrial);
     });
@@ -196,7 +198,7 @@ describe('InterfaceData', () => {
       assert.ok(id.deleters[0].flagged);
     });
     it('Confirms that the constructor is marked as in an OT only when its line is in an OT', () => {
-      const source = loadSource(DELETERS_IFACE_OT);
+      const source = loadSource(DELETERS_OT);
       const id = new InterfaceData(source);
       assert.ok(id.deleters[0].originTrial);
     });

@@ -264,7 +264,7 @@ class InterfaceData extends IDLData {
       let constructor_ = Object.assign({}, CONSTRUCTOR);
       constructor_.source = match.value[0];
       constructor_.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
-      constructor_.originTrial = this.originTrial || this._getRuntimeEnabledValue("experimental", match.value[1]);
+      constructor_.originTrial = this.originTrial || this._getRuntimeEnabledValue("origintrial", match.value[1]);
       let constructorString = match.value[4];
       if (constructorString) {
         if (!constructorString.includes("()")) {
@@ -290,7 +290,7 @@ class InterfaceData extends IDLData {
       // deleter.name = match.value[4].trim();
       deleter.name = (match.value[4]? match.value[4].trim(): null);
       deleter.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
-      deleter.originTrial = this.originTrial || this._getRuntimeEnabledValue("experimental", match.value[1]);
+      deleter.originTrial = this.originTrial || this._getRuntimeEnabledValue("origintrial", match.value[1]);
       let found = this._deleters.some(elem => {
         return elem.name == deleter.name;
       });
