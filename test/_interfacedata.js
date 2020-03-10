@@ -184,22 +184,22 @@ describe('InterfaceData', () => {
         return elem.name == UNNAMED_MEMBER;
       });
     });
-    it('Confirms that the deleters are marked as flagged when the interface is flagged', () => {
+    it('Confirms that deleters are marked as flagged when the interface is flagged', () => {
       const source = loadSource(DELETERS_IFACE_FLAGGED);
       const id = new InterfaceData(source);
       assert.ok(id.deleters[0].flagged);
     });
-    it('Confirms that the deleters are marked as in an OT when the interface is in an OT', () => {
+    it('Confirms that deleters are marked as in an OT when the interface is in an OT', () => {
       const source = loadSource(DELETERS_IFACE_OT);
       const id = new InterfaceData(source);
       assert.ok(id.deleters[0].originTrial);
     });
-    it('Confirms that the constructor is marked as flagged only when its line is flagged', () => {
+    it('Confirms that deleters are marked as flagged only when its line is flagged', () => {
       const source = loadSource(DELETERS_FLAGGED);
       const id = new InterfaceData(source);
       assert.ok(id.deleters[0].flagged);
     });
-    it('Confirms that the constructor is marked as in an OT only when its line is in an OT', () => {
+    it('Confirms that deleters are marked as in an OT only when its line is in an OT', () => {
       const source = loadSource(DELETERS_OT);
       const id = new InterfaceData(source);
       assert.ok(id.deleters[0].originTrial);
@@ -227,12 +227,12 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.eventHandlers[0].originTrial);
     });
-    it('Confirms that event handlers are marked as flagged only when its line is flagged', () => {
+    it('Confirms that an event handler is marked as flagged only when its line is flagged', () => {
       const source = loadSource(EVENTHANDLERS_FLAGGED);
       const id = new InterfaceData(source);
       assert.ok(id.eventHandlers[0].flagged);
     });
-    it('Confirms that event handlers are marked as in an OT only when its line is in an OT', () => {
+    it('Confirms that an event handler is marked as in an OT only when its line is in an OT', () => {
       const source = loadSource(EVENTHANDLERS_OT);
       const id = new InterfaceData(source);
       assert.ok(id.eventHandlers[0].originTrial);
@@ -428,7 +428,7 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.methods[0].resolutions, "void");
     });
-    it('Confirms that named getter methods are are returned by methods property', () => {
+    it('Confirms that named getters are are returned by methods property', () => {
       const source = loadSource(GETTERS_BOTH);
       const id = new InterfaceData(source);
       assert.ok(id.methods.length === 2);
@@ -446,22 +446,22 @@ describe('InterfaceData', () => {
   });
 
   describe('namedGetters', () => {
-    it('Confirms that namedGetters returns items when file contains named and unnamed getters', () => {
+    it('Confirms that named getters returns items when file contains named and unnamed getters', () => {
       const source = loadSource(GETTERS_BOTH);
       const id = new InterfaceData(source);
       assert.ok(id.namedGetters.length === 2);
     });
-    it('Confirms that namedGetters returns items when file contains only named getters', () => {
+    it('Confirms that named getters returns items when file contains only named getters', () => {
       const source = loadSource(GETTERS_NAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.namedGetters.length > 0);
     });
-    it('Confirms that namedGetters returns no items when file contains no named getters', () => {
+    it('Confirms that named getters returns no items when file contains no named getters', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.namedGetters.length === 0);
     });
-    it('Confirms that namedGetters are marked as flagged when the interface is flagged', () => {
+    it('Confirms that named getters are marked as flagged when the interface is flagged', () => {
       const source = loadSource(GETTERS_IFACE_FLAGGED);
       const id = new InterfaceData(source);
       const missing = id.namedGetters.find(elem => {
@@ -469,7 +469,7 @@ describe('InterfaceData', () => {
       });
       assert.ok(!missing);
     });
-    it('Confirms that namedGetters are marked as in an OT when the interface is in an OT', () => {
+    it('Confirms that named getters are marked as in an OT when the interface is in an OT', () => {
       const source = loadSource(GETTERS_IFACE_OT);
       const id = new InterfaceData(source);
       const missing = id.namedGetters.find(elem => {
@@ -532,12 +532,12 @@ describe('InterfaceData', () => {
       const properties = id.properties;
       assert.equal(id.properties[0].returnType, 'FontFaceLoadStatus');
     });
-    it('Confirms that maplike methods are marked as flagged when the interface is flagged', () => {
+    it('Confirms that properties are marked as flagged when the interface is flagged', () => {
       const source = loadSource(PROPERTIES_IFACE_FLAGGED);
       const id = new InterfaceData(source);
       assert.ok(id.properties[0].flagged);
     });
-    it('Confirms that maplike methods are marked as in an OT when the interface is in an OT', () => {
+    it('Confirms that properties are marked as in an OT when the interface is in an OT', () => {
       const source = loadSource(PROPERTIES_IFACE_OT);
       const id = new InterfaceData(source);
       assert.ok(id.properties[0].originTrial);
@@ -615,22 +615,22 @@ describe('InterfaceData', () => {
   });
 
   describe('unnamedGetters', () => {
-    it('Confirms that unnamedGetter returns true when file contains named and unnamed getters', () => {
+    it('Confirms that unnamed getters returns true when file contains named and unnamed getters', () => {
       const source = loadSource(GETTERS_BOTH);
       const id = new InterfaceData(source);
       assert.ok(id.unnamedGetter);
     });
-    it('Confirms that unnamedGetter returns false when file contains only named getters', () => {
+    it('Confirms that unnamed getters returns false when file contains only named getters', () => {
       const source = loadSource(GETTERS_NAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.unnamedGetter.length === 0);
     });
-    it('Confirms that unnamedGetter returns true when file contains only an unamed getter', () => {
+    it('Confirms that unnamed getters returns true when file contains only an unamed getter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.unnamedGetter);
     });
-    it('Confirms that unnamedGetter are marked as flagged when the interface is flagged', () => {
+    it('Confirms that unnamed getters are marked as flagged when the interface is flagged', () => {
       const source = loadSource(GETTERS_IFACE_FLAGGED);
       const id = new InterfaceData(source);
       const missing = id.unnamedGetter.find(elem => {
@@ -638,7 +638,7 @@ describe('InterfaceData', () => {
       });
       assert.ok(!missing);
     });
-    it('Confirms that unnamedGetter are marked as in an OT when the interface is in an OT', () => {
+    it('Confirms that unnamed getters are marked as in an OT when the interface is in an OT', () => {
       const source = loadSource(GETTERS_IFACE_OT);
       const id = new InterfaceData(source);
       const missing = id.unnamedGetter.find(elem => {
