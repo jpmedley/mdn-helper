@@ -87,7 +87,6 @@ const GETTER = Object.freeze({
 
 const ITERABLE = Object.freeze({
   "flagged": null,
-  "exists": null,
   "originTrial": null
 });
 
@@ -384,6 +383,9 @@ class InterfaceData extends IDLData {
       getter.name = (match.value[5]? match.value[5].trim(): null);
       getter.flagged = this.flagged;
       getter.originTrial = this.originTrial;
+      if (match.value[1]) {
+        this._getInlineExtendedAttributes(match.value[2], getter);
+      }
       let found = this._getters.some(elem => {
         return elem.name == getter.name;
       });
@@ -406,16 +408,18 @@ class InterfaceData extends IDLData {
 
   get iterable() {
     if (this._iterable) { this._iterable; }
-    let iterableObj = Object.assign({}, ITERABLE);
-    let matches = this._sourceData.match(ITERABLE_RE);
-    if (matches) {
-      iterableObj.exists = true;
-      iterableObj.flagged = this.flagged;
-      iterableObj.originTrial = this.originTrial;
-    } else {
-      iterableObj.exists = false;
+    let matches = this._sourceData.matchAll(ITERABLE_RE);
+    let match = matches.next();
+    while (!match.done) {
+      // There will always be no more than one.
+      this._iterable = Object.assign({}, ITERABLE);
+      this._iterable.flagged = this.flagged;
+      this._iterable.originTrial = this.originTrial;
+      if (match.value[1]) {
+        this._getInlineExtendedAttributes(match.value[2], this._iterable);
+      }
+      match = matches.next();
     }
-    this._iterable = iterableObj;
     return this._iterable;
   }
 

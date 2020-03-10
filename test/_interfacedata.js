@@ -278,27 +278,27 @@ describe('InterfaceData', () => {
     it('Confirms that an iterable with a sequence as one of several args is recognized', () => {
       const source = loadSource(ITERABLE_MULTI_ARG_SEQ);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable.exists);
+      assert.ok(id.iterable);
     });
     it('Confirms that an iterable with several args is recognized', () => {
       const source = loadSource(ITERABLE_MULTI_ARG);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable.exists);
+      assert.ok(id.iterable);
     });
     it('Confirms that an iterable with one arg is recognized', () => {
       const source = loadSource(ITERABLE_ONE_ARG);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable.exists);
+      assert.ok(id.iterable);
     });
     it('Confirms that an iterable with a sequence as its one arg is recognized', () => {
       const source = loadSource(ITERABLE_SEQUENCE_ARG);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable.exists);
+      assert.ok(id.iterable);
     });
     it('Confirms that iterable returns false when the IDL contains no iterable', () => {
       const source = loadSource(NO_ITERABLE);
       const id = new InterfaceData(source);
-      assert.ok(id.iterable.exists === false);
+      assert.ok(!id.iterable);
     });
   });
 
