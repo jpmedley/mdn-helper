@@ -1,6 +1,0 @@
-[
-    RuntimeEnabled=OTEExperimental
-] interface Property {
-    attribute FontFaceLoadStatus status;
-    attribute boolean medley;
-};

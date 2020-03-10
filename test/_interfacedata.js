@@ -32,15 +32,7 @@ const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
 const CONSTRUCTOR_OT = './test/files/constructor-ot.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
 const DELETERS = './test/files/all-deleters.idl';
-const DELETERS_FLAGGED = './test/files/deleters-flagged.idl';
-const DELETERS_IFACE_FLAGGED = './test/files/deleters-iface-flagged.idl';
-const DELETERS_IFACE_OT = './test/files/deleters-iface-ot.idl';
-const DELETERS_OT = './test/files/deleters-ot.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
-const EVENTHANDLERS_FLAGGED = './test/files/event-flagged.idl';
-const EVENTHANDLERS_IFACE_FLAGGED = './test/files/event-iface-flagged.idl';
-const EVENTHANDLERS_IFACE_OT = './test/files/event-iface-ot.idl';
-const EVENTHANDLERS_OT = './test/files/event-ot.idl';
 const EXPOSED_MANY = './test/files/exposed-many.idl';
 const EXPOSED_ONE = './test/files/exposed-one.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
@@ -50,15 +42,11 @@ const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
 const INTERFACE_NOPARENT = './test/files/interface-noparent.idl';
-const ITERABLE_IFACE_FLAGGED = './test/files/iterable-iface-flagged.idl';
-const ITERABLE_IFACE_OT = './test/files/iterable-iface-ot.idl';
 const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
 const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
 const METHOD_ARGUMENTS_COUNT = './test/files/method-argument-count.idl';
-const METHOD_IFACE_FLAGGED = './test/files/method-iface-flagged.idl';
-const METHOD_IFACE_OT = './test/files/method-iface-ot.idl';
 const METHOD_NO_ARGUMENTS = './test/files/method-noarguments.idl';
 const METHOD_PROMISES = './test/files/method-promises.idl';
 const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
@@ -66,8 +54,6 @@ const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
-const PROPERTIES_IFACE_FLAGGED = './test/files/properties-iface-flagged.idl';
-const PROPERTIES_IFACE_OT = './test/files/properties-iface-ot.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
 const PROPERTIES_MAPLIKE_IFACE_FLAGGED = './test/files/maplike-iface-flagged.idl';
 const PROPERTIES_MAPLIKE_IFACE_OT = './test/files/maplike-iface-ot.idl';
@@ -77,8 +63,6 @@ const RUNTIMEENABLED_IFACE_MISSING_RE = './test/files/runtimeenabled-interface-m
 const RUNTIMEENABLED_IFACE_OT_RE = './test/files/runtimeenabled-interface-ot.idl';
 const SECURE_CONTEXT = './test/files/secure-context.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
-const SETTERS_IFACE_FLAGGED = './test/files/setters-iface-flagged.idl';
-const SETTERS_IFACE_OT = './test/files/setters-iface-ot.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
 const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
 
@@ -113,6 +97,55 @@ function loadSource(sourcePath) {
 
 describe('InterfaceData', () => {
 
+  describe('Flags (nested behavior)', () => {
+    it('Confirms that an item is marked as flagged when the interface is flagged', () => {
+      const source = loadSource(CONSTRUCTOR_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].flagged);
+    });
+    it('Confirms that an item is marked as in an OT when the interface is in an OT', () => {
+      const source = loadSource(CONSTRUCTOR_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].originTrial);
+    });
+    it('Confirms that an item is marked as flagged only when its line is flagged', () => {
+      const source = loadSource(CONSTRUCTOR_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].flagged);
+    });
+    it('Confirms that an item is marked as in an OT only when its line is in an OT', () => {
+      const source = loadSource(CONSTRUCTOR_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.constructors[0].originTrial);
+    });
+    it('Confirms that the flagged property is set on the first of several returned objects', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      assert.ok(id.maplikeMethods[0].flagged);
+    });
+    it('Confirms that the originTrial property is set on the first of several returned objects', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE_IFACE_OT);
+      const id = new InterfaceData(source);
+      assert.ok(id.maplikeMethods[0].originTrial);
+    });
+    it('Confirms that the flagged property is set on one of several returned objects', () => {
+      const source = loadSource(GETTERS_IFACE_FLAGGED);
+      const id = new InterfaceData(source);
+      const missing = id.getters.find(elem => {
+        return elem.flagged != id.flagged;
+      });
+      assert.ok(!missing);
+    });
+    it('Confirms that the originTrial property is set on one of several returned objects', () => {
+      const source = loadSource(GETTERS_IFACE_OT);
+      const id = new InterfaceData(source);
+      const missing = id.getters.find(elem => {
+        return elem.originTrial != id.originTrial;
+      });
+      assert.ok(!missing);
+    });
+  })
+
   describe('constructors', () => {
     it('Confirms that constructors returns null when no constructors are present', () => {
       const source = loadSource(NO_CONSTRUCTOR);
@@ -144,26 +177,6 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.equal(id.constructors.length, 2);
     });
-    it('Confirms that the constructor is marked as flagged when the interface is flagged', () => {
-      const source = loadSource(CONSTRUCTOR_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.constructors[0].flagged);
-    });
-    it('Confirms that the constructor is marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(CONSTRUCTOR_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.constructors[0].originTrial);
-    });
-    it('Confirms that the constructor is marked as flagged only when its line is flagged', () => {
-      const source = loadSource(CONSTRUCTOR_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.constructors[0].flagged);
-    });
-    it('Confirms that the constructor is marked as in an OT only when its line is in an OT', () => {
-      const source = loadSource(CONSTRUCTOR_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.constructors[0].originTrial);
-    });
   });
 
   describe('deleters', () => {
@@ -184,26 +197,6 @@ describe('InterfaceData', () => {
         return elem.name == UNNAMED_MEMBER;
       });
     });
-    it('Confirms that deleters are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(DELETERS_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.deleters[0].flagged);
-    });
-    it('Confirms that deleters are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(DELETERS_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.deleters[0].originTrial);
-    });
-    it('Confirms that deleters are marked as flagged only when its line is flagged', () => {
-      const source = loadSource(DELETERS_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.deleters[0].flagged);
-    });
-    it('Confirms that deleters are marked as in an OT only when its line is in an OT', () => {
-      const source = loadSource(DELETERS_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.deleters[0].originTrial);
-    });
   });
 
   describe('eventHandlers', () => {
@@ -216,26 +209,6 @@ describe('InterfaceData', () => {
       const source = loadSource(NO_EVENTHANDLERS);
       const id = new InterfaceData(source);
       assert.equal(id.eventHandlers, null);
-    });
-    it('Confirms that event handlers are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(EVENTHANDLERS_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.eventHandlers[0].flagged);
-    });
-    it('Confirms that event handlers are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(EVENTHANDLERS_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.eventHandlers[0].originTrial);
-    });
-    it('Confirms that an event handler is marked as flagged only when its line is flagged', () => {
-      const source = loadSource(EVENTHANDLERS_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.eventHandlers[0].flagged);
-    });
-    it('Confirms that an event handler is marked as in an OT only when its line is in an OT', () => {
-      const source = loadSource(EVENTHANDLERS_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.eventHandlers[0].originTrial);
     });
   });
 
@@ -286,22 +259,6 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.getters === null);
     });
-    it('Confirms that getters are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(GETTERS_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      const missing = id.getters.find(elem => {
-        return elem.flagged != id.flagged;
-      });
-      assert.ok(!missing);
-    });
-    it('Confirms that getters are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(GETTERS_IFACE_OT);
-      const id = new InterfaceData(source);
-      const missing = id.getters.find(elem => {
-        return elem.originTrial != id.originTrial;
-      });
-      assert.ok(!missing);
-    });
   });
 
   describe('hasConstructor', () => {
@@ -343,16 +300,6 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.iterable.exists === false);
     });
-    it('Confirms that iterables are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(ITERABLE_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.iterable.flagged);
-    });
-    it('Confirms that iterables are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(ITERABLE_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.iterable.originTrial);
-    });
   });
 
   // Needs to read out of a test file that contains methods.
@@ -366,16 +313,6 @@ describe('InterfaceData', () => {
       const source = loadSource(PROPERTIES_MAPLIKE);
       const id = new InterfaceData(source);
       assert.equal(id.maplikeMethods.length, 10);
-    });
-    it('Confirms that maplike methods are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(PROPERTIES_MAPLIKE_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.maplikeMethods[0].flagged);
-    });
-    it('Confirms that maplike methods are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(PROPERTIES_MAPLIKE_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.maplikeMethods[0].originTrial);
     });
   });
 
@@ -433,16 +370,6 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.methods.length === 2);
     });
-    it('Confirms that methods are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(METHOD_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.methods[0].flagged);
-    });
-    it('Confirms that methods are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(METHOD_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.methods[0].originTrial);
-    });
   });
 
   describe('namedGetters', () => {
@@ -460,22 +387,6 @@ describe('InterfaceData', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.namedGetters.length === 0);
-    });
-    it('Confirms that named getters are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(GETTERS_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      const missing = id.namedGetters.find(elem => {
-        return elem.flagged != id.flagged;
-      });
-      assert.ok(!missing);
-    });
-    it('Confirms that named getters are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(GETTERS_IFACE_OT);
-      const id = new InterfaceData(source);
-      const missing = id.namedGetters.find(elem => {
-        return elem.originTrial != id.originTrial;
-      });
-      assert.ok(!missing);
     });
   });
 
@@ -532,16 +443,6 @@ describe('InterfaceData', () => {
       const properties = id.properties;
       assert.equal(id.properties[0].returnType, 'FontFaceLoadStatus');
     });
-    it('Confirms that properties are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(PROPERTIES_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.properties[0].flagged);
-    });
-    it('Confirms that properties are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(PROPERTIES_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.properties[0].originTrial);
-    });
   });
 
   describe('readOnlyProperties', () => {
@@ -594,16 +495,6 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.setter.exists === false);
     });
-    it('Confirms that setters are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(SETTERS_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      assert.ok(id.setter.flagged);
-    });
-    it('Confirms that setters are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(SETTERS_IFACE_OT);
-      const id = new InterfaceData(source);
-      assert.ok(id.setter.originTrial);
-    });
   });
 
   describe('signatures', () => {
@@ -629,22 +520,6 @@ describe('InterfaceData', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.unnamedGetter);
-    });
-    it('Confirms that unnamed getters are marked as flagged when the interface is flagged', () => {
-      const source = loadSource(GETTERS_IFACE_FLAGGED);
-      const id = new InterfaceData(source);
-      const missing = id.unnamedGetter.find(elem => {
-        return elem.flagged != id.flagged;
-      });
-      assert.ok(!missing);
-    });
-    it('Confirms that unnamed getters are marked as in an OT when the interface is in an OT', () => {
-      const source = loadSource(GETTERS_IFACE_OT);
-      const id = new InterfaceData(source);
-      const missing = id.unnamedGetter.find(elem => {
-        return elem.originTrial != id.originTrial;
-      });
-      assert.ok(!missing);
     });
   });
 });

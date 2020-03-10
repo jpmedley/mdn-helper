@@ -244,6 +244,26 @@ class InterfaceData extends IDLData {
     }
   }
 
+  _getRuntimeEnabledValue__(expectedStatus, forFlag) {
+    let status = global.__Flags.getHighestResolvedStatus(forFlag);
+    return (status === expectedStatus);
+  }
+
+  _getInlineExtendedAttributes(source, dataObject) {
+    const sources = source.split(",");
+    sources.forEach(elem => {
+      let elems = elem.split("=");
+      switch (elems[0]) {
+        case "RuntimeEnabled":
+          dataObject.flagged = dataObject.flagged || this._getRuntimeEnabledValue__("experimental", elems[1]);
+          dataObject.originTrial = dataObject.originTrial || this._getRuntimeEnabledValue__("origintrial", elems[1]);
+          break;
+        default:
+          break;
+      }
+    })
+  }
+
   _getInterfaceExtendedAttributes() {
     if (this._extendedAttributes) { return this._extendedAttributes; }
     let matches = this._sourceData.match(EXTENDED_ATTRIBUTES_INTERFACE_RE);
@@ -263,8 +283,11 @@ class InterfaceData extends IDLData {
     while (!match.done) {
       let constructor_ = Object.assign({}, CONSTRUCTOR);
       constructor_.source = match.value[0];
-      constructor_.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
-      constructor_.originTrial = this.originTrial || this._getRuntimeEnabledValue("origintrial", match.value[1]);
+      constructor_.flagged = this.flagged;
+      constructor_.originTrial = this.originTrial;
+      if (match.value[1]) {
+        this._getInlineExtendedAttributes(match.value[2], constructor_);
+      }
       let constructorString = match.value[4];
       if (constructorString) {
         if (!constructorString.includes("()")) {
@@ -288,8 +311,11 @@ class InterfaceData extends IDLData {
     while (!match.done) {
       let deleter = Object.assign({}, DELETER);
       deleter.name = (match.value[4]? match.value[4].trim(): null);
-      deleter.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
-      deleter.originTrial = this.originTrial || this._getRuntimeEnabledValue("origintrial", match.value[1]);
+      deleter.flagged = this.flagged;
+      deleter.originTrial = this.originTrial;
+      if (match.value[1]) {
+        this._getInlineExtendedAttributes(match.value[2], deleter);
+      }
       let found = this._deleters.some(elem => {
         return elem.name == deleter.name;
       });
@@ -307,8 +333,11 @@ class InterfaceData extends IDLData {
     while (!match.done) {
       let eventHandler = Object.assign({}, EVENT_HANDLER);
       eventHandler.name = match.value[4].trim();
-      eventHandler.flagged = this.flagged || this._getRuntimeEnabledValue("experimental", match.value[1]);
-      eventHandler.originTrial = this.originTrial || this._getRuntimeEnabledValue("origintrial", match.value[1]);
+      eventHandler.flagged = this.flagged;
+      eventHandler.originTrial = this.originTrial;
+      if (match.value[1]) {
+        this._getInlineExtendedAttributes(match.value[2], eventHandler);
+      }
       let found = this._eventHandlers.some(elem => {
         return elem.name == eventHandler.name;
       });

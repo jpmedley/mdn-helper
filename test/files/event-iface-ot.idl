@@ -1,7 +1,0 @@
-[
-    RuntimeEnabled=OTEExperimental
-] interface EventHand : EventTarget {
-    attribute EventHandler onconnect;
-    [MeasureAs=GenericSensorOnError] attribute EventHandler onerror;
-    [RuntimeEnabled=OnDeviceChange] attribute EventHandler ondevicechange;
-};
