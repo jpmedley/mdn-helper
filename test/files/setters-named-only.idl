@@ -1,5 +1,5 @@
 interface Setters {
-  [RaisesException] setter CSSUnparsedSegment (unsigned long index, CSSUnparsedSegment val);
+  [RaisesException] setter void setItem(DOMString key, DOMString value);
 
   attribute octet notDeleter;
 };

@@ -1,6 +1,0 @@
-[
-    RuntimeEnabled=OTEExperimental
-] interface MaplikeInterface {
-    maplike<DOMString, DOMString>;
-    [RuntimeEnabled=RTEExperimental] maplike<MedleyString, MedleyString>;
-};

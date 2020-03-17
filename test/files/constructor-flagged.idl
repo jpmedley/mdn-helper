@@ -1,8 +1,0 @@
-[
-    Exposed=Window,
-    ActiveScriptWrappable
-] interface Constructors {
-    [RuntimeEnabled=RTEExperimental] constructor(DOMString family, optional FontFaceDescriptors descriptors);
-    constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors);
-    [RaisesException=Setter, SetterCallWith=ExecutionContext] attribute DOMString family;
-};

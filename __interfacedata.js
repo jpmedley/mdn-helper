@@ -14,7 +14,10 @@
 
 'use strict';
 
+const webidl2 = require('webidl2');
+
 const { Pinger } = require("./pinger.js");
+const utils = require('./utils.js');
 
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
@@ -35,30 +38,12 @@ const INTERFACE_NAME_RE = /interface\s(\w+)/;
 
 // const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
-const DELETER_RE = /(\[(([^\]]*))\])?\sdeleter\svoid\s([^(]+)?\(([^)]+)\)/g;
-const DELETER_NAME_RE = /void([^(]*)\(/;
-const EVENTHANDLER_RE = /(\[([^\]]*)\])?(\sreadonly)?\sattribute\sEventHandler\s(\w+)/g;
-const EVENT_NAME_RE = /EventHandler\s([^;]*)/;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
 const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
 const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]*)\]/;
-const GETTERS_RE = /(\[(([^\]]*))\])?\sgetter\s([^ ]+)\s([^(]+)?\(([^)]+)\)/g;
-const GETTER_UNAMED_RE = /getter(\s([^\s]+))\s\(/;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
-const ITERABLE_RE = /iterable\<[^\>]*>/g;
 const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
-const MAPLIKE_RE = /(readonly)?\smaplike\<[^\>]*>/g;
-const METHOD_PROMISE_RE = /\[([^\]]*)\]\sPromise<([^>]*)>{1,2}\s(\w+)\(([^\)]*)/g; // Name at index 3
-const METHOD_RE = /\[([^\]]*)\]\s(\w+)\s(\w+)\(([^\)]*)/g; // Name at index 3
-
-const PROPERTIES = /(\[(\w+=\w+)\])?(\sreadonly)?\sattribute\s(\w+)\s(\w+)/g;
-const PROPERTY_READONLY_RE = /(\[(\w+=\w+)\])?(\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
-const PROPERTY_READWRITE_RE = /(\[(\w+=\w+)\])?(?!\sreadonly)\sattribute\s(\w+)\s(\w+)/g;
-
-
 const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
-const SETTERS_RE = /setter([^(]+)\(/g;
-const SETTER_UNAMED_RE = /setter\svoid\s\(/;
 
 const CONSTRUCTOR = Object.freeze({
   "arguments": [],
@@ -68,26 +53,33 @@ const CONSTRUCTOR = Object.freeze({
 });
 
 const DELETER = Object.freeze({
+  "arguments": [],
   "flagged": null,
   "name": null,
-  "originTrial": null
+  "originTrial": null,
+  "source": null
 })
 
 const EVENT_HANDLER = Object.freeze({
   "flagged": null,
   "name": null,
-  "originTrial": null
+  "originTrial": null,
+  "source": null
 });
 
 const GETTER = Object.freeze({
+  "arguments": [],
   "flagged": null,
-  "exists": null,
-  "originTrial": null
+  "originTrial": null,
+  "returnType": null,
+  "source": null
 });
 
 const ITERABLE = Object.freeze({
+  "arguments": [],
   "flagged": null,
-  "originTrial": null
+  "originTrial": null,
+  "source": null
 });
 
 const METHOD = Object.freeze({
@@ -96,27 +88,48 @@ const METHOD = Object.freeze({
   "name": null,
   "originTrial": null,
   "returnType": null,
-  "resolutions": null
+  "resolution": null,
+  "source": null
 });
 
 const PROPERTY = Object.freeze({
   "flagged": null,
   "name": null,
   "originTrial": null,
-  "readOnly": null,
-  "returnType": null
+  "readOnly": false,
+  "returnType": null,
+  "source": null
 });
 
 const SETTER = Object.freeze({
+  "arguments": [],
   "flagged": null,
-  "exists": null,
-  "originTrial": null
+  "originTrial": null,
+  "source": null
 });
 
 class IDLData {
-  constructor(source, options = {}) {
-    this._sourceData = source;
+  constructor(sourcePath, options = {}) {
+    this._sourceData = this._loadSource(sourcePath);
     this._name;
+  }
+
+  _loadSource(sourcePath) {
+    let sourceContents = utils.getIDLFile(sourcePath);
+    let sourceTree;
+    try {
+      // Use webidl2 only for crude validation.
+      sourceTree = webidl2.parse(sourceContents);
+    } catch(e) {
+      // if (e instanceof SyntaxError) {
+      //   global.__logger.info(`Unable to parse ${sourcePath}.`);
+      // }
+      global.__logger.error(e.message);
+      throw e;
+    } finally {
+      sourceTree = null;
+    }
+    return sourceContents;
   }
 
   get key() {
@@ -208,24 +221,62 @@ class EnumData extends IDLData {
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+    this._members = [];
     this._type = "interface";
-    this._allProperties = null;
-    this._constructors = null;
-    this._deleters = null;
-    this._eventHandlers = null;
+    this._constructors = [];
+    this._deleters = [];
+    this._eventHandlers = [];
     this._exposed = null;
     this._extendedAttributes = null;
     this._flagged = null;
-    this._getters = null;
+    this._getters = [];
     this._hasConstructor = null;
-    this._interable = null;
-    this._maplike = null;
+    this._iterable = [];
+    this._maplike = [];
     this._methods = null;
     this._originTrial = null;
     this._parentClass = null;
-    this._readOnlyProperties = null;
-    this._readWriteProperties = null;
-    this._setter = null;
+    this._properties = [];
+    this._setters = [];
+    this._processSource();
+  }
+
+  _filter(find) {
+    return this._members.filter(member => {
+      return member.includes(find);
+    });
+  }
+
+  // [RuntimeEnabled=RTEExperimental] setter void (DOMString property, [TreatNullAs=EmptyString] DOMString propertyValue);
+  _processSource() {
+    let recording = false;
+    const lines = this._sourceData.split('\n');
+    let members = [];
+    for (let l of lines) {
+      if (l.includes('}')) { recording = false; }
+      if (recording) {
+        if (l.trim() == "") { continue; }
+        if (l.startsWith("//")) { continue; }
+        members.push(l);
+      }
+      if (l.includes('interface')) { recording = true; }
+    }
+    // Take it apart and put it back together so that inline extended attributes
+    // are actually inline with the members they support.
+    let temp = members.join(" ");
+    this._members = temp.split(";");
+    const end = this._members.length - 1;
+    if (this._members[end] == "") { this._members.pop(); }
+
+    this._getConstructors();
+    this._getDeleters();
+    this._getEventHandlers();
+    this._getGetters();
+    this._getIterables();
+    this._getMaplikeMethods();
+    this._getMethods();
+    this._getProperties();
+    this._getSetters();
   }
 
   _getRuntimeEnabledValue(expectedStatus, fromAttributes) {
@@ -249,6 +300,7 @@ class InterfaceData extends IDLData {
   }
 
   _getInlineExtendedAttributes(source, dataObject) {
+    if (source.startsWith("[")) { source = source.slice(1); }
     const sources = source.split(",");
     sources.forEach(elem => {
       let elems = elem.split("=");
@@ -274,75 +326,95 @@ class InterfaceData extends IDLData {
     return this._extendedAttributes;
   }
 
+  _cloneObject(parent) {
+    let newObject = JSON.parse(JSON.stringify(parent))
+    newObject.flagged = this.flagged;
+    newObject.originTrial = this.originTrial;
+    return newObject;
+  }
+
+  _getConstructors() {
+    const sources = this._filter('constructor');
+    sources.forEach(source => {
+      let newConstructorData = this._cloneObject(CONSTRUCTOR);
+      newConstructorData.source = source.trim();
+
+      let workingString = newConstructorData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newConstructorData);
+        workingString = pieces[1];
+      }
+
+      let pieces = workingString.split("constructor");
+      if (!pieces[1].includes("()")) {
+        workingString = pieces[1].trim();
+        workingString = workingString.slice(0, -1).slice(1); //Remove parens and ';'
+        newConstructorData.arguments = workingString.split(",");
+        newConstructorData.arguments.forEach((arg, i, args) => {
+          args[i] = arg.trim();
+        });
+      }
+      this._constructors.push(JSON.parse(JSON.stringify(newConstructorData)));
+    });
+  }
+
   get constructors() {
-    if (this._constructors) { return this._constructors; }
-    let matches = this._sourceData.matchAll(CONSTRUCTOR_RE);
-    let match = matches.next();
-    if (!match.done) { this._constructors = []; }
-    while (!match.done) {
-      let constructor_ = Object.assign({}, CONSTRUCTOR);
-      constructor_.source = match.value[0];
-      constructor_.flagged = this.flagged;
-      constructor_.originTrial = this.originTrial;
-      if (match.value[1]) {
-        this._getInlineExtendedAttributes(match.value[2], constructor_);
-      }
-      let constructorString = match.value[4];
-      if (constructorString) {
-        if (!constructorString.includes("()")) {
-          constructor_.arguments = constructorString.split(',');
-          for (let i = 0; i < constructor_.arguments.length; i++) {
-            constructor_.arguments[i] = constructor_.arguments[i].trim();
-          }
-        }
-      }
-      this._constructors.push(constructor_);
-      match = matches.next();
-    }
     return this._constructors;
   }
 
-  get deleters() {
-    if (this._deleters) { return this._deleters; }
-    let matches = this._sourceData.matchAll(DELETER_RE);
-    let match = matches.next();
-    if (!match.done) { this._deleters = []; }
-    while (!match.done) {
-      let deleter = Object.assign({}, DELETER);
-      deleter.name = (match.value[4]? match.value[4].trim(): null);
-      deleter.flagged = this.flagged;
-      deleter.originTrial = this.originTrial;
-      if (match.value[1]) {
-        this._getInlineExtendedAttributes(match.value[2], deleter);
+  _getDeleters() {
+    const sources = this._filter('deleter');
+    sources.forEach(source => {
+      let newDeleterData = this._cloneObject(DELETER);
+      newDeleterData.source = source.trim();
+
+      let workingString = newDeleterData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newDeleterData);
+        workingString = pieces[1];
       }
-      let found = this._deleters.some(elem => {
-        return elem.name == deleter.name;
-      });
-      if (!found) { this._deleters.push(deleter); }
-      match = matches.next();
-    }
+
+      let pieces = workingString.split("(");
+      let sigs = pieces[0].split(" "); // pieces of the signature
+      if (sigs[2]) { newDeleterData.name = sigs[2]; }
+      if (!pieces[1].includes("()")) {
+        workingString = pieces[1].trim();
+        workingString = workingString.slice(0, -1).slice(1); //Remove parens and ';'
+        newDeleterData.arguments = workingString.split(",");
+        newDeleterData.arguments.forEach((arg, i, args) => {
+          args[i] = arg.trim();
+        });
+      }
+      this._deleters.push(JSON.parse(JSON.stringify(newDeleterData)));
+    });
+  }
+
+  get deleters() {
     return this._deleters;
   }
 
-  get eventHandlers() {
-    if (this._eventHandlers) { return this._eventHandlers; }
-    let matches = this._sourceData.matchAll(EVENTHANDLER_RE);
-    let match = matches.next();
-    if (!match.done) { this._eventHandlers = []; }
-    while (!match.done) {
-      let eventHandler = Object.assign({}, EVENT_HANDLER);
-      eventHandler.name = match.value[4].trim();
-      eventHandler.flagged = this.flagged;
-      eventHandler.originTrial = this.originTrial;
-      if (match.value[1]) {
-        this._getInlineExtendedAttributes(match.value[2], eventHandler);
+  _getEventHandlers() {
+    const sources = this._filter('EventHandler');
+    sources.forEach(source => {
+      let newEventHandler = this._cloneObject(EVENT_HANDLER);
+      newEventHandler.source = source.trim();
+      
+      let workingString = newEventHandler.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newEventHandler);
+        workingString = pieces[1];
       }
-      let found = this._eventHandlers.some(elem => {
-        return elem.name == eventHandler.name;
-      });
-      if (!found) { this._eventHandlers.push(eventHandler); }
-      match = matches.next();
-    }
+      
+      let pieces = workingString.split(" ");
+      newEventHandler.name = pieces[2].trim();
+      this._eventHandlers.push(JSON.parse(JSON.stringify(newEventHandler)));
+    });
+  }
+
+  get eventHandlers() {
     return this._eventHandlers;
   }
 
@@ -373,25 +445,37 @@ class InterfaceData extends IDLData {
     return this._flagged;
   }
 
-  get getters() {
-    if (this._getters) { return this._getters; }
-    let matches = this._sourceData.matchAll(GETTERS_RE);
-    let match = matches.next();
-    if (!match.done) { this._getters = []; }
-    while(!match.done) {
-      let getter = Object.assign({}, GETTER);
-      getter.name = (match.value[5]? match.value[5].trim(): null);
-      getter.flagged = this.flagged;
-      getter.originTrial = this.originTrial;
-      if (match.value[1]) {
-        this._getInlineExtendedAttributes(match.value[2], getter);
+  _getGetters() {
+    const sources = this._filter('getter');
+    sources.forEach(source => {
+      let newGetterData = this._cloneObject(GETTER);
+      newGetterData.source = source.trim();
+
+      let workingString = newGetterData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newGetterData);
+        workingString = pieces[1].trim();
       }
-      let found = this._getters.some(elem => {
-        return elem.name == getter.name;
+
+      let pieces = workingString.split("(");
+      let argsString = pieces[1];
+      argsString = argsString.slice(0, -1);
+      let args = argsString.split(",");
+      args.forEach((arg, i, args) => {
+        args[i] = arg.trim();
+        if (arg!="") { newGetterData.arguments.push(arg); }
       });
-      if (!found) { this._getters.push(getter); }
-      match = matches.next();
-    }
+
+      workingString = pieces[0];
+      pieces = workingString.split(" ");
+      newGetterData.returnType = pieces[1];
+      if (pieces[2]) { newGetterData.name = pieces[2]; }
+      this._getters.push(JSON.parse(JSON.stringify(newGetterData)));
+    });
+  }
+
+  get getters() {
     return this._getters
   }
 
@@ -406,82 +490,117 @@ class InterfaceData extends IDLData {
     return this._hasConstructor;
   }
 
-  get iterable() {
-    if (this._iterable) { this._iterable; }
-    let matches = this._sourceData.matchAll(ITERABLE_RE);
-    let match = matches.next();
-    while (!match.done) {
-      // There will always be no more than one.
-      this._iterable = Object.assign({}, ITERABLE);
-      this._iterable.flagged = this.flagged;
-      this._iterable.originTrial = this.originTrial;
-      if (match.value[1]) {
-        this._getInlineExtendedAttributes(match.value[2], this._iterable);
-      }
-      match = matches.next();
+  _getIterables() {
+    const sources = this._filter('iterable');
+    if (sources.length === 0) { return; }
+    let newIterable = this._cloneObject(ITERABLE);
+    newIterable.source = sources[0].trim();
+
+    let workingString = newIterable.source;
+    if (workingString.includes("]")) {
+      let pieces = workingString.split("]");
+      this._getInlineExtendedAttributes(pieces[0], newIterable);
+      workingString = pieces[1];
     }
+
+    let pieces = workingString.split("iterable");
+    workingString = pieces[1].trim();
+    workingString = workingString.slice(0, -1).slice(1); //Remove brackets and ';'
+    if (!workingString.includes(",")) {
+      newIterable.arguments.push(workingString)
+    } else {
+      let args = workingString.split(",");
+      newIterable.arguments.push(...args);
+    }
+    newIterable.arguments.forEach((arg, i, args) => {
+      args[i] = arg.trim();
+    })
+    this._iterable.push(newIterable);
+  }
+
+  get iterable() {
     return this._iterable;
   }
 
-  get maplikeMethods() {
-    if (this._maplike) { return this._maplike; }
-    let matches = this._sourceData.match(MAPLIKE_RE);
-    if (matches) {
-      this._maplike = [];
-      let mlMethods = ["entries", "forEach", "get", "has", "keys", "size", "values"];
-      let mlReturns = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
-      if (!matches[0].includes('readonly')) {
-        mlMethods.push(...["clear", "delete", "set"]);
-        mlReturns.push(...["void", "void", "void"]);
-      }
-      mlMethods.forEach((method, index) => {
-        let meth = Object.assign({}, METHOD);
-        meth.name = `${method}()`;
-        meth.flagged = this.flagged;
-        meth.originTrial = this.originTrial;
-        meth.returnType = mlReturns[index];
-        this._maplike.push(meth);
-      });
+  _getMaplikeMethods() {
+    const sources = this._filter('maplike');
+    if (sources.length === 0) { return; }
+    let extendedAttribs;
+    if (sources[0].includes("]")) { 
+      let pieces = sources[0].split("]");
+      extendedAttribs = pieces[0].trim();
     }
+
+    let mlMethods = ["entries", "forEach", "get", "has", "keys", "size", "values"];
+    let mlReturns = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
+    if (!sources[0].includes("readonly")) {
+      mlMethods.push(...["clear", "delete", "set"]);
+      mlReturns.push(...["void", "void", "void"]);
+    }
+
+    mlMethods.forEach((method, i) => {
+      let newMethod = this._cloneObject(METHOD);
+      newMethod.name = method;
+      newMethod.returnType = mlReturns[i];
+      this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      newMethod.source = sources[0].trim();
+      this._maplike.push(newMethod);
+    });
+    
+  }
+
+  get maplikeMethods() {
     return this._maplike;
   }
 
+  _getMethods() {
+    const nonMethods = ['attribute', 'constructor', 'deleter', 'EventHandler', 'getter', 'iterable', 'maplike', 'setter'];
+    let sources = [];
+    this._members.forEach((elem, i, elems) => {
+      const found = nonMethods.some((nonMethod, i, nonMethods) => {
+        return elem.includes(nonMethod);
+      });
+      if (!found) {
+        if (!this._methods) { this._methods = []; }
+        sources.push(elem);
+      }
+    });
+    if (sources.length === 0) { return; }
+
+    sources.forEach(source => {
+      let newMethodData = this._cloneObject(METHOD);
+      newMethodData.source = source.trim();
+
+      let workingString = newMethodData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newMethodData);
+        workingString = pieces[1].trim();
+      }
+
+      let pieces = workingString.split("(");
+      let argString = pieces[1].slice(0, -1);
+      let args = argString.split(",");
+      args.forEach((arg, i, args) => {
+        args[i] = arg.trim();
+        if (arg != "") { newMethodData.arguments.push(arg); }
+      });
+
+      let sigs = pieces[0].split(" ");
+      newMethodData.name = sigs[1].trim();
+      if (sigs[0].includes("Promise")) {
+        newMethodData.returnType = "Promise";
+        let resolution = sigs[0].split("Promise");
+        newMethodData.resolution = resolution[1].slice(0, -1).slice(1);
+      } else {
+        newMethodData.returnType = sigs[0].trim();
+      }
+      
+      this._methods.push(JSON.parse(JSON.stringify(newMethodData)));
+    });
+  }
+
   get methods() {
-    if (this._methods) { return this._methods; }
-    this._methods = [];
-    let matches = this._sourceData.matchAll(METHOD_RE);
-    let match = matches.next();
-    while (!match.done) {
-      let method = Object.assign({}, METHOD);
-      method.returnType = match.value[2];
-      method.name = `${match.value[3]}()`;
-      method.flagged = this.flagged;
-      method.originTrial = this.originTrial;
-      if (match.value[4]) {
-        method.arguments = match.value[4].split(',');
-      }
-      this._methods.push(method);
-      match = matches.next();
-    }
-    matches = this._sourceData.matchAll(METHOD_PROMISE_RE);
-    match = matches.next();
-    while (!match.done) {
-      let method = Object.assign({}, METHOD);
-      method.resolutions = match.value[2];
-      method.name = `${match.value[3]}()`;
-      method.flagged = this.flagged;
-      method.originTrial = this.originTrial;
-      method.returnType = "Promise";
-      if (match.value[4]) {
-        method.arguments = match.value[4].split(',');
-      }
-      this._methods.push(method);
-      match = matches.next();
-    }
-    let maplikes = this.maplikeMethods;
-    if (maplikes) { this._methods.push(...maplikes); }
-    let namedGetters = this.namedGetters;
-    if (namedGetters) { this._methods.push(...namedGetters); }
     return this._methods
   }
 
@@ -493,14 +612,17 @@ class InterfaceData extends IDLData {
   }
 
   get namedGetters() {
-    if (!this._getters) { this.getters; }
-    if (this._getters) {
-      let namedGetters = this._getters.filter(elem => {
-        return (elem.name? true: false);
-      });
-      return namedGetters;
-    }
-    return null;
+    return this._getters.filter(getter => {
+      if (!getter.name) { return false; }
+      return getter.name != "";
+    });
+  }
+
+  get namedSetters() {
+    return this._setters.filter(setter => {
+      if (!setter.name) { return false; }
+      return setter.name != "";
+    })
   }
 
   get originTrial() {
@@ -519,47 +641,44 @@ class InterfaceData extends IDLData {
     return this._parentClass;
   }
 
-  get properties() {
-    if (this._allProperties) { return this._allProperties; }
-    this._allProperties = [];
-    let matches = this._sourceData.matchAll(PROPERTIES);
-    let match = matches.next();
-    if (!match.done) { this._allProperties = [];}
-    while (!match.done) {
-      let returnType = match.value[4];
-      if (returnType === 'EventHandler') {
-        match = matches.next();
-        continue;
+  _getProperties() {
+    const sources = this._filter('attribute');
+    sources.forEach(source => {
+      if (source.includes('EventHandler')) { return; }
+      let newPropertyData = this._cloneObject(PROPERTY);
+      newPropertyData.source = source.trim();
+
+      let workingString = newPropertyData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newPropertyData);
+        workingString = pieces[1].trim();
       }
-      let prop = Object.assign({}, PROPERTY);
-      prop.name = match.value[5];
-      prop.flagged = this.flagged;
-      prop.originTrial = this.originTrial;
-      prop.readOnly = (match.value[3]? false: true);
-      // prop.returnType = match.value[4];
-      prop.returnType = (returnType? returnType: 'void');
-      this._allProperties.push(prop);
-      match = matches.next();
-    }
-    return this._allProperties;
+
+      let pieces = workingString.split(" ")
+      pieces = pieces.reverse();
+      newPropertyData.name = pieces[0];
+      newPropertyData.returnType = pieces[1];
+      if (pieces[3]) { newPropertyData.readOnly = true; }
+
+      this._properties.push(newPropertyData);
+    });
+  }
+
+  get properties() {
+    return this._properties;
   }
 
   get readOnlyProperties() {
-    if (this._readOnlyProperties) { return this._readWriteProperties; }
-    this._readOnlyProperties = [];
-    this._readOnlyProperties = this.properties.filter(prop => {
-      return prop.readOnly == true;
+    return this._properties.filter(prop => {
+      return prop.readOnly === true;
     });
-    return this._readOnlyProperties;
   }
 
   get readWriteProperties() {
-    if (this._readWriteProperties) { return this._readWriteProperties; }
-    this._readWriteProperties = [];
-    this._readWriteProperties = this.properties.filter(prop => {
-      return prop.readOnly == false;
+    return this._properties.filter(prop => {
+      return prop.readOnly === false;
     });
-    return this._readWriteProperties;
   }
 
   get secureContext() {
@@ -567,26 +686,39 @@ class InterfaceData extends IDLData {
     return extAttributes.includes("SecureContext");
   }
 
-  get setter() {
-    if (this._setter) { return this._setter; }
-    let setterObj = Object.assign({}, SETTER);
-    let matches = this._sourceData.match(SETTERS_RE);
-    if (matches) {
-      const setter = matches.find(elem => {
-        return elem.match(SETTER_UNAMED_RE);
-      });
-      if (setter) {
-        setterObj.exists = true;
-        setterObj.flagged = this.flagged;
-        setterObj.originTrial = this.originTrial;
-      } else {
-        setterObj.exists = false;
+  _getSetters() {
+    const sources = this._filter('setter');
+    sources.forEach(source => {
+      let newSetterData = this._cloneObject(SETTER);
+      newSetterData.source = source.trim();
+
+      let workingString = newSetterData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newSetterData);
+        workingString = pieces[1].trim();
       }
-    } else {
-      setterObj.exists = false;
-    }
-    this._setter = setterObj;
-    return this._setter;
+
+      let pieces = workingString.split("(");
+      let argString = pieces[1];
+      argString = argString.slice(0, -1);
+      let args = argString.split(",");
+      args.forEach((arg, i, args) => {
+        args[i] = arg.trim();
+        if (arg != "") { newSetterData.arguments.push(arg);}
+      });
+
+      workingString = pieces[0];
+      pieces = workingString.split(" ");
+      newSetterData.returnType = pieces[1];
+      if (pieces[2]) { newSetterData.name = pieces[2]; } 
+
+      this._setters.push(JSON.parse(JSON.stringify(newSetterData)));
+    });
+  }
+
+  get setters() {
+    return this._setters;
   }
 
   get signatures() {
@@ -594,34 +726,24 @@ class InterfaceData extends IDLData {
     let signatures = [];
     let constrs = this.constructors;
     constrs.forEach(elem => {
-      signatures.push(elem.source);
+      let args = elem.arguments.join(", ");
+      signatures.push(`constructor(${args})`);
     });
     return signatures;
   }
 
-
-
-
-  get namedGetters() {
-    if (!this._getters) { this.getters; }
-    if (this._getters) {
-      let namedGetters = this._getters.filter(elem => {
-        return (elem.name? true: false);
-      });
-      return namedGetters;
-    }
-    return null;
+  get unnamedGetter() {
+    return this._getters.filter(getter => {
+      if (getter.name) { return false; }
+      return new Boolean(getter.name);
+    });
   }
 
-  get unnamedGetter() {
-    if (!this._getters) { this.getters; }
-    if (this._getters) {
-      let unnamedGetter = this._getters.filter(elem => {
-        return (elem.name? false: true);
-      });
-      return unnamedGetter;
-    }
-    return null;
+  get unnamedSetter() {
+    return this._setters.filter(setter => {
+      if (setter.name) { return false; }
+      return new Boolean(setter.name);
+    });
   }
 
   getBurnRecords() {
@@ -630,7 +752,6 @@ class InterfaceData extends IDLData {
     for (let k of this.keys) {
       let record = Object.assign({}, EMPTY_BURN_DATA);
       record.key = k;
-
     }
   }
 }
