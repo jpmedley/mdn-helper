@@ -32,23 +32,16 @@ class InterfaceSet {
     this._interfaces.push(interfaceMetaObject);
   }
 
-  findMatching(name, includeFlags=false, includeOriginTrials=false) {
+  findMatching(searchName, includeFlags=false, includeOriginTrials=false) {
     const matches = [];
-    const lcName = name.toLowerCase();
-    // Origin trials do not have their own flag.
-    // It's a status of runtime flags.
-    let flag = (includeFlags || includeOriginTrials);
+    const lcSearchName = searchName.toLowerCase();
 
     for (let i of this._interfaces) {
-      if (i.flag) {
-        if (!flag) { continue; }
-      }
-      if (includeOriginTrials) {
-        if (!i.originTrial) { continue; }
-      }
+      if ((!includeFlags) && (!i.flagged)) { continue; }
+      if ((!includeOriginTrials) && (!i.originTrial)) { continue; }
 
-      let lcKey = i.keys[0].toLowerCase();
-      if (!lcKey.includes(lcName)) { continue; }
+      let lcKey = i.key.toLowerCase();
+      if (!lcKey.includes(lcSearchName)) { continue; }
       matches.push(i);
     }
     return matches;
