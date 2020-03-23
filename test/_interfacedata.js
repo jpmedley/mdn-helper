@@ -15,6 +15,8 @@
 'use strict';
 
 const assert = require('assert');
+const utils = require('../utils.js');
+const webidl2 = require('webidl2');
 
 const { InterfaceData } = require('../__interfacedata.js');
 const { initiateLogger } = require('../log.js');
@@ -85,10 +87,29 @@ const MEMBERS = [
   "unnamedSetter"
 ];
 
+function loadSource(sourcePath) {
+  let sourceContents = utils.getIDLFile(sourcePath);
+  let sourceTree;
+  try {
+    // Use webidl2 only for crude validation.
+    sourceTree = webidl2.parse(sourceContents);
+  } catch(e) {
+    // if (e instanceof SyntaxError) {
+    //   global.__logger.info(`Unable to parse ${sourcePath}.`);
+    // }
+    global.__logger.error(e.message);
+    throw e;
+  } finally {
+    sourceTree = null;
+  }
+  return sourceContents;
+}
+
 describe('InterfaceData', () => {
   describe('Member flags', () => {
     it('Confirms that all flagged members return true for .flagged', () => {
-      const id = new InterfaceData(FLAGGED_MEMBERS);
+      const source = loadSource(FLAGGED_MEMBERS);
+      const id = new InterfaceData(source);
       let foundIncorrect = {};
       let passFail = MEMBERS.every(memberName => {
         let member = id[memberName];
@@ -103,7 +124,8 @@ describe('InterfaceData', () => {
 
   describe('Member origin trial', () => {
     it('Confirms that all origin trial members return true for .originTrial', () => {
-      const id = new InterfaceData(OT_MEMBERS);
+      const source = loadSource(OT_MEMBERS);
+      const id = new InterfaceData(source);
       let foundIncorrect = {};
       let passFail = MEMBERS.every(memberName => {
         let member = id[memberName];
@@ -118,11 +140,13 @@ describe('InterfaceData', () => {
 
   describe('constructors', () => {
     it('Confirms that constructors returns null when no constructors are present', () => {
-      const id = new InterfaceData(NO_CONSTRUCTOR);
+      const source = loadSource(NO_CONSTRUCTOR);
+      const id = new InterfaceData(source);
       assert.equal(id.constructors.length, 0);
     });
     it('Confirms that a constructor without arguments can be found', () => {
-      const id = new InterfaceData(CONSTRUCTOR_NO_ARGS);
+      const source = loadSource(CONSTRUCTOR_NO_ARGS);
+      const id = new InterfaceData(source);
       const constructors = id.constructors;
       const found = constructors.find(elem => {
         return elem.arguments.length === 0;
@@ -130,7 +154,8 @@ describe('InterfaceData', () => {
       assert.equal(found.arguments.length, 0, JSON.stringify(found));
     });
     it('Confirms that a constructor with one argument can be found', () => {
-      const id = new InterfaceData(CONSTRUCTOR_ONE_ARGUMENT);
+      const source = loadSource(CONSTRUCTOR_ONE_ARGUMENT);
+      const id = new InterfaceData(source);
       const constructors = id.constructors;
       const found = constructors.find(elem => {
         return elem.arguments.length === 1;
@@ -138,7 +163,8 @@ describe('InterfaceData', () => {
       assert.equal(found.arguments.length, 1, JSON.stringify(found));
     })
     it('Confirms that a constructor with arguments can be found', () => {
-      const id = new InterfaceData(CONSTRUCTOR_ARGUMENTS);
+      const source = loadSource(CONSTRUCTOR_ARGUMENTS);
+      const id = new InterfaceData(source);
       const constructors = id.constructors;
       const found = constructors.find(elem => {
         return elem.arguments.length > 0;
@@ -146,22 +172,26 @@ describe('InterfaceData', () => {
       assert.equal(found.arguments.length, 3, JSON.stringify(found));
     });
     it('Confirms that all constructor interfacess are counted', () => {
-      const id = new InterfaceData(CONSTRUCTORS);
+      const source = loadSource(CONSTRUCTORS);
+      const id = new InterfaceData(source);
       assert.equal(id.constructors.length, 2);
     });
   });
 
   describe('deleters', () => {
     it('Confirms that all known variations of deleter IDL are counted', () => {
-      const id = new InterfaceData(DELETERS);
+      const source = loadSource(DELETERS);
+      const id = new InterfaceData(source);
       assert.equal(id.deleters.length, 4);
     });
     it('Confirms that null is returned when there are no deleters', () => {
-      const id = new InterfaceData(NO_DELETERS);
+      const source = loadSource(NO_DELETERS);
+      const id = new InterfaceData(source);
       assert.equal(id.deleters.length, 0);
     });
     it('Confirms that an unnamed deleter is processed from the IDL file', () => {
-      const id = new InterfaceData(DELETERS);
+      const source = loadSource(DELETERS);
+      const id = new InterfaceData(source);
       const found = id.deleters.some(elem => {
         return elem.name == UNNAMED_MEMBER;
       });
@@ -170,86 +200,103 @@ describe('InterfaceData', () => {
 
   describe('eventHandlers', () => {
     it('Confirms that all known variations of EventHandler IDL are counted', () => {
-      const id = new InterfaceData(EVENTHANDLERS);
+      const source = loadSource(EVENTHANDLERS);
+      const id = new InterfaceData(source);
       assert.equal(id.eventHandlers.length, 3);
     });
     it('Confirms that null is returned when there are no event handlers', () => {
-      const id = new InterfaceData(NO_EVENTHANDLERS);
+      const source = loadSource(NO_EVENTHANDLERS);
+      const id = new InterfaceData(source);
       assert.equal(id.eventHandlers.length, 0);
     });
   });
 
   describe('exposed', () => {
     it('Confirms one exposed interface is returned', () => {
-      const id = new InterfaceData(EXPOSED_ONE);
+      const source = loadSource(EXPOSED_ONE);
+      const id = new InterfaceData(source);
       assert.equal(id.exposed.length, 1);
     });
     it('Confirms multiple exposed interfaces are returned', () => {
-      const id = new InterfaceData(EXPOSED_MANY);
+      const source = loadSource(EXPOSED_MANY);
+      const id = new InterfaceData(source);
       assert.equal(id.exposed.length, 2);
     });
   });
 
   describe('flagged', () => {
     it('Confirms that flagged returns a boolean', () => {
-      const id = new InterfaceData(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
       assert.ok(typeof id.flagged === "boolean");
     });
     it('Confirms that false is returned when the flag name is not found', () => {
-      const id = new InterfaceData(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
       assert.ok(!id.flagged);
     });
     it('Confirms that true is returned when the flag name is found', () => {
-      const id = new InterfaceData(RUNTIMEENABLED_IFACE_EXPER_RE);
+      const source = loadSource(RUNTIMEENABLED_IFACE_EXPER_RE);
+      const id = new InterfaceData(source);
       assert.ok(id.flagged);
     });
   });
 
   describe('getters', () => {
     it('Confirms that getter returns returns all named and unnamed getters', () => {
-      const id = new InterfaceData(GETTERS_BOTH);
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
       assert.ok(id.getters.length === 3);
     });
     it('Confirms that getter returns all getters when file contains only an unnamed getter', () => {
-      const id = new InterfaceData(GETTERS_UNNAMED_ONLY);
+      const source = loadSource(GETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.ok(id.getters.length === 1);
     });
     it('Confirms that getter returns null when file contains no getters', () => {
-      const id = new InterfaceData(NO_GETTERS);
+      const source = loadSource(NO_GETTERS);
+      const id = new InterfaceData(source);
       assert.ok(id.getters.length === 0);
     });
   });
 
   describe('hasConstructor', () => {
     it('Confirms that hasConstructor returns false when a constructor is missing', () => {
-      const id = new InterfaceData(NO_CONSTRUCTOR);
+      const source = loadSource(NO_CONSTRUCTOR);
+      const id = new InterfaceData(source);
       assert.ok(id.hasConstructor === false);
     });
     it('Confirms that hasConstructor returns true when a constructor is present', () => {
-      const id = new InterfaceData(CONSTRUCTOR_NO_ARGS);
+      const source = loadSource(CONSTRUCTOR_NO_ARGS);
+      const id = new InterfaceData(source);
       assert.ok(id.hasConstructor === true);
     });
   });
 
   describe('iterable', () => {
     it('Confirms that an iterable with a sequence as one of several args is recognized', () => {
-      const id = new InterfaceData(ITERABLE_MULTI_ARG_SEQ);
+      const source = loadSource(ITERABLE_MULTI_ARG_SEQ);
+      const id = new InterfaceData(source);
       assert.equal(id.iterable[0].arguments[1], 'sequence<CSSStyleValue>');
     });
     it('Confirms that an iterable with one arg is recognized', () => {
-      const id = new InterfaceData(ITERABLE_ONE_ARG);
+      const source = loadSource(ITERABLE_ONE_ARG);
+      const id = new InterfaceData(source);
       assert.equal(id.iterable[0].arguments.length, 1);
     });
     it('Confirms that an iterable with several args is recognized', () => {
-      const id = new InterfaceData(ITERABLE_MULTI_ARG);
+      const source = loadSource(ITERABLE_MULTI_ARG);
+      const id = new InterfaceData(source);
       assert.equal(id.iterable[0].arguments.length, 2);
     });
     it('Confirms that an iterable with a sequence as its one arg is recognized', () => {
-      const id = new InterfaceData(ITERABLE_SEQUENCE_ARG);
+      const source = loadSource(ITERABLE_SEQUENCE_ARG);
+      const id = new InterfaceData(source);
       assert.equal(id.iterable[0].arguments[0], 'sequence<CSSStyleValue>');
     });
     it('Confirms that iterable returns an empty array when the IDL contains no iterable', () => {
-      const id = new InterfaceData(NO_ITERABLE);
+      const source = loadSource(NO_ITERABLE);
+      const id = new InterfaceData(source);
       assert.equal(id.iterable.length, 0);
     });
   });
@@ -257,26 +304,31 @@ describe('InterfaceData', () => {
   // Needs to read out of a test file that contains methods.
   describe('maplikeMethods', () => {
     it('Confirms that only readonly properties are returned', () => {
-      const id = new InterfaceData(PROPERTIES_MAPLIKE_READONLY);
+      const source = loadSource(PROPERTIES_MAPLIKE_READONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.maplikeMethods.length, 7);
     });
     it('Confirms that all methods are returned', () => {
-      const id = new InterfaceData(PROPERTIES_MAPLIKE);
+      const source = loadSource(PROPERTIES_MAPLIKE);
+      const id = new InterfaceData(source);
       assert.equal(id.maplikeMethods.length, 10);
     });
   });
 
   describe('methods', () => {
     it('Confirms that the correct number of promise-based methods are returned', () => {
-      const id = new InterfaceData(METHOD_PROMISES);
+      const source = loadSource(METHOD_PROMISES);
+      const id = new InterfaceData(source);
       assert.equal(id.methods.length, 4);
     });
     it('Confirms that the correct number of synchronous methods are returned', () => {
-      const id = new InterfaceData(METHOD_SYNCHRONOUS);
+      const source = loadSource(METHOD_SYNCHRONOUS);
+      const id = new InterfaceData(source);
       assert.equal(id.methods.length, 2);
     });
     it('Confirms that methods with arguments are found', () => {
-      const id = new InterfaceData(METHOD_SYNCHRONOUS);
+      const source = loadSource(METHOD_SYNCHRONOUS);
+      const id = new InterfaceData(source);
       let methodsWithArguments = 0;
       id.methods.forEach(method => {
         if (method.arguments.length > 0) { methodsWithArguments++; }
@@ -284,7 +336,8 @@ describe('InterfaceData', () => {
       assert.equal(methodsWithArguments, 1);
     });
     it('Confirms that methods without arguments are found', () => {
-      const id = new InterfaceData(METHOD_SYNCHRONOUS);
+      const source = loadSource(METHOD_SYNCHRONOUS);
+      const id = new InterfaceData(source);
       let methodsWithoutArguments = 0;
       id.methods.forEach(method => {
         if (method.arguments.length == 0) { methodsWithoutArguments++; }
@@ -292,34 +345,41 @@ describe('InterfaceData', () => {
       assert.equal(methodsWithoutArguments, 1);
     });
     it('Confirms that method.args returns the correct number of args, when present', () => {
-      const id = new InterfaceData(METHOD_ARGUMENTS_COUNT);
+      const source = loadSource(METHOD_ARGUMENTS_COUNT);
+      const id = new InterfaceData(source);
       assert.equal(id.methods[0].arguments.length, 2);
     });
     it('Confirms that method.args equals 0 when there are no args present', () => {
-      const id = new InterfaceData(METHOD_NO_ARGUMENTS);
+      const source = loadSource(METHOD_NO_ARGUMENTS);
+      const id = new InterfaceData(source);
       assert.equal(id.methods[0].arguments.length, 0);
     });
     it('Confirms that method.resolutions returns a value', () => {
-      const id = new InterfaceData(METHOD_PROMISE_RESOLUTION);
+      const source = loadSource(METHOD_PROMISE_RESOLUTION);
+      const id = new InterfaceData(source);
       assert.equal(id.methods[0].resolution, "DOMString");
     });
     it('Confirms that method.resolutions returns "void"', () => {
-      const id = new InterfaceData(METHOD_PROMISE_VOID);
+      const source = loadSource(METHOD_PROMISE_VOID);
+      const id = new InterfaceData(source);
       assert.equal(id.methods[0].resolution, "void");
     });
   });
 
   describe('namedGetters', () => {
     it('Confirms that named getters returns items when file contains named and unnamed getters', () => {
-      const id = new InterfaceData(GETTERS_BOTH);
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
       assert.equal(id.namedGetters.length, 2);
     });
     it('Confirms that named getters returns items when file contains only named getters', () => {
-      const id = new InterfaceData(GETTERS_NAMED_ONLY);
+      const source = loadSource(GETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.ok(id.namedGetters.length > 0);
     });
     it('Confirms that named getters returns no items when file contains no named getters', () => {
-      const id = new InterfaceData(GETTERS_UNNAMED_ONLY);
+      const source = loadSource(GETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.namedGetters.length, 0);
     });
   });
@@ -327,56 +387,67 @@ describe('InterfaceData', () => {
 
   describe('namedSetters', () => {
     it('Confirms that namedSetters returns items when file contains named and unnamed getters', () => {
-      const id = new InterfaceData(SETTERS_BOTH);
+      const source = loadSource(SETTERS_BOTH);
+      const id = new InterfaceData(source);
       assert.equal(id.namedSetters.length, 1);
     });
     it('Confirms that namedSetters returns items when file contains only named getters', () => {
-      const id = new InterfaceData(SETTERS_NAMED_ONLY);
+      const source = loadSource(SETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.namedSetters.length, 1);
     });
     it('Confirms that namedSetters returns no items when file contains no named getters', () => {
-      const id = new InterfaceData(SETTERS_UNNAMED_ONLY);
+      const source = loadSource(SETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.namedSetters.length, 0);
     });
   });
   
   describe('originTrial', () => {
     it('Confirms that originTrial returns a boolean', () => {
-      const id = new InterfaceData(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
       assert.ok(typeof id.originTrial === "boolean");
     });
     it('Confirms that false is returned when the origin trial name is not found', () => {
-      const id = new InterfaceData(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const source = loadSource(RUNTIMEENABLED_IFACE_MISSING_RE);
+      const id = new InterfaceData(source);
       assert.ok(!id.originTrial);
     });
     it('Confirms that true is returned when the origin trial name is found', () => {
-      const id = new InterfaceData(RUNTIMEENABLED_IFACE_OT_RE);
+      const source = loadSource(RUNTIMEENABLED_IFACE_OT_RE);
+      const id = new InterfaceData(source);
       assert.ok(id.originTrial);
     });
   });
 
   describe('parentClass', () => {
     it('Confirms that the name of a parent class is returned if present', () => {
-      const id = new InterfaceData(INTERFACE_PARENT);
+      const source = loadSource(INTERFACE_PARENT);
+      const id = new InterfaceData(source);
       assert.equal(id.parentClass, "EventTarget");
     });
     it('Confirms that null is returned if an interface has no parent class', () => {
-      const id = new InterfaceData(INTERFACE_NOPARENT);
+      const source = loadSource(INTERFACE_NOPARENT);
+      const id = new InterfaceData(source);
       assert.equal(id.parentClass, null);
     })
   });
   
   describe('properties', () => {
     it('Confirms that all basic properties are counted', () => {
-      const id = new InterfaceData(PROPERTIES_BASIC);
+      const source = loadSource(PROPERTIES_BASIC);
+      const id = new InterfaceData(source);
       assert.equal(id.properties.length, 2);
     });
     it('Confirms that eventHandler is excluded', () => {
-      const id = new InterfaceData(PROPERTIES_EVENTHANDLER);
+      const source = loadSource(PROPERTIES_EVENTHANDLER);
+      const id = new InterfaceData(source);
       assert.equal(id.properties.length, 2);
     });
     it('Confirms that return type is recorded', () => {
-      const id = new InterfaceData(PROPERTIES_BASIC);
+      const source = loadSource(PROPERTIES_BASIC);
+      const id = new InterfaceData(source);
       const properties = id.properties;
       assert.equal(id.properties[0].returnType, 'FontFaceLoadStatus');
     });
@@ -384,81 +455,96 @@ describe('InterfaceData', () => {
 
   describe('readOnlyProperties', () => {
     it ('Confirms that all readonly properties are counted', () => {
-      const id = new InterfaceData(PROPERTIES_BASIC);
+      const source = loadSource(PROPERTIES_BASIC);
+      const id = new InterfaceData(source);
       assert.equal(id.readOnlyProperties.length, 1);
     });
   });
 
   describe('readWriteProperties', () => {
     it ('Confirms that all read/write properties are counted', () => {
-      const id = new InterfaceData(PROPERTIES_BASIC);
+      const source = loadSource(PROPERTIES_BASIC);
+      const id = new InterfaceData(source);
       assert.equal(id.readWriteProperties.length, 1);
     });
   });
 
   describe('secureContext', () => {
     it('Confirms that secureContext returns true when present', () => {
-      const id = new InterfaceData(SECURE_CONTEXT);
+      const source = loadSource(SECURE_CONTEXT);
+      const id = new InterfaceData(source);
       assert.ok(id.secureContext);
     });
     it('Confirms that secureContext returns false when not present', () => {
-      const id = new InterfaceData(EXPOSED_ONE);
+      const source = loadSource(EXPOSED_ONE);
+      const id = new InterfaceData(source);
       assert.ok(!id.secureContext);
     });
   });
 
   describe('setters', () => {
     it('Confirms that setters returns both named and unnamed setters', () => {
-      const id = new InterfaceData(SETTERS_BOTH);
+      const source = loadSource(SETTERS_BOTH);
+      const id = new InterfaceData(source);
       assert.equal(id.setters.length, 2);
     });
     it('Confirms that setters returns values when file contains only an unnamed setters', () => {
-      const id = new InterfaceData(SETTERS_UNNAMED_ONLY);
+      const source = loadSource(SETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.setters.length, 1);
     });
     it('Confirms that setters returns values when file contains only named setters', () => {
-      const id = new InterfaceData(SETTERS_NAMED_ONLY);
+      const source = loadSource(SETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.setters.length, 1);
     });
     it('Confirms that no setters are returned when file contains no setters', () => {
-      const id = new InterfaceData(NO_SETTERS);
+      const source = loadSource(NO_SETTERS);
+      const id = new InterfaceData(source);
       assert.equal(id.setters.length, 0);
     });
   });
 
   describe('signatures', () => {
     it('Confirms that signatures returns an array', () => {
-      const id = new InterfaceData(CONSTRUCTORS);
+      const source = loadSource(CONSTRUCTORS);
+      const id = new InterfaceData(source);
       assert.ok(Array.isArray(id.signatures));
     });
   });
 
   describe('unnamedGetters', () => {
     it('Confirms that unnamedGetters returns an object when file contains named and unnamed getters', () => {
-      const id = new InterfaceData(GETTERS_BOTH);
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
       assert.equal(id.unnamedGetter.length, 1, JSON.stringify(id.unnamedGetter));
     });
     it('Confirms that unnamedGetters returns no object when file contains only named getters', () => {
-      const id = new InterfaceData(GETTERS_NAMED_ONLY);
+      const source = loadSource(GETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.unnamedGetter.length, 0, JSON.stringify(id.unnamedGetter))
     });
     it('Confirms that an object is returned when file contains only an unamedGetter', () => {
-      const id = new InterfaceData(GETTERS_UNNAMED_ONLY);
+      const source = loadSource(GETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.unnamedGetter.length, 1, JSON.stringify(id.unnamedGetter));
     });
   });
 
   describe('unnamedSetters', () => {
     it('Confirms that unnamedSetters returns an object when file contains named and unnamed setters', () => {
-      const id = new InterfaceData(SETTERS_BOTH);
+      const source = loadSource(SETTERS_BOTH);
+      const id = new InterfaceData(source);
       assert.equal(id.unnamedSetter.length, 1, JSON.stringify(id.unnamedGetter));
     });
     it('Confirms that unnamedSetters returns no object when file contains only named Setters', () => {
-      const id = new InterfaceData(SETTERS_NAMED_ONLY);
+      const source = loadSource(SETTERS_NAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.unnamedSetter.length, 0, JSON.stringify(id.unnamedGetter))
     });
     it('Confirms that an object is returned when file contains only an unamedSetter', () => {
-      const id = new InterfaceData(SETTERS_UNNAMED_ONLY);
+      const source = loadSource(SETTERS_UNNAMED_ONLY);
+      const id = new InterfaceData(source);
       assert.equal(id.unnamedSetter.length, 1, JSON.stringify(id.unnamedGetter));
     });
   });

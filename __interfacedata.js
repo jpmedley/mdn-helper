@@ -14,10 +14,7 @@
 
 'use strict';
 
-const webidl2 = require('webidl2');
-
 const { Pinger } = require("./pinger.js");
-const utils = require('./utils.js');
 
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
@@ -109,27 +106,9 @@ const SETTER = Object.freeze({
 });
 
 class IDLData {
-  constructor(sourcePath, options = {}) {
-    this._sourceData = this._loadSource(sourcePath);
+  constructor(source, options = {}) {
+    this._sourceData = source;
     this._name;
-  }
-
-  _loadSource(sourcePath) {
-    let sourceContents = utils.getIDLFile(sourcePath);
-    let sourceTree;
-    try {
-      // Use webidl2 only for crude validation.
-      sourceTree = webidl2.parse(sourceContents);
-    } catch(e) {
-      // if (e instanceof SyntaxError) {
-      //   global.__logger.info(`Unable to parse ${sourcePath}.`);
-      // }
-      global.__logger.error(e.message);
-      throw e;
-    } finally {
-      sourceTree = null;
-    }
-    return sourceContents;
   }
 
   get key() {
