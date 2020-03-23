@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { CallbackData, InterfaceData, TREE_TYPES } = require('./interfacedata.js');
+const { CallbackData, InterfaceData, TREE_TYPES } = require('./__interfacedata.js');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
@@ -32,7 +32,7 @@ const CALLBACK_RE = /callback([^=]*)([^(]*)\(([^)]*)\)/gm;
 const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
 const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
 const EXTENDED_ATRIB_RE = /\[\n([^\]]*)\]/gm;
-const INTERFACE_RE = /interface([^{]*){([^}]*)}/gm;
+const INTERFACE_RE = /(\[(([^\]]*))\])?\sinterface([^{]*){([^}]*)}/gm;
 
 class FileProcesser {
   constructor(sourcePath) {
@@ -40,7 +40,7 @@ class FileProcesser {
     this._sourceContents;
     this._sourceTree;
     this._validSource;
-    this._loadTree();
+    // this._loadTree();
     this._loadSource();
   }
 
@@ -69,7 +69,9 @@ class FileProcesser {
     }
     match = this._sourceContents.match(INTERFACE_RE);
     if (match) {
-      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      // interfaceMeta = this.__getInterfaceMeta(match[0]);
+      // resultCallback(interfaceMeta);
+      interfaceMeta = new InterfaceData(match[0]);
       resultCallback(interfaceMeta);
     }
   }
@@ -137,10 +139,10 @@ class FileProcesser {
     }
   }
 
-  _loadTree() {
-    this._sourceContents = utils.getIDLFile(this._sourcePath);
-    this._sourceTree = webidl2.parse(this._sourceContents);
-  }
+  // _loadTree() {
+  //   this._sourceContents = utils.getIDLFile(this._sourcePath);
+  //   this._sourceTree = webidl2.parse(this._sourceContents);
+  // }
 }
 
 module.exports.FileProcessor = FileProcesser;
