@@ -45,6 +45,7 @@ const METHOD_PROMISES = './test/files/method-promises.idl';
 const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
 const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
+const OT_MEMBERS = './test/files/ot-members.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
@@ -66,29 +67,30 @@ const NO_SETTERS = './test/files/no-setters.idl';
 
 const UNNAMED_MEMBER = '';
 
-describe('InterfaceData', () => {+
+const MEMBERS = [
+  "constructors",
+  "deleters",
+  "eventHandlers",
+  "getters",
+  "iterable",
+  "maplikeMethods",
+  "methods",
+  "namedGetters",
+  "namedSetters",
+  "properties",
+  "readOnlyProperties",
+  "readWriteProperties",
+  "setters",
+  "unnamedGetter",
+  "unnamedSetter"
+];
+
+describe('InterfaceData', () => {
   describe('Member flags', () => {
     it('Confirms that all flagged members return true for .flagged', () => {
       const id = new InterfaceData(FLAGGED_MEMBERS);
-      const members = [
-                        "constructors",
-                        "deleters",
-                        "eventHandlers",
-                        "getters",
-                        "iterable",
-                        "maplikeMethods",
-                        "methods",
-                        "namedGetters",
-                        "namedSetters",
-                        "properties",
-                        "readOnlyProperties",
-                        "readWriteProperties",
-                        "setters",
-                        "unnamedGetter",
-                        "unnamedSetter"
-                      ];
       let foundIncorrect = {};
-      let passFail = members.every(memberName => {
+      let passFail = MEMBERS.every(memberName => {
         let member = id[memberName];
         return member.every(elem => {
           if (!elem.flagged) { foundIncorrect = `${memberName} ${JSON.stringify(elem)}`; }
@@ -98,6 +100,21 @@ describe('InterfaceData', () => {+
       assert.ok(passFail, foundIncorrect);
     });
   });
+
+  describe('Member origin trial', () => {
+    it('Confirms that all origin trial members return true for .originTrial', () => {
+      const id = new InterfaceData(OT_MEMBERS);
+      let foundIncorrect = {};
+      let passFail = MEMBERS.every(memberName => {
+        let member = id[memberName];
+        return member.every(elem => {
+          if (!elem.originTrial) { foundIncorrect = `${memberName} ${JSON.stringify(elem)}` }
+          return elem.originTrial;
+        });
+      });
+      assert.ok(passFail, foundIncorrect);
+    })
+  })
 
   describe('constructors', () => {
     it('Confirms that constructors returns null when no constructors are present', () => {

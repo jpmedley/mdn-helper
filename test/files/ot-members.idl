@@ -1,0 +1,20 @@
+interface FlaggedMembers {
+    [RuntimeEnabled=OTEExperimental] constructor();
+    [RuntimeEnabled=OTEExperimental] constructor(DOMString family);
+    [RuntimeEnabled=OTEExperimental] constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source);
+    [RuntimeEnabled=OTEExperimental] deleter void (DOMString name);
+    [RuntimeEnabled=OTEExperimental] deleter void removeItem(DOMString key);
+    [RuntimeEnabled=OTEExperimental] attribute EventHandler ondevicechange;
+    [RuntimeEnabled=OTEExperimental] getter SVGPoint getItem(unsigned long index);
+    [RuntimeEnabled=OTEExperimental] getter DOMString (DOMString name);
+    [RuntimeEnabled=OTEExperimental] iterable<CSSParsedSegment>;
+    [RuntimeEnabled=OTEExperimental] maplike<DOMString, object>;
+    [RuntimeEnabled=OTEExperimental] boolean check(DOMString font, optional DOMString text = " ");
+    [RuntimeEnabled=OTEExperimental] boolean change();
+    [RuntimeEnabled=OTEExperimental] Promise<DOMString> readText();
+    [RuntimeEnabled=OTEExperimental] Promise<void> write(record<DOMString, Blob> data);
+    [RuntimeEnabled=OTEExperimental] attribute FontFaceLoadStatus status;
+    [RuntimeEnabled=OTEExperimental] readonly attribute boolean raw;
+    [RuntimeEnabled=OTEExperimental] setter CSSUnparsedSegment (unsigned long index, CSSUnparsedSegment val);
+    [RuntimeEnabled=OTEExperimental] setter void (unsigned long index, SVGPoint newItem);
+};
