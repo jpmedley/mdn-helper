@@ -51,10 +51,9 @@ class DirectoryManager {
   }
 
   get interfaceSet() {
-    if (!this._interfaceSet) {
-      this._interfaceSet = new InterfaceSet();
-      this._processDirectory(this._root);
-    }
+    if (this._interfaceSet) { return this._interfaceSet; }
+    this._interfaceSet = new InterfaceSet();
+    this._processDirectory(this._root);
     return this._interfaceSet;
   }
 }
