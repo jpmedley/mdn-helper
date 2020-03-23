@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { CallbackData, InterfaceData, TREE_TYPES } = require('./__interfacedata.js');
+const { CallbackData, DictionaryData, EnumData, InterfaceData, TREE_TYPES } = require('./__interfacedata.js');
 const utils = require('./utils.js');
 const webidl2 = require('webidl2');
 
@@ -44,39 +44,37 @@ class FileProcesser {
     this._loadSource();
   }
 
-  __process(resultCallback, returnSource) {
+  process(resultCallback, returnSource) {
     let match;
     let interfaceMeta;
     match = this._sourceContents.match(CALLBACK_RE);
     if (match) {
-      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      interfaceMeta = new CallbackData(match[0]);
       resultCallback(interfaceMeta);
     }
     match = this._sourceContents.match(DICTIONARY_RE);
     if (match) {
-      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      interfaceMeta = new DictionaryData(match[0]);
       resultCallback(interfaceMeta);
     }
     match = this._sourceContents.match(ENUM_RE);
     if (match) {
-      interfaceMeta = this.__getInterfaceMeta(match[0]);
+      interfaceMeta = new EnumData(match[0]);
       resultCallback(interfaceMeta);
     }
-    match = this._sourceContents.match(EXTENDED_ATRIB_RE);
-    if (match) {
-      interfaceMeta = this.__getInterfaceMeta(match[0]);
-      resultCallback(interfaceMeta);
-    }
+    // match = this._sourceContents.match(EXTENDED_ATRIB_RE);
+    // if (match) {
+    //   interfaceMeta = this.__getInterfaceMeta(match[0]);
+    //   resultCallback(interfaceMeta);
+    // }
     match = this._sourceContents.match(INTERFACE_RE);
     if (match) {
-      // interfaceMeta = this.__getInterfaceMeta(match[0]);
-      // resultCallback(interfaceMeta);
       interfaceMeta = new InterfaceData(match[0]);
       resultCallback(interfaceMeta);
     }
   }
 
-  process(resultCallback, returnTree=false) {
+  __process(resultCallback, returnTree=false) {
     let intface = this._sourceTree.find(elem => {
       return elem.type === 'interface';
     });
