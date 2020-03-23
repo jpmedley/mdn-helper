@@ -44,69 +44,94 @@ const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
 
 const CONSTRUCTOR = Object.freeze({
   "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "originTrial": null,
-  "source": null
+  "path": null,
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 });
 
 const DELETER = Object.freeze({
   "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "name": null,
   "originTrial": null,
-  "source": null
+  "path": null,
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 })
 
 const EVENT_HANDLER = Object.freeze({
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "name": null,
   "originTrial": null,
-  "source": null
+  "path": null,
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 });
 
 const GETTER = Object.freeze({
   "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "originTrial": null,
+  "path": null,
   "returnType": null,
-  "source": null
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 });
 
 const ITERABLE = Object.freeze({
   "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "originTrial": null,
-  "source": null
+  "path": null,
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 });
 
 const METHOD = Object.freeze({
   "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "name": null,
   "originTrial": null,
+  "path": null,
   "returnType": null,
   "resolution": null,
-  "source": null
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 });
 
 const PROPERTY = Object.freeze({
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "name": null,
   "originTrial": null,
+  "path": null,
   "readOnly": false,
   "returnType": null,
-  "source": null
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 });
 
 const SETTER = Object.freeze({
   "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
   "originTrial": null,
-  "source": null
+  "path": null,
+  "source": null,
+  "tree": this.source // Needed for Backward compatibility
 });
 
 class IDLData {
   constructor(source, options = {}) {
+    this._path = options.path;
     this._sourceData = source;
     this._name;
   }
@@ -309,6 +334,7 @@ class InterfaceData extends IDLData {
     let newObject = JSON.parse(JSON.stringify(parent))
     newObject.flagged = this.flagged;
     newObject.originTrial = this.originTrial;
+    newObject.path = this._path;
     return newObject;
   }
 
@@ -735,5 +761,7 @@ class InterfaceData extends IDLData {
   }
 }
 
-
+module.exports.CallbackData = CallbackData;
+module.exports.DictionaryData = DictionaryData;
+module.exports.EnumData = EnumData;
 module.exports.InterfaceData = InterfaceData;
