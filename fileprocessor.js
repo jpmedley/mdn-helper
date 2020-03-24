@@ -14,9 +14,10 @@
 
 'use strict';
 
-const { CallbackData, DictionaryData, EnumData, InterfaceData, TREE_TYPES } = require('./__interfacedata.js');
+var path = require('path');
 const utils = require('./utils.js');
-const webidl2 = require('webidl2');
+
+const { CallbackData, DictionaryData, EnumData, InterfaceData, TREE_TYPES } = require('./__interfacedata.js');
 
 const METAFILE = Object.freeze({
   flag: null,
@@ -32,7 +33,13 @@ const CALLBACK_RE = /callback([^=]*)([^(]*)\(([^)]*)\)/gm;
 const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
 const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
 const EXTENDED_ATRIB_RE = /\[\n([^\]]*)\]/gm;
-const INTERFACE_RE = /(\[(([^\]]*))\])?\sinterface([^{]*){([^}]*)}/gm;
+const INTERFACE_RE = /(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)}/gm;
+
+class RegExError extends Error {
+  constructor(message='', fileName='', lineNumber='') {
+    super(message, fileName, lineNumber);
+  }
+}
 
 class FileProcesser {
   constructor(sourcePath) {
@@ -48,18 +55,19 @@ class FileProcesser {
     let match;
     let interfaceMeta;
     match = this._sourceContents.match(CALLBACK_RE);
+    const options = { "path": this._sourcePath };
     if (match) {
-      interfaceMeta = new CallbackData(match[0]);
+      interfaceMeta = new CallbackData(match[0], options);
       resultCallback(interfaceMeta);
     }
     match = this._sourceContents.match(DICTIONARY_RE);
     if (match) {
-      interfaceMeta = new DictionaryData(match[0]);
+      interfaceMeta = new DictionaryData(match[0], options);
       resultCallback(interfaceMeta);
     }
     match = this._sourceContents.match(ENUM_RE);
     if (match) {
-      interfaceMeta = new EnumData(match[0]);
+      interfaceMeta = new EnumData(match[0], options);
       resultCallback(interfaceMeta);
     }
     // match = this._sourceContents.match(EXTENDED_ATRIB_RE);
@@ -69,8 +77,13 @@ class FileProcesser {
     // }
     match = this._sourceContents.match(INTERFACE_RE);
     if (match) {
-      interfaceMeta = new InterfaceData(match[0]);
+      interfaceMeta = new InterfaceData(match[0], options);
       resultCallback(interfaceMeta);
+    }
+    if (!match) {
+      const msg = `No matches found in ${this._sourcePath}.`;
+      const scriptFile = path.basename(__filename);
+      throw new RegExError(msg, scriptFile);
     }
   }
 
@@ -125,22 +138,8 @@ class FileProcesser {
 
   _loadSource() {
     this._sourceContents = utils.getIDLFile(this._sourcePath);
-    let sourceTree;
-    try {
-      // Use webidl2 only for crude validation.
-      sourceTree = webidl2.parse(this._sourceContents);
-    } catch(e) {
-      global.__logger.error(e.message);
-      throw e;
-    } finally {
-      sourceTree = null;
-    }
   }
 
-  // _loadTree() {
-  //   this._sourceContents = utils.getIDLFile(this._sourcePath);
-  //   this._sourceTree = webidl2.parse(this._sourceContents);
-  // }
 }
 
 module.exports.FileProcessor = FileProcesser;

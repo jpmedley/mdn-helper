@@ -25,7 +25,7 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 
 describe('FileProcessor', () => {
   describe('process()', () => {
-    it('Confirms that the four interface data objects are in the resulting fileset', ()=> {
+    it('Confirms that the four interface data objects are in the resulting fileset', () => {
       const is = new InterfaceSet();
       const testFile = `${IDL_FILES}multiple-structures.idl`;
       let fp = new FileProcessor(testFile);
