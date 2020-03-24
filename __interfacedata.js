@@ -14,6 +14,8 @@
 
 'use strict';
 
+const fs = require('fs');
+
 const { Pinger } = require("./pinger.js");
 
 const EMPTY_BURN_DATA = Object.freeze({
@@ -46,6 +48,7 @@ const CONSTRUCTOR = Object.freeze({
   "arguments": [],
   "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
+  "name": null,
   "originTrial": null,
   "path": null,
   "source": null,
@@ -77,6 +80,7 @@ const GETTER = Object.freeze({
   "arguments": [],
   "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
+  "name": null,
   "originTrial": null,
   "path": null,
   "returnType": null,
@@ -88,6 +92,7 @@ const ITERABLE = Object.freeze({
   "arguments": [],
   "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
+  "name": null,
   "originTrial": null,
   "path": null,
   "source": null,
@@ -123,6 +128,7 @@ const SETTER = Object.freeze({
   "arguments": [],
   "flag": this.flagged, // Needed for Backward compatibility
   "flagged": null,
+  "name": null,
   "originTrial": null,
   "path": null,
   "source": null,
@@ -131,9 +137,11 @@ const SETTER = Object.freeze({
 
 class IDLData {
   constructor(source, options = {}) {
-    this._path = options.path;
     this._sourceData = source;
+    this._keys = [];
+    this._members = [];
     this._name;
+    this._sources = [];
   }
 
   get key() {
@@ -150,6 +158,18 @@ class IDLData {
 
   get type() {
     return this._type;
+  }
+
+  writeKeys(keyFile, includeFlags = false) {
+    let tempMembers = this.getMembers(includeFlags);
+    let tempKeys = [this.name];
+    tempMembers.forEach(member => {
+      if (!tempKeys.includes(member.name)) {
+        tempKeys.push(member.name);
+      }
+    });
+    const keyList = tempKeys.join("\n");
+    fs.appendFileSync(keyFile, keyList);
   }
 
   getBurnRecords() {
@@ -225,7 +245,6 @@ class EnumData extends IDLData {
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
-    this._members = [];
     this._type = "interface";
     this._constructors = [];
     this._deleters = [];
@@ -237,7 +256,7 @@ class InterfaceData extends IDLData {
     this._hasConstructor = null;
     this._iterable = [];
     this._maplike = [];
-    this._methods = null;
+    this._methods = [];
     this._originTrial = null;
     this._parentClass = null;
     this._properties = [];
@@ -246,8 +265,8 @@ class InterfaceData extends IDLData {
   }
 
   _filter(find) {
-    return this._members.filter(member => {
-      return member.includes(find);
+    return this._sources.filter(source => {
+      return source.includes(find);
     });
   }
 
@@ -255,32 +274,37 @@ class InterfaceData extends IDLData {
   _processSource() {
     let recording = false;
     const lines = this._sourceData.split('\n');
-    let members = [];
+    let sources = [];
     for (let l of lines) {
       if (l.includes('}')) { recording = false; }
       if (recording) {
         if (l.trim() == "") { continue; }
         if (l.startsWith("//")) { continue; }
-        members.push(l);
+        sources.push(l);
       }
       if (l.includes('interface')) { recording = true; }
     }
     // Take it apart and put it back together so that inline extended attributes
     // are actually inline with the members they support.
-    let temp = members.join(" ");
-    this._members = temp.split(";");
-    const end = this._members.length - 1;
-    if (this._members[end] == "") { this._members.pop(); }
+    let temp = sources.join(" ");
+    this._sources = temp.split(";");
+    const end = this._sources.length - 1;
+    if (this._sources[end] == "") { this._sources.pop(); }
 
-    this._getConstructors();
-    this._getDeleters();
-    this._getEventHandlers();
-    this._getGetters();
-    this._getIterables();
-    this._getMaplikeMethods();
-    this._getMethods();
-    this._getProperties();
-    this._getSetters();
+    try {
+      this._getConstructors();
+      this._getDeleters();
+      this._getEventHandlers();
+      this._getGetters();
+      this._getIterables();
+      this._getMaplikeMethods();
+      this._getMethods();
+      this._getProperties();
+      this._getSetters();
+    } catch (error) {
+      const msg = `Problem processing ${this._sourcePath}.`
+      throw new Error(msg);
+    }
   }
 
   _getRuntimeEnabledValue(expectedStatus, fromAttributes) {
@@ -348,9 +372,10 @@ class InterfaceData extends IDLData {
       if (workingString.includes("]")) {
         let pieces = workingString.split("]");
         this._getInlineExtendedAttributes(pieces[0], newConstructorData);
-        workingString = pieces[1];
+        workingString = pieces[1].trim();
       }
 
+      newConstructorData.name = `${this.name}.${this.name}`;
       let pieces = workingString.split("constructor");
       if (!pieces[1].includes("()")) {
         workingString = pieces[1].trim();
@@ -378,7 +403,7 @@ class InterfaceData extends IDLData {
       if (workingString.includes("]")) {
         let pieces = workingString.split("]");
         this._getInlineExtendedAttributes(pieces[0], newDeleterData);
-        workingString = pieces[1];
+        workingString = pieces[1].trim();
       }
 
       let pieces = workingString.split("(");
@@ -410,7 +435,7 @@ class InterfaceData extends IDLData {
       if (workingString.includes("]")) {
         let pieces = workingString.split("]");
         this._getInlineExtendedAttributes(pieces[0], newEventHandler);
-        workingString = pieces[1];
+        workingString = pieces[1].trim();
       }
       
       let pieces = workingString.split(" ");
@@ -475,7 +500,11 @@ class InterfaceData extends IDLData {
       workingString = pieces[0];
       pieces = workingString.split(" ");
       newGetterData.returnType = pieces[1];
-      if (pieces[2]) { newGetterData.name = pieces[2]; }
+      if (pieces[2]) {
+        newGetterData.name = pieces[2];
+      } else {
+        newGetterData.name = "(getter)";
+      }
       this._getters.push(JSON.parse(JSON.stringify(newGetterData)));
     });
   }
@@ -505,9 +534,10 @@ class InterfaceData extends IDLData {
     if (workingString.includes("]")) {
       let pieces = workingString.split("]");
       this._getInlineExtendedAttributes(pieces[0], newIterable);
-      workingString = pieces[1];
+      workingString = pieces[1].trim();
     }
 
+    newIterable.name = "(iterable)";
     let pieces = workingString.split("iterable");
     workingString = pieces[1].trim();
     workingString = workingString.slice(0, -1).slice(1); //Remove brackets and ';'
@@ -554,6 +584,38 @@ class InterfaceData extends IDLData {
     
   }
 
+  get keys() {
+    if (this._keys.length > 0) { return this._keys; }
+    if (this.hasConstructor) { this._keys.push('constructor'); }
+    this.deleters.forEach(deleter => {
+      this._keys.push(deleter.name);
+    });
+    this.eventHandlers.forEach(handler => {
+      this._keys.push(handler.name);
+    });
+    this.getters.forEach(getter => {
+      this._keys.push(getter.name);
+    });
+    this.iterable.forEach(iter => {
+      this._keys.push(iter.name);
+    });
+    this.maplikeMethods.forEach(maplike => {
+      this._keys.push(maplike.name);
+    })
+    this.methods.forEach(member => {
+      if (!this._keys.includes(member.name)) {
+        this._keys.push(member.name);
+      }
+    });
+    this.properties.forEach(property => {
+      this._keys.push(property.name);
+    });
+    this.setters.forEach(setter => {
+      this._keys.push(setter.name);
+    });
+    return this._keys;
+  }
+
   get maplikeMethods() {
     return this._maplike;
   }
@@ -561,12 +623,12 @@ class InterfaceData extends IDLData {
   _getMethods() {
     const nonMethods = ['attribute', 'constructor', 'deleter', 'EventHandler', 'getter', 'iterable', 'maplike', 'setter'];
     let sources = [];
-    this._members.forEach((elem, i, elems) => {
+    this._sources.forEach((elem, i, elems) => {
       const found = nonMethods.some((nonMethod, i, nonMethods) => {
         return elem.includes(nonMethod);
       });
       if (!found) {
-        if (!this._methods) { this._methods = []; }
+        if (!this._sources) { this._methods = []; }
         sources.push(elem);
       }
     });
@@ -618,14 +680,14 @@ class InterfaceData extends IDLData {
 
   get namedGetters() {
     return this._getters.filter(getter => {
-      if (!getter.name) { return false; }
+      if (getter.name === "(getter)") { return false; }
       return getter.name != "";
     });
   }
 
   get namedSetters() {
     return this._setters.filter(setter => {
-      if (!setter.name) { return false; }
+      if (setter.name === "(setter)") { return false; }
       return setter.name != "";
     })
   }
@@ -716,7 +778,11 @@ class InterfaceData extends IDLData {
       workingString = pieces[0];
       pieces = workingString.split(" ");
       newSetterData.returnType = pieces[1];
-      if (pieces[2]) { newSetterData.name = pieces[2]; } 
+      if (pieces[2]) {
+        newSetterData.name = pieces[2];
+      } else {
+        newSetterData.name = "(setter)";
+      } 
 
       this._setters.push(JSON.parse(JSON.stringify(newSetterData)));
     });
@@ -739,14 +805,14 @@ class InterfaceData extends IDLData {
 
   get unnamedGetter() {
     return this._getters.filter(getter => {
-      if (getter.name) { return false; }
+      if (getter.name != "(getter)") { return false; }
       return new Boolean(getter.name);
     });
   }
 
   get unnamedSetter() {
     return this._setters.filter(setter => {
-      if (setter.name) { return false; }
+      if (setter.name != "(setter)") { return false; }
       return new Boolean(setter.name);
     });
   }
@@ -758,6 +824,35 @@ class InterfaceData extends IDLData {
       let record = Object.assign({}, EMPTY_BURN_DATA);
       record.key = k;
     }
+  }
+
+  
+
+  getMembers(inlcudeFlags = false, includeOriginTrials = false) {
+
+    function _filterByFlag(member) {
+      if ((member.flagged==true) && (inlcudeFlags==false)) { return false; }
+      if ((member.originTrial==true) && (includeOriginTrials==false)) { return false; }
+      return true;
+    }
+    
+    let temp = this.constructors.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.deleters.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.eventHandlers.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.getters.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.iterable.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.methods.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.properties.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.setters.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    return this._members;
   }
 }
 

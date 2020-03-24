@@ -4,11 +4,11 @@ interface Burnable {
     attribute EventHandler onconnect;
     [RuntimeEnabled=RTEExperimental] attribute EventHandler ondisconnect;
     getter CSSUnparsedSegment (unsigned long index);
-    [RuntimeEnabled=RTEExperimental] getter CSSParsedSegment (unsigned long index);
+    [RuntimeEnabled=OTEExperimental] getter CSSParsedSegment (unsigned long index);
     setter CSSUnparsedSegment (unsigned long index);
     [RuntimeEnabled=RTEExperimental] setter CSSParsedSegment (unsigned long index);
     boolean check(DOMString font, optional DOMString text = " ");
-    [RuntimeEnabled=RTEExperimental] boolean unCheck(DOMString font, optional DOMString text = " ");
+    [RuntimeEnabled=OTEExperimental] boolean unCheck(DOMString font, optional DOMString text = " ");
     attribute DOMString family;
     [RuntimeEnabled=RTEExperimental] attribute DOMString family2;
 };
