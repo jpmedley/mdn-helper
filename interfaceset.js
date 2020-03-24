@@ -37,8 +37,8 @@ class InterfaceSet {
     const lcSearchName = searchName.toLowerCase();
 
     for (let i of this._interfaces) {
-      if ((!includeFlags) && (!i.flagged)) { continue; }
-      if ((!includeOriginTrials) && (!i.originTrial)) { continue; }
+      if ((includeFlags == false) && (i.flagged == true)) { continue; }
+      if ((includeOriginTrials = false) && (i.originTrial == true)) {continue; }
 
       let lcKey = i.key.toLowerCase();
       if (!lcKey.includes(lcSearchName)) { continue; }
