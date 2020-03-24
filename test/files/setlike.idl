@@ -1,4 +1,0 @@
-interface SetlikeMember {
-    setlike<FontFace>;
-    [RuntimeEnabled=RTEExperimental] setlike<MedleyFace>;
-};
