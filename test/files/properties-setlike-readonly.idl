@@ -1,0 +1,3 @@
+interface SetlikeMember {
+    [RuntimeEnabled=RTEExperimental] readonly setlike<MedleyFace>;
+};

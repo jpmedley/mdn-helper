@@ -260,6 +260,7 @@ class InterfaceData extends IDLData {
     this._originTrial = null;
     this._parentClass = null;
     this._properties = [];
+    this._setlike = [];
     this._setters = [];
     this._processSource();
   }
@@ -301,6 +302,7 @@ class InterfaceData extends IDLData {
       this._getMethods();
       this._getProperties();
       this._getSetters();
+      this._getSetlikeMethods();
     } catch (error) {
       const msg = `Problem processing ${this._sourcePath}.`
       throw new Error(msg);
@@ -557,33 +559,6 @@ class InterfaceData extends IDLData {
     return this._iterable;
   }
 
-  _getMaplikeMethods() {
-    const sources = this._filter('maplike');
-    if (sources.length === 0) { return; }
-    let extendedAttribs;
-    if (sources[0].includes("]")) { 
-      let pieces = sources[0].split("]");
-      extendedAttribs = pieces[0].trim();
-    }
-
-    let mlMethods = ["entries", "forEach", "get", "has", "keys", "size", "values"];
-    let mlReturns = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
-    if (!sources[0].includes("readonly")) {
-      mlMethods.push(...["clear", "delete", "set"]);
-      mlReturns.push(...["void", "void", "void"]);
-    }
-
-    mlMethods.forEach((method, i) => {
-      let newMethod = this._cloneObject(METHOD);
-      newMethod.name = method;
-      newMethod.returnType = mlReturns[i];
-      this._getInlineExtendedAttributes(extendedAttribs, newMethod);
-      newMethod.source = sources[0].trim();
-      this._maplike.push(newMethod);
-    });
-    
-  }
-
   get keys() {
     if (this._keys.length > 0) { return this._keys; }
     if (this.hasConstructor) { this._keys.push('constructor'); }
@@ -616,12 +591,39 @@ class InterfaceData extends IDLData {
     return this._keys;
   }
 
+  _getMaplikeMethods() {
+    const sources = this._filter('maplike');
+    if (sources.length === 0) { return; }
+    let extendedAttribs;
+    if (sources[0].includes("]")) { 
+      let pieces = sources[0].split("]");
+      extendedAttribs = pieces[0].trim();
+    }
+
+    let mlMethods = ["entries", "forEach", "get", "has", "keys", "size", "values"];
+    let mlReturns = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
+    if (!sources[0].includes("readonly")) {
+      mlMethods.push(...["clear", "delete", "set"]);
+      mlReturns.push(...["void", "void", "void"]);
+    }
+
+    mlMethods.forEach((method, i) => {
+      let newMethod = this._cloneObject(METHOD);
+      newMethod.name = method;
+      newMethod.returnType = mlReturns[i];
+      this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      newMethod.source = sources[0].trim();
+      this._maplike.push(newMethod);
+    });
+    
+  }
+
   get maplikeMethods() {
     return this._maplike;
   }
 
   _getMethods() {
-    const nonMethods = ['attribute', 'constructor', 'deleter', 'EventHandler', 'getter', 'iterable', 'maplike', 'setter'];
+    const nonMethods = ['attribute', 'constructor', 'deleter', 'EventHandler', 'getter', 'iterable', 'maplike', 'setlike', 'setter'];
     let sources = [];
     this._sources.forEach((elem, i, elems) => {
       const found = nonMethods.some((nonMethod, i, nonMethods) => {
@@ -751,6 +753,37 @@ class InterfaceData extends IDLData {
   get secureContext() {
     let extAttributes = this._getInterfaceExtendedAttributes();
     return extAttributes.includes("SecureContext");
+  }
+
+
+  _getSetlikeMethods() {
+    const sources = this._filter('setlike');
+    if (sources.length === 0) { return; }
+    let extendedAttribs;
+    if (sources[0].includes("]")) { 
+      let pieces = sources[0].split("]");
+      extendedAttribs = pieces[0].trim();
+    }
+
+    let slMethods = ["entries", "forEach", "has", "keys", "size", "values"];
+    let slReturns = ["sequence", "void", "boolean", "sequence", "long long", "sequence"];
+    if (!sources[0].includes("readonly")) {
+      slMethods.push(...["add", "clear", "delete"]);
+      slReturns.push(...["void", "void", "void"]);
+    }
+
+    slMethods.forEach((method, i) => {
+      let newMethod = this._cloneObject(METHOD);
+      newMethod.name = method;
+      newMethod.returnType = slReturns[i];
+      this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      newMethod.source = sources[0].trim();
+      this._setlike.push(newMethod);
+    });
+  }
+
+  get setlikeMethods() {
+    return this._setlike;
   }
 
   _getSetters() {

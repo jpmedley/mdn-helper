@@ -54,6 +54,8 @@ const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
 const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
+const PROPERTIES_SETLIKE = './test/files/properties-setlike.idl';
+const PROPERTIES_SETLIKE_READONLY = './test/files/properties-setlike-readonly.idl';
 const RUNTIMEENABLED_IFACE_EXPER_RE = './test/files/runtimeenabled-interface-exper.idl';
 const RUNTIMEENABLED_IFACE_MISSING_RE = './test/files/runtimeenabled-interface-missing.idl';
 const RUNTIMEENABLED_IFACE_OT_RE = './test/files/runtimeenabled-interface-ot.idl';
@@ -111,6 +113,7 @@ function loadSource(sourcePath) {
 describe('__InterfaceData', () => {
   describe('Member flags', () => {
     it('Confirms that all flagged members return true for .flagged', () => {
+      // Excludes testing of setlike because of overlap with maplike.
       const source = loadSource(FLAGGED_MEMBERS);
       const id = new InterfaceData(source, FLAGGED_MEMBERS);
       let foundIncorrect = {};
@@ -127,6 +130,7 @@ describe('__InterfaceData', () => {
 
   describe('Member origin trial', () => {
     it('Confirms that all origin trial members return true for .originTrial', () => {
+      // Excludes testing of setlike because of overlap with maplike.
       const source = loadSource(OT_MEMBERS);
       const id = new InterfaceData(source, OT_MEMBERS);
       let foundIncorrect = {};
@@ -509,6 +513,19 @@ describe('__InterfaceData', () => {
       const source = loadSource(EXPOSED_ONE);
       const id = new InterfaceData(source, EXPOSED_ONE);
       assert.ok(!id.secureContext);
+    });
+  });
+
+  describe('setlikeMethods', () => {
+    it('Confirms that only readonly properties are returned', () => {
+      const source = loadSource(PROPERTIES_SETLIKE_READONLY);
+      const id = new InterfaceData(source, PROPERTIES_SETLIKE_READONLY);
+      assert.equal(id.setlikeMethods.length, 6);
+    });
+    it('Confirms that all methods are returned', () => {
+      const source = loadSource(PROPERTIES_SETLIKE);
+      const id = new InterfaceData(source, PROPERTIES_SETLIKE);
+      assert.equal(id.setlikeMethods.length, 9);
     });
   });
 
