@@ -16,8 +16,6 @@
 
 const fs = require('fs');
 const { Pinger } = require('./pinger.js');
-const utils = require('./utils.js');
-const webidl2 = require('webidl2');
 
 const EMPTY_BCD_DATA = Object.freeze({
   key: null,
@@ -351,9 +349,6 @@ class InterfaceData extends IDLData {
   _getIdentifiers(separator, options = { stableOnly: false }) {
     let identifiers = [];
     identifiers.push(this.name);
-    // if (this.hasConstructor) {
-    //   identifiers.push(`${this.name}${separator}${this.name}`);
-    // }
     this._sourceData.members.forEach(m => {
       if (options.stableOnly) {
         if (!this._isBurnable(m, {includeExperimental: !options.stableOnly})) {
