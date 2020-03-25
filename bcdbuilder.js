@@ -62,19 +62,20 @@ class _BCDBuilder {
   }
 
   _loadBCD() {
-    let members = [];
+    let membersBCD = [];
     if (this._interfaceData.hasConstructor) {
-      members.push(_copyString(CONSTR_TEMPLATE));
+      membersBCD.push(_copyString(CONSTR_TEMPLATE));
     }
-    for (let m of this._interfaceData.members) {
+    const members = this._interfaceData.getMembers();
+    for (let m of members) {
       let member = _copyString(MEMBER_TEMPLATE)
                    .replace(/\[\[member-name\]\]/g, m[0]);
-      members.push(member);
+      membersBCD.push(member);
     }
     this._bcdString = _copyString(API_TEMPLATE);
     let memberString = '';
-    if (members.length) {
-      memberString = members.join(',\n');
+    if (membersBCD.length) {
+      memberString = membersBCD.join(',\n');
       memberString = memberString.replace('\n,', ',');
       memberString = `,${memberString}`;
     }
