@@ -93,12 +93,22 @@ function _getOutputFile(filePath, reuse = false) {
   return fs.openSync(filePath, 'w');
 }
 
-function _getIDLFile(name) {
-  if (!name.endsWith(".idl")) { name += ".idl"; }
-  // let filePath = IDL_FILES + name;
-  let filePath = name;
-  let buffer = fs.readFileSync(filePath);
-  return buffer.toString();
+function _getIDLFile(filePath, options = { "clean": false }) {
+
+  if (!filePath.endsWith(".idl")) { filePath += ".idl"; }
+  const buffer = fs.readFileSync(filePath);
+  let fileContents = buffer.toString();
+  if (options.clean) {
+    const BLANK_LINE = /^\s*$(\r\n|\r|\n)/gm;
+    const COMMENT_START = /^\/\*$(\r\n|\r|\n)/gm;
+    const COMMENT_MULTILINE = /^\s\*.*$(\r\n|\r|\n)/gm;
+    const COMMENT_SINGLELINE = /^\/\/.*$(\r\n|\r|\n)/gm;
+    fileContents = fileContents.replace(BLANK_LINE, "");
+    fileContents = fileContents.replace(COMMENT_START, "");
+    fileContents = fileContents.replace(COMMENT_MULTILINE, "");
+    fileContents = fileContents.replace(COMMENT_SINGLELINE, "");
+  }
+  return fileContents;
 }
 
 function _getTemplate(name) {

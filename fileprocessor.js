@@ -14,7 +14,10 @@
 
 'use strict';
 
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+
 const utils = require('./utils.js');
 
 const { CallbackData, DictionaryData, EnumData, InterfaceData, TREE_TYPES } = require('./__interfacedata.js');
@@ -44,11 +47,9 @@ class RegExError extends Error {
 class FileProcesser {
   constructor(sourcePath) {
     this._sourcePath = sourcePath;
-    this._sourceContents;
+    this._sourceContents = utils.getIDLFile(this._sourcePath, { clean: true });
     this._sourceTree;
     this._validSource;
-    // this._loadTree();
-    this._loadSource();
   }
 
   process(resultCallback, returnSource) {
@@ -70,11 +71,6 @@ class FileProcesser {
       interfaceMeta = new EnumData(match[0], options);
       resultCallback(interfaceMeta);
     }
-    // match = this._sourceContents.match(EXTENDED_ATRIB_RE);
-    // if (match) {
-    //   interfaceMeta = this.__getInterfaceMeta(match[0]);
-    //   resultCallback(interfaceMeta);
-    // }
     match = this._sourceContents.match(INTERFACE_RE);
     if (match) {
       interfaceMeta = new InterfaceData(match[0], options);
@@ -134,10 +130,6 @@ class FileProcesser {
     im.keys.push(...interfaceData.keys);
     im.key = im.keys[0];
     return im;
-  }
-
-  _loadSource() {
-    this._sourceContents = utils.getIDLFile(this._sourcePath);
   }
 
 }
