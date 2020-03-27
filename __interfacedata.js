@@ -893,6 +893,13 @@ class InterfaceData extends IDLData {
     if (temp.length > 0) { this._members.push(...temp); }
     temp = this.setters.filter(_filterByFlag);
     if (temp.length > 0) { this._members.push(...temp); }
+
+    this._members.sort((a, b) => {
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
+      return 0
+    });
+
     return this._members;
   }
 }

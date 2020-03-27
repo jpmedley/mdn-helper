@@ -63,14 +63,21 @@ class _BCDBuilder {
 
   _loadBCD() {
     let membersBCD = [];
-    if (this._interfaceData.hasConstructor) {
-      membersBCD.push(_copyString(CONSTR_TEMPLATE));
-    }
     const members = this._interfaceData.getMembers();
+    const skipMembers = ["(getter)", "(iterable)", "(setter)"];
+    let constructorFound = false;
     for (let m of members) {
-      let member = _copyString(MEMBER_TEMPLATE)
-                   .replace(/\[\[member-name\]\]/g, m[0]);
-      membersBCD.push(member);
+      if (skipMembers.includes(m.name)) { continue; }
+      if (m.type === 'Constructor') {
+        if (!constructorFound) {
+          membersBCD.push(_copyString(CONSTR_TEMPLATE));
+          constructorFound = true;
+        }
+      } else {
+        let member = _copyString(MEMBER_TEMPLATE)
+                     .replace(/\[\[member-name\]\]/g, m.name);
+        membersBCD.push(member);
+      }
     }
     this._bcdString = _copyString(API_TEMPLATE);
     let memberString = '';
