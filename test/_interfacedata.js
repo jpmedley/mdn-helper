@@ -49,6 +49,7 @@ const METHOD_PROMISES = './test/files/method-promises.idl';
 const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
 const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
+const MIXIN = './test/files/mixin.idl';
 const OT_MEMBERS = './test/files/ot-members.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
@@ -400,11 +401,28 @@ describe('__InterfaceData', () => {
     });
   });
 
+  describe('mixin', () => {
+    it('Confirms that mixin IDL loads without errors', () => {
+      const source = loadSource(MIXIN);
+      try {
+        const id = new InterfaceData(source, MIXIN);
+        assert.ok(id.mixin);
+      } catch (error) {
+        throw error;
+      }
+    })
+  });
+
   describe('name', () => {
     it('Confirms that the name property returns the correct value', () => {
       const source = loadSource(BURNABLE);
       const id = new InterfaceData(source, BURNABLE);
       assert.equal(id.name, 'Burnable');
+    });
+    it('Confirms that the name property is not "mixin"', () => {
+      const source = loadSource(MIXIN);
+      const id = new InterfaceData(source, MIXIN);
+      assert.notStrictEqual(id.name, 'mixin');
     });
   })
 

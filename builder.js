@@ -307,7 +307,7 @@ class _IDLBuilder extends Builder {
       console.log(msg);
       return;
     }
-    let bcdm = new BCDBuilder(this._interfaceData);
+    let bcdm = new BCDBuilder(this._interfaceData, { verbose: this.verbose });
     let outPath = `${this._outPath}${name}/`;
     if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
     let outFilePath = outPath + name + '.json';

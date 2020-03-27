@@ -32,7 +32,7 @@ const EMPTY_BURN_DATA = Object.freeze({
 const CALLBACK_NAME_RE = /callback\s(\w+)/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
-const INTERFACE_NAME_RE = /interface\s(\w+)/;
+const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
 
 
 // const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
@@ -279,8 +279,15 @@ class InterfaceData extends IDLData {
     });
   }
 
+  _processHeader() {
+    let matches = this._sourceData.match(INTERFACE_NAME_RE);
+    matches[1]? this._mixin = true: this._mixin = false;
+    this._name = matches[2];
+  }
+
   // [RuntimeEnabled=RTEExperimental] setter void (DOMString property, [TreatNullAs=EmptyString] DOMString propertyValue);
   _processSource() {
+    this._processHeader();
     let recording = false;
     const lines = this._sourceData.split('\n');
     let sources = [];
@@ -681,10 +688,11 @@ class InterfaceData extends IDLData {
     return this._methods
   }
 
+  get mixin() {
+    return this._mixin;
+  }
+
   get name() {
-    if (this._name) { return this._name; }
-    let matches = this._sourceData.match(INTERFACE_NAME_RE);
-    this._name = matches[1];
     return this._name;
   }
 
