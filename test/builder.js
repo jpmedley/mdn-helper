@@ -18,15 +18,12 @@ const assert = require('assert');
 const fs = require('fs');
 
 const { IDLBuilder } = require('../builder.js');
-const { InterfaceData } = require('../interfacedata.js');
+const { InterfaceData } = require('../__interfacedata.js');
 const utils = require('../utils.js');
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
-const BURNABLE = {
-  name: 'burnable',
-  path: function() { return './test/files/burn-records.idl'; }
-}
+const BURNABLE = './test/files/burn-records.idl';
 
 const tempFolder = 'tmp/';
 const jsonPath = `${tempFolder}test-bcd.json`;
@@ -40,7 +37,8 @@ describe('IDLBuilder', () => {
     });
 
     it('Confirms that BCD is written to a file', () => {
-      const id = new InterfaceData(BURNABLE);
+      const source = utils.getIDLFile(BURNABLE, true);
+      const id = new InterfaceData(source);
       const idB = new IDLBuilder({
         interfaceData: id,
         jsonOnly: true,
