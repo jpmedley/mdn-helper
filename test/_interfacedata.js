@@ -400,6 +400,14 @@ describe('__InterfaceData', () => {
     });
   });
 
+  describe('name', () => {
+    it('Confirms that the name property returns the correct value', () => {
+      const source = loadSource(BURNABLE);
+      const id = new InterfaceData(source, BURNABLE);
+      assert.equal(id.name, 'Burnable');
+    });
+  })
+
   describe('namedGetters', () => {
     it('Confirms that named getters returns items when file contains named and unnamed getters', () => {
       const source = loadSource(GETTERS_BOTH);
