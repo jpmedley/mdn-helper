@@ -14,13 +14,11 @@
 
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
-const readline = require('readline');
 
 const utils = require('./utils.js');
 
-const { CallbackData, DictionaryData, EnumData, InterfaceData, TREE_TYPES } = require('./__interfacedata.js');
+const { CallbackData, DictionaryData, EnumData, InterfaceData } = require('./__interfacedata.js');
 
 const METAFILE = Object.freeze({
   flag: null,
@@ -35,7 +33,6 @@ const METAFILE = Object.freeze({
 const CALLBACK_RE = /callback([^=]*)([^(]*)\(([^)]*)\)/gm;
 const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
 const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
-const EXTENDED_ATRIB_RE = /\[\n([^\]]*)\]/gm;
 const INTERFACE_RE = /(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)}/gm;
 
 class RegExError extends Error {
@@ -48,8 +45,6 @@ class FileProcesser {
   constructor(sourcePath) {
     this._sourcePath = sourcePath;
     this._sourceContents = utils.getIDLFile(this._sourcePath, { clean: true });
-    this._sourceTree;
-    this._validSource;
   }
 
   process(resultCallback, returnSource) {
@@ -80,37 +75,6 @@ class FileProcesser {
       const msg = `No matches found in ${this._sourcePath}.`;
       const scriptFile = path.basename(__filename);
       throw new RegExError(msg, scriptFile);
-    }
-  }
-
-  __process(resultCallback, returnTree=false) {
-    let intface = this._sourceTree.find(elem => {
-      return elem.type === 'interface';
-    });
-    let interfaceData = new InterfaceData(intface, { sourcePath: this._sourcePath });
-    let flagged = interfaceData.flagged;
-    let originTrial = interfaceData.originTrial;
-    let className = (interfaceData.type.split(' '))[0];
-    let interfaceMeta = this._getInterfaceMeta(interfaceData);
-    if (returnTree) { interfaceMeta.tree = intface; }
-    interfaceMeta.flag = flagged;
-    interfaceMeta.originTrial = originTrial;
-    interfaceMeta.type = TREE_TYPES[className];
-    resultCallback(interfaceMeta);
-
-    for (let t of this._sourceTree) {
-      if (t.type === 'eof') { continue; }
-      if (t.type === 'interface') { continue; }
-      className = (t.type.split(' '))[0];
-      let metaType = TREE_TYPES[className];
-      if (!metaType) { continue; }
-      interfaceData = new metaType(t, { sourcePath: this._sourcePath });
-      interfaceMeta = this._getInterfaceMeta(interfaceData);
-      if (returnTree) { interfaceMeta.tree = t; }
-      interfaceMeta.flag = flagged;
-      interfaceMeta.originTrial = originTrial;
-      interfaceMeta.type = metaType;
-      resultCallback(interfaceMeta);
     }
   }
 
