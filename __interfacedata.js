@@ -52,7 +52,8 @@ const CONSTRUCTOR = Object.freeze({
   "originTrial": null,
   "path": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Constructor"
 });
 
 const DELETER = Object.freeze({
@@ -63,8 +64,9 @@ const DELETER = Object.freeze({
   "originTrial": null,
   "path": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
-})
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Deleter"
+});
 
 const EVENT_HANDLER = Object.freeze({
   "flag": this.flagged, // Needed for Backward compatibility
@@ -73,7 +75,8 @@ const EVENT_HANDLER = Object.freeze({
   "originTrial": null,
   "path": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "EventHandler"
 });
 
 const GETTER = Object.freeze({
@@ -85,7 +88,8 @@ const GETTER = Object.freeze({
   "path": null,
   "returnType": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Getter"
 });
 
 const ITERABLE = Object.freeze({
@@ -96,7 +100,8 @@ const ITERABLE = Object.freeze({
   "originTrial": null,
   "path": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Iterable"
 });
 
 const METHOD = Object.freeze({
@@ -109,7 +114,8 @@ const METHOD = Object.freeze({
   "returnType": null,
   "resolution": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Method"
 });
 
 const PROPERTY = Object.freeze({
@@ -121,7 +127,8 @@ const PROPERTY = Object.freeze({
   "readOnly": false,
   "returnType": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Property"
 });
 
 const SETTER = Object.freeze({
@@ -132,7 +139,8 @@ const SETTER = Object.freeze({
   "originTrial": null,
   "path": null,
   "source": null,
-  "tree": this.source // Needed for Backward compatibility
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Setter"
 });
 
 class IDLData {
