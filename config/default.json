@@ -15,20 +15,12 @@
     "blacklist": [
       "ApplicationCache",
       "ApplicationCacheErrorEvent",
+      "AudioProcessingEvent",
       "MojoHandle",
       "MojoInterfaceInterceptor",
       "MojoInterfaceRequestEVent",
       "MojoWatcher",
-      "Plugin",
-      "VRDisplay",
-      "VRDisplayCapabilities",
-      "VRDisplayEvent",
-      "VRDisplayEventReason",
-      "VREye",
-      "VRFrameData",
-      "VRPose",
-      "VRStateParameters"
-
+      "Plugin"
     ]
   },
   "User": {
