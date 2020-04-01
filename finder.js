@@ -14,10 +14,11 @@
 
 'use strict';
 
-const { BCD } = require('./bcd.js');
 const cb = require('prompt-checkbox');
-const { DirectoryManager } = require('./directorymanager.js');
 const Enquirer = require('enquirer');
+
+const { BCD } = require('./bcd.js');
+const { DirectoryManager } = require('./directorymanager.js');
 const { FileProcessor } = require('./fileprocessor.js');
 const { IDLBuilder } = require('./builder.js');
 const utils = require('./utils.js');
@@ -54,13 +55,12 @@ class _Finder {
   }
 
   _findInterfaces(interfacesNamed) {
-    // const matches = this.idlSet.findMatching(interfacesNamed);
     const matches = this._interfaces.findMatching(
       interfacesNamed,
       this._includeFlags,
       this._includeOriginTrials
     );
-    if (!matches.length) {
+    if (matches.length == 0) {
       console.log(NOTHING_FOUND);
       process.exit();
     }
