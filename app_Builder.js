@@ -15,8 +15,10 @@
 'use-strict';
 
 const { Finder } = require('./finder.js');
+const { initiateLogger } = require('./log.js');
 const { printWelcome, update } = require('./utils.js');
 
+initiateLogger('build');
 printWelcome();
 update();
 

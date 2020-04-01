@@ -16,9 +16,18 @@
 
 const winston = require('winston');
 
-function _initiateLogger() {
+const utils = require('./utils.js');
+
+function _initiateLogger(name) {
   if (!global.__logger) {
-    global.__logger = winston.createLogger();
+    let fileName = utils.makeOutputFolder(`${name}_${utils.today()}`);
+    fileName += `${name}_${utils.today()}.log`
+
+    global.__logger = winston.createLogger({
+      transports: [
+        new winston.transports.File({ filename: fileName})
+      ]
+    });
   }
 }
 

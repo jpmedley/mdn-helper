@@ -14,11 +14,15 @@
 
 'use strict';
 
-const { FileProcessor } = require('./fileprocessor.js')
 const fs = require('fs');
+
+const { FileProcessor } = require('./fileprocessor.js');
+const { initiateLogger } = require('./log.js');
 const { InterfaceSet } = require('./interfaceset.js');
 
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
+
+initiateLogger();
 
 class DirectoryManager {
   constructor(rootDirectory = 'idl/', options) {
@@ -40,8 +44,9 @@ class DirectoryManager {
             this._interfaceSet.add(result);
           });
         } catch (error) {
-          console.log(`Cannot process ${root}${contents[c].name}.`)
-          console.log(error);
+          // console.log(`Cannot process ${root}${contents[c].name}.`)
+          // console.log(error);
+          global.__logger.info(`Cannot process ${root}${contents[c].name}.`);
         }
       }
     }
