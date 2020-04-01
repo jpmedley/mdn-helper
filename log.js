@@ -18,7 +18,7 @@ const winston = require('winston');
 
 const utils = require('./utils.js');
 
-function _initiateLogger(name) {
+function _initiateLogger(name = '') {
   if (!global.__logger) {
     let fileName = utils.makeOutputFolder(`${name}_${utils.today()}`);
     fileName += `${name}_${utils.today()}.log`

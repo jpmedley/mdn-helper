@@ -37,12 +37,26 @@ class InterfaceSet {
     const lcSearchName = searchName.toLowerCase();
 
     for (let i of this._interfaces) {
-      if ((includeFlags == false) && (i.flagged == true)) { continue; }
-      if ((includeOriginTrials = false) && (i.originTrial == true)) {continue; }
+      try {
+        if ((includeFlags == false) && (i.flagged == true)) { continue; }
+        if ((includeOriginTrials = false) && (i.originTrial == true)) {continue; }
+  
+        let lcKey = i.key.toLowerCase();
+        if (!lcKey.includes(lcSearchName)) { continue; }
+        matches.push(i);
+      } catch (error) {
+        switch (error.name) {
+          case 'TypeError':
+            const msg = `Problem processing ${i.sourcePath}\n${i.sourceContents}`;
+            global.__logger.error(msg);
+            break;
+          default:
+            throw error;
+            break;
+        }
+      }
 
-      let lcKey = i.key.toLowerCase();
-      if (!lcKey.includes(lcSearchName)) { continue; }
-      matches.push(i);
+
     }
     return matches;
   }
