@@ -146,6 +146,7 @@ const SETTER = Object.freeze({
 class IDLData {
   constructor(source, options = {}) {
     this._sourceData = source;
+    this._sourcePath = options.sourcePath;
     this._keys = [];
     this._members = [];
     this._name;
@@ -156,12 +157,12 @@ class IDLData {
     return this.name;
   }
 
-  get sourcePath() {
-    return this._sourcePath;
+  get sourceContents() {
+    return this._sourceData;
   }
 
-  set sourcePath(path) {
-    this._sourcePath = path;
+  get path() {
+    return this._sourcePath;
   }
 
   get type() {
