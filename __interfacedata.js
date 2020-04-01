@@ -577,6 +577,7 @@ class InterfaceData extends IDLData {
 
   get keys() {
     if (this._keys.length > 0) { return this._keys; }
+    this._keys.push(this.name);
     if (this.hasConstructor) { this._keys.push('constructor'); }
     this.deleters.forEach(deleter => {
       this._keys.push(deleter.name);

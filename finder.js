@@ -179,7 +179,7 @@ class _Finder {
     let id;
     const fp = new FileProcessor(metaFile.path);
     fp.process((result) => {
-      id = new result.type(result.tree, result.path);
+      id = result;
     }, true)
     const options = {
       interactive: this._interactive,

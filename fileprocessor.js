@@ -50,8 +50,8 @@ class FileProcesser {
   process(resultCallback, returnSource) {
     let match;
     let interfaceMeta;
-    match = this._sourceContents.match(CALLBACK_RE);
     const options = { "sourcePath": this._sourcePath };
+    match = this._sourceContents.match(CALLBACK_RE);
     if (match) {
       interfaceMeta = new CallbackData(match[0], options);
       resultCallback(interfaceMeta);
