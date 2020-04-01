@@ -30,7 +30,7 @@ const METAFILE = Object.freeze({
   type: ''
 });
 
-const CALLBACK_RE = /callback([^=]*)([^(]*)\(([^)]*)\)/gm;
+const CALLBACK_RE = /^callback([^=]*)([^(]*)\(([^)]*)\)/gm;
 const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
 const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
 const INTERFACE_RE = /(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)}/gm;
@@ -51,7 +51,7 @@ class FileProcesser {
     let match;
     let interfaceMeta;
     match = this._sourceContents.match(CALLBACK_RE);
-    const options = { "path": this._sourcePath };
+    const options = { "sourcePath": this._sourcePath };
     if (match) {
       interfaceMeta = new CallbackData(match[0], options);
       resultCallback(interfaceMeta);
