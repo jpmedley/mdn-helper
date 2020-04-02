@@ -628,7 +628,9 @@ class InterfaceData extends IDLData {
       let newMethod = this._cloneObject(METHOD);
       newMethod.name = method;
       newMethod.returnType = mlReturns[i];
-      this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      if (extendedAttribs) {
+        this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      }
       newMethod.source = sources[0].trim();
       this._maplike.push(newMethod);
     });
@@ -794,7 +796,9 @@ class InterfaceData extends IDLData {
       let newMethod = this._cloneObject(METHOD);
       newMethod.name = method;
       newMethod.returnType = slReturns[i];
-      this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      if (extendedAttribs) {
+        this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      }
       newMethod.source = sources[0].trim();
       this._setlike.push(newMethod);
     });
