@@ -49,29 +49,34 @@ class FileProcesser {
 
   process(resultCallback, returnSource) {
     let match;
+    let matched = false;
     let interfaceMeta;
     const options = { "sourcePath": this._sourcePath };
     match = this._sourceContents.match(CALLBACK_RE);
     if (match) {
+      matched = true;
       interfaceMeta = new CallbackData(match[0], options);
       resultCallback(interfaceMeta);
     }
     match = this._sourceContents.match(DICTIONARY_RE);
     if (match) {
+      matched = true;
       interfaceMeta = new DictionaryData(match[0], options);
       resultCallback(interfaceMeta);
     }
     match = this._sourceContents.match(ENUM_RE);
     if (match) {
+      matched = true;
       interfaceMeta = new EnumData(match[0], options);
       resultCallback(interfaceMeta);
     }
     match = this._sourceContents.match(INTERFACE_RE);
     if (match) {
+      matched = true;
       interfaceMeta = new InterfaceData(match[0], options);
       resultCallback(interfaceMeta);
     }
-    if (!match) {
+    if (!matched) {
       const msg = `No matches found in ${this._sourcePath}.`;
       const scriptFile = path.basename(__filename);
       throw new RegExError(msg, scriptFile);
