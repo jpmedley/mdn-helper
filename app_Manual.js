@@ -14,6 +14,8 @@
 
 'use strict';
 
+require('./log.js').initiateLogger('app_Manual');
+
 const { CLIBuilder } = require('./builder.js');
 const { printWelcome } = require('./utils.js');
 
