@@ -643,14 +643,25 @@ class InterfaceData extends IDLData {
   }
 
   _getMethods() {
-    const nonMethods = ['attribute', 'const', 'constructor', 'deleter', 'EventHandler', 'getter', 'iterable', 'maplike', 'setlike', 'setter'];
+    const nonMethods = [
+      'attribute',
+      'const',
+      'constructor',
+      'deleter',
+      'EventHandler',
+      'getter',
+      'iterable',
+      'maplike',
+      'setlike',
+      'setter'
+    ];
     let sources = [];
     this._sources.forEach((elem, i, elems) => {
       const found = nonMethods.some((nonMethod, i, nonMethods) => {
         return elem.includes(nonMethod);
       });
       if (!found) {
-        if (!this._sources) { this._methods = []; }
+        if (!this._methods) { this._methods = []; }
         sources.push(elem);
       }
     });
@@ -667,22 +678,28 @@ class InterfaceData extends IDLData {
         workingString = pieces[1].trim();
       }
 
-      let pieces = workingString.split("(");
-      let argString = pieces[1].slice(0, -1);
-      let args = argString.split(",");
-      args.forEach((arg, i, args) => {
-        args[i] = arg.trim();
-        if (arg != "") { newMethodData.arguments.push(arg); }
-      });
+      if (workingString.includes("(")) {
+        let pieces = workingString.split("(");
+        let argString = pieces[1].slice(0, -1);
+        let args = argString.split(",");
+        args.forEach((arg, i, args) => {
+          args[i] = arg.trim();
+          if (arg != "") { newMethodData.arguments.push(arg); }
+        });
+        let sigs = pieces[0].split(" ");
+        newMethodData.name = sigs[1].trim();
+        if (sigs[0].includes("Promise")) {
+          newMethodData.returnType = "Promise";
+          let resolution = sigs[0].split("Promise");
+          newMethodData.resolution = resolution[1].slice(0, -1).slice(1);
+        } else {
+          newMethodData.returnType = sigs[0].trim();
+        }
+      }
 
-      let sigs = pieces[0].split(" ");
-      newMethodData.name = sigs[1].trim();
-      if (sigs[0].includes("Promise")) {
-        newMethodData.returnType = "Promise";
-        let resolution = sigs[0].split("Promise");
-        newMethodData.resolution = resolution[1].slice(0, -1).slice(1);
-      } else {
-        newMethodData.returnType = sigs[0].trim();
+      if (workingString.includes("stringifier")) {
+        newMethodData.name = "toString";
+        newMethodData.returnType = "String";
       }
       
       this._methods.push(JSON.parse(JSON.stringify(newMethodData)));
