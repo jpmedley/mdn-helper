@@ -16,9 +16,7 @@
 
 const assert = require('assert');
 
-const { DirectoryManager } = require('../directorymanager.js')
-const { InterfaceSet } = require('../interfaceset.js');
-const { METAFILE } = require('../fileprocessor.js');
+const { DirectoryManager } = require('../directorymanager.js');
 
 let INTERFACE_SET;
 
@@ -34,28 +32,29 @@ describe('InterfaceSet', () => {
   });
 
   describe('findMatching', () => {
+    it('Confirms return of all interfaces behind a flag', () => {
+      const matches = INTERFACE_SET.findMatching("*", true);
+      assert.equal(matches.length, 72);
+    })
     it('Confirms return of matching items', ()=> {
       const matches = INTERFACE_SET.findMatching('Burnable');
       assert.equal(matches.length, 2);
     });
     it('Confirms flags returned', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceRTE2', true);
-      // assert.equal(matches.length, 1);
       assert.ok(matches[0].flagged, 'Expected true from InterfaceData.flagged');
     });
     it('Confirms flags not returned when not requested', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceRTE2', false);
       assert.equal(matches.length, 0);
     });
-    it('Confirms origin trials returned,', () => {
+    it('Confirms origin trials returned', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceOT', false, true);
-      // assert.equal(matches.length, 1);
       assert.ok(matches[0].originTrial, 'Expected true from InterfaceData.originTrial');
     });
     it('Confirms origin trials not returned when not requested', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceOT', false, false);
-      // assert.equal(matches.length, 0);
-      assert.ok(matches[0].originTrial, 'Expected false from InterfaceData.originTrial')
+      assert.equal(matches.length, 0);
     });
   });
 });

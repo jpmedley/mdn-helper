@@ -39,9 +39,13 @@ class InterfaceSet {
     for (let i of this._interfaces) {
       try {
         if ((includeFlags == false) && (i.flagged == true)) { continue; }
-        if ((includeOriginTrials = false) && (i.originTrial == true)) {continue; }
+        if ((includeOriginTrials == false) && (i.originTrial == true)) { continue; }
   
         let lcKey = i.key.toLowerCase();
+        if (searchName == "*") {
+          matches.push(i);
+          continue;
+        }
         if (!lcKey.includes(lcSearchName)) { continue; }
         matches.push(i);
       } catch (error) {
@@ -52,7 +56,6 @@ class InterfaceSet {
             break;
           default:
             throw error;
-            break;
         }
       }
 
