@@ -431,7 +431,7 @@ class ChromeBurner extends Burner {
       let idlFile;
       let fp = new FileProcessor(i.path);
       fp.process((result) => {
-        idlFile = new result.type(result.tree, result.path)
+        idlFile = result;
       }, true);
 
 
