@@ -309,6 +309,7 @@ class InterfaceData extends IDLData {
     if (this._sources[end] == "") { this._sources.pop(); }
 
     try {
+      // TO DO: Add processing of const
       this._getConstructors();
       this._getDeleters();
       this._getEventHandlers();
@@ -642,7 +643,7 @@ class InterfaceData extends IDLData {
   }
 
   _getMethods() {
-    const nonMethods = ['attribute', 'constructor', 'deleter', 'EventHandler', 'getter', 'iterable', 'maplike', 'setlike', 'setter'];
+    const nonMethods = ['attribute', 'const', 'constructor', 'deleter', 'EventHandler', 'getter', 'iterable', 'maplike', 'setlike', 'setter'];
     let sources = [];
     this._sources.forEach((elem, i, elems) => {
       const found = nonMethods.some((nonMethod, i, nonMethods) => {
