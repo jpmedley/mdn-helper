@@ -33,7 +33,7 @@ const METAFILE = Object.freeze({
 const CALLBACK_RE = /^callback([^=]*)([^(]*)\(([^)]*)\)/gm;
 const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
 const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
-const INTERFACE_RE = /(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)}/gm;
+const INTERFACE_RE = /^(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)}/gm;
 
 class RegExError extends Error {
   constructor(message='', fileName='', lineNumber='') {
