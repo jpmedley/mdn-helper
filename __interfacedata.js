@@ -286,7 +286,6 @@ class InterfaceData extends IDLData {
     this._name = matches[2];
   }
 
-  // [RuntimeEnabled=RTEExperimental] setter void (DOMString property, [TreatNullAs=EmptyString] DOMString propertyValue);
   _processSource() {
     this._processHeader();
     let recording = false;
