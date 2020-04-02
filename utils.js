@@ -102,11 +102,11 @@ function _getIDLFile(filePath, options = { "clean": false }) {
     const BLANK_LINE = /^\s*$(\r\n|\r|\n)/gm;
     const COMMENT_START = /^\/\*$(\r\n|\r|\n)/gm;
     const COMMENT_MULTILINE = /^\s\*.*$(\r\n|\r|\n)/gm;
-    const COMMENT_SINGLELINE = /^(\s*)\/\/.*$(\r\n|\r|\n)/gm;
-    fileContents = fileContents.replace(BLANK_LINE, "");
+    const COMMENT_SINGLELINE = /\/\/.*$(\r\n|\r|\n)/gm;
     fileContents = fileContents.replace(COMMENT_START, "");
     fileContents = fileContents.replace(COMMENT_MULTILINE, "");
     fileContents = fileContents.replace(COMMENT_SINGLELINE, "");
+    fileContents = fileContents.replace(BLANK_LINE, "");
   }
   return fileContents;
 }
