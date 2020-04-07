@@ -54,16 +54,18 @@ class BCD {
     }
   }
 
-  getByKey(key) {
-    if (key.startsWith('on')) {
-      key = key.replace('on', '');
-      key += '_event';
-    }
-    const keys = key.split('.');
-    let branch = this;
-    for (let k of keys) {
-      if (!branch[k]) { return null; }
-      branch = branch[k];
+  getByKey(key, trunk = "api") {
+    let branch = this[trunk];
+    let chain = key.split(".").reverse();
+    while (chain.length) {
+      let link = chain[chain.length - 1];
+      if (link.startsWith('on')) {
+        link = link.replace('on', '');
+        link += '_event';
+      }
+      if (!branch[link]) { return null; }
+      branch = branch[link];
+      chain.pop();
     }
     return branch;
   }

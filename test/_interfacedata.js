@@ -633,7 +633,7 @@ describe('__InterfaceData', () => {
       const keyFileContents = fs.readFileSync(keyFile).toString();
       const keys = keyFileContents.split('\n');
       fs.unlinkSync(keyFile);
-      assert.equal(keys.length, 7);
+      assert.equal(keys.length, 6);
     });
   });
 });

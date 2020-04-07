@@ -25,8 +25,9 @@ const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 initiateLogger();
 
 class DirectoryManager {
-  constructor(rootDirectory = 'idl/', options) {
+  constructor(rootDirectory = 'idl/', options = { types: ['interface']} ) {
     this._root = rootDirectory;
+    this._types = options.types;
   }
 
   _processDirectory(root) {
@@ -41,11 +42,11 @@ class DirectoryManager {
         try {
           let fp = new FileProcessor(`${root}${contents[c].name}`);
           fp.process((result) => {
-            this._interfaceSet.add(result);
+            if (this._types.includes(result.type)) {
+              this._interfaceSet.add(result);
+            }
           });
         } catch (error) {
-          // console.log(`Cannot process ${root}${contents[c].name}.`)
-          // console.log(error);
           global.__logger.info(`Cannot process ${root}${contents[c].name}.`);
         }
       }

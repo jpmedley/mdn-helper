@@ -419,25 +419,19 @@ class ChromeBurner extends Burner {
 
   async burn() {
     await this._resolveArguments(this._args);
+    console.log('Looking for browser compatibility data and MDN pages.');
+
     this._loadWhitelist();
     this._startBurnLogFile();
     this._openResultsFile();
-    const dm = new DirectoryManager('idl/');
+    const burnTypes = ["interface"];
+    const dm = new DirectoryManager('idl/', { types: burnTypes });
     const interfaceSet = dm.interfaceSet;
-    const interfaces = interfaceSet.interfaces;
+    const interfaces = interfaceSet.findMatching("*", this._includeFlags, this._includeOriginTrials);
 
-    console.log('Looking for browser compatibility data and MDN pages.');
-    for (let i of interfaces) {
-      let idlFile;
-      let fp = new FileProcessor(i.path);
-      fp.process((result) => {
-        idlFile = result;
-      }, true);
-
-
-      if (!this._isBurnable(idlFile)) { continue; }
-      let burnRecords = idlFile.getBurnRecords();
-      if (!burnRecords) { continue; }
+    for (let interface_ of interfaces) {
+      if (!this._isBurnable(interface_)) { continue; }
+      let burnRecords = interface_.getBurnRecords(this._includeFlags, this._includeOriginTrials);
       let pinger = new Pinger(burnRecords);
       burnRecords = await pinger.pingRecords()
       .catch(e => {
@@ -449,26 +443,18 @@ class ChromeBurner extends Burner {
     this._closeOutputFile();
   }
 
-  _isBurnable(idlFile) {
-    if (!idlFile) { return false; }
-    let found = false;
-    if (this._whitelistName) {
-      const keys = idlFile.getkeys();
-      for (let w of this._whitelist) {
-        if (keys.includes(w)) { found = true; }
+  _isBurnable(interfaceData) {
+    if (this._whitelist) {
+      if (this._whitelist.includes(idlFilename)) { return true; }
+      let whitelisted = this._whitelist.some(elem => {
+        return interfaceData.keys.includes(elem);
+      });
+      if (whitelisted) {
+        return true;
       }
     }
-    if (this._whitelistName && (!found)) {
-      return false;
-    }
-    if ((this._whitelistName) && (!this._whitelist.includes(idlFile.name))) {
-      return false;
-    }
-    if (utils.isBlacklisted(idlFile._sourceData.name)) { return false; }
-    if (!BURNABLE_TYPES.includes(idlFile._type)) { return false; }
-    if (!this._includeFlags && idlFile.flagged) { return false; }
-    if (!this._includeTestFlags && (idlFile.flag === 'test')) { return false; }
-    if (!this._includeOriginTrials && idlFile.originTrial) { return false; }
+    if (utils.isBlacklisted(interfaceData.name)) { return false; }
+    if (BURNABLE_TYPES.includes(interfaceData.type)) { return true; }
     return true;
   }
 

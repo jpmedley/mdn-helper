@@ -81,6 +81,7 @@ class Pinger {
           res.on('end', () => {
             if (status.match(/2\d\d/)) {
               record.mdn_exists = true;
+              record.redirect = false;
               code = STATUS_COMPLETE;
               resolve(code);
             }

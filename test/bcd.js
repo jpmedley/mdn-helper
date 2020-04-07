@@ -25,12 +25,12 @@ describe('BCD', () => {
     it('Confirms that null is returned for a fictitious key', () => {
       const bcd = new BCD();
       // assert(bcd.getByKey('Medley'));
-      assert.equal(bcd.getByKey('api.Medley'), null);
+      assert.equal(bcd.getByKey('Medley'), null);
     });
 
     it('Confirms that a tree is returned for a real value', () => {
       const bcd = new BCD();
-      assert.notEqual(bcd.getByKey('api.Request'), null);
+      assert.notEqual(bcd.getByKey('Request'), null);
     })
   });
 });
