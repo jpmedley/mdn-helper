@@ -255,7 +255,7 @@ describe('__InterfaceData', () => {
       const source = loadSource(BURNABLE);
       const id = new InterfaceData(source);
       const members = id.getMembers(true, true);
-      assert.equal(members.length, 12);
+      assert.equal(members.length, 10);
     });
     it('Confirms that getMembers() returns only stable items', () => {
       const source = loadSource(BURNABLE);
@@ -267,13 +267,13 @@ describe('__InterfaceData', () => {
       const source = loadSource(BURNABLE);
       const id = new InterfaceData(source);
       const members = id.getMembers(true, false);
-      assert.equal(members.length, 10);
+      assert.equal(members.length, 9);
     });
-    it('Confirms that getMembers() returns only stable and flagged items', () => {
+    it('Confirms that getMembers() returns only stable and origin trial items', () => {
       const source = loadSource(BURNABLE);
       const id = new InterfaceData(source);
       const members = id.getMembers(false, true);
-      assert.equal(members.length, 9);
+      assert.equal(members.length, 8);
     });
   });
 
