@@ -120,29 +120,26 @@ class _Finder {
     }
     names = names.sort();
     names.push(CANCEL);
-    let enq = new Enquirer();
+    const enq = new Enquirer();
     enq.register('radio', cb);
     enq.question('idlFile', 'Which interface do you want to work with?', {
       type: 'radio',
       choices: names
     });
-    let answer = await enq.prompt('idlFile');
-    return answer;
+    const answer = await enq.prompt('idlFile');
+    if (answer === CANCEL) { process.exit(); }
+    const pieces = answer.idlFile[0].split(" ");
+    const key = pieces[0].trim();
+    const answerData = matches.find(elem => {
+      return elem.name === key;
+    });
+    return answerData;
   }
 
   async _find() {
     const matches = this._findInterfaces(this._searchString);
-    const answers = await this._select(matches);
-    if (answers.idlFile[0] === CANCEL) { process.exit(); }
-    let key = answers.idlFile[0].match(/(\w+)\s/);
-    let match;
-    for (let m of matches) {
-      if (m.key === key[1]) {
-        match = m;
-        break;
-      }
-    }
-    return match;
+    const answer = await this._select(matches);
+    return answer;
   }
 
   _show(file) {
