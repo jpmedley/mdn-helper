@@ -816,6 +816,11 @@ class InterfaceData extends IDLData {
     return extAttributes.includes("SecureContext");
   }
 
+  // Backward compatibility
+  getSecureContext() {
+    return this.secureContext;
+  }
+
 
   _getSetlikeMethods() {
     const sources = this._filter('setlike');
@@ -922,9 +927,14 @@ class InterfaceData extends IDLData {
     let records = super.getBurnRecords();
     let members = this.getMembers(includeFlags, includeOriginTrials);
     for (let m of members) {
+      if (!includeFlags && m._flagged) { continue; }
+      if (!includeOriginTrials && m._originTrial) { continue; }
       let record = Object.assign({}, EMPTY_BURN_DATA);
       record.key = `${this.name}.${m.name}`;
       this._getBCD(record);
+      record.flag = m.flagged;
+      record.origin_trial = m.originTrial;
+      record.type = m.type;
       records.push(record);
     }
     return records;
@@ -933,6 +943,7 @@ class InterfaceData extends IDLData {
   
 
   getMembers(inlcudeFlags = false, includeOriginTrials = false) {
+    if (this._members.length > 0) { return this._members; }
 
     function _filterByFlag(member) {
       if ((member.flagged==true) && (inlcudeFlags==false)) { return false; }
