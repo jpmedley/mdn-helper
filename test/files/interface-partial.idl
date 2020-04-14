@@ -1,0 +1,6 @@
+[
+    ImplementedAs=DocumentAnimation,
+    RuntimeEnabled=WebAnimationsAPI
+] partial interface PartialInterface {
+    readonly attribute DocumentTimeline timeline;
+};

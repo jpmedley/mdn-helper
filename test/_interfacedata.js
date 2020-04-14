@@ -38,6 +38,7 @@ const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
+const INTERFACE_PARTIAL = './test/files/interface-partial.idl';
 const INTERFACE_NOPARENT = './test/files/interface-noparent.idl';
 const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
@@ -94,24 +95,18 @@ const MEMBERS = [
 
 function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
-  // let sourceContents = utils.getIDLFile(sourcePath);
-  // let sourceTree;
-  // try {
-  //   // Use webidl2 only for crude validation.
-  //   sourceTree = webidl2.parse(sourcePath);
-  // } catch(e) {
-  //   // if (e instanceof SyntaxError) {
-  //   //   global.__logger.info(`Unable to parse ${source}.`);
-  //   // }
-  //   global.__logger.error(e.message);
-  //   throw e;
-  // } finally {
-  //   sourceTree = null;
-  // }
-  // return sourceContents;
 }
 
+
 describe('__InterfaceData', () => {
+  describe('Partial interfaces', () => {
+    it('Confirms that partial interfaces are loaded and processed', () => {
+      const source = loadSource(INTERFACE_PARTIAL);
+      const id = new InterfaceData(source, INTERFACE_PARTIAL);
+      assert.equal(id.name, "PartialInterface");
+    });
+  });
+
   describe('Member flags', () => {
     it('Confirms that all flagged members return true for .flagged', () => {
       // Excludes testing of setlike because of overlap with maplike.
