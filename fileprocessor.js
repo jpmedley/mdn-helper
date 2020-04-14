@@ -33,8 +33,9 @@ const METAFILE = Object.freeze({
 const CALLBACK_RE = /^callback([^=]*)([^(]*)\(([^)]*)\)/gm;
 const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
 const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
-// const INTERFACE_RE = /^(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)}/gm;
-const INTERFACE_RE = /^(\[(([^\]]*))\])?(\s?partial)?\s?interface([^{]*){([^}]*)}/gm;
+const INTERFACE_RE = /^(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)}/gm;
+const INTERFACE_PARTIAL_RE = /^(\[(([^\]]*))\])?(\s?partial)\s?interface([^{]*){([^}]*)}/gm;
+const INTERFACE_CALLBACK_RE = /^(\[(([^\]]*))\])?(\s?callback)\s?interface([^{]*){([^}]*)}/gm;
 
 class RegExError extends Error {
   constructor(message='', fileName='', lineNumber='') {
@@ -53,6 +54,24 @@ class FileProcesser {
     let matched = false;
     let interfaceMeta;
     const options = { "sourcePath": this._sourcePath };
+    match = this._sourceContents.match(INTERFACE_RE);
+    if (match) {
+      matched = true;
+      interfaceMeta = new InterfaceData(match[0], options);
+      resultCallback(interfaceMeta);
+    }
+    match = this._sourceContents.match(INTERFACE_CALLBACK_RE);
+    if (match) {
+      matched = true;
+      interfaceMeta = new InterfaceData(match[0], options);
+      resultCallback(interfaceMeta);
+    }
+    match = this._sourceContents.match(INTERFACE_PARTIAL_RE);
+    if (match) {
+      matched = true;
+      interfaceMeta = new InterfaceData(match[0], options);
+      resultCallback(interfaceMeta);
+    }
     match = this._sourceContents.match(CALLBACK_RE);
     if (match) {
       matched = true;
@@ -69,12 +88,6 @@ class FileProcesser {
     if (match) {
       matched = true;
       interfaceMeta = new EnumData(match[0], options);
-      resultCallback(interfaceMeta);
-    }
-    match = this._sourceContents.match(INTERFACE_RE);
-    if (match) {
-      matched = true;
-      interfaceMeta = new InterfaceData(match[0], options);
       resultCallback(interfaceMeta);
     }
     if (!matched) {

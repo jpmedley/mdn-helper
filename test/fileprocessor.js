@@ -44,5 +44,15 @@ describe('FileProcessor', () => {
       const ifs = is.interfaces;
       assert.equal(ifs[0].name, "PartialInterface");
     });
+    it('Confirms that callback interfaces are handled', () => {
+      const is = new InterfaceSet();
+      const testFile = `${IDL_FILES}interface-callback.idl`;
+      let fp = new FileProcessor(testFile);
+      fp.process((result) => {
+        is.add(result);
+      });
+      const ifs = is.interfaces;
+      assert.equal(ifs[0].name, "CallbackInterface");
+    });
   });
 });
