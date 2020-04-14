@@ -20,17 +20,10 @@ const Validator = require('jsonschema').Validator;
 
 const { BCDBuilder } = require('../bcdbuilder.js');
 const { FileProcessor } = require('../fileprocessor.js');
-const { InterfaceData } = require('../interfacedata.js');
 const utils = require('../utils.js');
-
-// https://www.npmjs.com/package/diff
 
 const EXPECTED_UAS = ["chrome", "chrome_android", "edge", "edge_mobile", "firefox", "firefox_android", "ie", "nodejs", "opera", "opera_android", "qq_android", "safari", "safari_ios", "samsunginternet_android", "uc_android", "uc_chinese_android", "webview_android"];
 
-// const BURNABLE = {
-//   name: 'burnable',
-//   path: function() { return './test/files/burn-records.idl'; }
-// }
 const BURNABLE = './test/files/burn-records.idl';
 
 const tempFolder = 'tmp/';
@@ -50,7 +43,6 @@ describe('BCDBuilder', () => {
       let id;
       const fp = new FileProcessor(BURNABLE);
       fp.process((result) => {
-        // id = new result.type(result.tree, result.path);
         id = result;
       }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
@@ -64,7 +56,6 @@ describe('BCDBuilder', () => {
       let id;
       const fp = new FileProcessor(BURNABLE);
       fp.process((result) => {
-        // id = new result.type(result.tree, result.path);
         id = result;
       }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
@@ -87,7 +78,6 @@ describe('BCDBuilder', () => {
       let id;
       const fp = new FileProcessor(BURNABLE);
       fp.process((result) => {
-        // id = new result.type(result.tree, result.path);
         id = result
       }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
@@ -104,7 +94,6 @@ describe('BCDBuilder', () => {
       let id;
       const fp = new FileProcessor(BURNABLE);
       fp.process((result) => {
-        // id = new result.type(result.tree, result.path);
         id = result;
       }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
@@ -141,7 +130,6 @@ describe('BCDBuilder', () => {
       let id;
       const fp = new FileProcessor(BURNABLE);
       fp.process((result) => {
-        // id = new result.type(result.tree, result.path);
         id = result;
       }, true)
       const bcdManager = new BCDBuilder(id, 'api', {verbose: false});

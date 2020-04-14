@@ -18,7 +18,7 @@ const path = require('path');
 
 const utils = require('./utils.js');
 
-const { CallbackData, DictionaryData, EnumData, InterfaceData } = require('./__interfacedata.js');
+const { CallbackData, DictionaryData, EnumData, InterfaceData } = require('./interfacedata.js');
 
 const METAFILE = Object.freeze({
   flag: null,

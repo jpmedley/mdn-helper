@@ -451,15 +451,6 @@ class ChromeBurner extends Burner {
   }
 
   _isBurnable(interfaceData) {
-    // if (this._whitelist) {
-    //   if (this._whitelist.includes(idlFilename)) { return true; }
-    //   let whitelisted = this._whitelist.some(elem => {
-    //     return interfaceData.keys.includes(elem);
-    //   });
-    //   if (whitelisted) {
-    //     return true;
-    //   }
-    // }
     if (utils.isBlacklisted(interfaceData.name)) { return false; }
     if (BURNABLE_TYPES.includes(interfaceData.type)) { return true; }
     return true;

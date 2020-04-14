@@ -104,20 +104,6 @@ class InterfaceSet {
   get interfaces() {
     return this._interfaces;
   }
-  
-  // get keys() {
-  //   const keys = [];
-  //   for (let i of this._interfaces) {
-  //     keys.push(i);
-  //   }
-  //   keys.sort();
-  //   return keys;
-  // }
-
-  // writeKeys(toFile) {
-  //   const keyList = this.keys.join('\n');
-  //   fs.appendFileSync(tofile, keyList);
-  // }
 }
 
 module.exports.InterfaceSet = InterfaceSet;

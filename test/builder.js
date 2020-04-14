@@ -18,7 +18,7 @@ const assert = require('assert');
 const fs = require('fs');
 
 const { IDLBuilder } = require('../builder.js');
-const { InterfaceData } = require('../__interfacedata.js');
+const { InterfaceData } = require('../interfacedata.js');
 const utils = require('../utils.js');
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');

@@ -15,72 +15,196 @@
 'use strict';
 
 const fs = require('fs');
-const { Pinger } = require('./pinger.js');
 
-const EMPTY_BCD_DATA = Object.freeze({
-  key: null,
-  browsers: []
-});
+const { BCD } = new require('./bcd.js');
+const { Pinger } = require("./pinger.js");
+
+const bcd = new BCD();
 
 const EMPTY_BURN_DATA = Object.freeze({
   key: null,
-  bcd: false,
-  flag: false,
-  mdn_exists: false,
+  bcd: null,
+  flag: null,
+  mdn_exists: null,
   mdn_url: '',
-  origin_trial: false,
-  redirect: false,
+  origin_trial: null,
+  redirect: null,
   type: ''
 });
 
-const ITERABLE = ['entries', 'forEach', 'keys', 'values'];
-const MAPLIKE = ['clear', 'delete', 'entries', 'forEach', 'get', 'has', 'keys', 'set', 'size', 'values'];
-const READONLY_MAPLIKE = ['entries', 'forEach', 'get', 'has', 'keys', 'size', 'values'];
-const SETLIKE = ['entries', 'forEach', 'has', 'keys', 'size', 'values'];
-const SYMBOLS = Object.freeze({
-  iterable: ITERABLE,
-  maplike: MAPLIKE,
-  readonlymaplike: READONLY_MAPLIKE,
-  setlike: SETLIKE
+const CALLBACK_NAME_RE = /callback\s(\w+)/;
+const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
+const ENUM_NAME_RE = /enum\s(\w+)/;
+const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
+
+
+// const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
+const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
+const EXPOSED_RE = /Exposed=?([^\n]*)/;
+const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
+const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]+)\]/;
+const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
+const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
+const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
+
+const CONSTRUCTOR = Object.freeze({
+  "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Constructor"
 });
 
-const NO_FLAG = 'No flag found';
-
-//Cross refences webidl2 types with MDN terminology
-const TYPES = Object.freeze({
-  "attribute": "property",
-  "return-type": "constructor",
-  "operation": "method",
-  "interface": "reference",
+const DELETER = Object.freeze({
+  "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Deleter"
 });
 
-class IDLError extends Error {
-  constructor(message='', fileName='', lineNumber='') {
-    super(message, fileName, lineNumber);
-  }
-}
+const EVENT_HANDLER = Object.freeze({
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "EventHandler"
+});
 
-class IDLAttributeError extends IDLError {
-  constructor(message='', fileName='', lineNumber='') {
-    super(message, fileName, lineNumber);
-  }
-}
+const GETTER = Object.freeze({
+  "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "returnType": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Getter"
+});
 
-class IDLFlagError extends IDLAttributeError {
-  constructor(message='', fileName='', lineNumber='') {
-    super(message, fileName, lineNumber);
-  }
-}
+const ITERABLE = Object.freeze({
+  "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Iterable"
+});
+
+const METHOD = Object.freeze({
+  "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "returnType": null,
+  "resolution": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Method"
+});
+
+const PROPERTY = Object.freeze({
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "readOnly": false,
+  "returnType": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Property"
+});
+
+const SETTER = Object.freeze({
+  "arguments": [],
+  "flag": this.flagged, // Needed for Backward compatibility
+  "flagged": null,
+  "name": null,
+  "originTrial": null,
+  "path": null,
+  "source": null,
+  "tree": this.source, // Needed for Backward compatibility
+  "type": "Setter"
+});
 
 class IDLData {
-  constructor(sourceTree, options = {}) {
+  constructor(source, options = {}) {
+    this._sourceData = source;
     this._sourcePath = options.sourcePath;
-    this._storeTree(sourceTree);
+    this._keys = [];
+    this._members = [];
+    this._name;
+    this._sources = [];
   }
 
-  _storeTree(source) {
-    this._sourceData = source;
-    this._type = source.type;
+  get key() {
+    return this.name;
+  }
+
+  get sourceContents() {
+    return this._sourceData;
+  }
+
+  get path() {
+    return this._sourcePath;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  writeKeys(keyFile, includeFlags = false) {
+    let tempMembers = this.getMembers(includeFlags);
+    let tempKeys = [this.name];
+    tempMembers.forEach(member => {
+      if (!tempKeys.includes(member.name)) {
+        tempKeys.push(member.name);
+      }
+    });
+    const keyList = tempKeys.join("\n");
+    fs.appendFileSync(keyFile, keyList);
+  }
+
+  _getBCD(burnRecord) {
+    const urlData = bcd.getByKey(burnRecord.key);
+    if (urlData) {
+      burnRecord.bcd = true;
+      if (urlData.__compat) {
+        burnRecord.mdn_url = urlData.__compat.mdn_url;
+      }
+    } else {
+      burnRecord.bcd = false;
+      burnRecord.mdn_exists = false;
+    }
+  }
+
+  getBurnRecords() {
+    let record = Object.assign({}, EMPTY_BURN_DATA);
+    record.key = this.key;
+    this._getBCD(record);
+    record.flag = this.flagged;
+    record.origin_trial = this.originTrial;
+    record.type = this.type;
+    return new Array(record);
   }
 
   async ping(verboseOutput = true) {
@@ -95,499 +219,761 @@ class IDLData {
     });
     return records;
   }
-
-  get sourcePath() {
-    return this._sourcePath;
-  }
-
-  set sourcePath(path) {
-    this._sourcePath = path;
-  }
-
-  get type() {
-    return this._type;
-  }
-
-  _generateRecord(options) {
-    let record = Object.assign({}, EMPTY_BURN_DATA);
-    record.key = options.key;
-    let bcdData = global._bcd.getByKey(`api.${record.key}`);
-    if (bcdData) {
-      record.bcd = true;
-      if (bcdData.__compat) {
-        if (bcdData.__compat.mdn_url) {
-          record.mdn_url = bcdData.__compat.mdn_url;
-        }
-      }
-    }
-    record.flag = this._isFlagged(options.idlData);
-    record.origin_trial = this._isOriginTrial(options.idlData);
-    let type;
-    if (options.idlData.body) {
-      if (options.idlData.body.idlType) {
-        if (options.idlData.body.idlType.idlType === 'constructor') {
-          type = options.idlData.body.idlType.type;
-        }
-      }
-    } else {
-      type = options.idlData.type;
-    }
-    record.type = TYPES[`${type}`];
-    return record;
-  }
-
-  _getExtendedAttribute(member, attributeName) {
-    if (!member.extAttrs) { return null; }
-    const attributeValue = member.extAttrs.items.find(attr => {
-      return attr.name === attributeName;
-    });
-    if (!attributeValue) { return null; }
-    switch (attributeName) {
-      case 'OriginTrialEnabled':
-      case 'RuntimeEnabled':
-        return attributeValue.rhs.value;
-      case 'SecureContext':
-        return attributeValue;
-      default:
-        const msg = `Unhandled extended attribute: ${attributeName}.`;
-        throw new IDLAttributeError(msg);
-    }
-  }
-
-  _getFlagStatus(root) {
-    const attribute = this._getExtendedAttribute(root, 'RuntimeEnabled')
-    return global.__Flags.getHighestResolvedStatus(attribute);
-  }
-
-  _isBurnable(member, options = {
-    includeExperimental: false,
-    includeOriginTrials: false }) {
-    const status = this._getFlagStatus(member);
-    switch (status) {
-      case 'test':
-        return false;
-      case 'experimental':
-        return options.includeExperimental;
-      case 'origintrial':
-        return options.includeOriginTrials;
-      case 'stable':
-        return true;
-      case NO_FLAG:
-        return true;
-      default:
-        throw new IDLFlagError(`Unrecognized status value: ${status}.`);
-    }
-  }
-
-  _shouldBurn(member) {
-    if (!this._isBurnable(member)) { return false; }
-    if (member.stringifier) { return false; }
-    if (member.deleter) { return false; }
-    return true;
-  }
-
-  get constants() {
-    let returns = this._sourceData.members.filter(m => {
-      if (!m.type === 'const') { return false; }
-      if (this._isBurnable(m)) { return true; }
-    });
-    if (returns.length === 0) { return null; }
-    return returns;
-  }
-
-  get flagged() {
-    const flag = this._getFlagStatus(this._sourceData);
-    switch (flag) {
-      case 'experimental':
-        return true;
-      case 'stable':
-        return false;
-      case (NO_FLAG):
-        return false;
-      default:
-        return true;
-    }
-  }
-
-  getFlag(member = this._sourceData) {
-    return this._getFlagStatus(member);
-  }
-
-  get key() {
-    let keys = this.keys;
-    return keys[0];
-  }
-
-  get keys() {
-    return this._getIdentifiers('.');
-  }
-
-  getkeys(stableOnly = false) {
-    return this._getIdentifiers('.', { stableOnly: stableOnly });
-  }
-
-  get name() {
-    return this._sourceData.name;
-  }
-
-  get originTrial() {
-    // Origin Trial is now a type of flag. If there's no flag, there's no origin trial.
-    if (!this.flagged) { return false; }
-    const flag = this._getFlagStatus(this._sourceData);
-    switch (flag) {
-      case ('stable'):
-        return false;
-      case (NO_FLAG):
-        return false;
-      default:
-        return true;
-    }
-  }
-
-  getSecureContext(member = this._sourceData) {
-    if (this._getExtendedAttribute(this._sourceData, 'SecureContext')) {
-      return true;
-    }
-    return false;
-  }
-
-  writeKeys(keyFile, stableOnly = true) {
-    const keys = this.getkeys(stableOnly);
-    const keyList = keys.join('\n');
-    fs.appendFileSync(keyFile, keyList);
-  }
-
-  getBurnRecords() {
-    let records = [];
-    // Get an interface record.
-    // We wouldn't be here if interface was not burnable.
-    let options = {
-      idlData: this._sourceData,
-      key: this._sourceData.name
-    }
-    records.push(this._generateRecord(options));
-    if (this._sourceData.members) {
-      this._sourceData.members.forEach(m => {
-        if (this._shouldBurn(m)) {
-          options.idlData = m;
-          let name = this._resolveMemberName(m);
-          if (SYMBOLS.hasOwnProperty(name)) {
-            SYMBOLS[name].forEach(i => {
-              options.key = `${this._sourceData.name}.${i}`;
-              records.push(this._generateRecord(options));
-            })
-          } else if (name === 'what') {
-            // Do nothing.
-          } else {
-            options.key = `${this._sourceData.name}.${name}`;
-            records.push(this._generateRecord(options));
-          }
-        }
-      })
-    }
-    return records;
-  }
-
-  _isFlagged(searchRoot) {
-    if (this._getExtendedAttribute(searchRoot, 'RuntimeEnabled')) {
-      return true;
-    }
-    return false;
-  }
-
-  _isOriginTrial(searchRoot) {
-    if (this._getExtendedAttribute(searchRoot, 'OriginTrialEnabled')) {
-      return true;
-    }
-    return false;
-  }
 }
 
 class CallbackData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+    this._type = "callback";
   }
 
-  _getIdentifiers(separator, options = { stableOnly: false }) {
-    let identifiers = [];
-    identifiers.push(this._sourceData.name);
-    return identifiers;
+  get name() {
+    if (!this._name) {
+      let matches = this._sourceData.match(CALLBACK_NAME_RE);
+      this._name = matches[1];
+    }
+    return this._name;
   }
 }
 
 class DictionaryData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+    this._type = "dictionary";
   }
 
-  _getIdentifiers(separator, options = { stableOnly: false }) {
-    const msg = 'Time to deal with Dictionary.';
-    throw new Error(msg);
+  get name() {
+    if (!this._name) {
+      let matches = this._sourceData.match(DICTIONARY_NAME_RE);
+      this._name = matches[1];
+    }
+    return this._name;
   }
 }
 
 class EnumData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+    this._type = "enum";
   }
 
-  _getIdentifiers(separator, options = { stableOnly: false }) {
-    let identifiers = [];
-    identifiers.push(this._sourceData.name);
-    for (let v of this._sourceData.values) {
-      identifiers.push(`${this._sourceData.name}${separator}${v.value}`);
+  get name() {
+    if (!this._name) {
+      let matches = this._sourceData.match(ENUM_NAME_RE);
+      this._name = matches[1];
     }
-    return identifiers;
+    return this._name;
   }
 }
 
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+    this._type = "interface";
+    this._constructors = [];
+    this._deleters = [];
+    this._eventHandlers = [];
+    this._exposed = null;
+    this._extendedAttributes = null;
+    this._flagged = null;
+    this._getters = [];
+    this._hasConstructor = null;
+    this._iterable = [];
+    this._maplike = [];
+    this._methods = [];
+    this._originTrial = null;
+    this._parentClass = null;
+    this._properties = [];
+    this._setlike = [];
+    this._setters = [];
+    this._processSource();
   }
 
-  _getIdentifiers(separator, options = { stableOnly: false }) {
-    let identifiers = [];
-    identifiers.push(this.name);
-    this._sourceData.members.forEach(m => {
-      if (options.stableOnly) {
-        if (!this._isBurnable(m, {includeExperimental: !options.stableOnly})) {
-          return;
-        }
+  _filter(find) {
+    return this._sources.filter(source => {
+      return source.includes(find);
+    });
+  }
+
+  _processHeader() {
+    let matches = this._sourceData.match(INTERFACE_NAME_RE);
+    matches[1]? this._mixin = true: this._mixin = false;
+    this._name = matches[2];
+  }
+
+  _processSource() {
+    this._processHeader();
+    let recording = false;
+    const lines = this._sourceData.split('\n');
+    let sources = [];
+    for (let l of lines) {
+      if (l.includes('}')) { recording = false; }
+      if (recording) {
+        if (l.trim() == "") { continue; }
+        if (l.startsWith("//")) { continue; }
+        sources.push(l);
       }
-      switch (m.type) {
-        case 'attribute':
-          identifiers.push(`${this.name}${separator}${m.escapedName}`);
-          break;
-        case 'const':
-          identifiers.push(`${this.name}${separator}${m.name}`);
-          break;
-        case 'iterable':
-          for (let i of ITERABLE) {
-            identifiers.push(`${this.name}${separator}${i}`);
-          }
-          break;
-        case 'maplike':
-          for (let m of MAPLIKE) {
-            identifiers.push(`${this.name}${separator}${m}`);
-          }
-          break;
-        case 'setlike':
-          for (let s of SETLIKE) {
-            identifiers.push(`${this.name}${separator}${s}`);
-          }
-          break;
-        case 'operation':
-          if (m.getter || m.setter) { return; }
-          let opName = this._getOperationKey(m);
-          let opKey = `${this.name}${separator}${opName}`
-          if (!identifiers.includes(opKey)) {
-            identifiers.push(opKey);
-          }
+      if (l.includes('interface')) { recording = true; }
+    }
+    // Take it apart and put it back together so that inline extended attributes
+    // are actually inline with the members they support.
+    let temp = sources.join(" ");
+    this._sources = temp.split(";");
+    const end = this._sources.length - 1;
+    if (this._sources[end] == "") { this._sources.pop(); }
+
+    try {
+      // TO DO: Add processing of const
+      this._getConstructors();
+      this._getDeleters();
+      this._getEventHandlers();
+      this._getGetters();
+      this._getIterables();
+      this._getMaplikeMethods();
+      this._getMethods();
+      this._getProperties();
+      this._getSetters();
+      this._getSetlikeMethods();
+    } catch (error) {
+      const msg = `Problem processing ${this._sourcePath}.`
+      throw new Error(msg);
+    }
+  }
+
+  _getRuntimeEnabledValue(expectedStatus, fromAttributes) {
+    if (fromAttributes) {
+      let matches = fromAttributes.match(RUNTIMEENABLED_RE);
+      if (matches) {
+        let flag = matches[1];
+        let status = global.__Flags.getHighestResolvedStatus(flag);
+        return (status == expectedStatus);
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  _getInlineExtendedAttributes(source, dataObject) {
+    if (source.startsWith("[")) { source = source.slice(1); }
+    const sources = source.split(",");
+    sources.forEach(elem => {
+      let elems = elem.split("=");
+      switch (elems[0]) {
+        case "RuntimeEnabled":
+          dataObject.flagged = dataObject.flagged || this._getRuntimeEnabledValue__("experimental", elems[1]);
+          dataObject.originTrial = dataObject.originTrial || this._getRuntimeEnabledValue__("origintrial", elems[1]);
           break;
         default:
-          console.log(m.type);
-          throw new IDLError(`Unknown member type found in InterfaceData._getIdentifiers: ${m.type}.`)
+          break;
       }
-    }, this);
-    return identifiers;
+    })
   }
 
-  _getOperationKey(member) {
-    if (member.body.idlType.idlType === 'constructor') {
-      return this.name;
+  _getInterfaceExtendedAttributes() {
+    if (this._extendedAttributes) { return this._extendedAttributes; }
+    let matches = this._sourceData.match(EXTENDED_ATTRIBUTES_INTERFACE_RE);
+    if (matches) {
+      let match = matches[0];
+      let attributes = match.match(EXTENDED_ATTRIBUTES_RE);
+      this._extendedAttributes = attributes[0];
     }
-    if (member.deleter) {
-      return 'deleter';
-    }
-    if (member.getter) {
-      return 'getter';
-    }
-    if (member.setter) {
-      return 'setter';
-    }
-    if (member.stringifier) {
-      return 'stringifier';
-    }
-    if (member.body.name) {
-      return member.body.name.escaped;
-    }
-    throw new Error('Cannot find operation key.');
+    return this._extendedAttributes;
   }
 
-  _resolveMemberName(member) {
-    switch (member.type) {
-      case 'operation':
-        if (member.getter || member.setter) {
-          return member.body.idlType.baseName;
-        } else if (this.hasConstructor) {
-          return this.constructorName;
-        } else {
-          return member.body.name.value;
-        }
-      case 'attribute':
-        return member.name;
-      case 'iterable':
-        return member.type;
-      case 'maplike':
-        let type = member.type;
-        if (member.readonly) {
-          type = `readonly${type}`;
-        }
-        return type;
-      default:
-        return 'what';
-    }
+  _cloneObject(parent) {
+    let newObject = JSON.parse(JSON.stringify(parent))
+    newObject.flagged = this.flagged;
+    newObject.originTrial = this.originTrial;
+    newObject.path = this._path;
+    return newObject;
   }
 
-  get constructorBranch() {
-    try {
-      return this._sourceData.members.find(i => {
-        return i.body.idlType.baseName === 'constructor';
-      });
-    } catch (e) {
-      if (e.name === 'TypeError') {
-        return null;
-      } else {
-        throw e;
+  _getConstructors() {
+    const sources = this._filter('constructor');
+    sources.forEach(source => {
+      let newConstructorData = this._cloneObject(CONSTRUCTOR);
+      newConstructorData.source = source.trim();
+
+      let workingString = newConstructorData.source;
+        if (workingString.startsWith("[")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newConstructorData);
+        workingString = pieces[1].trim();
       }
-    }
+
+      newConstructorData.name = this.name;
+      let pieces = workingString.split("constructor");
+      if (!pieces[1].includes("()")) {
+        workingString = pieces[1].trim();
+        workingString = workingString.slice(0, -1).slice(1); //Remove parens and ';'
+        newConstructorData.arguments = workingString.split(",");
+        newConstructorData.arguments.forEach((arg, i, args) => {
+          args[i] = arg.trim();
+        });
+      }
+
+      this._constructors.push(JSON.parse(JSON.stringify(newConstructorData)));
+    });
   }
 
-  get constructorName() {
-    if (!this.hasConstructor) { return null; }
-    return `${this._sourceData.name}`;
+  get constructors() {
+    return this._constructors;
   }
 
-  get deleter() {
-    throw new IDLError('Time to deal with deleaters.');
+  _getDeleters() {
+    const sources = this._filter('deleter');
+    sources.forEach(source => {
+      let newDeleterData = this._cloneObject(DELETER);
+      newDeleterData.source = source.trim();
+
+      let workingString = newDeleterData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newDeleterData);
+        workingString = pieces[1].trim();
+      }
+
+      let pieces = workingString.split("(");
+      let sigs = pieces[0].split(" "); // pieces of the signature
+      if (sigs[2]) { newDeleterData.name = sigs[2]; }
+      if (!pieces[1].includes("()")) {
+        workingString = pieces[1].trim();
+        workingString = workingString.slice(0, -1).slice(1); //Remove parens and ';'
+        newDeleterData.arguments = workingString.split(",");
+        newDeleterData.arguments.forEach((arg, i, args) => {
+          args[i] = arg.trim();
+        });
+      }
+      this._deleters.push(JSON.parse(JSON.stringify(newDeleterData)));
+    });
+  }
+
+  get deleters() {
+    return this._deleters;
+  }
+
+  _getEventHandlers() {
+    const sources = this._filter('EventHandler');
+    sources.forEach(source => {
+      let newEventHandler = this._cloneObject(EVENT_HANDLER);
+      newEventHandler.source = source.trim();
+      
+      let workingString = newEventHandler.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newEventHandler);
+        workingString = pieces[1].trim();
+      }
+      
+      let pieces = workingString.split(" ");
+      newEventHandler.name = pieces[2].trim();
+      this._eventHandlers.push(JSON.parse(JSON.stringify(newEventHandler)));
+    });
   }
 
   get eventHandlers() {
-    let returns = this._sourceData.members.filter(m => {
-      if (m.baseName === 'EventHandler') {
-        return this._isBurnable(m);
+    return this._eventHandlers;
+  }
+
+  get exposed() {
+    if (this._exposed) { return this._exposed; }
+    let extAttributes = this._getInterfaceExtendedAttributes();
+    if (extAttributes) {
+      let matches = extAttributes.match(EXPOSED_RE);
+      if (matches) {
+        let match = matches[0];
+        if (match.includes("=")) {
+          match = match.split('=')[1];
+        }
+        if (match.includes("(")) {
+          let subMatches = match.match(INSIDE_PARENS_RE);
+          match = subMatches[1];
+        }
+        if (match.endsWith(",")) { match = match.substring(0, match.length-1) }
+        this._exposed = match.split(',');
       }
-      return false;
-    });
-    if (returns.length === 0) { return null; }
-    return returns;
+    }
+    return this._exposed;
   }
 
-  get iterable() {
-    return this._sourceData.members.some(m => {
-      return m.type === 'iterable';
+  get flagged() {
+    if (this._flagged) { return this._flagged}
+    this._flagged = this._getRuntimeEnabledValue("experimental", this._getInterfaceExtendedAttributes());
+    return this._flagged;
+  }
+
+  _getGetters() {
+    const sources = this._filter('getter');
+    let register = [];
+    sources.forEach(source => {
+      let newGetterData = this._cloneObject(GETTER);
+      newGetterData.source = source.trim();
+
+      let workingString = newGetterData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newGetterData);
+        workingString = pieces[1].trim();
+      }
+
+      let pieces = workingString.split("(");
+      let argsString = pieces[1];
+      argsString = argsString.slice(0, -1);
+      let args = argsString.split(",");
+      args.forEach((arg, i, args) => {
+        args[i] = arg.trim();
+        if (arg!="") { newGetterData.arguments.push(arg); }
+      });
+
+      workingString = pieces[0];
+      pieces = workingString.split(" ");
+      newGetterData.returnType = pieces[1];
+      if (pieces[2]) {
+        newGetterData.name = pieces[2];
+      } else {
+        newGetterData.name = "(getter)";
+      }
+      if (!register.includes(newGetterData.name)) {
+        register.push(newGetterData.name);
+        this._getters.push(JSON.parse(JSON.stringify(newGetterData)));
+      }
     });
   }
 
-  get getter() {
-    throw new IDLError('Time to deal with getters.')
+  get getters() {
+    return this._getters
   }
 
   get hasConstructor() {
-    try {
-      return this._sourceData.members.some(i => {
-        return i.body.idlType.baseName === 'constructor';
-      });
-    } catch (e) {
-      if (e.name === 'TypeError') {
-        return false;
-      } else {
-        throw e;
-      }
+    if (this._hasConstructor) { return this._hasConstructor; }
+    let matches = this._sourceData.match(CONSTRUCTOR_RE);
+    if (matches) {
+      this._hasConstructor = true;
+    } else {
+      this._hasConstructor = false;
     }
+    return this._hasConstructor;
   }
 
-  get maplike() {
-    return this._sourceData.members.some(m => {
-      return m.type === 'maplike';
+  _getIterables() {
+    const sources = this._filter('iterable');
+    if (sources.length === 0) { return; }
+    let newIterable = this._cloneObject(ITERABLE);
+    newIterable.source = sources[0].trim();
+
+    let workingString = newIterable.source;
+    if (workingString.includes("]")) {
+      let pieces = workingString.split("]");
+      this._getInlineExtendedAttributes(pieces[0], newIterable);
+      workingString = pieces[1].trim();
+    }
+
+    newIterable.name = "(iterable)";
+    let pieces = workingString.split("iterable");
+    workingString = pieces[1].trim();
+    workingString = workingString.slice(0, -1).slice(1); //Remove brackets and ';'
+    if (!workingString.includes(",")) {
+      newIterable.arguments.push(workingString)
+    } else {
+      let args = workingString.split(",");
+      newIterable.arguments.push(...args);
+    }
+    newIterable.arguments.forEach((arg, i, args) => {
+      args[i] = arg.trim();
+    })
+    this._iterable.push(newIterable);
+  }
+
+  get iterable() {
+    return this._iterable;
+  }
+
+  get keys() {
+    if (this._keys.length > 0) { return this._keys; }
+    this._keys.push(this.name);
+    if (this.hasConstructor) { this._keys.push('constructor'); }
+    this.deleters.forEach(deleter => {
+      this._keys.push(deleter.name);
     });
+    this.eventHandlers.forEach(handler => {
+      this._keys.push(handler.name);
+    });
+    this.getters.forEach(getter => {
+      this._keys.push(getter.name);
+    });
+    this.iterable.forEach(iter => {
+      this._keys.push(iter.name);
+    });
+    this.maplikeMethods.forEach(maplike => {
+      this._keys.push(maplike.name);
+    })
+    this.methods.forEach(member => {
+      if (!this._keys.includes(member.name)) {
+        this._keys.push(member.name);
+      }
+    });
+    this.properties.forEach(property => {
+      this._keys.push(property.name);
+    });
+    this.setters.forEach(setter => {
+      this._keys.push(setter.name);
+    });
+    return this._keys;
   }
 
-  get members() {
-    let members = new Map();
-    const properties = this.properties;
-    if (properties) {
-      for (let p of properties) {
-        members.set(p.name, p);
-      }
+  _getMaplikeMethods() {
+    const sources = this._filter('maplike');
+    if (sources.length === 0) { return; }
+    let extendedAttribs;
+    if (sources[0].includes("]")) { 
+      let pieces = sources[0].split("]");
+      extendedAttribs = pieces[0].trim();
     }
-    const methods = this.methods;
-    if (methods) {
-      for (let m of methods) {
-        if (m.body.name) {
-          members.set(m.body.name.value, m);
+
+    let mlMethods = ["entries", "forEach", "get", "has", "keys", "size", "values"];
+    let mlReturns = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
+    if (!sources[0].includes("readonly")) {
+      mlMethods.push(...["clear", "delete", "set"]);
+      mlReturns.push(...["void", "void", "void"]);
+    }
+
+    mlMethods.forEach((method, i) => {
+      let newMethod = this._cloneObject(METHOD);
+      newMethod.name = method;
+      newMethod.returnType = mlReturns[i];
+      if (extendedAttribs) {
+        this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      }
+      newMethod.source = sources[0].trim();
+      this._maplike.push(newMethod);
+    });
+    
+  }
+
+  get maplikeMethods() {
+    return this._maplike;
+  }
+
+  _getMethods() {
+    const nonMethods = [
+      'attribute',
+      'const',
+      'constructor',
+      'deleter',
+      'EventHandler',
+      'getter',
+      'iterable',
+      'maplike',
+      'setlike',
+      'setter'
+    ];
+    let sources = [];
+    let register = [];
+    this._sources.forEach((elem, i, elems) => {
+      const found = nonMethods.some((nonMethod, i, nonMethods) => {
+        return elem.includes(nonMethod);
+      });
+      if (!found) {
+        if (!this._methods) { this._methods = []; }
+        sources.push(elem);
+      }
+    });
+    if (sources.length === 0) { return; }
+
+    sources.forEach(source => {
+      let newMethodData = this._cloneObject(METHOD);
+      newMethodData.source = source.trim();
+
+      let workingString = newMethodData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newMethodData);
+        workingString = pieces[1].trim();
+      }
+
+      if (workingString.includes("(")) {
+        let pieces = workingString.split("(");
+        let argString = pieces[1].slice(0, -1);
+        let args = argString.split(",");
+        args.forEach((arg, i, args) => {
+          args[i] = arg.trim();
+          if (arg != "") { newMethodData.arguments.push(arg); }
+        });
+        let sigs = pieces[0].split(" ");
+        newMethodData.name = sigs[1].trim();
+        if (sigs[0].includes("Promise")) {
+          newMethodData.returnType = "Promise";
+          let resolution = sigs[0].split("Promise");
+          newMethodData.resolution = resolution[1].slice(0, -1).slice(1);
+        } else {
+          newMethodData.returnType = sigs[0].trim();
         }
       }
-    }
-    return members;
+
+      if (workingString.includes("stringifier")) {
+        newMethodData.name = "toString";
+        newMethodData.returnType = "String";
+      }
+      
+      if (!register.includes(newMethodData.name)) {
+        register.push(newMethodData.name);
+        this._methods.push(JSON.parse(JSON.stringify(newMethodData)));
+      }
+    });
   }
 
   get methods() {
-    let returns = this._sourceData.members.filter(item => {
-      if (item.getter) { return false; }
-      if (item.setter) { return false; }
-      return item.type === 'operation';
+    return this._methods
+  }
+
+  get mixin() {
+    return this._mixin;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get namedGetters() {
+    return this._getters.filter(getter => {
+      if (getter.name === "(getter)") { return false; }
+      return getter.name != "";
     });
-    if (returns.length === 0) { return null; }
-    return returns;
+  }
+
+  get namedSetters() {
+    return this._setters.filter(setter => {
+      if (setter.name === "(setter)") { return false; }
+      return setter.name != "";
+    })
+  }
+
+  get originTrial() {
+    if (this._originTrial) { return this._originTrial}
+    this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
+    return this._originTrial;
+  }
+
+  get parentClass() {
+    if (this._parentClass) { return this._parentClass; }
+    let matches = this._sourceData.match(INTERFACE_INHERITANCE_RE);
+    if (matches) {
+      let names = matches[1].split(":");
+      if (names[1]) { this._parentClass = names[1].trim(); }
+    }
+    return this._parentClass;
+  }
+
+  _getProperties() {
+    const sources = this._filter('attribute');
+    sources.forEach(source => {
+      if (source.includes('EventHandler')) { return; }
+      let newPropertyData = this._cloneObject(PROPERTY);
+      newPropertyData.source = source.trim();
+
+      let workingString = newPropertyData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newPropertyData);
+        workingString = pieces[1].trim();
+      }
+
+      let pieces = workingString.split(" ")
+      pieces = pieces.reverse();
+      newPropertyData.name = pieces[0];
+      newPropertyData.returnType = pieces[1];
+      if (pieces[3]) { newPropertyData.readOnly = true; }
+
+      this._properties.push(newPropertyData);
+    });
   }
 
   get properties() {
-    let returns = this._sourceData.members.filter(item => {
-      return item.type === 'attribute';
+    return this._properties;
+  }
+
+  get readOnlyProperties() {
+    return this._properties.filter(prop => {
+      return prop.readOnly === true;
     });
-    if (returns.length === 0) { return null; }
-    return returns;
+  }
+
+  get readWriteProperties() {
+    return this._properties.filter(prop => {
+      return prop.readOnly === false;
+    });
+  }
+
+  get secureContext() {
+    let extAttributes = this._getInterfaceExtendedAttributes();
+    return extAttributes.includes("SecureContext");
+  }
+
+  // Backward compatibility
+  getSecureContext() {
+    return this.secureContext;
+  }
+
+
+  _getSetlikeMethods() {
+    const sources = this._filter('setlike');
+    if (sources.length === 0) { return; }
+    let extendedAttribs;
+    if (sources[0].includes("]")) { 
+      let pieces = sources[0].split("]");
+      extendedAttribs = pieces[0].trim();
+    }
+
+    let slMethods = ["entries", "forEach", "has", "keys", "size", "values"];
+    let slReturns = ["sequence", "void", "boolean", "sequence", "long long", "sequence"];
+    if (!sources[0].includes("readonly")) {
+      slMethods.push(...["add", "clear", "delete"]);
+      slReturns.push(...["void", "void", "void"]);
+    }
+
+    slMethods.forEach((method, i) => {
+      let newMethod = this._cloneObject(METHOD);
+      newMethod.name = method;
+      newMethod.returnType = slReturns[i];
+      if (extendedAttribs) {
+        this._getInlineExtendedAttributes(extendedAttribs, newMethod);
+      }
+      newMethod.source = sources[0].trim();
+      this._setlike.push(newMethod);
+    });
+  }
+
+  get setlikeMethods() {
+    return this._setlike;
+  }
+
+  _getSetters() {
+    const sources = this._filter('setter');
+    let register = [];
+    sources.forEach(source => {
+      let newSetterData = this._cloneObject(SETTER);
+      newSetterData.source = source.trim();
+
+      let workingString = newSetterData.source;
+      if (workingString.includes("]")) {
+        let pieces = workingString.split("]");
+        this._getInlineExtendedAttributes(pieces[0], newSetterData);
+        workingString = pieces[1].trim();
+      }
+
+      let pieces = workingString.split("(");
+      let argString = pieces[1];
+      argString = argString.slice(0, -1);
+      let args = argString.split(",");
+      args.forEach((arg, i, args) => {
+        args[i] = arg.trim();
+        if (arg != "") { newSetterData.arguments.push(arg);}
+      });
+
+      workingString = pieces[0];
+      pieces = workingString.split(" ");
+      newSetterData.returnType = pieces[1];
+      if (pieces[2]) {
+        newSetterData.name = pieces[2];
+      } else {
+        newSetterData.name = "(setter)";
+      } 
+
+      if (!register.includes(newSetterData.name)) {
+        register.push(newSetterData.name);
+        this._setters.push(JSON.parse(JSON.stringify(newSetterData)));
+      }
+    });
   }
 
   get setters() {
-    throw new IDLError('Time to deal with setters.')
+    return this._setters;
   }
 
   get signatures() {
-    if (!this.hasConstructor) { return [] ; }
-    try {
-      let signatures = [];
-      this._sourceData.members.forEach((m, i, members) => {
-        if (!m.body) { return; }
-        if (!m.body.idlType) { return; }
-        if (m.body.idlType.baseName !== 'constructor') { return; }
-        let sigArgs = [];
-        m.body.arguments.forEach((arg, i, args) => {
-          sigArgs.push(arg.escapedName);
-        });
-        const sig = sigArgs.join(', ');
-        signatures.push(`(${sig})`);
-      });
-      return signatures;
-    } catch (e) {
-      if (e.name === 'TypeError') {
-        return null;
-      } else {
-        throw e;
-      }
-    }
+    // Needed for backward comapatibility.
+    let signatures = [];
+    let constrs = this.constructors;
+    constrs.forEach(elem => {
+      let args = elem.arguments.join(", ");
+      signatures.push(`constructor(${args})`);
+    });
+    return signatures;
   }
 
-  get stringifier() {
-    throw new IDLError('Time to deal with stringifier.')
+  get unnamedGetter() {
+    return this._getters.filter(getter => {
+      if (getter.name != "(getter)") { return false; }
+      return new Boolean(getter.name);
+    });
+  }
+
+  get unnamedSetter() {
+    return this._setters.filter(setter => {
+      if (setter.name != "(setter)") { return false; }
+      return new Boolean(setter.name);
+    });
+  }
+
+  getBurnRecords(includeFlags = false, includeOriginTrials = false) {
+    // Gets the burn record for the interface itself.
+    let records = super.getBurnRecords();
+    let members = this.getMembers(includeFlags, includeOriginTrials);
+    for (let m of members) {
+      if (!includeFlags && m._flagged) { continue; }
+      if (!includeOriginTrials && m._originTrial) { continue; }
+      let record = Object.assign({}, EMPTY_BURN_DATA);
+      record.key = `${this.name}.${m.name}`;
+      this._getBCD(record);
+      record.flag = m.flagged;
+      record.origin_trial = m.originTrial;
+      record.type = m.type;
+      records.push(record);
+    }
+    return records;
+  }
+
+  
+
+  getMembers(inlcudeFlags = false, includeOriginTrials = false) {
+    if (this._members.length > 0) { return this._members; }
+
+    function _filterByFlag(member) {
+      if ((member.flagged==true) && (inlcudeFlags==false)) { return false; }
+      if ((member.originTrial==true) && (includeOriginTrials==false)) { return false; }
+      return true;
+    }
+    
+    let temp = this.constructors.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.deleters.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.eventHandlers.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.getters.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.iterable.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.methods.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.properties.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+    temp = this.setters.filter(_filterByFlag);
+    if (temp.length > 0) { this._members.push(...temp); }
+
+    this._members.sort((a, b) => {
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
+      return 0
+    });
+
+    return this._members;
   }
 }
 
-const TREE_TYPES = Object.freeze({
-  callback: CallbackData,
-  dictionary: undefined,
-  enum: EnumData,
-  includes: undefined,
-  interface: InterfaceData
-});
-
 module.exports.CallbackData = CallbackData;
 module.exports.DictionaryData = DictionaryData;
-module.exports.EMPTY_BCD_DATA = EMPTY_BCD_DATA;
-module.exports.EMPTY_BURN_DATA = EMPTY_BURN_DATA;
 module.exports.EnumData = EnumData;
-module.exports.IDLFlagError = IDLFlagError;
 module.exports.InterfaceData = InterfaceData;
-module.exports.TREE_TYPES = TREE_TYPES;
