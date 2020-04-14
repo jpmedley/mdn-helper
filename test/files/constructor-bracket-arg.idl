@@ -1,0 +1,8 @@
+interface BracketArgument {
+  constructor(optional sequence<AccessibleNode> nodes = []);
+  attribute unsigned long length;
+  getter AccessibleNode? item(unsigned long index);
+  [RaisesException] setter void (unsigned long index, AccessibleNode node);
+  void add(AccessibleNode node, optional AccessibleNode? before = null);
+  void remove(long index);
+};

@@ -42,7 +42,7 @@ const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
 const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
-const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]*)\]/;
+const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]+)\]/;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
 const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
@@ -402,7 +402,7 @@ class InterfaceData extends IDLData {
       newConstructorData.source = source.trim();
 
       let workingString = newConstructorData.source;
-      if (workingString.includes("]")) {
+        if (workingString.startsWith("[")) {
         let pieces = workingString.split("]");
         this._getInlineExtendedAttributes(pieces[0], newConstructorData);
         workingString = pieces[1].trim();

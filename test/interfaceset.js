@@ -21,8 +21,6 @@ const { DirectoryManager } = require('../directorymanager.js');
 let INTERFACE_SET;
 
 const IDL_FILES = './test/files/';
-const WHITELIST_INTERFACES = ['Burnable', 'Constructors'];
-const WHITELIST_MEMBERS = ['Constructors.family'];
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
@@ -34,9 +32,9 @@ describe('InterfaceSet', () => {
   });
 
   describe('findMatching', () => {
-    it('Confirms return of all interfaces behind a flag', () => {
+    it('Confirms inclusiong of interfaces behind a flag', () => {
       const matches = INTERFACE_SET.findMatching("*", true);
-      assert.equal(matches.length, 70);
+      assert.equal(matches.length, 71);
     })
     it('Confirms return of matching items', ()=> {
       const matches = INTERFACE_SET.findMatching('Burnable');

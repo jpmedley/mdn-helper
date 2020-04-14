@@ -27,6 +27,7 @@ initiateLogger();
 const BURNABLE = './test/files/burn-records.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
+const CONSTRUCTOR_BRACKET_ARG = './test/files/constructor-bracket-arg.idl';
 const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
 const CONSTRUCTOR_ONE_ARGUMENT = './test/files/constructor-1-argument.idl';
 const DELETERS = './test/files/all-deleters.idl';
@@ -179,6 +180,11 @@ describe('__InterfaceData', () => {
       const id = new InterfaceData(source, CONSTRUCTORS);
       assert.equal(id.constructors.length, 2);
     });
+    it('Confirms processing of constructors with square brackets in args', () => {
+      const source = loadSource(CONSTRUCTOR_BRACKET_ARG);
+      const id = new InterfaceData(source, CONSTRUCTOR_BRACKET_ARG);
+      assert.ok(id.hasConstructor);
+    })
   });
 
   describe('deleters', () => {
