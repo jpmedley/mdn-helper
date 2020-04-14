@@ -46,7 +46,7 @@ class InterfaceSet {
             matches.push(i);
           }
         } else {
-          if (searchValue === i.name) {
+          if (searchValue === "*") {
             matches.push(i);
           }
         }

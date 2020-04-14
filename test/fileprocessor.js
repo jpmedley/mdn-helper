@@ -34,5 +34,15 @@ describe('FileProcessor', () => {
       });
       assert.equal(is.count, 4);
     });
+    it('Confirms that partial interfaces are handled', () => {
+      const is = new InterfaceSet();
+      const testFile = `${IDL_FILES}interface-partial.idl`;
+      let fp = new FileProcessor(testFile);
+      fp.process((result) => {
+        is.add(result);
+      });
+      const ifs = is.interfaces;
+      assert.equal(ifs[0].name, "PartialInterface");
+    });
   });
 });
