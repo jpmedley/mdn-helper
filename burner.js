@@ -427,7 +427,14 @@ class ChromeBurner extends Burner {
     const burnTypes = ["interface"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     const interfaceSet = dm.interfaceSet;
-    const interfaces = interfaceSet.findMatching("*", this._includeFlags, this._includeOriginTrials);
+    let passValue;
+    if (this._whitelist) {
+      passValue = this._whitelist;
+    } else {
+      passValue = "*";
+    }
+    // const interfaces = interfaceSet.findMatching(passValue, this._includeFlags, this._includeOriginTrials);
+    const interfaces = interfaceSet.findExact(passValue, this._includeFlags, this._includeOriginTrials);
 
     for (let interface_ of interfaces) {
       if (!this._isBurnable(interface_)) { continue; }
@@ -444,15 +451,15 @@ class ChromeBurner extends Burner {
   }
 
   _isBurnable(interfaceData) {
-    if (this._whitelist) {
-      if (this._whitelist.includes(idlFilename)) { return true; }
-      let whitelisted = this._whitelist.some(elem => {
-        return interfaceData.keys.includes(elem);
-      });
-      if (whitelisted) {
-        return true;
-      }
-    }
+    // if (this._whitelist) {
+    //   if (this._whitelist.includes(idlFilename)) { return true; }
+    //   let whitelisted = this._whitelist.some(elem => {
+    //     return interfaceData.keys.includes(elem);
+    //   });
+    //   if (whitelisted) {
+    //     return true;
+    //   }
+    // }
     if (utils.isBlacklisted(interfaceData.name)) { return false; }
     if (BURNABLE_TYPES.includes(interfaceData.type)) { return true; }
     return true;

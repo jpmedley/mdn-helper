@@ -7,7 +7,7 @@
     or --landingPage to create only a landing page.
 
   burn bcd -- [(-c | --category) _category_] [(-b | --browsers) browsers] [(-w | --whitelist) whitelist]
-  burn chrome  -- [(-f | --flags)] [(-o | --origin-trials)]
+  burn chrome  -- [(-f | --flags)] [(-o | --origin-trials)] [(-w | --whitelist) whitelist]
   burn urls -- [(-c | --category) category]
     Builds several types of burn-down lists.
 

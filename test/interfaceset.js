@@ -21,6 +21,8 @@ const { DirectoryManager } = require('../directorymanager.js');
 let INTERFACE_SET;
 
 const IDL_FILES = './test/files/';
+const WHITELIST_INTERFACES = ['Burnable', 'Constructors'];
+const WHITELIST_MEMBERS = ['Constructors.family'];
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 

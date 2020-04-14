@@ -32,17 +32,48 @@ class InterfaceSet {
     this._interfaces.push(interfaceMetaObject);
   }
 
-  findMatching(searchName, includeFlags=false, includeOriginTrials=false) {
+  findExact(searchValue, includeFlags=false, includeOriginTrials=false) {
     const matches = [];
-    const lcSearchName = searchName.toLowerCase();
+
+    const isArray = Array.isArray(searchValue);
+    for (let i of this._interfaces) {
+      try {
+        if ((includeFlags == false) && (i.flagged == true)) { continue; }
+        if ((includeOriginTrials == false) && (i.originTrial == true)) { continue; }
+
+        if (isArray) {
+          if (searchValue.includes(i.name)) {
+            matches.push(i);
+          }
+        } else {
+          if (searchValue === i.name) {
+            matches.push(i);
+          }
+        }
+      } catch (error) {
+        switch (error.name) {
+          case 'TypeError':
+            const msg = `Problem processing ${i.sourcePath}\n${i.sourceContents}`;
+            global.__logger.error(msg);
+            break;
+          default:
+            throw error;
+        }
+      }
+    }
+    return matches;
+  }
+
+  findMatching(searchValue, includeFlags=false, includeOriginTrials=false) {
+    const matches = [];
+    const lcSearchName = searchValue.toLowerCase();
 
     for (let i of this._interfaces) {
       try {
         if ((includeFlags == false) && (i.flagged == true)) { continue; }
         if ((includeOriginTrials == false) && (i.originTrial == true)) { continue; }
-  
         let lcKey = i.key.toLowerCase();
-        if (searchName == "*") {
+        if (searchValue == "*") {
           matches.push(i);
           continue;
         }
@@ -58,10 +89,12 @@ class InterfaceSet {
             throw error;
         }
       }
-
-
     }
     return matches;
+  }
+
+  getSubset(searchAray, includeFlags=false, includeOriginTrials=false) {
+    
   }
 
   get count() {
