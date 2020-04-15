@@ -30,10 +30,10 @@
     *path/to*/mdn-helper/out/ directory.
 
   find searchString [(-p | --ping)]
-    Searches Chrome's IDL files for filenames matching the provided string,
-    prompts you to select a specific file, then displays the contents of that
-    file. Use -p or --ping to ping the MDN pages for the interface members and
-    display whether they exist.
+    Searches Chrome's IDL files for interfaces matching the provided string,
+    prompts you to select a specific interface, then displays the interface. Use
+    -p or --ping to ping the MDN pages for the interface members and display
+    whether they exist.
 
   header -- -n headerName [(-H | --header)] [(-d | --directive) directiveName]
     Creates pages for the provided HTTP header and directive names
