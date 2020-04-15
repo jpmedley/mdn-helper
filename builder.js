@@ -240,6 +240,12 @@ class _CLIBuilder extends Builder {
   }
 }
 
+class _CSSBuilder extends Builder {
+  constructor(options = { verbose: true }) {
+    super(options);
+  }
+}
+
 class _IDLBuilder extends Builder {
   constructor(options = { verbose: true }) {
     super(options);
@@ -338,4 +344,5 @@ class _IDLBuilder extends Builder {
 
 module.exports.pageExists = pageExists;
 module.exports.CLIBuilder = _CLIBuilder;
+module.exports.CSSBuilder = _CSSBuilder;
 module.exports.IDLBuilder = _IDLBuilder;

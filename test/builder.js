@@ -17,7 +17,7 @@
 const assert = require('assert');
 const fs = require('fs');
 
-const { IDLBuilder } = require('../builder.js');
+const { CSSBuilder, IDLBuilder } = require('../builder.js');
 const { InterfaceData } = require('../interfacedata.js');
 const utils = require('../utils.js');
 
@@ -26,7 +26,28 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 const BURNABLE = './test/files/burn-records.idl';
 
 const tempFolder = 'tmp/';
-const jsonPath = `${tempFolder}test-bcd.json`;
+
+describe('CSSBuilder', () => {
+  describe('build()', () => {
+
+    beforeEach(() => {
+      utils.deleteUnemptyFolder(tempFolder);
+      utils.makeFolder(tempFolder);
+    });
+
+    it('Confirms that a CSS property page is written', () => {
+
+    });
+
+    it('Confirms that BCD is written to a file', () => {
+      
+    });
+
+    afterEach(() => {
+      utils.deleteUnemptyFolder('tmp/');
+    });
+  })
+})
 
 describe('IDLBuilder', () => {
   describe('build()', () => {
