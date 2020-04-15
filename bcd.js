@@ -56,6 +56,7 @@ class BCD {
 
   getByKey(key, trunk = "api") {
     let branch = this[trunk];
+    if (key === trunk) { return branch; }
     let chain = key.split(".").reverse();
     while (chain.length) {
       let link = chain[chain.length - 1];
