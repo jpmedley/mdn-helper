@@ -335,8 +335,9 @@ class InterfaceData extends IDLData {
       this._getSetters();
       this._getSetlikeMethods();
     } catch (error) {
-      const msg = `Problem processing ${this._sourcePath}.`
-      throw new Error(msg);
+      let msg = `Problem processing ${this._sourcePath}.\n`
+      msg += `${error.message}\n${error.stack}`;
+      throw new Error(msg, error.fileName, error.lineNumber);
     }
   }
 
@@ -353,6 +354,11 @@ class InterfaceData extends IDLData {
     } else {
       return false;
     }
+  }
+  
+  _getRuntimeEnabledValue__(expectedStatus, forFlag) {
+    let status = global.__Flags.getHighestResolvedStatus(forFlag);
+    return (status === expectedStatus);
   }
 
   _getInlineExtendedAttributes(source, dataObject) {
