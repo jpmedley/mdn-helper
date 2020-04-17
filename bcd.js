@@ -118,5 +118,9 @@ class BCD {
 
 }
 
-module.exports.BCD = BCD;
+// module.exports.BCD = BCD;
+if (!global.__bcd) { 
+  global.__bcd = new BCD();
+}
+module.exports.bcd = global.__bcd;
 module.exports.EMPTY_BURN_RECORD = EMPTY_BURN_RECORD;

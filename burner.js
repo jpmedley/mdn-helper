@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { BCD } = require('./bcd.js');
+const { bcd } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const { DirectoryManager } = require('./directorymanager.js');
@@ -59,15 +59,13 @@ const BROWSERS = [
   'webview_android',
 ];
 
-global._bcd = new BCD();
 global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 //To Do: Every burner class should use some form of isBurnable(). It would
 //       confine whitelist testing to a better place.
 
 function getBurnRecords(key, whitelist) {
-  // const urlData = bcd[key];
-  const urlData = global._bcd.getByKey(key);
+  const urlData = bcd.getByKey(key);
   let records = [];
   (function getRecords(data) {
     for (let d in data) {
@@ -282,7 +280,7 @@ class BCDBurner extends Burner {
 
   _getBCDBurnRecords() {
     let records = [];
-    let bcdData = global._bcd[this._category];
+    let bcdData = bcd[this._category];
     (function getRecords(data) {
       for (let d in data) {
         if ((this._whitelistName) && (!this._whitelist.includes(d))) {
@@ -433,7 +431,6 @@ class ChromeBurner extends Burner {
     } else {
       passValue = "*";
     }
-    // const interfaces = interfaceSet.findMatching(passValue, this._includeFlags, this._includeOriginTrials);
     const interfaces = interfaceSet.findExact(passValue, this._includeFlags, this._includeOriginTrials);
 
     for (let interface_ of interfaces) {

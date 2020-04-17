@@ -16,29 +16,14 @@
 
 const fs = require('fs');
 
-const { BCD } = new require('./bcd.js');
+const { bcd } = require('./bcd.js');
 const { Pinger } = require("./pinger.js");
-
-const bcd = new BCD();
-
-// const EMPTY_BURN_RECORD = Object.freeze({
-//   key: null,
-//   bcd: null,
-//   flag: null,
-//   mdn_exists: null,
-//   mdn_url: '',
-//   origin_trial: null,
-//   redirect: null,
-//   type: ''
-// });
 
 const CALLBACK_NAME_RE = /callback\s(\w+)/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
 const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
 
-
-// const CONSTRUCTOR_RE = /constructor\(([^;]*)/g;
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
 const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
@@ -182,19 +167,6 @@ class IDLData {
     });
     const keyList = tempKeys.join("\n");
     fs.appendFileSync(keyFile, keyList);
-  }
-
-  _getBCD(burnRecord) {
-    const bcdData = bcd.getByKey(burnRecord.key);
-    if (bcdData) {
-      burnRecord.bcd = true;
-      if (bcdData.__compat) {
-        burnRecord.mdn_url = bcdData.__compat.mdn_url;
-      }
-    } else {
-      burnRecord.bcd = false;
-      burnRecord.mdn_exists = false;
-    }
   }
 
   getBurnRecords() {

@@ -17,19 +17,16 @@
 const assert = require('assert');
 const fs = require('fs');
 
-const { BCD } = require('../bcd.js')
+const { bcd } = require('../bcd.js')
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
 describe('BCD', () => {
   describe('getByKey()', () => {
     it('Confirms that null is returned for a fictitious key', () => {
-      const bcd = new BCD();
-      // assert(bcd.getByKey('Medley'));
       assert.equal(bcd.getByKey('Medley'), null);
     });
 
     it('Confirms that a tree is returned for a real value', () => {
-      const bcd = new BCD();
       assert.notEqual(bcd.getByKey('Request'), null);
     })
   });
