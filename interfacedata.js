@@ -16,7 +16,6 @@
 
 const fs = require('fs');
 
-const { EMPTY_BURN_RECORD } = require('./burnrecord.js');
 const { BCD } = new require('./bcd.js');
 const { Pinger } = require("./pinger.js");
 
@@ -186,11 +185,11 @@ class IDLData {
   }
 
   _getBCD(burnRecord) {
-    const urlData = bcd.getByKey(burnRecord.key);
-    if (urlData) {
+    const bcdData = bcd.getByKey(burnRecord.key);
+    if (bcdData) {
       burnRecord.bcd = true;
-      if (urlData.__compat) {
-        burnRecord.mdn_url = urlData.__compat.mdn_url;
+      if (bcdData.__compat) {
+        burnRecord.mdn_url = bcdData.__compat.mdn_url;
       }
     } else {
       burnRecord.bcd = false;
@@ -199,9 +198,7 @@ class IDLData {
   }
 
   getBurnRecords() {
-    let record = Object.assign({}, EMPTY_BURN_RECORD);
-    record.key = this.key;
-    this._getBCD(record);
+    let record = bcd.getRecordByKey(this.key, 'api');
     record.flag = this.flagged;
     record.origin_trial = this.originTrial;
     record.type = this.type;
@@ -931,9 +928,7 @@ class InterfaceData extends IDLData {
     for (let m of members) {
       if (!includeFlags && m._flagged) { continue; }
       if (!includeOriginTrials && m._originTrial) { continue; }
-      let record = Object.assign({}, EMPTY_BURN_RECORD);
-      record.key = `${this.name}.${m.name}`;
-      this._getBCD(record);
+      let record = bcd.getRecordByKey(`${this.name}.${m.name}`, 'api');
       record.flag = m.flagged;
       record.origin_trial = m.originTrial;
       record.type = m.type;

@@ -18,6 +18,17 @@ const bcd = require('mdn-browser-compat-data');
 
 const SKIPABLE = ['__compat','__name','__parent','browsers','description','mathml','mdn_url','getPossibleKeys','webdriver','webextensions','xpath','xslt'];
 
+const EMPTY_BURN_RECORD = Object.freeze({
+  key: null,
+  bcd: null,
+  flag: null,
+  mdn_exists: null,
+  mdn_url: '',
+  origin_trial: null,
+  redirect: null,
+  type: ''
+});
+
 function generateFullKey(currentKey) {
   if (!currentKey.__parent) { return currentKey.__name; }
   let resultArray = new Array();
@@ -29,6 +40,7 @@ function generateFullKey(currentKey) {
   const result = resultArray.join('.');
   return result;
 }
+
 
 class BCD {
   constructor() {
@@ -88,6 +100,23 @@ class BCD {
     return results;
   }
 
+  getRecordByKey(key, trunk = 'api') {
+    let burnRecord = Object.assign({}, EMPTY_BURN_RECORD);
+    burnRecord.key = key;
+    const bcdData = this.getByKey(key, trunk);
+    if (bcdData) {
+      burnRecord.bcd = true;
+      if (bcdData.__compat) {
+        burnRecord.mdn_url = bcdData.__compat.mdn_url;
+      }
+    } else {
+      burnRecord.bcd = false;
+      burnRecord.mdn_exists = false;
+    }
+    return burnRecord;
+  }
+
 }
 
 module.exports.BCD = BCD;
+module.exports.EMPTY_BURN_RECORD = EMPTY_BURN_RECORD;

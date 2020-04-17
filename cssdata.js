@@ -14,6 +14,9 @@
 
 'use strict';
 
+
+const { BCD } = new require('./bcd.js');
+const { Pinger } = require("./pinger.js");
 const utils = require('./utils.js');
 
 class CSSData {
@@ -22,8 +25,29 @@ class CSSData {
     this.properties = utils.getJSON('./idl/core/css/css_properties.json5');
   }
 
-  build() {
-    
+  _getBCD(burnRecord) {
+    const bcdData = bcd.getByKey(burnRecord.key, "css");
+    if (bcdData) {
+      burnRecord.bcd = true;
+      if (bcdData.__compat) {
+        burnRecord.mdn_url = bcdData.__compat.mdn_url;
+      }
+    } else {
+      burnRecord.bcd = false;
+      burnRecord.mdn_exists = false;
+    }
+  }
+
+  getBurnRecords(includeFlags = false, includeOriginTrials = false) {
+    let records = [];
+    let members = this.getMembers(includeFlags, includeOriginTrials);
+    for (let m of members) {
+      let record = bcd.getRecordByKey(`${m.name}`, 'css');
+    }
+  }
+
+  getMembers(includeFlags = false, includeOriginTrials = false) {
+
   }
 }
 
