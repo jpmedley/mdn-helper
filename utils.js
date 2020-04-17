@@ -17,6 +17,7 @@
 const config = require('config');
 const Enquirer = require('enquirer');
 const fs = require('fs');
+const JSON5 = require('json5');
 const path = require('path');
 const shell = require('shelljs');
 
@@ -29,6 +30,11 @@ const UPDATE_INTERVALS = ['hourly','daily','weekly'];
 const ONE_HOUR = 3600000;
 const ONE_DAY = 86400000;
 const ONE_WEEK = 604800000;
+
+const BLANK_LINE_RE = /^\s*$(\r\n|\r|\n)/gm;
+const COMMENT_START_RE = /^\/\*$(\r\n|\r|\n)/gm;
+const COMMENT_MULTILINE_RE = /^\s\*.*$(\r\n|\r|\n)/gm;
+const COMMENT_SINGLELINE_RE = /\/\/.*$(\r\n|\r|\n)/gm;
 
 let OUT = config.get('Application.outputDirectory');
 if (OUT.includes('$HOME')) {
@@ -99,16 +105,31 @@ function _getIDLFile(filePath, options = { "clean": false }) {
   const buffer = fs.readFileSync(filePath);
   let fileContents = buffer.toString();
   if (options.clean) {
-    const BLANK_LINE = /^\s*$(\r\n|\r|\n)/gm;
-    const COMMENT_START = /^\/\*$(\r\n|\r|\n)/gm;
-    const COMMENT_MULTILINE = /^\s\*.*$(\r\n|\r|\n)/gm;
-    const COMMENT_SINGLELINE = /\/\/.*$(\r\n|\r|\n)/gm;
-    fileContents = fileContents.replace(COMMENT_START, "");
-    fileContents = fileContents.replace(COMMENT_MULTILINE, "");
-    fileContents = fileContents.replace(COMMENT_SINGLELINE, "");
-    fileContents = fileContents.replace(BLANK_LINE, "");
+    fileContents = fileContents.replace(COMMENT_START_RE, "");
+    fileContents = fileContents.replace(COMMENT_MULTILINE_RE, "");
+    fileContents = fileContents.replace(COMMENT_SINGLELINE_RE, "");
+    fileContents = fileContents.replace(BLANK_LINE_RE, "");
   }
   return fileContents;
+}
+
+function _getFile(path) {
+  const buffer = fs.readFileSync(path);
+  return buffer.toString();
+}
+
+function _getJSON(path) {
+  let fileContents = _getFile(path);
+  let parser;
+  if (path.endsWith(".json")) {
+    parser = JSON;
+  } else if (path.endsWith(".json5")) {
+    parser = JSON5;
+  } else {
+    const msg = `The requested file does not have a 'json' or 'json5' extension: ${path}.`;
+    throw new TypeError(msg);
+  }
+  return parser.parse(fileContents);
 }
 
 function _getTemplate(name) {
@@ -126,10 +147,8 @@ function _isBlacklisted(apiName) {
 }
 
 function _getWireframes() {
-  const wireframePath = TEMPLATES + QUESTIONS_FILE
-  const wireframeBuffer = fs.readFileSync(wireframePath);
-  const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
-  return wireframes;
+  const json = this._getJSON(TEMPLATES + QUESTIONS_FILE);
+  return json.templates;
 }
 
 function _makeOutputFolder(dirName) {
@@ -233,7 +252,9 @@ module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.displayConfig = _displayConfig;
 module.exports.getConfig = _getConfig;
+module.exports.getFile = _getFile;
 module.exports.getIDLFile = _getIDLFile;
+module.exports.getJSON = _getJSON;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;

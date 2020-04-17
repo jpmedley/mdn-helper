@@ -40,6 +40,7 @@ echo '\nDownloading IDL and related data files.\n'
 curl $URL > idl.tar.gz
 
 tar -C $IDL_ROOT/ -xf idl.tar.gz core/*.idl
+tar -C $IDL_ROOT/ -xf idl.tar.gz core/css/*.json5
 tar -C $IDL_ROOT/ -xf idl.tar.gz modules/*.idl
 tar -C $IDL_ROOT/ -xf idl.tar.gz platform/runtime_enabled_features.json5
 

@@ -22,8 +22,9 @@ const utils = require('../utils.js');
 
 describe('CSSData', () => {
   describe('build()', () => {
-    it('Confirms that CSS boilerplate is written', () => {
-      
+    it('Confirms that CSS data is loaded', () => {
+      const cd = new CSSData();
+      assert.equal((typeof cd.parameters), 'object');
     });
   });
 });

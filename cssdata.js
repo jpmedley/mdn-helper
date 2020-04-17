@@ -14,9 +14,14 @@
 
 'use strict';
 
+const utils = require('./utils.js');
+
+const CSS_PROPERTIES = './idl/core/css/css_properties.json5';
+
 class CSSData {
   constructor() {
-
+    this._source = utils.getJSON(CSS_PROPERTIES);
+    this.parameters = this._source.parameters;
   }
 
   build() {
