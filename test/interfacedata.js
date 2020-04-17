@@ -99,7 +99,7 @@ function loadSource(sourcePath) {
 }
 
 
-describe('__InterfaceData', () => {
+describe('InterfaceData', () => {
   describe('Partial interfaces', () => {
     it('Confirms that partial interfaces are loaded and processed', () => {
       const source = loadSource(INTERFACE_PARTIAL);

@@ -18,10 +18,9 @@ const assert = require('assert');
 const fs = require('fs');
 
 const { CSSData } = require('../cssdata.js');
-const utils = require('../utils.js');
 
 describe('CSSData', () => {
-  describe('build()', () => {
+  describe('constructor', () => {
     it('Confirms that CSS data is loaded', () => {
       const cd = new CSSData();
       assert.equal((typeof cd.parameters), 'object');
