@@ -29,7 +29,34 @@ const CANCEL = '(none)';
 global._bcd = new BCD();
 global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
-class _Finder {
+function _finderFactory(args) {
+  //First few args are no longer needed.
+  args.shift();
+  const command = args[0].search(/app_(\w+).js/)[1];
+  args.shift();
+  const actionType = args[0].toLowerCase();
+  let msg = `The ${actionType} action must be one of \'css\' or \'idl\'.`;
+  if (!args[0]) {
+    msg = `You must provide an action type. ${msg}`;
+  }
+  switch (actionType) {
+    case 'css':
+      return new CSSFinder(args);
+    case 'idl':
+      return new IDLFinder(args);
+    default:
+      throw new Error(msg);
+  }
+}
+
+class CSSFinder {
+  constructor(args) {
+    console.log("CSSFinder is not yet available.\n");
+    process.exit();
+  }
+}
+
+class IDLFinder {
   constructor(args) {
     this._processArguments(args)
     let dm = new DirectoryManager('idl/');
@@ -87,7 +114,7 @@ class _Finder {
   }
 
   _processArguments(args) {
-    this._searchString = args[2];
+    this._searchString = args[1];
     this._interactive = args.some(arg => {
       return (arg.includes('-i') || (arg.includes('--interactive')));
     });
@@ -190,4 +217,6 @@ class _Finder {
 
 }
 
-module.exports.Finder = _Finder;
+module.exports.FinderFactory = _finderFactory;
+module.exports.CSSFinder = CSSFinder;
+module.exports.Finder = IDLFinder;

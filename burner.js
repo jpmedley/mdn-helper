@@ -103,13 +103,13 @@ async function selectArgument(question, choices, returnAll= false) {
 }
 
 function _burnerFactory(args) {
-  // First three args are no longer needed.
+  // First few args are no longer needed.
   args.shift();
   args.shift();
-  let eMsg = 'Burner type must be one of \'bcd\', \'chrome\', or \'urls\'.'
+  let msg = 'Burner type must be one of \'bcd\', \'chrome\', or \'urls\'.'
   if (!args[0]) {
-    eMsg = 'You must provide a buner type. ' + eMsg;
-    throw new Error(eMsg);
+    msg = 'You must provide a burner type. ' + msg;
+    throw new Error(msg);
   }
   const burnerType = args[0].toLowerCase();
   args.shift();
@@ -121,8 +121,8 @@ function _burnerFactory(args) {
     case 'urls':
       return new URLBurner({ args: args });
     default:
-      eMsg = 'Burner type is invalid or misspelled. ' + eMsg;
-      throw new Error(eMsg);
+      msg = 'Burner type is invalid or misspelled. ' + msg;
+      throw new Error(msg);
   }
 }
 

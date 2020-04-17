@@ -1,4 +1,5 @@
-  build searchString -- [(-i | --interactive)] [(-j | --jsonOnly)] [(-l | --landingPage)]
+  build css searchString
+  build idl searchString -- [(-i | --interactive)] [(-j | --jsonOnly)] [(-l | --landingPage)]
     Builds an interfaces boilerplates after selecting an IDL file based on
     searchString. For interfaces, this also outputs BCD if a file doesn't exist.
     Use -i or --interactive to interactively fill in missing information through
@@ -29,7 +30,8 @@
     Creates a page for a CSS property. The results are written to the
     *path/to*/mdn-helper/out/ directory.
 
-  find searchString [(-p | --ping)]
+  find css searchString
+  find idl searchString [(-p | --ping)]
     Searches Chrome's IDL files for interfaces matching the provided string,
     prompts you to select a specific interface, then displays the interface. Use
     -p or --ping to ping the MDN pages for the interface members and display
