@@ -15,7 +15,6 @@
 'use strict';
 
 const assert = require('assert');
-const fs = require('fs');
 
 const { CSSData } = require('../cssdata.js');
 
@@ -24,6 +23,11 @@ describe('CSSData', () => {
     it('Confirms that CSS data is loaded', () => {
       const cd = new CSSData();
       assert.equal((typeof cd.parameters), 'object');
+    });
+
+    it('Confirms that deep CSS data is accessible', () => {
+      const cd = new CSSData();
+      assert.equal(cd.data[0].name, "animation-delay");
     });
   });
 });

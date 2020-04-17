@@ -22,6 +22,7 @@ class CSSData {
   constructor() {
     this._source = utils.getJSON(CSS_PROPERTIES);
     this.parameters = this._source.parameters;
+    this.data = this._source.data;
   }
 
   build() {
