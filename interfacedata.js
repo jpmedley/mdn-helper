@@ -16,21 +16,22 @@
 
 const fs = require('fs');
 
+const { EMPTY_BURN_RECORD } = require('./burnrecord.js');
 const { BCD } = new require('./bcd.js');
 const { Pinger } = require("./pinger.js");
 
 const bcd = new BCD();
 
-const EMPTY_BURN_DATA = Object.freeze({
-  key: null,
-  bcd: null,
-  flag: null,
-  mdn_exists: null,
-  mdn_url: '',
-  origin_trial: null,
-  redirect: null,
-  type: ''
-});
+// const EMPTY_BURN_RECORD = Object.freeze({
+//   key: null,
+//   bcd: null,
+//   flag: null,
+//   mdn_exists: null,
+//   mdn_url: '',
+//   origin_trial: null,
+//   redirect: null,
+//   type: ''
+// });
 
 const CALLBACK_NAME_RE = /callback\s(\w+)/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
@@ -198,7 +199,7 @@ class IDLData {
   }
 
   getBurnRecords() {
-    let record = Object.assign({}, EMPTY_BURN_DATA);
+    let record = Object.assign({}, EMPTY_BURN_RECORD);
     record.key = this.key;
     this._getBCD(record);
     record.flag = this.flagged;
@@ -930,7 +931,7 @@ class InterfaceData extends IDLData {
     for (let m of members) {
       if (!includeFlags && m._flagged) { continue; }
       if (!includeOriginTrials && m._originTrial) { continue; }
-      let record = Object.assign({}, EMPTY_BURN_DATA);
+      let record = Object.assign({}, EMPTY_BURN_RECORD);
       record.key = `${this.name}.${m.name}`;
       this._getBCD(record);
       record.flag = m.flagged;
