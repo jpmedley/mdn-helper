@@ -22,12 +22,12 @@ describe('CSSData', () => {
   describe('constructor', () => {
     it('Confirms that CSS data is loaded', () => {
       const cd = new CSSData();
-      assert.equal((typeof cd.parameters), 'object');
+      assert.equal((typeof cd.properties.parameters), 'object');
     });
 
     it('Confirms that deep CSS data is accessible', () => {
       const cd = new CSSData();
-      assert.equal(cd.data[0].name, "animation-delay");
+      assert.equal(cd.properties.data[0].name, "animation-delay");
     });
   });
 });
