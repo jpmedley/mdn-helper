@@ -156,7 +156,7 @@ class IDLFinder {
       choices: names
     });
     const answer = await enq.prompt('idlFile');
-    if (answer === CANCEL) { process.exit(); }
+    if (answer.idlFile[0] === CANCEL) { process.exit(); }
     const pieces = answer.idlFile[0].split(" ");
     const key = pieces[0].trim();
     const answerData = matches.find(elem => {
