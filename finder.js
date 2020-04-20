@@ -22,7 +22,7 @@ const { FileProcessor } = require('./fileprocessor.js');
 const { IDLBuilder } = require('./builder.js');
 const utils = require('./utils.js');
 
-const NOTHING_FOUND = "Could not find matching IDL files."
+const NOTHING_FOUND = "Could not find matching IDL files.\n\nTry running this command with the -f or -o flags to search for items behind\nflags or in origin trials.\n"
 const CANCEL = '(none)';
 
 global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
@@ -30,18 +30,22 @@ global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enable
 function _finderFactory(args) {
   //First few args are no longer needed.
   args.shift();
-  const command = args[0].search(/app_(\w+).js/)[1];
+  const matches = args[0].match(/app_([^\.]+)\.js/);
+  const revisedArgs = [];
+  revisedArgs.push(matches[1]);
   args.shift();
-  const actionType = args[0].toLowerCase();
-  let msg = `The ${actionType} action must be one of \'css\' or \'idl\'.`;
+  const searchDomain = args[0].toLowerCase();
+  let msg = `The action must be one of \'css\' or \'idl\'. The value ${searchDomain} was provided`;
   if (!args[0]) {
     msg = `You must provide an action type. ${msg}`;
   }
-  switch (actionType) {
+  args.shift();
+  revisedArgs.push(...args);
+  switch (searchDomain) {
     case 'css':
-      return new CSSFinder(args);
+      return new CSSFinder(revisedArgs);
     case 'idl':
-      return new IDLFinder(args);
+      return new IDLFinder(revisedArgs);
     default:
       throw new Error(msg);
   }
@@ -125,16 +129,16 @@ class IDLFinder {
     this._jsonOnly = args.some(arg => {
       return (arg.includes('-j') || (arg.includes('--jsonOnly')));
     });
-    if (args[1].includes('app_Builder.js')) {
+    if (args[0] === 'Builder') {
       this._landingPageOnly = args.some(arg => {
         return (arg.includes('-l') || (arg.includes('--landing-page')));
       });
-    };
-    if (args[1].includes('app_Finder.js')) {
+    }
+    if (args[0] === 'Finder') {
       this._ping = args.some(arg => {
         return (arg.includes('-p') || (arg.includes('--ping')));
       });
-    };
+    }
   }
 
   async _select(matches) {
