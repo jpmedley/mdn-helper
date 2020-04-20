@@ -117,7 +117,7 @@ describe('InterfaceData', () => {
       let passFail = MEMBERS.every(memberName => {
         let member = id[memberName];
         return member.every(elem => {
-          if (!elem.flagged) { foundIncorrect = `${memberName} ${JSON.stringify(elem)}`; }
+          if (!elem.flagged) { foundIncorrect += `${memberName} ${JSON.stringify(elem)}\n`; }
           return elem.flagged
         });
       });
@@ -134,7 +134,7 @@ describe('InterfaceData', () => {
       let passFail = MEMBERS.every(memberName => {
         let member = id[memberName];
         return member.every(elem => {
-          if (!elem.originTrial) { foundIncorrect = `${memberName} ${JSON.stringify(elem)}` }
+          if (!elem.originTrial) { foundIncorrect += `${memberName} ${JSON.stringify(elem)}\n` }
           return elem.originTrial;
         });
       });
