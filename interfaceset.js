@@ -14,11 +14,6 @@
 
 'use strict';
 
-const { BCD } = require('./bcd.js');
-
-// global._bcd = new BCD();
-// global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
-
 const TYPES = ["interface", "interface mixin", "callback"];
 
 class InterfaceSet {

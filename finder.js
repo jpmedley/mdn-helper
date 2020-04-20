@@ -17,7 +17,6 @@
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 
-const { BCD } = require('./bcd.js');
 const { DirectoryManager } = require('./directorymanager.js');
 const { FileProcessor } = require('./fileprocessor.js');
 const { IDLBuilder } = require('./builder.js');
@@ -26,7 +25,6 @@ const utils = require('./utils.js');
 const NOTHING_FOUND = "Could not find matching IDL files."
 const CANCEL = '(none)';
 
-global._bcd = new BCD();
 global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 function _finderFactory(args) {
