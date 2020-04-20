@@ -26,7 +26,7 @@ const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
 
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
-const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[(([^\]]*))\]\sinterface/gm;
+const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[([^\]]*)\]\sinterface/m;
 const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]+)\]/;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
@@ -312,18 +312,16 @@ class InterfaceData extends IDLData {
   }
 
   _getRuntimeEnabledValue(expectedStatus, fromAttributes) {
-    if (fromAttributes) {
-      let matches = fromAttributes.match(RUNTIMEENABLED_RE);
-      if (matches) {
-        let flag = matches[1];
-        let status = global.__Flags.getHighestResolvedStatus(flag);
-        return (status == expectedStatus);
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+    if (!fromAttributes) { return false; }
+    const flagName = fromAttributes.find(ea => {
+      return ea.includes("RuntimeEnabled");
+    });
+    if (flagName) {
+      const pieces = flagName.split("=");
+      const status = global.__Flags.getHighestResolvedStatus(pieces[1]);
+      return (status === expectedStatus);
     }
+    return false;
   }
   
   _getRuntimeEnabledValue__(expectedStatus, forFlag) {
@@ -351,9 +349,16 @@ class InterfaceData extends IDLData {
     if (this._extendedAttributes) { return this._extendedAttributes; }
     let matches = this._sourceData.match(EXTENDED_ATTRIBUTES_INTERFACE_RE);
     if (matches) {
-      let match = matches[0];
-      let attributes = match.match(EXTENDED_ATTRIBUTES_RE);
-      this._extendedAttributes = attributes[0];
+      let realMatches = matches[1].trim();
+      this._extendedAttributes = realMatches.split("\n");
+    }
+    if (this._extendedAttributes) {
+      this._extendedAttributes.forEach((attrib, i, eas) => {
+        eas[i] = attrib.trim();
+        if (eas[i].endsWith(",")) {
+          eas[i] = eas[i].substring(0, (eas[i].length - 1));
+        }
+      });
     }
     return this._extendedAttributes;
   }
@@ -457,19 +462,35 @@ class InterfaceData extends IDLData {
     if (this._exposed) { return this._exposed; }
     let extAttributes = this._getInterfaceExtendedAttributes();
     if (extAttributes) {
-      let matches = extAttributes.match(EXPOSED_RE);
-      if (matches) {
-        let match = matches[0];
-        if (match.includes("=")) {
-          match = match.split('=')[1];
+      let exposed = extAttributes.find(attrib => {
+        return attrib.includes("Exposed");
+      });
+      if (exposed) {
+        let exposedOn = exposed.split("=")[1];
+        if (exposedOn.includes("(")) {
+          let inParens = exposedOn.match(INSIDE_PARENS_RE);
+          exposedOn = inParens[1];
         }
-        if (match.includes("(")) {
-          let subMatches = match.match(INSIDE_PARENS_RE);
-          match = subMatches[1];
+        this._exposed = exposedOn.split(",");
+        if (this._exposed[this._exposed.length - 1] === "") {
+          this._exposed.pop();
         }
-        if (match.endsWith(",")) { match = match.substring(0, match.length-1) }
-        this._exposed = match.split(',');
       }
+
+
+      // let matches = extAttributes.match(EXPOSED_RE);
+      // if (matches) {
+      //   let match = matches[0];
+      //   if (match.includes("=")) {
+      //     match = match.split('=')[1];
+      //   }
+      //   if (match.includes("(")) {
+      //     let subMatches = match.match(INSIDE_PARENS_RE);
+      //     match = subMatches[1];
+      //   }
+      //   if (match.endsWith(",")) { match = match.substring(0, match.length-1) }
+      //   this._exposed = match.split(',');
+      // }
     }
     return this._exposed;
   }

@@ -34,6 +34,7 @@ const DELETERS = './test/files/all-deleters.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const EXPOSED_MANY = './test/files/exposed-many.idl';
 const EXPOSED_ONE = './test/files/exposed-one.idl';
+const EXTENDED_ATTRIBUTES_REVERSED = './test/files/extended-attributes-reversed.idl';
 const FLAGGED_MEMBERS = './test/files/flagged-members.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
@@ -100,6 +101,16 @@ function loadSource(sourcePath) {
 
 
 describe('InterfaceData', () => {
+  describe('Extended attributes', () => {
+    it('Confirms that extended attribute order is irrelevant to reading their values', () => {
+      const sourceOne = loadSource(RUNTIMEENABLED_IFACE_OT_RE);
+      const id1 = new InterfaceData(sourceOne, RUNTIMEENABLED_IFACE_OT_RE);
+      const sourceTwo = loadSource(EXTENDED_ATTRIBUTES_REVERSED);
+      const id2 = new InterfaceData(sourceTwo, EXTENDED_ATTRIBUTES_REVERSED);
+      assert.equal(id1.originTrial, id2.originTrial);
+    });
+  });
+
   describe('Partial interfaces', () => {
     it('Confirms that partial interfaces are loaded and processed', () => {
       const source = loadSource(INTERFACE_PARTIAL);
