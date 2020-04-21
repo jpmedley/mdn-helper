@@ -21,7 +21,6 @@ const utils = require('./utils.js');
 
 class CSSSet {
   constructor() {
-    this.atRules = utils.getJSON('./idl/core/css/parser/at_rule_names.json5');
     this.properties = utils.getJSON('./idl/core/css/css_properties.json5');
     this.propertyMethods = utils.getJSON('./idl/core/css/properties/css_property_methods.json5');
     this.media = {};
@@ -37,7 +36,7 @@ class CSSSet {
   }
 
   findMatching(searchValue, includeFlags=false, includeOriginTrials=false) {
-    
+
   }
 }
 
