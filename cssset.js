@@ -19,11 +19,18 @@ const { bcd } = new require('./bcd.js');
 const { Pinger } = require("./pinger.js");
 const utils = require('./utils.js');
 
-class CSSData {
+class CSSSet {
   constructor() {
     this.atRules = utils.getJSON('./idl/core/css/parser/at_rule_names.json5');
     this.properties = utils.getJSON('./idl/core/css/css_properties.json5');
+    this.propertyMethods = utils.getJSON('./idl/core/css/properties/css_property_methods.json5');
+    this.media = {};
+    this.media.names = utils.getJSON('./idl/core/css/media_feature_names.json5');
+    this.media.types = utils.getJSON('./idl/core/css/media_type_names.json5');
+    this.values = utils.getJSON('./idl/core/css/css_primitive_value_units.json5');
+    this.values.keywords = utils.getJSON('./idl/core/css/css_value_keywords.json5');
+    this.svg = utils.getJSON('./idl/core/css/svg_css_value_keywords.json5');
   }
 }
 
-module.exports.CSSData = CSSData;
+module.exports.CSSSet = CSSSet;

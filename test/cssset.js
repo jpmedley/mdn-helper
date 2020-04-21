@@ -16,17 +16,17 @@
 
 const assert = require('assert');
 
-const { CSSData } = require('../cssdata.js');
+const { CSSSet } = require('../cssset.js');
 
-describe('CSSData', () => {
+describe('CSSSet', () => {
   describe('constructor', () => {
     it('Confirms that CSS data is loaded', () => {
-      const cd = new CSSData();
+      const cd = new CSSSet();
       assert.equal((typeof cd.properties.parameters), 'object');
     });
 
     it('Confirms that deep CSS data is accessible', () => {
-      const cd = new CSSData();
+      const cd = new CSSSet();
       assert.equal(cd.properties.data[0].name, "animation-delay");
     });
   });
