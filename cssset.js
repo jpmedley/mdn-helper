@@ -31,6 +31,14 @@ class CSSSet {
     this.values.keywords = utils.getJSON('./idl/core/css/css_value_keywords.json5');
     this.svg = utils.getJSON('./idl/core/css/svg_css_value_keywords.json5');
   }
+
+  findExact(searchValue, includeFlags=false, includeOriginTrials=false) {
+
+  }
+
+  findMatching(searchValue, includeFlags=false, includeOriginTrials=false) {
+    
+  }
 }
 
 module.exports.CSSSet = CSSSet;
