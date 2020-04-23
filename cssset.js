@@ -31,12 +31,36 @@ class CSSSet {
     this.svg = utils.getJSON('./idl/core/css/svg_css_value_keywords.json5');
   }
 
-  findExact(searchValue, includeFlags=false, includeOriginTrials=false) {
+  _findExactProperties(searchValue, includeFlags=false, includeOriginTrials=false) {
+    let foundProperties = [];
+    this.properties.data.forEach(element => {
+      if (element.name === searchValue) {
+        foundProperties.push(element);
+      }
+    });
+    return foundProperties;
+  }
 
+  _findMatchingProperties(searchValue, includeFlags=false, includeOriginTrials=false) {
+    let foundProperties = [];
+    this.properties.data.forEach(element => {
+      if (element.name.includes(searchValue)) {
+        foundProperties.push(element);
+      }
+    });
+    return foundProperties;
+  }
+
+  findExact(searchValue, includeFlags=false, includeOriginTrials=false) {
+    let foundProperties = [];
+    foundProperties.push(...this._findExactProperties(searchValue, includeFlags, includeOriginTrials));
+    return foundProperties;
   }
 
   findMatching(searchValue, includeFlags=false, includeOriginTrials=false) {
-
+    let foundProperties = [];
+    foundProperties.push(...this._findMatchingProperties(searchValue, includeFlags, includeOriginTrials));
+    return foundProperties;
   }
 }
 
