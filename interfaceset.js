@@ -27,21 +27,21 @@ class InterfaceSet {
     this._interfaces.push(interfaceMetaObject);
   }
 
-  findExact(searchValue, includeFlags=false, includeOriginTrials=false) {
+  findExact(searchValOrArray, includeFlags=false, includeOriginTrials=false) {
     const matches = [];
 
-    const isArray = Array.isArray(searchValue);
+    const isArray = Array.isArray(searchValOrArray);
     for (let i of this._interfaces) {
       try {
         if ((includeFlags == false) && (i.flagged == true)) { continue; }
         if ((includeOriginTrials == false) && (i.originTrial == true)) { continue; }
 
         if (isArray) {
-          if (searchValue.includes(i.name)) {
+          if (searchValOrArray.includes(i.name)) {
             matches.push(i);
           }
         } else {
-          if (searchValue === "*") {
+          if (searchValOrArray === "*") {
             matches.push(i);
           }
         }
