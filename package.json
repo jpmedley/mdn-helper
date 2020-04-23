@@ -13,7 +13,10 @@
     "header": "node app_Manual.js header",
     "help": "node app_Help.js",
     "interface": "node app_Manual.js interface",
-    "update-data": "node app_UpdateData.js"
+    "update": "node app_updateData.js",
+    "update-data": "node app_UpdateData.js",
+    "whitelist": "node app_Burner.js chrome -w",
+    "show-whitelists": "ls whitelists"
   },
   "keywords": [
     "MDN",

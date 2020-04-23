@@ -45,11 +45,17 @@ function generateFullKey(currentKey) {
 class BCD {
   constructor() {
     this._decorate(bcd);
+    this._bindNewMembers(bcd);
+    return bcd;
+  }
+
+  _bindNewMembers(bcd) {
     bcd.getPossibleKeys = this.getPossibleKeys;
     this.getPossibleKeys.bind(bcd);
     bcd.getByKey = this.getByKey;
     this.getByKey.bind(bcd);
-    return bcd;
+    bcd.getRecordByKey = this.getRecordByKey;
+    this.getRecordByKey.bind(bcd);
   }
 
   _decorate(data) {
