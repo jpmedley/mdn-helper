@@ -1,4 +1,4 @@
-callback interface CallbackInterface {
+callback interface InterfaceCallback {
     // Constants for acceptNode()
     const unsigned short FILTER_ACCEPT = 1;
     const unsigned short FILTER_REJECT = 2;

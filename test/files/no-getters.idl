@@ -1,4 +1,4 @@
-interface Getters {
+interface NoGetters {
 
   attribute octet notDeleter;
 };

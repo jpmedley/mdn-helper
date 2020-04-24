@@ -1,4 +1,4 @@
-interface FlaggedMembers {
+interface OTMembers {
     [RuntimeEnabled=OTEExperimental] constructor();
     [RuntimeEnabled=OTEExperimental] constructor(DOMString family);
     [RuntimeEnabled=OTEExperimental] constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source);

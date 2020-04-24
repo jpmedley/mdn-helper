@@ -1,4 +1,4 @@
-interface EventHand : EventTarget {
+interface AllEventHand : EventTarget {
     attribute EventHandler onconnect;
     [MeasureAs=GenericSensorOnError] attribute EventHandler onerror;
     [RuntimeEnabled=OnDeviceChange] attribute EventHandler ondevicechange;

@@ -1,4 +1,4 @@
-interface Setters {
+interface SetterBoth {
   [RaisesException] setter void setItem(DOMString key, DOMString value);
   [RaisesException] setter void (unsigned long index, SVGPoint newItem);
 

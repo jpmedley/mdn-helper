@@ -23,7 +23,7 @@ const utils = require('../utils.js');
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
-const BURNABLE = './test/files/burn-records.idl';
+const BURNABLE = './test/files/burnable.idl';
 
 const tempFolder = 'tmp/';
 

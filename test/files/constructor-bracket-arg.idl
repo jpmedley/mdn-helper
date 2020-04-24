@@ -1,4 +1,4 @@
-interface BracketArgument {
+interface ConstructorBracketArg {
   constructor(optional sequence<AccessibleNode> nodes = []);
   attribute unsigned long length;
   getter AccessibleNode? item(unsigned long index);

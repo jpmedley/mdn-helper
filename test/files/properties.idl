@@ -1,4 +1,4 @@
-interface Property {
+interface Properties {
     attribute FontFaceLoadStatus status;
     attribute boolean medley;
 };

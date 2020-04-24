@@ -1,4 +1,4 @@
-interface MethodArgs : EventTarget {
+interface Methods : EventTarget {
     [RaisesException] boolean check(DOMString font, optional DOMString text = " ");
     [RaisesException] boolean checks();
 

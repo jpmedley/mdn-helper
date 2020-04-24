@@ -1,0 +1,14 @@
+interface Burnable2 {
+    constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source);
+    constructor(DOMString family, (DOMString or ArrayBuffer or ArrayBufferView) source, optional FontFaceDescriptors descriptors);
+    attribute EventHandler onconnect;
+    [RuntimeEnabled=RTEExperimental] attribute EventHandler ondisconnect;
+    getter CSSUnparsedSegment (unsigned long index);
+    [RuntimeEnabled=OTEExperimental] getter CSSParsedSegment (unsigned long index);
+    setter CSSUnparsedSegment (unsigned long index);
+    [RuntimeEnabled=RTEExperimental] setter CSSParsedSegment (unsigned long index);
+    boolean check(DOMString font, optional DOMString text = " ");
+    [RuntimeEnabled=OTEExperimental] boolean unCheck(DOMString font, optional DOMString text = " ");
+    attribute DOMString family;
+    [RuntimeEnabled=RTEExperimental] attribute DOMString family2;
+};

@@ -2,7 +2,7 @@
     Exposed=Window,
     ActiveScriptWrappable,
     RuntimeEnabled=RTEExperimental
-] interface Runtime {
+] interface RuntimeExperimental {
     constructor();
 readonly attribute FontFaceSetLoadStatus status;
 };

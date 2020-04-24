@@ -1,4 +1,4 @@
-interface Iterables {
+interface IterableSeqArg {
   iterable<sequence<CSSStyleValue>>;
 
   attribute octet notDeleter;

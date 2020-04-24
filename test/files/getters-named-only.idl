@@ -1,4 +1,4 @@
-interface Getters {
+interface GettersNamedOnly {
   getter SVGPoint getItem(unsigned long index);
 
   attribute octet notDeleter;

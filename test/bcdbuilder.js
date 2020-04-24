@@ -24,7 +24,7 @@ const utils = require('../utils.js');
 
 const EXPECTED_UAS = ["chrome", "chrome_android", "edge", "edge_mobile", "firefox", "firefox_android", "ie", "nodejs", "opera", "opera_android", "qq_android", "safari", "safari_ios", "samsunginternet_android", "uc_android", "uc_chinese_android", "webview_android"];
 
-const BURNABLE = './test/files/burn-records.idl';
+const BURNABLE = './test/files/burnable.idl';
 
 const tempFolder = 'tmp/';
 const jsonPath = `${tempFolder}test-bcd.json`;

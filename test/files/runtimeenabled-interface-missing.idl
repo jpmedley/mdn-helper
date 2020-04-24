@@ -2,7 +2,7 @@
     Exposed=Window,
     ActiveScriptWrappable,
     RuntimeEnabled=Notifications
-] interface Runtime {
+] interface RuntimeMissing {
     constructor();
 readonly attribute FontFaceSetLoadStatus status;
 };

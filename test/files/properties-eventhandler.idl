@@ -1,4 +1,4 @@
-interface Properties {
+interface PropertiesEventHander {
     [RuntimeEnabled=RTEExperimental] attribute FontFaceLoadStatus status;
     [RuntimeEnabled=RTEExperimental] attribute EventHandler onstart;
     [RuntimeEnabled=RTEExperimental] readonly attribute boolean raw;

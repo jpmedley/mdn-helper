@@ -24,7 +24,7 @@ dictionary USBDeviceFilter {
 [
     Exposed=Window,
     ActiveScriptWrappable
-] interface BaseAudioContext : EventTarget {
+] interface MultipleStructures : EventTarget {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
     readonly attribute AudioDestinationNode destination;
 

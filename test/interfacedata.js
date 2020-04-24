@@ -24,7 +24,7 @@ const { initiateLogger } = require('../log.js');
 
 initiateLogger();
 
-const BURNABLE = './test/files/burn-records.idl';
+const BURNABLE = './test/files/burnable.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
 const CONSTRUCTOR_BRACKET_ARG = './test/files/constructor-bracket-arg.idl';
@@ -115,7 +115,7 @@ describe('InterfaceData', () => {
     it('Confirms that partial interfaces are loaded and processed', () => {
       const source = loadSource(INTERFACE_PARTIAL);
       const id = new InterfaceData(source, INTERFACE_PARTIAL);
-      assert.equal(id.name, "PartialInterface");
+      assert.equal(id.name, "InterfacePartial");
     });
   });
 
@@ -286,6 +286,15 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       const members = id.getMembers(false, true);
       assert.equal(members.length, 8);
+    });
+  });
+
+  describe('getMembersBurnRecords', () => {
+    it('Confirms return of records for an interface and a member', () => {
+      const source = loadSource(BURNABLE);
+      const id = new InterfaceData(source);
+      const records = id.getMembersBurnRecords('Burnable.check');
+      assert.equal(records.length, 2);
     });
   });
 

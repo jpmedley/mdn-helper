@@ -1,4 +1,4 @@
-interface Getters {
+interface GettersBoth {
   getter SVGPoint getItem(unsigned long index);
   [Affects=Nothing] getter DOMString item(unsigned long index);
   [Affects=Nothing] getter DOMString (DOMString name);

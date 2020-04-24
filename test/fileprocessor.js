@@ -42,7 +42,7 @@ describe('FileProcessor', () => {
         is.add(result);
       });
       const ifs = is.interfaces;
-      assert.equal(ifs[0].name, "PartialInterface");
+      assert.equal(ifs[0].name, "InterfacePartial");
     });
     it('Confirms that callback interfaces are handled', () => {
       const is = new InterfaceSet();
@@ -52,7 +52,7 @@ describe('FileProcessor', () => {
         is.add(result);
       });
       const ifs = is.interfaces;
-      assert.equal(ifs[0].name, "CallbackInterface");
+      assert.equal(ifs[0].name, "InterfaceCallback");
     });
   });
 });

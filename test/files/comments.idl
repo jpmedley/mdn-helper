@@ -29,7 +29,7 @@
  */
 
 // https://drafts.csswg.org/web-animations/#the-animatable-interface-mixin
-interface mixin Animatable {
+interface mixin Comments {
     [CallWith=ScriptState, Measure, RaisesException] Animation animate(object? keyframes, optional (unrestricted double or KeyframeAnimationOptions) options);
     [RuntimeEnabled=WebAnimationsAPI] sequence<Animation> getAnimations(optional GetAnimationsOptions options = {});
 };

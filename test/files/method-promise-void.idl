@@ -1,7 +1,7 @@
 [
     SecureContext,
     Exposed=Window
-] interface MethodPromise : EventTarget {
+] interface MethodPromiseVoid : EventTarget {
     [MeasureAs=AsyncClipboardAPIWrite,
      CallWith=ScriptState,
      RuntimeEnabled=AsyncClipboard
