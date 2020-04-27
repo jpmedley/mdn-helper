@@ -35,7 +35,7 @@ class Pinger {
   async pingRecords(verboseOutput = false) {
     for (let r of this._records) {
       if (!r.mdn_url) { continue; }
-      if (r.mdn_url === "No URL found.") {continue; }
+      if (r.mdn_url === "No URL found.") { continue; }
       if (verboseOutput) { console.log(r.key); }
       let retryCount = RETRY_COUNT;
       while (retryCount > 0) {
