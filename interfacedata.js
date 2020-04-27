@@ -277,7 +277,7 @@ class InterfaceData extends IDLData {
     const lines = this._sourceData.split('\n');
     let sources = [];
     for (let l of lines) {
-      if (l.includes('}')) { recording = false; }
+      if (l.includes('};')) { recording = false; }
       if (recording) {
         if (l.trim() == "") { continue; }
         if (l.startsWith("//")) { continue; }
