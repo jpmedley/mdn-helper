@@ -113,7 +113,7 @@ class BCD {
     if (bcdData) {
       burnRecord.bcd = true;
       if (bcdData.__compat) {
-        burnRecord.mdn_url = bcdData.__compat.mdn_url;
+        burnRecord.mdn_url = bcdData.__compat.mdn_url || "No URL found.";
       }
     } else {
       burnRecord.bcd = false;
