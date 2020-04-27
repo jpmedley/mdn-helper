@@ -921,16 +921,42 @@ class InterfaceData extends IDLData {
     for (let m of members) {
       if (!includeFlags && m._flagged) { continue; }
       if (!includeOriginTrials && m._originTrial) { continue; }
-      let record = bcd.getRecordByKey(`${this.name}.${m.name}`, 'api');
-      record.flag = m.flagged;
-      record.origin_trial = m.originTrial;
-      record.type = m.type;
+      // let record = bcd.getRecordByKey(`${this.name}.${m.name}`, 'api');
+      // record.flag = m.flagged;
+      // record.origin_trial = m.originTrial;
+      // record.type = m.type;
+      let record = this._buildRecord(m);
       records.push(record);
     }
     return records;
   }
 
-  
+  _buildRecord(member) {
+    let record = bcd.getRecordByKey(`${this.name}.${member.name}`, 'api');
+    record.flag = member.flagged;
+    record.origin_trial = member.originTrial;
+    record.type = member.type;
+    return record;
+  }
+
+  getMembersBurnRecords(key, includeFlags = false, includeOriginTrials = false) {
+    let steps = key.split(".");
+    if (steps.length > 1) {
+      let records = super.getBurnRecords();
+      steps.shift();
+      let members = this.getMembers(includeFlags, includeOriginTrials);
+      for (let m of members) {
+        if (!steps.includes(m.name)) { continue; }
+        if (!includeFlags && m._flagged) { continue; }
+        if (!includeOriginTrials && m._originTrial) { continue; }
+        let record = this._buildRecord(m);
+        records.push(record);
+      }
+      return records;
+    } else {
+      return this.getBurnRecords(includeFlags, includeOriginTrials);
+    }
+  }  
 
   getMembers(inlcudeFlags = false, includeOriginTrials = false) {
     if (this._members.length > 0) { return this._members; }

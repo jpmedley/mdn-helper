@@ -28,7 +28,7 @@ class InterfaceSet {
   }
 
   findExact(searchValOrArray, includeFlags=false, includeOriginTrials=false) {
-    const matches = [];
+    const matches = new Map();
 
     const isArray = Array.isArray(searchValOrArray);
     for (let i of this._interfaces) {
@@ -37,12 +37,21 @@ class InterfaceSet {
         if ((includeOriginTrials == false) && (i.originTrial == true)) { continue; }
 
         if (isArray) {
-          if (searchValOrArray.includes(i.name)) {
-            matches.push(i);
+          let found = searchValOrArray.some(elem => {
+            let key = elem.split(".")[0];
+            return (key === i.name)
+          });
+          if (found) {
+            matches.set(i.name, i);
           }
+          // if (searchValOrArray.includes(i.name)) {
+          //   // matches.push(i);
+          //   matches.set(i.name, i);
+          // }
         } else {
           if (searchValOrArray === "*") {
-            matches.push(i);
+            // matches.push(i);
+            matches.set(i.name, i);
           }
         }
       } catch (error) {

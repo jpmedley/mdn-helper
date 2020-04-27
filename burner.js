@@ -415,6 +415,15 @@ class ChromeBurner extends Burner {
     this._type = 'chrome';
   }
 
+  async _ping(burnRecords) {
+    let pinger = new Pinger(burnRecords);
+    burnRecords = await pinger.pingRecords()
+    .catch(e => {
+      throw e;
+    });
+    return burnRecords
+  }
+
   async burn() {
     await this._resolveArguments(this._args);
     console.log('Looking for browser compatibility data and MDN pages.');
@@ -425,25 +434,23 @@ class ChromeBurner extends Burner {
     const burnTypes = ["interface"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     const interfaceSet = dm.interfaceSet;
-    let passValue;
+    let interfaces;
     if (this._whitelist) {
-      passValue = this._whitelist;
+      interfaces = interfaceSet.findExact(this._whitelist, this._includeFlags, this._includeOriginTrials);
+      for (let w of this._whitelist) {
+        let key = w.split(".")[0];
+        let interface_ = interfaces.get(key);
+        if (!interface_) { continue; }
+        if (BURNABLE_TYPES.includes(interface_.name)) { continue; }
+        let burnRecords = interface_.getMembersBurnRecords(w, this._includeFlags, this._includeOriginTrials);
+        burnRecords = await this._ping(burnRecords);
+        this._record(burnRecords);
+      }
+
+
     } else {
-      passValue = "*";
+      interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
     }
-    const interfaces = interfaceSet.findExact(passValue, this._includeFlags, this._includeOriginTrials);
-
-    for (let interface_ of interfaces) {
-      if (!this._isBurnable(interface_)) { continue; }
-      let burnRecords = interface_.getBurnRecords(this._includeFlags, this._includeOriginTrials);
-      let pinger = new Pinger(burnRecords);
-      burnRecords = await pinger.pingRecords()
-      .catch(e => {
-        throw e;
-      });
-      this._record(burnRecords);
-    }
-
     this._closeOutputFile();
   }
 
