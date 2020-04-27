@@ -441,7 +441,7 @@ class ChromeBurner extends Burner {
         let key = w.split(".")[0];
         let interface_ = interfaces.get(key);
         if (!interface_) { continue; }
-        if (BURNABLE_TYPES.includes(interface_.name)) { continue; }
+        if (!BURNABLE_TYPES.includes(interface_.type)) { continue; }
         let burnRecords = interface_.getMembersBurnRecords(w, this._includeFlags, this._includeOriginTrials);
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
