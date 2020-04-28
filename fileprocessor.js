@@ -30,12 +30,15 @@ const METAFILE = Object.freeze({
   type: ''
 });
 
-const CALLBACK_RE = /^callback([^=]*)([^(]*)\(([^)]*)\)/gm;
-const DICTIONARY_RE = /dictionary([^{]*){([^}]*)}/gm;
-const ENUM_RE = /enum[\w\s]+{([^}]*)}/gm;
-const INTERFACE_RE = /^(\[(([^\]]*))\])?\s?interface([^{]*){([^}]*)};/gm;
-const INTERFACE_PARTIAL_RE = /^(\[(([^\]]*))\])?(\s?partial)\s?interface([^{]*){([^}]*)};/gm;
-const INTERFACE_CALLBACK_RE = /^(\[(([^\]]*))\])?(\s?callback)\s?interface([^{]*){([^}]*)};/gm;
+const STARTS = ["[", "callback", "dictionary", "enum", "interface", "partial"];
+const INTERFACE_OBJECTS = Object.freeze({
+  "[": InterfaceData,
+  "callback": CallbackData,
+  "dictionary": DictionaryData,
+  "enum": EnumData,
+  "interface": InterfaceData,
+  "partial": InterfaceData
+});
 
 class RegExError extends Error {
   constructor(message='', fileName='', lineNumber='') {
@@ -49,51 +52,42 @@ class FileProcesser {
     this._sourceContents = utils.getIDLFile(this._sourcePath, { clean: true });
   }
 
-  process(resultCallback, returnSource) {
-    let match;
-    let matched = false;
+  process(resultCallback) {
     let interfaceMeta;
+    let recording = false;
+    let lines = this._sourceContents.split('\n');
+    let batch = [];
+    let type;
     const options = { "sourcePath": this._sourcePath };
-    match = this._sourceContents.match(INTERFACE_RE);
-    if (match) {
-      matched = true;
-      interfaceMeta = new InterfaceData(match[0], options);
-      resultCallback(interfaceMeta);
-    }
-    match = this._sourceContents.match(INTERFACE_CALLBACK_RE);
-    if (match) {
-      matched = true;
-      interfaceMeta = new InterfaceData(match[0], options);
-      resultCallback(interfaceMeta);
-    }
-    match = this._sourceContents.match(INTERFACE_PARTIAL_RE);
-    if (match) {
-      matched = true;
-      interfaceMeta = new InterfaceData(match[0], options);
-      resultCallback(interfaceMeta);
-    }
-    match = this._sourceContents.match(CALLBACK_RE);
-    if (match) {
-      matched = true;
-      interfaceMeta = new CallbackData(match[0], options);
-      resultCallback(interfaceMeta);
-    }
-    match = this._sourceContents.match(DICTIONARY_RE);
-    if (match) {
-      matched = true;
-      interfaceMeta = new DictionaryData(match[0], options);
-      resultCallback(interfaceMeta);
-    }
-    match = this._sourceContents.match(ENUM_RE);
-    if (match) {
-      matched = true;
-      interfaceMeta = new EnumData(match[0], options);
-      resultCallback(interfaceMeta);
-    }
-    if (!matched) {
-      const msg = `No matches found in ${this._sourcePath}.`;
-      const scriptFile = path.basename(__filename);
-      throw new RegExError(msg, scriptFile);
+    for (let l of lines) {
+      if (!recording) {
+        type = STARTS.find(f => {
+          return l.startsWith(f);
+        });
+        if (type) { 
+          if (type === "callback") {
+            if (!l.includes("interface")) {
+              interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
+              resultCallback(interfaceMeta);
+              continue;
+            } else {
+              type = "interface";
+            }
+
+          }
+          recording = true;
+          batch.push(l);
+        }
+      } else {
+        batch.push(l);
+        if (l.startsWith("};")) {
+          recording = false;
+          let objectSource = batch.join('\n');
+          interfaceMeta = new INTERFACE_OBJECTS[type](objectSource, options);
+          resultCallback(interfaceMeta);
+          batch = [];
+        }
+      }
     }
   }
 
