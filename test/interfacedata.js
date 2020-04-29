@@ -47,6 +47,7 @@ const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
 const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
 const METHOD_ARGUMENTS_COUNT = './test/files/method-argument-count.idl';
+const METHOD_MULTI_RETURNS = './test/files/method-multi-returns.idl';
 const METHOD_NO_ARGUMENTS = './test/files/method-noarguments.idl';
 const METHOD_PROMISES = './test/files/method-promises.idl';
 const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
@@ -67,7 +68,7 @@ const SECURE_CONTEXT = './test/files/secure-context.idl';
 const SETTERS_BOTH = './test/files/setters-both.idl';
 const SETTERS_NAMED_ONLY = './test/files/setters-named-only.idl';
 const SETTERS_UNNAMED_ONLY = './test/files/setters-unnamed-only.idl';
-
+const STRINGIFIER = './test/files/stringifier.idl';
 const NO_CONSTRUCTOR = './test/files/no-constructor.idl';
 const NO_DELETERS = './test/files/no-deleters.idl';
 const NO_EVENTHANDLERS = './test/files/no-event-handlers.idl';
@@ -382,7 +383,7 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source, METHOD_SYNCHRONOUS);
       assert.equal(id.methods.length, 2);
     });
-    it('Confirms that methods with arguments are found', () => {
+    it('Confirms that methods with arguments are processed', () => {
       const source = loadSource(METHOD_SYNCHRONOUS);
       const id = new InterfaceData(source, METHOD_SYNCHRONOUS);
       let methodsWithArguments = 0;
@@ -391,7 +392,7 @@ describe('InterfaceData', () => {
       });
       assert.equal(methodsWithArguments, 1);
     });
-    it('Confirms that methods without arguments are found', () => {
+    it('Confirms that methods without arguments are processed', () => {
       const source = loadSource(METHOD_SYNCHRONOUS);
       const id = new InterfaceData(source, METHOD_SYNCHRONOUS);
       let methodsWithoutArguments = 0;
@@ -399,6 +400,11 @@ describe('InterfaceData', () => {
         if (method.arguments.length == 0) { methodsWithoutArguments++; }
       });
       assert.equal(methodsWithoutArguments, 1);
+    });
+    it('Confirms that methods with multiple return types are processed', () => {
+      const source = loadSource(METHOD_MULTI_RETURNS);
+      const id = new InterfaceData(source, METHOD_MULTI_RETURNS);
+      assert.equal(id.methods[0].arguments.length, 1);
     });
     it('Confirms that method.args returns the correct number of args, when present', () => {
       const source = loadSource(METHOD_ARGUMENTS_COUNT);
@@ -419,6 +425,11 @@ describe('InterfaceData', () => {
       const source = loadSource(METHOD_PROMISE_VOID);
       const id = new InterfaceData(source, METHOD_PROMISE_VOID);
       assert.equal(id.methods[0].resolution, "void");
+    });
+    it('Confirms that stringifier keywords are processed', () => {
+      const source = loadSource(STRINGIFIER);
+      const id = new InterfaceData(source, STRINGIFIER);
+      assert.equal(id.methods[0].name, "toString");
     });
   });
 
