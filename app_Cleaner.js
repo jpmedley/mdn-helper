@@ -14,8 +14,6 @@
 
 'use-strict';
 
-require('./log.js').initiateLogger('app_Cleaner');
-
 const { Cleaner } = require('./cleaner.js');
 const { printWelcome } = require('./utils.js');
 

@@ -14,7 +14,7 @@
 
 'use-strict';
 
-require('./log.js').initiateLogger('app_Burner');
+global.__appName = 'app_Burner';
 
 const { BurnerFactory } = require('./burner.js');
 const { printWelcome, update } = require('./utils.js');

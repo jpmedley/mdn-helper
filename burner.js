@@ -132,7 +132,7 @@ class Burner {
     this._outputLines = 0;
     this._type;
     this._category;
-    this._outputPath = utils.makeOutputFolder(`burn_${utils.today()}`);
+    this._outputPath = utils.makeOutputFolder(`${global.__appName}_${utils.today()}`);
   }
 
   _closeOutputFile() {
