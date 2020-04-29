@@ -18,11 +18,10 @@ const { bcd } = require('./bcd.js');
 const cb = require('prompt-checkbox');
 const Enquirer = require('enquirer');
 const { DirectoryManager } = require('./directorymanager.js');
-const { FileProcessor } = require('./fileprocessor.js');
 const fs = require('fs');
+const { initiateLogger } = require('./log.js');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
-const winston = require('winston');
 const {
   EMPTY_BURN_DATA,
   InterfaceData
@@ -181,19 +180,7 @@ class Burner {
   }
 
   _startBurnLogFile() {
-    let fileName = this._outputPath + this._type;
-    if (this._category) {
-      fileName += `-${this._category}`;
-    }
-    if (this._whitelist) {
-      fileName += `-${this._whitelistName}`;
-    }
-    fileName += `-${utils.today()}.log`
-
-    const fileTransport = new winston.transports.File({
-      filename: fileName
-    });
-    global.__logger.add(fileTransport);
+    initiateLogger(global.__appName);
   }
 }
 
@@ -464,9 +451,9 @@ class ChromeBurner extends Burner {
     return true;
   }
 
-  _getIDLFile(fileName) {
+  _getIDLFile(fileObject) {
     try {
-      let idlFile = new InterfaceData(fileName, {
+      let idlFile = new InterfaceData(fileObject, {
         experimental: this._includeFlags,
         originTrials: this._includeOriginTrials
       });
@@ -475,14 +462,24 @@ class ChromeBurner extends Burner {
       switch (e.constructor.name) {
         case 'IDLError':
         case 'WebIDLParseError':
-          let msg = (fileName.path() + "\n\t" + e.message + "\n\n");
-          global.__logger.info(msg);
+          this._logError(fileObject, e);
           return;
-          break;
         default:
           throw e;
-      }
+      }s
     }
+  }
+
+  _logError(fileObject, error) {
+    let label = this._outputPath + this._type;
+    if (this._category) {
+      label += `-${this._category}`;
+    }
+    if (this._whitelist) {
+      label += `-${this._whitelistName}`;
+    }
+    let msg = `${fileObject.path()}: ${label}\n\t${error.message}`;
+    global.__logger.info(msg);
   }
 
   _openResultsFile() {
