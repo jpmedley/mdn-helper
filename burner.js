@@ -499,7 +499,7 @@ class ChromeBurner extends Burner {
       if (!r.bcd || !r.mdn_exists) {
         if (r.mdn_exists === null) { 
           r.mdn_exists = "Unknown";
-          r.mdn_url = "No URL found";
+          r.mdn_url = "No URL found in compatibility data";
         }
         let line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url},${r.redirect}`;
         if (this._includeFlags) { line += `,${r.flag}`; }
