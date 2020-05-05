@@ -1,0 +1,21 @@
+{
+  "whitelist": [
+    "Bluetooth.getDevices",
+    "FileSystemDirectoryHandle",
+    "FileSystemHandle",
+    "FileSystemFileHandle",
+    "FileSystemWritableFileStream",
+    "frame.worldInformation",
+    "NativeFileSystemDirectoryIterator",
+    "NativeIOFile",
+    "NativeIOFileSync",
+    "NativeIOManager",
+    "PortalActivateEvent",
+    "WindowEventHandlers",
+    "WorldInformation",
+    "XRPlane",
+    "XRPlaneDetectionState",
+    "XRPlaneSet",
+    "xrSession.updateWorldTrackingState",
+  ]
+}
