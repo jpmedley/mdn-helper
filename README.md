@@ -29,7 +29,7 @@ From within the mdn-helper direcory:
 
 Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, builds a JSON file for the [Browser compatibility Database](https://github.com/mdn/browser-compat-data), the builds boilerplate pages formatted for publishing on MDN. Use `-i` or `--interactive` to interactively fill in missing information through a series of questions. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
 
-**Syntax:** `build _searchString_ -- [(-i | --interactive)] [(-j | --jsonOnly)]`
+**Syntax:** `build idl _searchString_ -- [(-i | --interactive)] [(-j | --jsonOnly)]`
 
 For detailed instructions, see [Building MDN Pages](/help/BUILDING-PAGES.md).
 
@@ -72,7 +72,7 @@ Creates a pages for a CSS property. The results are written to the `*path/to*/md
 
 Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then displays the contents of that file.
 
-**Syntax:** `find _searchString_ -- [(-p | --ping)]`
+**Syntax:** `find idl _searchString_ -- [(-p | --ping)]`
 
 **Flag:**
 
