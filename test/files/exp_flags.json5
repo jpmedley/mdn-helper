@@ -90,8 +90,8 @@
 
   data: [
     {
-      name: "RTEDefault",
-      status: {"Android": "", "default": "experimental"},
+      name: "RTEComplex",
+      status:  {"Android": "stable", "default": "experimental"},
     },
     {
       name: "RTEExperimental",

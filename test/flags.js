@@ -31,6 +31,15 @@ describe('FlagStatus', () => {
     });
   })
 
+  describe('getPlatformStatus()', () => {
+    it('Confirms that a default status is returned', () => {
+      assert.equal(global.__Flags.getPlatformStatus('RTEComplex', 'default'), 'experimental');
+    });
+    it('Confirms that Android status is returned', () => {
+      assert.equal(global.__Flags.getPlatformStatus('RTEComplex', 'Android'), 'stable');
+    });
+  });
+
   describe('getStableAsBoolean()', () => {
     it('Confirms that a key returns "true" on stable flag', () => {
       assert.ok(global.__Flags.getStableAsBoolean('RTEStable'));
@@ -48,7 +57,7 @@ describe('FlagStatus', () => {
 
   describe('getHighestResolvedStatus()', () => {
     it('Confirms that a key returns "experimental" on flag object', () => {
-      assert.equal(global.__Flags.getHighestResolvedStatus('RTEDefault'), 'experimental');
+      assert.equal(global.__Flags.getHighestResolvedStatus('RTEComplex'), 'stable');
     });
     it ('Confirms that a key returns "experimental" on a simple flag', () => {
       assert.equal(global.__Flags.getHighestResolvedStatus('RTEExperimental'), 'experimental');

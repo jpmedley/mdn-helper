@@ -54,6 +54,16 @@ class _FlagStatus {
     return NO_FLAG;
   }
 
+  getPlatformStatus(key, platform) {
+    const actualStatus = this.getActualStatus(key);
+    if (actualStatus === NO_FLAG) {
+      return 'stable';
+    }
+    if (typeof actualStatus === 'object') {
+      return actualStatus[platform];
+    }
+  }
+
   getHighestResolvedStatus(key) {
     const actualStatus = this.getActualStatus(key);
     if (actualStatus === NO_FLAG) {
