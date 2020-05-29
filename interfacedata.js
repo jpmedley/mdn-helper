@@ -476,21 +476,6 @@ class InterfaceData extends IDLData {
           this._exposed.pop();
         }
       }
-
-
-      // let matches = extAttributes.match(EXPOSED_RE);
-      // if (matches) {
-      //   let match = matches[0];
-      //   if (match.includes("=")) {
-      //     match = match.split('=')[1];
-      //   }
-      //   if (match.includes("(")) {
-      //     let subMatches = match.match(INSIDE_PARENS_RE);
-      //     match = subMatches[1];
-      //   }
-      //   if (match.endsWith(",")) { match = match.substring(0, match.length-1) }
-      //   this._exposed = match.split(',');
-      // }
     }
     return this._exposed;
   }
@@ -715,33 +700,6 @@ class InterfaceData extends IDLData {
           if (arg != "") { newMethodData.arguments.push(arg); }
         });
       }
-
-      
-
-
-      // if (workingString.includes("(")) {
-      //   let pieces = workingString.split("(");
-      //   let argString = pieces[1].slice(0, -1);
-      //   let args = argString.split(",");
-      //   args.forEach((arg, i, args) => {
-      //     args[i] = arg.trim();
-      //     if (arg != "") { newMethodData.arguments.push(arg); }
-      //   });
-      //   let sigs = pieces[0].split(" ");
-      //   newMethodData.name = sigs[1].trim();
-      //   if (sigs[0].includes("Promise")) {
-      //     newMethodData.returnType = "Promise";
-      //     let resolution = sigs[0].split("Promise");
-      //     newMethodData.resolution = resolution[1].slice(0, -1).slice(1);
-      //   } else {
-      //     newMethodData.returnType = sigs[0].trim();
-      //   }
-      // }
-
-      // if (workingString.includes("stringifier")) {
-      //   newMethodData.name = "toString";
-      //   newMethodData.returnType = "String";
-      // }
       
       if (!register.includes(newMethodData.name)) {
         register.push(newMethodData.name);

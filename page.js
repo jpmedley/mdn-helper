@@ -33,7 +33,7 @@ class _Page {
     let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) +  help[this.type] + '\n';
     this.questions = new Questions(introMessage);
     this.questions.add(type, name);
-    this.contents = utils.getTemplate(this.type);
+    this.contents = utils.getTemplate(this.type.toLowerCase());
     const reg = RegExp(TOKEN_RE, 'g');
     let matches;
     while ((matches = reg.exec(this.contents)) != null) {
