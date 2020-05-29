@@ -183,7 +183,7 @@ class IDLFinder {
       let id;
       const fp = new FileProcessor(metaFile.path);
       fp.process((result) => {
-        id = new result.type(result.tree, result.path)
+        id = result;
       }, true);
       console.log('Checking for existing MDN pages. This may take a few minutes.\n');
       const pingRecords = await id.ping(false);
