@@ -14,8 +14,7 @@
 
 'use strict';
 
-const cb = require('prompt-checkbox');
-const Enquirer = require('enquirer');
+const { Select } = require('enquirer');
 
 const { DirectoryManager } = require('./directorymanager.js');
 const { FileProcessor } = require('./fileprocessor.js');
@@ -149,15 +148,14 @@ class IDLFinder {
     }
     names = names.sort();
     names.push(CANCEL);
-    const enq = new Enquirer();
-    enq.register('radio', cb);
-    enq.question('idlFile', 'Which interface do you want to work with?', {
-      type: 'radio',
+    const prompt = new Select({
+      name: 'idlFile',
+      message: 'Which interface do you want to work with?',
       choices: names
     });
-    const answer = await enq.prompt('idlFile');
-    if (answer.idlFile[0] === CANCEL) { process.exit(); }
-    const pieces = answer.idlFile[0].split(" ");
+    let answer = await prompt.run();
+    if (answer === CANCEL) { process.exit(); }
+    const pieces = answer.split(" ");
     const key = pieces[0].trim();
     const answerData = matches.find(elem => {
       return elem.name === key;
@@ -177,7 +175,14 @@ class IDLFinder {
     console.log(`File located at ${file.path}.`);
   }
 
+  _printInstructions() {
+    let msg = `Select one interface only. Use the up and down arrow to find the interface you\n`
+    msg = `${msg}want. Press the space bar to select it and press return.\n`
+    console.log(msg);
+  }
+
   async findAndShow() {
+    this._printInstructions();
     let metaFile = await this._find();
     if (this._ping) {
       let id;
@@ -201,6 +206,7 @@ class IDLFinder {
   }
 
   async findAndBuild() {
+    this._printInstructions()
     let metaFile = await this._find();
     let id;
     const fp = new FileProcessor(metaFile.path);

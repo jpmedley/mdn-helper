@@ -15,12 +15,12 @@
 'use strict';
 
 function _run(currentPage, question) {
-  const answer = question.answer.toLowerCase();
-  if (answer.startsWith('n')) {
+  // const answer = question.answer.toLowerCase();
+  if (!question.answer) {
     question.answer = '';
     return;
   }
-  question.answer = question.default;
+  question.answer = question.action.args[0];
 }
 
 module.exports.run = _run;

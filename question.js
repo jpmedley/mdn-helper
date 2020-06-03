@@ -15,8 +15,14 @@
 'use strict';
 
 const actions = require('./actions');
-const Enquirer = require('enquirer');
+// const Enquirer = require('enquirer');
+const { Confirm, Input } = require('enquirer');
 const utils = require('./utils.js');
+
+const INPUT_TYPES = {
+  "Confirm": Confirm,
+  "Input": Input
+}
 
 
 class _Question {
@@ -30,29 +36,30 @@ class _Question {
   }
 
   _isAnswerValid() {
-    if (!this.pattern) { return true; }
-    const regex = RegExp(this.pattern, 'g');
-    const result = regex.exec(this.answer);
+    // console.log(this.question.pattern);
+    if (!this.question.pattern) { return true; }
+    const regex = RegExp(this.question.pattern, 'g');
+    let answer = new String(this.result());
+    answer = answer.valueOf();
+    const result = regex.exec(answer);
     if (!result) {
-      return false;
+      return this.question.help;
     }
+    // console.log(`Result: ${result[0]}`)
     return true;
   }
 
   async _prompt() {
-    let enq = new Enquirer();
-    let options = { message: this.question };
-    if (this.default) {
-      options.default = this.default;
-    }
-    enq.question(this.name, options);
-    let tempAnswer = await enq.prompt(this.name);
-    // Convert Enquirer answer to mdn-helper answer.
-    this.answer = tempAnswer[this.name];
-    if (!this._isAnswerValid()) {
-      console.log(this.help);
-      await this._prompt();
-    }
+    const Prompt = INPUT_TYPES[this.type];
+    const prompt = new Prompt({
+      name: 'question',
+      message: this.question,
+      initial: this.default,
+      validate: this._isAnswerValid,
+      question: this
+    });
+    this.answer = await prompt.run();
+    // console.log(`Answer: ${this.answer}`);
   }
 
   async ask(forPage) {
@@ -61,6 +68,7 @@ class _Question {
     } catch(e) {
       throw e;
     } finally {
+      // Start Here: Which property tells me whether the action can run.
       if (this.action) {
         await actions[this.action.name].run(forPage, this);
       }

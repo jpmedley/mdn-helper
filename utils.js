@@ -15,7 +15,7 @@
 'use strict';
 
 const config = require('config');
-const Enquirer = require('enquirer');
+const { Input } = require('enquirer');
 const fs = require('fs');
 const JSON5 = require('json5');
 const path = require('path');
@@ -163,10 +163,10 @@ function _makeFolder(dirName) {
 }
 
 async function _pause() {
-  let enq = new Enquirer();
-  let options = { message: 'Press Enter to continue.' };
-  enq.question('continue', options);
-  let ans = await enq.prompt('continue');
+  const prompt = new Input({
+    message: 'Press Enter to continue.'
+  });
+  let ans = await prompt.run();
 }
 
 function _printHelp() {
