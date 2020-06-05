@@ -64,24 +64,6 @@ class IDLFinder {
     this._interfaces = dm.interfaceSet;
   }
 
-  async _confirm(message) {
-    let enq = new Enquirer();
-    const options = {
-      message: (message + ' Y or N?'),
-      validate: (value) => {
-        if (!['y','Y','n','N'].includes(value)) {
-          return "Please enter one of 'y','Y','n', or 'N'";
-        } else {
-          value = value.toLowerCase();
-          return true;
-        }
-      }
-    };
-    enq.question('confirm', options);
-    const answer = await enq.prompt('confirm');
-    return answer;
-  }
-
   _findInterfaces(interfacesNamed) {
     const matches = this._interfaces.findMatching(
       interfacesNamed,
