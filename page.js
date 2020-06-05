@@ -14,7 +14,8 @@
 
 'use strict';
 
-const Enquirer = require('enquirer');
+// const Enquirer = require('enquirer');
+// const { Confirm } = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Questions } = require('./questions.js');
@@ -100,22 +101,17 @@ class _Page {
     if (fs.existsSync(outPath)) {
       let msg = `A file already exits for ${this.name}. `;
       msg += 'Do you want to overwrite it?'
-      let enq = new Enquirer();
-      let options = { 
-        message: msg,
-        default: "n",
-        validate: (value) => {
-          if (!['y','Y','n','N'].includes(value)) {
-            return "Please enter one of 'y','Y','n', or 'N'";
-          } else {
-            value = value.toLowerCase();
-            return true;
-          }
-        }
-      };
-      enq.question('prompt', options);
-      let answer = await enq.prompt('prompt');
-      if (answer.prompt === 'n') { return; }
+      const answer = utils.confirm(msg);
+      // const prompt = new Confirm({
+      //   name: 'confirm',
+      //   message: msg,
+      //   initial: "true",
+      //   format: (v) => {
+      //     return v ? 'yes' : 'no';
+      //   }
+      // });
+      // const answer = await prompt.run();
+      if (!answer) { return; }
     }
     fs.writeFileSync(outPath, this.contents);
   }

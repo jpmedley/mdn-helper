@@ -51,11 +51,11 @@
     "child-interfaces": {
       "question": "Does this interface have any children?",
       "type": "Confirm",
-      "pattern": "^(n|y|N|Y)",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "No",
+      "default": "false",
       "required": true,
       "before": "",
       "action": {"name": "add_block", "args": ["_frag_childinterfaces.html"]}
@@ -253,7 +253,7 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "isSecureContext": {
-      "question": "Does this API require a secure context? If so, press return to make the pages\ndisplay a blurb declaring it as such. Otherwise, enter 'f', 'n', or '1' and press return.\n",
+      "question": "Does this API require a secure context? If so, press return to make the pages\ndisplay a blurb declaring it as such. Otherwise, enter 'n' and press return.\n",
       "type": "Confirm",
       "pattern": "^(true|false)",
       "message": "",
@@ -351,9 +351,9 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "readOnly": {
-      "question": "Is this item read only?  Type 'n' or hit return.",
+      "question": "Is this item read only?",
       "type": "Confirm",
-      "pattern": "^(n|N|no|No|read-only)",
+      "pattern": "^(true|false)",
       "help": "Answer must be one of 'N', 'No', or 'read-only'.",
       "message": "",
       "hidden": false,
@@ -361,7 +361,7 @@
       "default": "read-only",
       "required": true,
       "before": "",
-      "action": {"name": "add_string"}
+      "action": {"name": "add_string", "args": ["read-only"]}
     },
     "return": {
       "question": "What is the return value for this item?",
@@ -400,7 +400,7 @@
       "action": null
     },
     "see-also": {
-      "question": "Do you have 'see also' links you'd like to include in the page? enter 't',\n'y', or '0' and press return.(This will add a 'see also' section to the page.\nYou will need to add the links manually.)",
+      "question": "Do you have 'see also' links you'd like to include in the page? enter 'n',\nand press return.(This will add a 'see also' section to the page.\nYou will need to add the links manually.)",
       "type": "Confirm",
       "pattern": "^(true|false)",
       "message": "",

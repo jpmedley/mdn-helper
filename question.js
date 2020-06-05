@@ -35,8 +35,7 @@ class _Question {
     this.answer = null;
   }
 
-  _isAnswerValid() {
-    // console.log(this.question.pattern);
+  _validate() {
     if (!this.question.pattern) { return true; }
     const regex = RegExp(this.question.pattern, 'g');
     let answer = new String(this.result());
@@ -45,8 +44,16 @@ class _Question {
     if (!result) {
       return this.question.help;
     }
-    // console.log(`Result: ${result[0]}`)
     return true;
+  }
+
+  _format(value) {
+    switch (this.question.type) {
+      case 'Confirm':
+        return value ? 'yes' : 'no';
+      default:
+        return value;
+    }
   }
 
   async _prompt() {
@@ -55,11 +62,11 @@ class _Question {
       name: 'question',
       message: this.question,
       initial: this.default,
-      validate: this._isAnswerValid,
+      validate: this._validate,
+      format: this._format,
       question: this
     });
     this.answer = await prompt.run();
-    // console.log(`Answer: ${this.answer}`);
   }
 
   async ask(forPage) {

@@ -103,7 +103,7 @@ const METHOD = Object.freeze({
   "resolution": null,
   "source": null,
   "tree": this.source, // Needed for Backward compatibility
-  "type": "Method"
+  "type": "method"
 });
 
 const PROPERTY = Object.freeze({
