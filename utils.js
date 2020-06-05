@@ -22,6 +22,7 @@ const path = require('path');
 const shell = require('shelljs');
 
 const BLACKLIST = config.get('Application.blacklist');
+const USE_BLACKLIST = config.get('Application.useBlacklist');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TEMPLATES = 'templates/';
 const HOMEDIR = require('os').homedir();
@@ -140,7 +141,7 @@ function _getTemplate(name) {
 }
 
 function _isBlacklisted(apiName) {
-  if (config.get('Application.useBlacklist')) {
+  if (USE_BLACKLIST) {
     return BLACKLIST.includes(apiName);
   }
   return false;
