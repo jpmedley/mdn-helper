@@ -16,7 +16,6 @@
 
 const fs = require('fs');
 const cb = require('prompt-checkbox');
-// const Enquirer = require('enquirer');
 const { MultiSelect } = require('enquirer');
 const utils = require('./utils.js');
 

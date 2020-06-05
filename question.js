@@ -15,7 +15,6 @@
 'use strict';
 
 const actions = require('./actions');
-// const Enquirer = require('enquirer');
 const { Confirm, Input } = require('enquirer');
 const utils = require('./utils.js');
 

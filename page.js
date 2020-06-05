@@ -14,8 +14,6 @@
 
 'use strict';
 
-// const Enquirer = require('enquirer');
-// const { Confirm } = require('enquirer');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Questions } = require('./questions.js');
@@ -102,15 +100,6 @@ class _Page {
       let msg = `A file already exits for ${this.name}. `;
       msg += 'Do you want to overwrite it?'
       const answer = utils.confirm(msg);
-      // const prompt = new Confirm({
-      //   name: 'confirm',
-      //   message: msg,
-      //   initial: "true",
-      //   format: (v) => {
-      //     return v ? 'yes' : 'no';
-      //   }
-      // });
-      // const answer = await prompt.run();
       if (!answer) { return; }
     }
     fs.writeFileSync(outPath, this.contents);

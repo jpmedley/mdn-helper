@@ -16,11 +16,10 @@
 
 const { bcd } = require('./bcd.js');
 const cb = require('prompt-checkbox');
-// const Enquirer = require('enquirer');
-const { MultiSelect } = require('enquirer');
 const { DirectoryManager } = require('./directorymanager.js');
 const fs = require('fs');
 const { initiateLogger } = require('./log.js');
+const { MultiSelect } = require('enquirer');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 const {
