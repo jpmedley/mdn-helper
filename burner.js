@@ -435,7 +435,7 @@ class ChromeBurner extends Burner {
     } else {
       interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
       for (const [key, val] of interfaces) {
-        if (!BURNABLE_TYPES.includes(val.type)) { continue; }
+        if (!this._isBurnable(val)) { continue; }
         let burnRecords = val.getBurnRecords(this._includeFlags, this._includeOriginTrials);
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
