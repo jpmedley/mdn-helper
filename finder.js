@@ -158,8 +158,7 @@ class IDLFinder {
   }
 
   _printInstructions() {
-    let msg = `Select one interface only. Use the up and down arrow to find the interface you\n`
-    msg = `${msg}want. Press the space bar to select it and press return.\n`
+    const msg = `Use the up and down arrow to find the interface you want. Then press return.\n`
     console.log(msg);
   }
 
