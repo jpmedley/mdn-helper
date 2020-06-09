@@ -23,6 +23,7 @@
       "HID",
       "HIDCollectionInfo",
       "HIDConnection",
+      "HIDConnectionEvent",
       "HIDDevice",
       "HIDInputReportEvent",
       "HIDReportInfo",
