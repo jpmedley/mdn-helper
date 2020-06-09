@@ -13,6 +13,7 @@
       "NEW_WRITER": ["child-interfaces", "iterableMemberLink", "iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"]
     },
     "blacklist": [
+      "AnimationEffectTiming",
       "ApplicationCache",
       "ApplicationCacheErrorEvent",
       "AudioProcessingEvent",
