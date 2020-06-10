@@ -34,7 +34,6 @@
       "FileSystemCallback",
       "FileSystemSync",
       "FileWriterCallback",
-      "Flags",
       "HID",
       "HIDCollectionInfo",
       "HIDConnection",
