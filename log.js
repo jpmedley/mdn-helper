@@ -14,12 +14,20 @@
 
 'use strict';
 
+const config = require('config');
 const winston = require('winston');
 
 const utils = require('./utils.js');
 
+global.__logger = {};
+global.__logger.initiated = false;
+global.__logger.info = () => {}
+global.__logger.error = () => {}
+
 function _initiateLogger(name = '') {
-  if (!global.__logger) {
+  if (!global.__logger.initiated) {
+    global.__logger.initiated = true;
+    if (!config.get('Application.log')) { return; }
     let fileName = utils.makeOutputFolder(`${name}_${utils.today()}`);
     fileName += `${name}_${utils.today()}.log`
 

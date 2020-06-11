@@ -1,6 +1,7 @@
 {
   "Application": {
     "help": "VERBOSE",
+    "log": false,
     "outputDirectory": "out/",
     "questionsFile": "standard-questions.json",
     "test": false,
