@@ -36,7 +36,7 @@ if [ ! -d $IDL_ROOT ]; then
   mkdir $IDL_ROOT
 fi
 
-echo '\nDownloading IDL and related data files.\n'
+echo '\nDownloading IDL and related data files from Chrome source code.\n'
 curl $URL > idl.tar.gz
 
 tar -C $IDL_ROOT/ -xf idl.tar.gz core/*.idl
