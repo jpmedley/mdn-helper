@@ -44,10 +44,6 @@ class InterfaceSet {
           if (found) {
             matches.set(i.name, i);
           }
-          // if (searchValOrArray.includes(i.name)) {
-          //   // matches.push(i);
-          //   matches.set(i.name, i);
-          // }
         } else {
           if (searchValOrArray === "*") {
             // matches.push(i);

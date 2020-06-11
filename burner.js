@@ -16,10 +16,10 @@
 
 const { bcd } = require('./bcd.js');
 const cb = require('prompt-checkbox');
-const Enquirer = require('enquirer');
 const { DirectoryManager } = require('./directorymanager.js');
 const fs = require('fs');
 const { initiateLogger } = require('./log.js');
+const { MultiSelect } = require('enquirer');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 const {
@@ -88,15 +88,14 @@ function getBurnRecords(key, whitelist) {
 }
 
 async function selectArgument(question, choices, returnAll= false) {
-  const enq = new Enquirer();
-  enq.register('checkbox', cb);
-  enq.question('chose', question, {
-    type: 'checkbox',
-    choices: choices
+  const prompt = new MultiSelect({
+    name: 'selectArgument',
+    message: question,
+    choices: choices,
   });
-  const answer = await enq.prompt('chose');
-  if (returnAll) { return answer.chose; }
-  else { return answer.chose[0]; }
+  const answers = await prompt.run();
+  if (returnAll) { return answers }
+  else { return answers[0] }
 }
 
 function _burnerFactory(args) {

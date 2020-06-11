@@ -24,6 +24,7 @@ const EMPTY_BURN_RECORD = Object.freeze({
   flag: null,
   mdn_exists: null,
   mdn_url: '',
+  name: '',
   origin_trial: null,
   redirect: null,
   type: ''

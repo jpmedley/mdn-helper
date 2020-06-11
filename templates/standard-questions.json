@@ -2,7 +2,7 @@
   "templates": {
     "abstract": {
       "question": "Write or supply an abstract for the interface",
-      "type": "string",
+      "type": "Input",
       "help": "The abstract can sometimes be copied from the spec.",
       "message": "",
       "hidden": false,
@@ -13,21 +13,20 @@
       "action": null
     },
     "accessibility": {
-      "question": "Does this interface have accessibility concerns? Yes or No?",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "question": "Does this interface have accessibility concerns?",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "Yes",
+      "default": "false",
       "required": true,
       "before": "",
       "action": {"name": "add_block", "args": ["_frag_accessibility.html"]}
     },
     "argument-definition": {
       "question": "What is the definition for this argument.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -39,7 +38,7 @@
     },
     "arguments": {
       "question": "Does this item have any parameters? Please enter all arguments with commas\n between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -50,36 +49,33 @@
       "action": {"name": "add_definitionList", "args": ["_frag_arguments.html"]}
     },
     "child-interfaces": {
-      "question": "Does this interface have any children? Yes or No?",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "question": "Does this interface have any children?",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "No",
+      "default": "false",
       "required": true,
       "before": "",
       "action": {"name": "add_block", "args": ["_frag_childinterfaces.html"]}
     },
     "constructor": {
-      "question": "Does this interface have a constructor? Yes or No?",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "question": "Does this interface have a constructor?",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "Yes",
+      "default": "true",
       "required": true,
       "before": "",
       "action": {"name": "add_block", "args": ["_frag_constructor.html"]}
     },
     "cors-response": {
-      "question": "Is the response for this header CORS safelisted? Yes or No?",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "question": "Is the response for this header CORS safelisted?",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -90,7 +86,7 @@
     },
     "description": {
       "question": "Describe this item.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -102,7 +98,7 @@
     },
     "directive": {
       "question": "What is the name of the HTTP directive?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -114,7 +110,7 @@
     },
     "directives": {
       "question": "Does this item have any directives? Please enter all arguments with commas\n between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -126,7 +122,7 @@
     },
     "directive-values": {
       "question": "What are the possible values for this directive? Please enter all arguments with commas\n between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -138,7 +134,7 @@
     },
     "elaboration": {
       "question": "Is there anything else to say about this item?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -150,7 +146,7 @@
     },
     "event-inh": {
       "question": "What does this event inherit from?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -162,7 +158,7 @@
     },
     "eventHandlers": {
       "question": "Does this interface have any event handlers? Please enter all arguments with commas\n between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -174,7 +170,7 @@
     },
     "exceptions": {
       "question": "Does this method throw any exceptions? Please enter all arguments with commas\n between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -185,10 +181,9 @@
       "action": {"name": "add_definitionList", "args": ["_frag_exceptions.html"]}
     },
     "forbidden-response": {
-      "question": "Is the response for this header forbidden? Yes or No?",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "question": "Is the response for this header forbidden?",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -199,7 +194,7 @@
     },
     "formalAPIName": {
       "question": "What is the formal name of the API as it appears on the specification?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -211,7 +206,7 @@
     },
     "header": {
       "question": "What is the name of the HTTP header?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -223,7 +218,7 @@
     },
     "header-spec-version": {
       "question": "What is the version number of the spec that defines this header or directive?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -235,7 +230,7 @@
     },
     "header-type": {
       "question": "What is the this header's type? Valid values are Request, Response, General, and entity.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -247,7 +242,7 @@
     },
     "interfaces": {
       "question": "Enter a comma-separated list of interfaces.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -259,21 +254,21 @@
     },
     "isSecureContext": {
       "question": "Does this API require a secure context? If so, press return to make the pages\ndisplay a blurb declaring it as such. Otherwise, enter 'n' and press return.\n",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y|{{securecontext_header}})",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "{{securecontext_header}}",
+      "default": "true",
       "required": true,
       "before": "",
-      "action": {"name": "add_string"}
+      "action": {"name": "add_string", "args": ["{{securecontext_header}}"]}
     },
     "iterableMemberLink": {
-      "question": "What is this interface's anchor for iterable/maplike in the spec?",
-      "type": "string",
-      "pattern": "",
+      "question": "Please provide a link to the iterable/maplike item in the specification?",
+      "type": "Input",
+      "pattern": "#\\S+",
+      "help": "The link must include an anchor ('#').",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -284,7 +279,7 @@
     },
     "mdnAPIRef": {
       "question": "What is the API name as it should be used in the APIRef() macro? This is the\nsame value used as the in GroupData.json.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -296,7 +291,7 @@
     },
     "mdnSpecName": {
       "question": "What's the API name that will be passed to the MDN SpecName() and spec2() macros?\n",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -308,8 +303,9 @@
     },
     "memberLink": {
       "question": "Please provice the link to the item in the specification.",
+      "type": "Input",
       "pattern": "#\\S+",
-      "help": "The link must include an anchor.",
+      "help": "The link must include an anchor ('#').",
       "message": "",
       "hidden": false,
       "replace": "*",
@@ -320,7 +316,7 @@
     },
     "methods": {
       "question": "Does this interface have any methods (exclusing those that would be created for\nan iterable object)? Please enter all arguments with commas between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -332,7 +328,7 @@
     },
     "parameters": {
       "question": "Does this item have any parameters? Please enter all arguments with commas\n between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -344,7 +340,7 @@
     },
     "properties": {
       "question": "Does this item have any properties? Please enter all arguments with commas\n between each.",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -355,9 +351,9 @@
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
     },
     "readOnly": {
-      "question": "Is this item read only?  Type 'n' or hit return.",
-      "type": "boolean",
-      "pattern": "^(n|N|no|No|read-only)",
+      "question": "Is this item read only?",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "help": "Answer must be one of 'N', 'No', or 'read-only'.",
       "message": "",
       "hidden": false,
@@ -365,11 +361,11 @@
       "default": "read-only",
       "required": true,
       "before": "",
-      "action": {"name": "add_string"}
+      "action": {"name": "add_string", "args": ["read-only"]}
     },
     "return": {
       "question": "What is the return value for this item?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -381,7 +377,7 @@
     },
     "rfc-number": {
       "question": "What is the RFC number where the header is defined?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -393,7 +389,7 @@
     },
     "rfc-title": {
       "question": "What is the title of the RFC where the header is defined?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -404,21 +400,20 @@
       "action": null
     },
     "see-also": {
-      "question": "Do you have 'see also' links you'd like to include in the page? (This will add\na 'see also' section to the page. You will need to add the links manually.)\nYes or No?",
-      "type": "boolean",
-      "pattern": "^(n|y|N|Y)",
-      "help": "Answer must be one of 'N', 'No', 'Y', or 'Yes'.",
+      "question": "Do you have 'see also' links you'd like to include in the page? enter 'n',\nand press return.(This will add a 'see also' section to the page.\nYou will need to add the links manually.)",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "Yes",
+      "default": "false",
       "required": true,
       "before": "",
       "action": {"name": "add_block", "args": ["_frag_seealso.html"]}
     },
     "selector": {
       "question": "What is the name of the CSS selector?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -430,7 +425,7 @@
     },
     "syntax": {
       "question": "What is the syntax for this item?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,
@@ -442,7 +437,7 @@
     },
     "syntax-explanation": {
       "question": "Does the syntax for this header require explanation?",
-      "type": "string",
+      "type": "Input",
       "pattern": "",
       "message": "",
       "hidden": false,

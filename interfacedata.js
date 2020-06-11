@@ -103,7 +103,7 @@ const METHOD = Object.freeze({
   "resolution": null,
   "source": null,
   "tree": this.source, // Needed for Backward compatibility
-  "type": "Method"
+  "type": "method"
 });
 
 const PROPERTY = Object.freeze({
@@ -116,7 +116,7 @@ const PROPERTY = Object.freeze({
   "returnType": null,
   "source": null,
   "tree": this.source, // Needed for Backward compatibility
-  "type": "Property"
+  "type": "property"
 });
 
 const SETTER = Object.freeze({
@@ -172,6 +172,7 @@ class IDLData {
   getBurnRecords() {
     let record = bcd.getRecordByKey(this.key, 'api');
     record.flag = this.flagged;
+    record.name = this.key;
     record.origin_trial = this.originTrial;
     record.type = this.type;
     return new Array(record);
@@ -921,6 +922,7 @@ class InterfaceData extends IDLData {
   _buildRecord(member) {
     let record = bcd.getRecordByKey(`${this.name}.${member.name}`, 'api');
     record.flag = member.flagged;
+    record.name = member.name;
     record.origin_trial = member.originTrial;
     record.type = member.type;
     return record;

@@ -289,7 +289,7 @@ class _IDLBuilder extends Builder {
       if (page.mdn_exists) {
         skippingPages.push([page.type, page.key]);
       } else {
-        const newPage = new Page(page.key, page.type, sharedQuestions);
+        const newPage = new Page(page.name, page.type, sharedQuestions);
         this._pages.push(newPage);
       }
     });

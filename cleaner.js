@@ -16,7 +16,7 @@
 
 const fs = require('fs');
 const cb = require('prompt-checkbox');
-const Enquirer = require('enquirer');
+const { MultiSelect } = require('enquirer');
 const utils = require('./utils.js');
 
 const CANCEL = '(cancel)';
@@ -39,23 +39,29 @@ class _Cleaner {
     let dirs = [];
     for (let d of this._directories) { dirs.push(d.name); }
     dirs.push(CANCEL);
-    const enq = new Enquirer();
-    enq.register('checkbox', cb);
-    enq.question('outputDirs', 'Which output directories do you want to delete?', {
-      type: 'checkbox',
-      // checkbox: radio.star,
-      choices: dirs
+    const prompt = new MultiSelect({
+      name: 'cleanList',
+      message: 'Which output directories do you want to delete?',
+      choices: dirs,
+      validate: (v) => {
+        if (v.length === 0) {
+          let msg = "Use arrows to move and the space bar to select. ";
+          msg += "You must choose one or more\n  items or '(cancel)' to abandon.";
+          return msg;
+        }
+        if (v.length > 1 && v.includes(CANCEL)) {
+          return "Selected items cannot include (cancel). Use the space bar to unselect.";
+        }
+        return true;
+      }
     });
-    let answers = await enq.prompt('outputDirs');
-    return answers.outputDirs;
+    const answers = await prompt.run();
+    return answers;
   }
 
   async _clean(dirsToDelete) {
-    const enq = new Enquirer();
-    const options = { message: "Are you sure? Y or N?" };
-    enq.question('confirm', options);
-    const answer = await enq.prompt('confirm');
-    if (answer.confirm.toLowerCase() == 'y') {
+    const answer = await utils.confirm("Are you sure?");
+    if (answer) {
       console.log("\nRemoving selected directories.");
       for (let d in dirsToDelete) {
         console.log(`\tDeleting ${dirsToDelete[d]}.`);
@@ -65,6 +71,7 @@ class _Cleaner {
     } else {
       console.log('Will not delete selected directories.\n');
     }
+
   }
 
   async clean() {
