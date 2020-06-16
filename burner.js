@@ -15,7 +15,7 @@
 'use strict';
 
 const { bcd } = require('./bcd.js');
-const cb = require('prompt-checkbox');
+// const cb = require('prompt-checkbox');
 const { DirectoryManager } = require('./directorymanager.js');
 const fs = require('fs');
 const { initiateLogger } = require('./log.js');
@@ -398,6 +398,7 @@ class ChromeBurner extends Burner {
     this._includeFlags = false;
     this._includeOriginTrials = false;
     this._includeTestFlags = false;
+    this._interfacesOnly = options._interfacesOnly ? options._interfacesOnly : false;
     this._type = 'chrome';
   }
 
@@ -429,6 +430,14 @@ class ChromeBurner extends Burner {
         if (!interface_) { continue; }
         if (!BURNABLE_TYPES.includes(interface_.type)) { continue; }
         let burnRecords = interface_.getMembersBurnRecords(w, this._includeFlags, this._includeOriginTrials);
+        burnRecords = await this._ping(burnRecords);
+        this._record(burnRecords);
+      }
+    } else if (this._interfacesOnly) {
+      interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
+      for (const [key, val] of interfaces) {
+        if (!this._isBurnable(val)) { continue; }
+        let burnRecords = val.getInterfaceBurnRecords();
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
       }
@@ -512,11 +521,14 @@ class ChromeBurner extends Burner {
 
   async _resolveArguments(args) {
     await super._resolveArguments(args);
-    this._includeFlags = args.some(arg=>{
-      return (arg.includes('-f') || (arg.includes('--flags')));
+    this._includeFlags = args.some(arg => {
+      return (arg.includes('-f') || arg.includes('--flags'));
     });
-    this._includeOriginTrials = args.some(arg=>{
-      return (arg.includes('-o') || (arg.includes('--origin-trials')));
+    this._includeOriginTrials = args.some(arg => {
+      return (arg.includes('-o') || arg.includes('--origin-trials'));
+    });
+    this._interfacesOnly = args.some(arg => {
+      return (arg.includes('-i') || arg.includes('--interfaces-only'));
     });
   }
 }

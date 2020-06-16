@@ -8,7 +8,7 @@
     or --landingPage to create only a landing page.
 
   burn bcd -- [(-c | --category) _category_] [(-b | --browsers) browsers] [(-w | --whitelist) whitelist]
-  burn chrome  -- [(-f | --flags)] [(-o | --origin-trials)] [(-w | --whitelist) whitelist]
+  burn chrome  -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-w | --whitelist) whitelist]
   burn urls -- [(-c | --category) category]
     Builds several types of burn-down lists.
 
@@ -17,8 +17,11 @@
     'html', 'javascript', or 'svg'. If you don't enter one of these values, you
     will be prompted for one of them.
 
-    The second generates a csv listing Chrome APIs that are lacking an MDN
-    page. Use -f or --flags to include APIs behind a flag.
+    The second generates a csv listing Chrome APIs that are lacking an MDN page.
+    Use -f or --flags to include APIs behind a flag. Use -i or --interfaces-only
+    run a report containing only interfaces. Use -o or --origin-trials to
+    include APIs currently in a Chrome origin trial. Use -w or --whitelist to
+    include of list of interfaces to burn.
 
     The last generates a csv listing BCD entries that are lacking a
     corresponding MDN page.

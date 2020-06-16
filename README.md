@@ -37,9 +37,9 @@ For detailed instructions, see [Building MDN Pages](/help/BUILDING-PAGES.md).
 
 Builds several types of burn-down lists. This has several syntaxes.
 
-**Syntax:** `burn chrome -- [(-f | --flags)] [(-o | --origin-trials)] [(-w | --whitelist)]`
+**Syntax:** `burn chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-w | --whitelist)]`
 
-Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--whitelist` to include of list of interfaces to burn.
+Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--whitelist` to include of list of interfaces to burn.
 
 **Syntax:** `burn urls -- [(-c | --category) _category_]`
 

@@ -902,6 +902,10 @@ class InterfaceData extends IDLData {
     });
   }
 
+  getInterfaceBurnRecords() {
+    return super.getBurnRecords();
+  }
+
   getBurnRecords(includeFlags = false, includeOriginTrials = false) {
     // Gets the burn record for the interface itself.
     let records = super.getBurnRecords();
@@ -909,10 +913,6 @@ class InterfaceData extends IDLData {
     for (let m of members) {
       if (!includeFlags && m._flagged) { continue; }
       if (!includeOriginTrials && m._originTrial) { continue; }
-      // let record = bcd.getRecordByKey(`${this.name}.${m.name}`, 'api');
-      // record.flag = m.flagged;
-      // record.origin_trial = m.originTrial;
-      // record.type = m.type;
       let record = this._buildRecord(m);
       records.push(record);
     }
