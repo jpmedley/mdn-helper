@@ -15,7 +15,6 @@
 'use strict';
 
 const fs = require('fs');
-const cb = require('prompt-checkbox');
 const { MultiSelect } = require('enquirer');
 const utils = require('./utils.js');
 
