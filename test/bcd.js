@@ -15,7 +15,6 @@
 'use strict';
 
 const assert = require('assert');
-const fs = require('fs');
 
 const { bcd } = require('../bcd.js')
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');

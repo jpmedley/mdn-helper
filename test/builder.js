@@ -17,7 +17,7 @@
 const assert = require('assert');
 const fs = require('fs');
 
-const { CSSBuilder, IDLBuilder } = require('../builder.js');
+const { IDLBuilder } = require('../builder.js');
 const { InterfaceData } = require('../interfacedata.js');
 const utils = require('../utils.js');
 

@@ -15,8 +15,6 @@
 'use strict';
 
 
-const { bcd } = new require('./bcd.js');
-const { Pinger } = require("./pinger.js");
 const utils = require('./utils.js');
 
 class CSSSet {
