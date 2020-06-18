@@ -24,6 +24,7 @@ npm run burn bcd -- -c mathml -b all
 npm run burn bcd -- -c webextensions -b all
 
 npm run burn chrome
+npm run burn chrome -- -i
 npm run burn chrome -- -w fugu-wl.json
 
 npm run burn urls -- -c api
