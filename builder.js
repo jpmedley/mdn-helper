@@ -271,6 +271,8 @@ class _IDLBuilder extends Builder {
     sharedQuestions.add('interface', this._interfaceData.name);
     if (this._interfaceData.getSecureContext()) {
       sharedQuestions.add('isSecureContext', '{{securecontext_header}}');
+    } else {
+      sharedQuestions.add('isSecureContext', '');
     }
 
     // Create an array for the question objects.
