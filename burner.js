@@ -155,6 +155,9 @@ class Burner {
     if (this._whitelist) {
       this._outFileName += `-${this._whitelistName}`;
     }
+    if (this._interfacesOnly) {
+      this._outFileName += `-interfaces`;
+    }
     this._outFileName += `-burnlist-${utils.today()}.csv`;
   }
 
