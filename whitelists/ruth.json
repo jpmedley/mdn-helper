@@ -1,0 +1,32 @@
+{
+  "whitelist": [
+    "CanvasPath",
+    "CSSMathInvert",
+    "CSSMathMax",
+    "CSSMathMin",
+    "CSSMathNegate",
+    "CSSMatrixComponent",
+    "CSSRotate",
+    "CSSScale",
+    "CSSSkew",
+    "CSSSkewX",
+    "CSSSkewY",
+    "CSSTransformComponent",
+    "CSSTransformValue",
+    "CSSTransition",
+    "CSSTranslate",
+    "Gamepad",
+    "GamepadButton",
+    "GamepadEvent",
+    "GamepadHapticActuator",
+    "GamepadList",
+    "HTMLVideoElement",
+    "VideoDecoder",
+    "VideoEncoder",
+    "VideoFrame",
+    "VideoPlaybackQuality",
+    "VideoTrack",
+    "VideoTrackReader",
+    "VideoTrackWriter"
+  ]
+}
