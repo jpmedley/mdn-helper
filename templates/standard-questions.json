@@ -277,8 +277,8 @@
       "before": "",
       "action": null
     },
-    "mdnAPIRef": {
-      "question": "What is the API name as it should be used in the APIRef() macro? This is the\nsame value used as the in GroupData.json.",
+    "sidebarMacro": {
+      "question": "What is the API name as it should be used in the page's sidebar macro? This is the\nsame value used as the in GroupData.json.",
       "type": "Input",
       "pattern": "",
       "message": "",
