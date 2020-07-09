@@ -26,7 +26,6 @@ class CSSSet {
     this.media.types = utils.getJSON('./idl/core/css/media_type_names.json5');
     this.values = utils.getJSON('./idl/core/css/css_primitive_value_units.json5');
     this.values.keywords = utils.getJSON('./idl/core/css/css_value_keywords.json5');
-    this.svg = utils.getJSON('./idl/core/css/svg_css_value_keywords.json5');
   }
 
   _findExactProperties(searchValue, includeFlags=false, includeOriginTrials=false) {
