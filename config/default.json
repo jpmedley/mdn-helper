@@ -19,6 +19,7 @@
       "ApplicationCache",
       "ApplicationCacheErrorEvent",
       "AudioProcessingEvent",
+      "CanvasPath",
       "DirectoryEntry",
       "DirectoryEntrySync",
       "DirectoryReader",
