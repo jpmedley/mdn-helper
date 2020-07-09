@@ -249,6 +249,7 @@ class InterfaceData extends IDLData {
     this._flagged = null;
     this._getters = [];
     this._hasConstructor = null;
+    this._inTest = null;
     this._iterable = [];
     this._maplike = [];
     this._methods = [];
@@ -538,6 +539,12 @@ class InterfaceData extends IDLData {
       this._hasConstructor = false;
     }
     return this._hasConstructor;
+  }
+
+  get inTest() {
+    if (this._inTest) { return this._inTest}
+    this._inTest = this._getRuntimeEnabledValue("test", this._getInterfaceExtendedAttributes());
+    return this._inTest;
   }
 
   _getIterables() {

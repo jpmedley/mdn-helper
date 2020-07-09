@@ -34,6 +34,7 @@ const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const EXPOSED_MANY = './test/files/exposed-many.idl';
 const EXPOSED_ONE = './test/files/exposed-one.idl';
 const EXTENDED_ATTRIBUTES_REVERSED = './test/files/extended-attributes-reversed.idl';
+const FLAGGED_INTERFACE = './test/files/interface-rte-test.idl';
 const FLAGGED_MEMBERS = './test/files/flagged-members.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
@@ -150,8 +151,8 @@ describe('InterfaceData', () => {
         });
       });
       assert.ok(passFail, foundIncorrect);
-    })
-  })
+    });
+  });
 
   describe('constructors', () => {
     it('Confirms that constructors returns null when no constructors are present', () => {
@@ -326,6 +327,14 @@ describe('InterfaceData', () => {
       const source = loadSource(CONSTRUCTOR_NO_ARGS);
       const id = new InterfaceData(source, CONSTRUCTOR_NO_ARGS);
       assert.ok(id.hasConstructor === true);
+    });
+  });
+
+  describe('Interface under test ', () => {
+    it('confirms that a flag value of \'test\' returns as true', () => {
+      const source = loadSource(FLAGGED_INTERFACE);
+      const id = new InterfaceData(source, FLAGGED_INTERFACE);
+      assert.ok(id.inTest === true);
     });
   });
 
