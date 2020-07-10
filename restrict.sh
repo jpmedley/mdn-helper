@@ -35,3 +35,5 @@ tar -C $IDL_ROOT/ -xf idl.tar.gz core/css/*.json5
 tar -C $IDL_ROOT/ -xf idl.tar.gz platform/runtime_enabled_features.json5
 
 rm idl.tar.gz
+
+rm .update
