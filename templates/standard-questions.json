@@ -1,7 +1,7 @@
 {
   "templates": {
     "abstract": {
-      "question": "Write or supply an abstract for the interface",
+      "question": "Write or supply an abstract for the interface.",
       "type": "Input",
       "help": "The abstract can sometimes be copied from the spec.",
       "message": "",
@@ -25,7 +25,7 @@
       "action": {"name": "add_block", "args": ["_frag_accessibility.html"]}
     },
     "argument-definition": {
-      "question": "What is the definition for this argument.",
+      "question": "What is the definition for this argument?",
       "type": "Input",
       "pattern": "",
       "message": "",
@@ -167,6 +167,30 @@
       "required": false,
       "before": "",
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+    },
+    "eventName": {
+      "question": "What is the name of the event passed to this handler?",
+      "type": "Input",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": "",
+      "action": null
+    },
+    "eventOccurs": {
+      "question": "When does this event occur?",
+      "type": "Input",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": "",
+      "action": null
     },
     "exceptions": {
       "question": "Does this method throw any exceptions? Please enter all arguments with commas\n between each.",

@@ -29,7 +29,8 @@ class _Page {
 
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
-    let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) +  help[this.type] + '\n';
+    console.log(`${this.type}`);
+    let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) + help[this.type] + '\n';
     this.questions = new Questions(introMessage);
     this.questions.add(type, name);
     this.contents = utils.getTemplate(this.type.toLowerCase());

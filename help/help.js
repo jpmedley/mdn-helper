@@ -23,7 +23,8 @@ const CONCISE = Object.freeze({
   reference: '\n',
   constructor: '\n',
   method:'\n',
-  property: '\n'
+  property: '\n',
+  EventHandler: '\n'
 });
 
 const VERBOSE = Object.freeze({
@@ -49,7 +50,8 @@ const VERBOSE = Object.freeze({
   \nexample go to https://developer.mozilla.org/en-US/docs/Web/API/OrientationSensor\n\n`,
   constructor: '\n',
   method:'\n',
-  property: '\n'
+  property: '\n',
+  EventHandler: '\n'
 });
 
 const helpTypes = { CONCISE: CONCISE, VERBOSE: VERBOSE };
