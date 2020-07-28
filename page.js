@@ -29,7 +29,6 @@ class _Page {
 
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
-    console.log(`${this.type}`);
     let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) + help[this.type] + '\n';
     this.questions = new Questions(introMessage);
     this.questions.add(type, name);
@@ -98,7 +97,7 @@ class _Page {
     if (!fs.existsSync(outFolder)) { fs.mkdirSync(outFolder); }
     let outPath = outFolder + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
     if (fs.existsSync(outPath)) {
-      let msg = `A file already exits for ${this.name}. `;
+      let msg = `A file already exits for ${this.name} ${this.type}. `;
       msg += 'Do you want to overwrite it?'
       const answer = utils.confirm(msg);
       if (!answer) { return; }

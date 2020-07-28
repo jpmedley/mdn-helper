@@ -202,6 +202,9 @@ class _CLIBuilder extends Builder {
   constructor(options) {
     super(options);
     this._args = options.args;
+    this._writeOnly = options.args.some(arg => {
+      return (arg.includes('-w') || arg.includes('--writeOnly'))
+    });
   }
 
   _initPages() {
@@ -226,8 +229,10 @@ class _CLIBuilder extends Builder {
 
     // Process remaining arguments.
     args.forEach((arg, index, args) => {
+      console.log(arg);
+      if ((arg.trim() === 'w') || arg.trim() === 'writeOnly') { return; }
       let members = arg.split(',');
-      aPage = new Page(members[1], members[0], sharedQuestions);
+      let aPage = new Page(members[1], members[0], sharedQuestions);
       this._pages.push(aPage);
     });
   }
@@ -235,7 +240,9 @@ class _CLIBuilder extends Builder {
   async build() {
     this._initPages();
     for (let p of this._pages) {
-      await p.askQuestions();
+      if (!this._writeOnly) {
+        await p.askQuestions();
+      }
       p.write();
     }
   }
