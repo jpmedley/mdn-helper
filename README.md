@@ -97,7 +97,7 @@ At least one of the following:
 
 Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory.
 
-**Syntax:** <code>interface -n _interfaceName_ [-l] [-r] [-c] [(-e | --event) _eventName_] [(-h | --handler) _handlerName_] [(-m | --method) _methodName_] [(-p | --property) _propertyName_]</code>
+**Syntax:** <code>interface -n _interfaceName_ [-l] [-r] [-c] [(-e | --event) _eventName_] [(-h | --handler) _handlerName_] [(-m | --method) _methodName_] [(-p | --property) _propertyName_] [(-w | --writefiles)</code>
 
 **Flags:**
 
@@ -114,6 +114,7 @@ At least one of the following:
 * `-h` or `--handler`: (Optional) Indicates that an [event handler page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_event_handler_subpage_template) should be created with the specified name. This flag may be repeated as needed.
 * `-m` or `--method`: (Optional) Indicates that a [method page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_method_subpage_template) should be created with the specified name. This flag may be repeated as needed.
 * `-p` or `--property`: (Optional) Indicates that a [property page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_property_subpage_template) should be created with the specified name. This flag may be repeated as needed.
+* `-w` or `--writefiles`: (Optional) The pages will not be created interactively, but will be written directly to the output directory.
 
 ## update-data
 

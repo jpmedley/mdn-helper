@@ -203,7 +203,7 @@ class _CLIBuilder extends Builder {
     super(options);
     this._args = options.args;
     this._writeOnly = options.args.some(arg => {
-      return (arg.includes('-w') || arg.includes('--writeOnly'))
+      return (arg.includes('-w') || arg.includes('--writefiles'))
     });
   }
 

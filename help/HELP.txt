@@ -48,6 +48,7 @@
   interface -- -n _interfaceName_ [-l] [-r] [-it] [-mp] [-mr]
   [(-e | --event) _eventName_] [(-h | --handler) _handlerName_]
   [(-m | --method) _methodName_] [(-p | --property) _propertyName_]
+  [(-w | --writefiles)]
     Creates pages for JavaScript platform APIs. The results are written to the
     *path/to*/mdn-helper/out/ directory.
 
