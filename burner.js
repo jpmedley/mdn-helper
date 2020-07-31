@@ -61,14 +61,14 @@ const BROWSERS = [
 global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 //To Do: Every burner class should use some form of isBurnable(). It would
-//       confine whitelist testing to a better place.
+//       confine reportList testing to a better place.
 
-function getBurnRecords(key, whitelist) {
+function getBurnRecords(key, reportingList) {
   const urlData = bcd.getByKey(key);
   let records = [];
   (function getRecords(data) {
     for (let d in data) {
-      if ((whitelist) && (!whitelist.includes(d))) { continue; }
+      if ((reportingList) && (!reportingList.includes(d))) { continue; }
       if (d == '__parent') { continue; }
       if (d == '__name') { continue; }
       if (!data[d].__compat) {
@@ -152,8 +152,8 @@ class Burner {
     if (this._category) {
       this._outFileName += `-${this._category}`;
     }
-    if (this._whitelist) {
-      this._outFileName += `-${this._whitelistName}`;
+    if (this._reportingList) {
+      this._outFileName += `-${this._reportingListName}`;
     }
     if (this._interfacesOnly) {
       this._outFileName += `-interfaces`;
@@ -161,23 +161,23 @@ class Burner {
     this._outFileName += `-burnlist-${utils.today()}.csv`;
   }
 
-  _loadWhitelist() {
-    if (!this._whitelistPath) { return; }
-    const buffer = fs.readFileSync(this._whitelistPath);
-    this._whitelist = JSON.parse(buffer.toString()).whitelist;
-    this._whitelistName = (() => {
-      const wl = this._whitelistPath.match(/\/(\S+)\.js/);
+  _loadReportingList() {
+    if (!this._reportingListPath) { return; }
+    const buffer = fs.readFileSync(this._reportingListPath);
+    this._reportingList = JSON.parse(buffer.toString()).reportingList;
+    this._reportingListName = (() => {
+      const wl = this._reportingListPath.match(/\/(\S+)\.js/);
       return `${wl[1]}`;
     })();
   }
 
   async _resolveArguments(args) {
-    const whitelist = args.findIndex(arg=>{
-      return (arg.includes('-w') || (arg.includes('--whitelist')));
+    const reportingList = args.findIndex(arg=>{
+      return (arg.includes('-r') || (arg.includes('--reportinglist')));
     });
-    if (whitelist > -1) {
-      const whitelistDir = utils.getConfig('whitelistDirectory');
-      this._whitelistPath = `${whitelistDir}${args[whitelist +1]}`;
+    if (reportingList > -1) {
+      const reportingListDir = utils.getConfig('reportingListDirectory');
+      this._reportingListPath = `${reportingListDir}${args[reportingList +1]}`;
     }
   }
 
@@ -194,11 +194,11 @@ class URLBurner extends Burner {
 
   async burn() {
     await this._resolveArguments(this._args);
-    this._loadWhitelist();
+    this._loadReportingList();
     this._startBurnLogFile();
     this._openResultsFile();
     console.log('Pinging MDN for known URLs.');
-    let burnRecords = getBurnRecords(this._category, this._whitelist);
+    let burnRecords = getBurnRecords(this._category, this._reportingList);
     const pinger = new Pinger(burnRecords);
     const verboseOutput = true;
     //This should be pingURLs().
@@ -258,7 +258,7 @@ class BCDBurner extends Burner {
 
   async burn() {
     await this._resolveArguments(this._args);
-    this._loadWhitelist();
+    this._loadReportingList();
     this._startBurnLogFile();
     this._openResultsFile();
     console.log(`Checking BCD data for missing ${this._category} data.`);
@@ -272,7 +272,7 @@ class BCDBurner extends Burner {
     let bcdData = bcd[this._category];
     (function getRecords(data) {
       for (let d in data) {
-        if ((this._whitelistName) && (!this._whitelist.includes(d))) {
+        if ((this._reportingListName) && (!this._reportingList.includes(d))) {
           continue;
         }
         if (d == '__parent') { continue; }
@@ -418,16 +418,16 @@ class ChromeBurner extends Burner {
     await this._resolveArguments(this._args);
     console.log('Looking for browser compatibility data and MDN pages.');
 
-    this._loadWhitelist();
+    this._loadReportingList();
     this._startBurnLogFile();
     this._openResultsFile();
     const burnTypes = ["interface"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     const interfaceSet = dm.interfaceSet;
     let interfaces;
-    if (this._whitelist) {
-      interfaces = interfaceSet.findExact(this._whitelist, this._includeFlags, this._includeOriginTrials);
-      for (let w of this._whitelist) {
+    if (this._reportingList) {
+      interfaces = interfaceSet.findExact(this._reportingList, this._includeFlags, this._includeOriginTrials);
+      for (let w of this._reportingList) {
         let key = w.split(".")[0];
         let interface_ = interfaces.get(key);
         if (!interface_) { continue; }
@@ -487,8 +487,8 @@ class ChromeBurner extends Burner {
     if (this._category) {
       label += `-${this._category}`;
     }
-    if (this._whitelist) {
-      label += `-${this._whitelistName}`;
+    if (this._reportingList) {
+      label += `-${this._reportingListName}`;
     }
     let msg = `${fileObject.path()}: ${label}\n\t${error.message}`;
     global.__logger.info(msg);

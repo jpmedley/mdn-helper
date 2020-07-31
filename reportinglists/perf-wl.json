@@ -1,27 +1,21 @@
 {
-  "whitelist": [
-    "IntersectionObserver",
-    "IntersectionObserverCallback",
-    "IntersectionObserverEntry",
-    "MutationObserver",
+  "reportingList": [
     "Performance",
     "PerformanceElementTiming",
     "PerformanceEntry",
     "PerformanceEventTiming",
+    "PerformanceLayoutJank",
     "PerformanceLongTaskTiming",
     "PerformanceMark",
     "PerformanceMeasure",
     "PerformanceNavigation",
     "PerformanceNavigationTiming",
     "PerformanceObserver",
-    "PerformanceObserverCallback",
     "PerformanceObserverEntryList",
     "PerformancePaintTiming",
     "PerformanceResourceTiming",
     "PerformanceServerTiming",
     "PerformanceTiming",
-    "ResizeObserver",
-    "ResizeObserverCallback",
-    "ResizeObserverEntry"
+    "TaskAttributionTiming"
   ]
 }

@@ -21,8 +21,8 @@ const JSON5 = require('json5');
 const path = require('path');
 const shell = require('shelljs');
 
-const BLACKLIST = config.get('Application.blacklist');
-const USE_BLACKLIST = config.get('Application.useBlacklist');
+const EXCLUSIONS = config.get('Application.exclusions');
+const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TEMPLATES = 'templates/';
 const HOMEDIR = require('os').homedir();
@@ -153,8 +153,8 @@ function _getTemplate(name) {
 }
 
 function _isBlacklisted(apiName) {
-  if (USE_BLACKLIST) {
-    return BLACKLIST.includes(apiName);
+  if (USE_EXCLUSIONS) {
+    return EXCLUSIONS.includes(apiName);
   }
   return false;
 }

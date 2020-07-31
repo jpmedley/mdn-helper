@@ -1,5 +1,5 @@
 {
-  "whitelist": [
+  "reportingList": [
     "CanvasPath",
     "CSSMathInvert",
     "CSSMathMax",

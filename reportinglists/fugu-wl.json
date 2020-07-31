@@ -1,5 +1,5 @@
 {
-  "whitelist": [
+  "reportingList": [
     "BarcodeDetector",
     "Clipboard",
     "ClipboardEvent",

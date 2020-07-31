@@ -7,13 +7,13 @@
     "test": false,
     "update": "daily",
     "useBlacklist": "true",
-    "whitelistDirectory": "whitelists/",
+    "reportingListDirectory": "reportinglists/",
     "questionHiding": {
       "use": "NEW_WRITER",
       "ENG": ["iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"],
       "NEW_WRITER": ["child-interfaces", "iterableMemberLink", "iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"]
     },
-    "blacklist": [
+    "exclusions": [
       "AnimationEffectTiming",
       "AnimationEffectTimingReadOnly",
       "ApplicationCache",

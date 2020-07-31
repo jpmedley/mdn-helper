@@ -37,9 +37,9 @@ For detailed instructions, see [Building MDN Pages](/help/BUILDING-PAGES.md).
 
 Builds several types of burn-down lists. This has several syntaxes.
 
-**Syntax:** `burn chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-w | --whitelist)]`
+**Syntax:** `burn chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist)]`
 
-Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--whitelist` to include of list of interfaces to burn.
+Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--reportinglist` to include of list of interfaces to burn.
 
 **Syntax:** `burn urls -- [(-c | --category) _category_]`
 
@@ -114,7 +114,7 @@ At least one of the following:
 * `-h` or `--handler`: (Optional) Indicates that an [event handler page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_event_handler_subpage_template) should be created with the specified name. This flag may be repeated as needed.
 * `-m` or `--method`: (Optional) Indicates that a [method page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_method_subpage_template) should be created with the specified name. This flag may be repeated as needed.
 * `-p` or `--property`: (Optional) Indicates that a [property page](https://developer.mozilla.org/en-US/docs/MDN/Contribute/Structures/Page_types/API_property_subpage_template) should be created with the specified name. This flag may be repeated as needed.
-* `-w` or `--writefiles`: (Optional) The pages will not be created interactively, but will be written directly to the output directory.
+* `-` or `--writefiles`: (Optional) The pages will not be created interactively, but will be written directly to the output directory.
 
 ## update-data
 

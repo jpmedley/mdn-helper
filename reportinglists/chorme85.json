@@ -1,5 +1,5 @@
 {
-  "whitelist": [
+  "reportingList": [
     "Bluetooth.getDevices",
     "FileSystemDirectoryHandle",
     "FileSystemHandle",
@@ -16,6 +16,6 @@
     "XRPlane",
     "XRPlaneDetectionState",
     "XRPlaneSet",
-    "xrSession.updateWorldTrackingState",
+    "xrSession.updateWorldTrackingState"
   ]
 }
