@@ -6,7 +6,7 @@
     "questionsFile": "standard-questions.json",
     "test": false,
     "update": "daily",
-    "useBlacklist": "true",
+    "useExclusions": "true",
     "reportingListDirectory": "reportinglists/",
     "questionHiding": {
       "use": "NEW_WRITER",
