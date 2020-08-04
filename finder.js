@@ -137,10 +137,10 @@ class IDLFinder {
     });
     let answer = await prompt.run();
     if (answer === CANCEL) { process.exit(); }
-    const pieces = answer.split(" ");
+    const pieces = answer.split('(').slice(0, -1);
     const key = pieces[0].trim();
     const answerData = matches.find(elem => {
-      return elem.name === key;
+      return elem.name.includes(key);
     });
     return answerData;
   }
