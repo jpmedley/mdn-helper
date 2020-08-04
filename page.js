@@ -99,7 +99,7 @@ class _Page {
     if (fs.existsSync(outPath)) {
       let msg = `A file already exits for ${this.name} ${this.type}. `;
       msg += 'Do you want to overwrite it?'
-      const answer = utils.confirm(msg);
+      const answer = await utils.confirm(msg);
       if (!answer) { return; }
     }
     fs.writeFileSync(outPath, this.contents);
