@@ -139,8 +139,6 @@ class IDLFinder {
     if (answer === CANCEL) { process.exit(); }
     const pieces = answer.split('(');
     const key = pieces[1].slice(0, -1).trim();
-    // const pieces = answer.split('(').slice(0, -1);
-    // const key = pieces[0].trim();
     const answerData = matches.find(elem => {
       return elem.path.includes(key);
     });
