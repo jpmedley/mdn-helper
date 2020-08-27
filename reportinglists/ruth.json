@@ -12,6 +12,8 @@
     "PeriodicSyncManager",
     "ServiceWorkerGlobalScope.contentdelete",
     "ServiceWorkerRegistration.index",
+    "ServiceWorkerRegistration.periodicSync",
+    "ServiceWorkerRegistration.sync",
     "WakeLock",
     "WorkerGlobalScope.nativeIO"
   ]
