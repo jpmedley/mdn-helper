@@ -1,0 +1,16 @@
+{
+  "reportingList": [
+    "IDBCursor",
+    "IDBCursorWithValue",
+    "IDBDatabase",
+    "IDBFactory",
+    "IDBIndex",
+    "IDBKeyRange",
+    "IDBOjectStore",
+    "IDBObservation",
+    "IDBOpenDBRequest",
+    "IDBRequest",
+    "IDBTransaction",
+    "IDBVersionChangeEvent"
+  ]
+}
