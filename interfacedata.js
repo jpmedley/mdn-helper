@@ -26,7 +26,7 @@ const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
 
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
-const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[([^\]]*)\]\sinterface/m;
+const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[([^\]]*)\]\s+interface/m;
 const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]+)\]/;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
