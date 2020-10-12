@@ -497,7 +497,7 @@ class ChromeBurner extends Burner {
   _openResultsFile() {
     this._getOutFileName();
     this._outFileHandle = utils.getOutputFile(this._outFileName);
-    let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect';
+    let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL';
     if (this._includeFlags) { header += ',Behind a Flag'; }
     if (this._includeOriginTrials) { header += ',In Origin Trial'; }
     header += '\n';
@@ -513,7 +513,7 @@ class ChromeBurner extends Burner {
           r.mdn_exists = "Unknown";
           r.mdn_url = "No URL found in compatibility data";
         }
-        let line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url},${r.redirect}`;
+        let line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url}`;
         if (this._includeFlags) { line += `,${r.flag}`; }
         if (this._includeOriginTrials) { line += `,${r.origin_trial}`; }
         line += '\n';
