@@ -23,7 +23,7 @@
       "HIDReportInfo",
       "HIDReportItem"
     ],
-    "exclusions": [
+    "deprecated": [
       "AnimationEffectTiming",
       "AnimationEffectTimingReadOnly",
       "ApplicationCache",

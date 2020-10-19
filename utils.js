@@ -21,7 +21,7 @@ const JSON5 = require('json5');
 const path = require('path');
 const shell = require('shelljs');
 
-let EXCLUSIONS = config.get('Application.exclusions');
+let EXCLUSIONS = config.get('Application.deprecated');
 EXCLUSIONS.push(...config.get('Application.muted'));
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
