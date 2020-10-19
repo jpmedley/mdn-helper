@@ -21,7 +21,8 @@ const JSON5 = require('json5');
 const path = require('path');
 const shell = require('shelljs');
 
-const EXCLUSIONS = config.get('Application.exclusions');
+let EXCLUSIONS = config.get('Application.exclusions');
+EXCLUSIONS.push(...config.get('Application.muted'));
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TEMPLATES = 'templates/';
@@ -152,7 +153,7 @@ function _getTemplate(name) {
   return buffer.toString();
 }
 
-function _isBlacklisted(apiName) {
+function _isExcluded(apiName) {
   if (USE_EXCLUSIONS) {
     return EXCLUSIONS.includes(apiName);
   }
@@ -272,7 +273,7 @@ module.exports.getJSON = _getJSON;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
-module.exports.isBlacklisted = _isBlacklisted;
+module.exports.isExcluded = _isExcluded;
 module.exports.makeFolder = _makeFolder;
 module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.pause = _pause;

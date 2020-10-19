@@ -13,6 +13,16 @@
       "ENG": ["iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"],
       "NEW_WRITER": ["child-interfaces", "iterableMemberLink", "iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"]
     },
+    "muted": [
+      "HID",
+      "HIDCollectionInfo",
+      "HIDConnection",
+      "HIDConnectionEvent",
+      "HIDDevice",
+      "HIDInputReportEvent",
+      "HIDReportInfo",
+      "HIDReportItem"
+    ],
     "exclusions": [
       "AnimationEffectTiming",
       "AnimationEffectTimingReadOnly",
@@ -43,14 +53,6 @@
       "FileWriter",
       "FileWriterCallback",
       "FileWriterSync",
-      "HID",
-      "HIDCollectionInfo",
-      "HIDConnection",
-      "HIDConnectionEvent",
-      "HIDDevice",
-      "HIDInputReportEvent",
-      "HIDReportInfo",
-      "HIDReportItem",
       "LocalFileSystem",
       "LocalFileSystemSync",
       "Metadata",

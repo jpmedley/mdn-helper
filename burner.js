@@ -458,7 +458,7 @@ class ChromeBurner extends Burner {
   }
 
   _isBurnable(interfaceData) {
-    if (utils.isBlacklisted(interfaceData.name)) { return false; }
+    if (utils.isExcluded(interfaceData.name)) { return false; }
     if (BURNABLE_TYPES.includes(interfaceData.type)) { return true; }
     return true;
   }
