@@ -48,6 +48,6 @@ rm idl.tar.gz
 
 if [ -z $3 ]; then
   echo '\nInstalling latest browser compatibility data.\n'
-  npm install mdn-browser-compat-data@latest
+  npm install @mdn/browser-compat-data@latest
   curl https://raw.githubusercontent.com/mdn/browser-compat-data/master/schemas/compat-data.schema.json > test/files/compat-data.schema.json
 fi
