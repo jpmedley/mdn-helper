@@ -317,7 +317,7 @@ class _IDLBuilder extends Builder {
     }
   }
 
-  _writeBCD() {
+  async _writeBCD() {
     let name = this._interfaceData.name;
     if (bcd.api[name]) {
       const msg = `\nA BCD file already exists for ${name}. You will need to manually\nverify it for completeness.\n`;
@@ -326,7 +326,7 @@ class _IDLBuilder extends Builder {
     }
     let bcdm = new BCDBuilder(this._interfaceData, { verbose: this.verbose });
     let outFilePath = this._resolveBCDPath(name);
-    bcdm.write(outFilePath);
+    await bcdm.write(outFilePath);
   }
 
   _resolveBCDPath(name) {
@@ -343,7 +343,7 @@ class _IDLBuilder extends Builder {
   }
 
   async build() {
-    this._writeBCD();
+    await this._writeBCD();
     if (this._jsonOnly) { return; }
     await this._initPages();
     let msg;

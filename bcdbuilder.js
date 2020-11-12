@@ -35,7 +35,8 @@ class _BCDBuilder {
     this._loadBCD();
   }
 
-  write(outFilePath) {    
+  async write(outFilePath) {
+    if (fs.existsSync(outFilePath)) { return; }
     // Poor man's way of fixing the nesting.
     const temp = JSON.parse(this._bcdString);
     this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
