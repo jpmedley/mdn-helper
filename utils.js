@@ -33,6 +33,8 @@ const ONE_HOUR = 3600000;
 const ONE_DAY = 86400000;
 const ONE_WEEK = 604800000;
 
+const KEY_FILE_PATH = 'config/alternate-keys.json';
+
 const BLANK_LINE_RE = /^\s*$(\r\n|\r|\n)/gm;
 const COMMENT_START_RE = /^\/\*$(\r\n|\r|\n)/gm;
 const COMMENT_MULTILINE_RE = /^\s\*.*$(\r\n|\r|\n)/gm;
@@ -43,6 +45,8 @@ if (OUT.includes('$HOME')) {
   OUT = OUT.replace('$HOME', HOMEDIR);
 }
 if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
+
+let AlternateKeys;
 
 function loadWireFrames() {
   const wireframePath = TEMPLATES + QUESTIONS_FILE;
@@ -95,6 +99,13 @@ function _displayConfig() {
     console.log(out);
   }
   console.log('');
+}
+
+function _getAlternateKey(key) {
+  if (!AlternateKeys) {
+    AlternateKeys = _getJSON(KEY_FILE_PATH);
+  }
+  return AlternateKeys.alternateKeys[key];
 }
 
 function _getConfig(parameter) {
@@ -266,6 +277,7 @@ module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.displayConfig = _displayConfig;
+module.exports.getAlternateKey = _getAlternateKey
 module.exports.getConfig = _getConfig;
 module.exports.getFile = _getFile;
 module.exports.getIDLFile = _getIDLFile;

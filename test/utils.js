@@ -23,6 +23,15 @@ const fs = require('fs');
 const utils = require('../utils.js');
 
 describe('Utils', () => {
+  describe('getAlternateKey()', () => {
+    it('Verifies that alternate keys are returned', () => {
+      const key = 'WebGLColorBufferFloat';
+      const altKey = 'WEBGL_color_buffer_float';
+      let retrievedKey = utils.getAlternateKey(key);
+      assert.strictEqual(altKey, retrievedKey);
+    });
+  });
+
   describe('getIDLFile()', () => {
     it('Verifies that blank lines and comments are purged', () => {
       let buffer = fs.readFileSync(COMMENTS_CLEANED);

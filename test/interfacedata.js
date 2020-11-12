@@ -23,6 +23,7 @@ const { initiateLogger } = require('../log.js');
 
 initiateLogger();
 
+const ALTERNATE_KEY = './test/files/alternate-key.idl';
 const BURNABLE = './test/files/burnable.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
@@ -365,6 +366,18 @@ describe('InterfaceData', () => {
       assert.equal(id.iterable.length, 0);
     });
   });
+  describe('key', () => {
+    it('Conirms that key returns the actual key', () => {
+      const source = loadSource(BURNABLE);
+      const id = new InterfaceData(source, BURNABLE);
+      assert.strictEqual(id.key, 'Burnable');
+    });
+    it('Confirms that an alternate key is returned', () => {
+      const source = loadSource(ALTERNATE_KEY);
+      const id = new InterfaceData(source, ALTERNATE_KEY);
+      assert.strictEqual(id.key, 'WEBGL_color_buffer_float');
+    })
+  })
 
   // Needs to read out of a test file that contains methods.
   describe('maplikeMethods', () => {

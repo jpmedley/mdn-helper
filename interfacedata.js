@@ -17,7 +17,8 @@
 const fs = require('fs');
 
 const { bcd } = require('./bcd.js');
-const { Pinger } = require("./pinger.js");
+const { Pinger } = require('./pinger.js');
+const utils = require('./utils.js');
 
 const CALLBACK_NAME_RE = /callback\s(\w+)/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
@@ -135,6 +136,7 @@ class IDLData {
   constructor(source, options = {}) {
     this._sourceData = source;
     this._sourcePath = options.sourcePath;
+    this._key;
     this._keys = [];
     this._members = [];
     this._name;
@@ -142,7 +144,13 @@ class IDLData {
   }
 
   get key() {
-    return this.name;
+    if (!this._key) {
+      this._key = utils.getAlternateKey(this.name);
+    }
+    if (!this._key) {
+      this._key = this.name;
+    }
+    return this._key;
   }
 
   get sourceContents() {

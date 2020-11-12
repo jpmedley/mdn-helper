@@ -21,7 +21,10 @@
       "HIDDevice",
       "HIDInputReportEvent",
       "HIDReportInfo",
-      "HIDReportItem"
+      "HIDReportItem",
+      "WebGL2ComputeRenderingContextBase",
+      "WebGLDrawInstancedBaseVertexBaseInstance",
+      "WebGLMultiDrawInstancedBaseVertexBaseInstance"
     ],
     "deprecated": [
       "AnimationEffectTiming",
