@@ -16,6 +16,7 @@
 
 const { bcd } = require('./bcd.js');
 const { BCDBuilder } = require('./bcdbuilder.js');
+const config = require('config');
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Page } = require('./page.js');
@@ -324,10 +325,21 @@ class _IDLBuilder extends Builder {
       return;
     }
     let bcdm = new BCDBuilder(this._interfaceData, { verbose: this.verbose });
-    let outPath = `${this._outPath}${name}/`;
-    if (!fs.existsSync(outPath)) { fs.mkdirSync(outPath); }
-    let outFilePath = outPath + name + '.json';
+    let outFilePath = this._resolveBCDPath(name);
     bcdm.write(outFilePath);
+  }
+
+  _resolveBCDPath(name) {
+    let bcdPath;
+    try {
+      bcdPath = utils.getBCDPath();
+      bcdPath = `${bcdPath}api/${name}.json`;
+    } catch (error) {
+      bcdPath = utils.makeFolder(name);
+      bcdPath = `${bcdPath}${name}.json`;
+    } finally {
+      return bcdPath;
+    }
   }
 
   async build() {

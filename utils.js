@@ -17,6 +17,7 @@
 const config = require('config');
 const { Confirm, Input } = require('enquirer');
 const fs = require('fs');
+const { homedir } = require('os');
 const JSON5 = require('json5');
 const path = require('path');
 const shell = require('shelljs');
@@ -26,7 +27,7 @@ EXCLUSIONS.push(...config.get('Application.muted'));
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TEMPLATES = 'templates/';
-const HOMEDIR = require('os').homedir();
+// const HOMEDIR = require('os').homedir();
 const APP_ROOT = path.resolve(__dirname);
 const UPDATE_INTERVALS = ['hourly','daily','weekly'];
 const ONE_HOUR = 3600000;
@@ -41,10 +42,10 @@ const COMMENT_MULTILINE_RE = /^\s\*.*$(\r\n|\r|\n)/gm;
 const COMMENT_SINGLELINE_RE = /\/\/.*$(\r\n|\r|\n)/gm;
 
 let OUT = config.get('Application.outputDirectory');
-if (OUT.includes('$HOME')) {
-  OUT = OUT.replace('$HOME', HOMEDIR);
-}
-if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
+// if (OUT.includes('$HOME')) {
+//   OUT = OUT.replace('$HOME', HOMEDIR);
+// }
+// if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
 
 let AlternateKeys;
 
@@ -106,6 +107,11 @@ function _getAlternateKey(key) {
     AlternateKeys = _getJSON(KEY_FILE_PATH);
   }
   return AlternateKeys.alternateKeys[key];
+}
+
+function _getBCDPath() {
+  let bcdPath = config.get('Application.bcdCommitDirectory');
+  return _resolveHome(bcdPath);
 }
 
 function _getConfig(parameter) {
@@ -177,11 +183,12 @@ function _getWireframes() {
 }
 
 function _makeOutputFolder(dirName) {
-  const todayFolder = `${OUT}${dirName}/`;
-  return _makeFolder(todayFolder);
+  const folderToMake = _resolveHome(`${OUT}${dirName}/`);
+  return _makeFolder(folderToMake);
 }
 
 function _makeFolder(dirName) {
+  dirName = _resolveHome(dirName);
   if (fs.existsSync(dirName)) { return dirName; }
   fs.mkdirSync(dirName);
   return dirName;
@@ -209,6 +216,10 @@ function _printWelcome() {
   console.log("=".repeat(80));
   console.log(" ".repeat(30) + "Welcome to mdn-helper" + " ".repeat(29));
   console.log("=".repeat(80));
+}
+
+function _resolveHome(path) {
+  return path.replace('$HOME',homedir());
 }
 
 function _today() {
@@ -277,7 +288,8 @@ module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.displayConfig = _displayConfig;
-module.exports.getAlternateKey = _getAlternateKey
+module.exports.getAlternateKey = _getAlternateKey;
+module.exports.getBCDPath = _getBCDPath
 module.exports.getConfig = _getConfig;
 module.exports.getFile = _getFile;
 module.exports.getIDLFile = _getIDLFile;
