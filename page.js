@@ -93,9 +93,8 @@ class _Page {
 
   async write() {
     this.render();
-    let outFolder = utils.OUT + '/' + this.sharedQuestions.name + '/';
-    if (!fs.existsSync(outFolder)) { fs.mkdirSync(outFolder); }
-    let outPath = outFolder + this.sharedQuestions.name + "_" + this.name + "_" + this.type + ".html";
+    let outFolder = utils.makeOutputFolder(this.sharedQuestions.name);
+    let outPath = `${outFolder}/${this.sharedQuestions.name}_${this.name}_${this.type}.html`;
     if (fs.existsSync(outPath)) {
       let msg = `A file already exits for ${this.name} ${this.type}. `;
       msg += 'Do you want to overwrite it?'

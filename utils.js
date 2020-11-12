@@ -303,5 +303,6 @@ module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.pause = _pause;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
+module.exports.resolveHome = _resolveHome
 module.exports.today = _today;
 module.exports.update = _update;
