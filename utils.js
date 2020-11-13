@@ -42,10 +42,7 @@ const COMMENT_MULTILINE_RE = /^\s\*.*$(\r\n|\r|\n)/gm;
 const COMMENT_SINGLELINE_RE = /\/\/.*$(\r\n|\r|\n)/gm;
 
 let OUT = config.get('Application.outputDirectory');
-// if (OUT.includes('$HOME')) {
-//   OUT = OUT.replace('$HOME', HOMEDIR);
-// }
-// if (!fs.existsSync(OUT)) { fs.mkdirSync(OUT); }
+OUT = _resolveHome(OUT);
 
 let AlternateKeys;
 
