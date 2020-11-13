@@ -3,7 +3,6 @@
     "help": "VERBOSE",
     "log": false,
     "outputDirectory": "out/",
-    "bcdCommitDirectory": "$HOME/Documents/content/bcd/",
     "questionsFile": "standard-questions.json",
     "test": false,
     "update": "daily",
