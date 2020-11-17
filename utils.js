@@ -273,7 +273,7 @@ function _update(args) {
   if (force) { update = force; }
   if (update || force){
     shell.exec('./update-idl.sh');
-    fs.writeFileSync(updateFile, now);
+    fs.writeFileSync(updateFile, now.toString());
     return true;
   } else if (!update || force) {
     return false;
