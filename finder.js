@@ -60,7 +60,7 @@ class CSSFinder {
 class IDLFinder {
   constructor(args) {
     this._processArguments(args)
-    let dm = new DirectoryManager('idl/');
+    let dm = new DirectoryManager(`${utils.APP_ROOT}/idl/`)
     this._interfaces = dm.interfaceSet;
   }
 

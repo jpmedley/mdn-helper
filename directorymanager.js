@@ -56,9 +56,16 @@ class DirectoryManager {
   }
 
   get interfaceSet() {
-    if (this._interfaceSet) { return this._interfaceSet; }
-    this._interfaceSet = new InterfaceSet();
-    this._processDirectory(this._root);
+    if (!this._interfaceSet) {
+      this._interfaceSet = new InterfaceSet();
+      this._processDirectory(this._root);
+      if (this._interfaceSet.count < 1) {
+        let msg = `IDL files were not found in ${this._root}. `
+        msg =+ `Run "npm run update-data -- -f" and try again.`;
+        console.log(msg);
+        process.exit();
+      }
+    }
     return this._interfaceSet;
   }
 }

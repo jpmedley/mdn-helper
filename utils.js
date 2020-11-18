@@ -280,6 +280,7 @@ function _update(args) {
   }
 }
 
+module.exports.APP_ROOT = APP_ROOT;
 module.exports.OUT = OUT;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
