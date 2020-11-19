@@ -21,6 +21,7 @@ const { homedir } = require('os');
 const JSON5 = require('json5');
 const path = require('path');
 const shell = require('shelljs');
+const updateData = require('./updateData.js');
 
 let EXCLUSIONS = config.get('Application.deprecated');
 EXCLUSIONS.push(...config.get('Application.muted'));
@@ -65,6 +66,12 @@ async function _confirm(msg, initial = "true") {
     }
   });
   return await prompt.run();
+}
+
+function _deleteFile(file) {
+  if (fs.existsSync(file)) {
+    fs.unlinkSync(file);
+  }
 }
 
 function _deleteUnemptyFolder(folder) {
@@ -258,31 +265,23 @@ function _update(args) {
   })();
   const actualInterval = now - lastUpdate
   const updateInterval = config.get('Application.update');
-  let update = false;
+  let updateNow = false;
   switch (updateInterval) {
     case 'hourly':
-      if (actualInterval > ONE_HOUR) { update = true; }
+      if (actualInterval > ONE_HOUR) { updateNow = true; }
       break;
     case 'daily':
-      if (actualInterval > ONE_DAY) { update = true; }
+      if (actualInterval > ONE_DAY) { updateNow = true; }
       break;
     case 'weekly':
-      if (actualInterval > (ONE_WEEK)) { update = true; }
+      if (actualInterval > (ONE_WEEK)) { updateNow = true; }
       break;
   }
-  if (force) { update = force; }
-  if (update || force){
-    let updateScript
-    try {
-      updateScript = config.get('Application.updateScript');
-    } catch (error) {
-      updateScript = './update-idl.sh';
-    }
-    shell.exec(updateScript);
-    // shell.exec('./update-idl.sh');
-    fs.writeFileSync(updateFile, now.toString());
+  if (force) { updateNow = force; }
+  if (updateNow || force){
+    updateData.update();
     return true;
-  } else if (!update || force) {
+  } else if (!updateNow || force) {
     return false;
   }
 }
@@ -291,6 +290,7 @@ module.exports.APP_ROOT = APP_ROOT;
 module.exports.OUT = OUT;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
+module.exports.deleteFile = _deleteFile
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.displayConfig = _displayConfig;
 module.exports.getAlternateKey = _getAlternateKey;
