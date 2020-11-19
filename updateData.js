@@ -19,19 +19,71 @@ const fs = require('fs');
 const Path = require('path');
 const shell = require('shelljs');
 const tar = require('tar');
+const config = require('config');
 const utils = require('./utils.js');
 
 const IDL_ZIP_NANE = 'renderer.tar.gz';
 const IDL_ZIP = `https://chromium.googlesource.com/chromium/src/+archive/HEAD/third_party/blink/${IDL_ZIP_NANE}`;
-const IDL_DIR = `${__dirname}/idl/`
+const IDL_DIR = `${__dirname}/idl/`;
+const ONE_HOUR = 3600000;
+const ONE_DAY = 86400000;
+const ONE_WEEK = 604800000;
+const UPDATE_FILE = `${__dirname}/.update`;
 
-function _update(source = IDL_ZIP, destination = IDL_DIR) {
-  utils.deleteUnemptyFolder(destination);
-  _downloadBCD()
-  _downloadIDL(source, destination)
-  .then(() => {
-    console.log('\nData update complete.\n');
-  });
+function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
+  const force = _resolveForce(args);
+  const update = _resolveUpdatestatus();
+  if (update || force) {
+    utils.deleteUnemptyFolder(destination);
+    _downloadBCD()
+    _downloadIDL(source, destination)
+    .then(() => {
+      fs.writeFileSync(UPDATE_FILE, (new Date().toString()));
+      console.log('Data update complete.\n');
+    });
+    return true;
+  } else {
+    return false;
+  }
+
+}
+
+function _resolveUpdatestatus() {
+  const now = new Date();
+  const lastUpdate = (() => {
+    let lu;
+    if (fs.existsSync(UPDATE_FILE)) {
+      lu = fs.readFileSync(UPDATE_FILE).toString();
+    } else {
+      lu = "Tue Jan 22 1019 15:36:25 GMT-0500 (Eastern Standard Time)";
+    }
+    return new Date(lu);
+  })();
+  const actualInterval = now - lastUpdate;
+  const updateInterval = config.get('Application.update');
+  let updateNow = false;
+  switch (updateInterval) {
+    case 'hourly':
+      if (actualInterval > ONE_HOUR) { updateNow = true; }
+      break;
+    case 'daily':
+      if (actualInterval > ONE_DAY) { updateNow = true; }
+      break;
+    case 'weekly':
+      if (actualInterval > (ONE_WEEK)) { updateNow = true; }
+      break;
+  }
+  return updateNow;
+}
+
+function _resolveForce(args) {
+  let force = false;
+  if (args) {
+    force = args.some(e => {
+      return (e.includes('-f'));
+    })
+  }
+  return force;
 }
 
 async function _downloadIDL(source, destination) {

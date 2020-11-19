@@ -20,20 +20,13 @@ const fs = require('fs');
 const { homedir } = require('os');
 const JSON5 = require('json5');
 const path = require('path');
-const shell = require('shelljs');
-const updateData = require('./updateData.js');
 
 let EXCLUSIONS = config.get('Application.deprecated');
 EXCLUSIONS.push(...config.get('Application.muted'));
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TEMPLATES = 'templates/';
-// const HOMEDIR = require('os').homedir();
 const APP_ROOT = path.resolve(__dirname);
-const UPDATE_INTERVALS = ['hourly','daily','weekly'];
-const ONE_HOUR = 3600000;
-const ONE_DAY = 86400000;
-const ONE_WEEK = 604800000;
 
 const KEY_FILE_PATH = 'config/alternate-keys.json';
 
@@ -244,48 +237,6 @@ function _today() {
   return today;
 }
 
-function _update(args) {
-  let force = false;
-  if (args) {
-    force = args.some(e => {
-      return (e.includes('-f'));
-    });
-  }
-  const updateFile = APP_ROOT + '/.update';
-  const now = new Date();
-  const lastUpdate = (() => {
-    let lu;
-    if (fs.existsSync(updateFile)) {
-      lu = fs.readFileSync(updateFile);
-      lu = lu.toString();
-    } else {
-      lu = "Tue Jan 22 1019 15:36:25 GMT-0500 (Eastern Standard Time)";
-    }
-    return new Date(lu);
-  })();
-  const actualInterval = now - lastUpdate
-  const updateInterval = config.get('Application.update');
-  let updateNow = false;
-  switch (updateInterval) {
-    case 'hourly':
-      if (actualInterval > ONE_HOUR) { updateNow = true; }
-      break;
-    case 'daily':
-      if (actualInterval > ONE_DAY) { updateNow = true; }
-      break;
-    case 'weekly':
-      if (actualInterval > (ONE_WEEK)) { updateNow = true; }
-      break;
-  }
-  if (force) { updateNow = force; }
-  if (updateNow || force){
-    updateData.update();
-    return true;
-  } else if (!updateNow || force) {
-    return false;
-  }
-}
-
 module.exports.APP_ROOT = APP_ROOT;
 module.exports.OUT = OUT;
 module.exports.WIREFRAMES = WIREFRAMES;
@@ -310,4 +261,3 @@ module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.resolveHome = _resolveHome
 module.exports.today = _today;
-module.exports.update = _update;

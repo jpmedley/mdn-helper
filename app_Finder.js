@@ -17,10 +17,11 @@
 require('./log.js').initiateLogger('app_Finder');
 
 const { FinderFactory } = require('./finder.js');
-const { printWelcome, update } = require('./utils.js');
+const { printWelcome } = require('./utils.js');
+const { update } = require('./updateData.js');
 
 printWelcome();
-update();
+update(process.argv);
 
 const finder = FinderFactory(process.argv);
 finder.findAndShow();

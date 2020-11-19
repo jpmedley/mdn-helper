@@ -14,10 +14,11 @@
 
 'use strict';
 
-const { printWelcome, update } = require('./utils.js');
+const { printWelcome } = require('./utils.js');
+const updateData = require('./updateData.js');
 
 printWelcome();
-const updated = update(process.argv);
+const updated = updateData.update(process.argv);
 if (!updated) {
   console.log('No data update is currently needed.');
 }
