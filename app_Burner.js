@@ -17,7 +17,8 @@
 global.__appName = 'app_Burner';
 
 const { BurnerFactory } = require('./burner.js');
-const { printWelcome, update } = require('./utils.js');
+const { printWelcome } = require('./utils.js');
+const { update } = require('./updateData.js');
 
 printWelcome();
 update();
