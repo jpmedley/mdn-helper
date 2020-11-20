@@ -31,8 +31,8 @@ const ONE_WEEK = 604800000;
 const UPDATE_FILE = `${__dirname}/.update`;
 
 function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
-  const force = _resolveForce(args);
-  const update = _resolveUpdatestatus();
+  const force = _isForced(args);
+  const update = _isUpdateNeeded();
   if (update || force) {
     utils.deleteUnemptyFolder(destination);
     _downloadBCD()
@@ -48,7 +48,7 @@ function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
 
 }
 
-function _resolveUpdatestatus() {
+function _isUpdateNeeded() {
   const now = new Date();
   const lastUpdate = (() => {
     let lu;
@@ -76,7 +76,7 @@ function _resolveUpdatestatus() {
   return updateNow;
 }
 
-function _resolveForce(args) {
+function _isForced(args) {
   let force = false;
   if (args) {
     force = args.some(e => {
@@ -88,7 +88,8 @@ function _resolveForce(args) {
 
 async function _downloadIDL(source, destination) {
   console.log('\nDownloading IDL and related data files from Chrome source code.\n');
-  await download(source, destination, { filename: IDL_ZIP_NANE });
+  utils.makeFolder('idl');
+  shell.exec(`curl ${source} > ${destination}${IDL_ZIP_NANE}`);
   var filter = (path, entry) => {
     if (path.includes('bindings/')) { return false }
     if (path.includes('build/')) { return false }
@@ -110,8 +111,6 @@ async function _downloadIDL(source, destination) {
     warn: warn
   });
   utils.deleteFile(`${destination}${IDL_ZIP_NANE}`);
-  // fs.unlinkSync(destination);
-  
 }
 
 function _downloadBCD() {
@@ -120,4 +119,5 @@ function _downloadBCD() {
   shell.exec('curl https://raw.githubusercontent.com/mdn/browser-compat-data/master/schemas/compat-data.schema.json > test/files/compat-data.schema.json');
 }
 
+module.exports.isUpdateNeeded = _isUpdateNeeded;
 module.exports.update = _update;

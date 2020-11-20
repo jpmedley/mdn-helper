@@ -17,6 +17,7 @@
 const fs = require('fs');
 
 const { bcd } = require('./bcd.js');
+const { FlagStatus } = require('./flags.js')
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 
@@ -132,8 +133,11 @@ const SETTER = Object.freeze({
   "type": "Setter"
 });
 
+let FLAGS;
+
 class IDLData {
   constructor(source, options = {}) {
+    FLAGS = new FlagStatus('./idl/platform/runtime_enabled_features.json5')
     this._sourceData = source;
     this._sourcePath = options.sourcePath;
     this._key;
@@ -328,14 +332,14 @@ class InterfaceData extends IDLData {
     });
     if (flagName) {
       const pieces = flagName.split("=");
-      const status = global.__Flags.getHighestResolvedStatus(pieces[1]);
+      const status = FLAGS.getHighestResolvedStatus(pieces[1]);
       return (status === expectedStatus);
     }
     return false;
   }
   
   _getRuntimeEnabledValue__(expectedStatus, forFlag) {
-    let status = global.__Flags.getHighestResolvedStatus(forFlag);
+    let status = FLAGS.getHighestResolvedStatus(forFlag);
     return (status === expectedStatus);
   }
 

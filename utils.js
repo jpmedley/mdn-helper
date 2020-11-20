@@ -180,6 +180,7 @@ function _getWireframes() {
 }
 
 function _makeOutputFolder(dirName) {
+  _makeFolder(OUT);
   const folderToMake = _resolveHome(`${OUT}${dirName}/`);
   return _makeFolder(folderToMake);
 }

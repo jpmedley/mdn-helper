@@ -24,8 +24,6 @@ const utils = require('./utils.js');
 const NOTHING_FOUND = "Could not find matching IDL files.\n\nTry running this command with the -f or -o flags to search for items behind\nflags or in origin trials.\n"
 const CANCEL = '(none)';
 
-global.__Flags = require('./flags.js').FlagStatus('./idl/platform/runtime_enabled_features.json5');
-
 function _finderFactory(args) {
   //First few args are no longer needed.
   args.shift();

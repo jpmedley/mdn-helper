@@ -17,6 +17,7 @@
 const assert = require('assert');
 
 const { CSSSet } = require('../cssset.js');
+const updated = require('../updateData.js').update();
 
 describe('CSSSet', () => {
   describe('constructor', () => {
