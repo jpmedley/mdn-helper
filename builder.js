@@ -46,6 +46,8 @@ const FLAGS = {
   "--css": "--css"
 }
 
+// const NOT_NEEDED = [ "deleter", "getter", "iterable", "setter", "stringifier" ];
+
 function getNamedArg(arg) {
   if (arg in FLAGS) {
     return FLAGS[arg];
@@ -299,6 +301,7 @@ class _IDLBuilder extends Builder {
       if (page.mdn_exists) {
         skippingPages.push([page.type, page.key]);
       } else {
+        // if (NOT_NEEDED.includes(page.type.toLowerCase())) { return; }
         const newPage = new Page(page.name, page.type, sharedQuestions);
         this._pages.push(newPage);
       }

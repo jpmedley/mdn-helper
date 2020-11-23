@@ -289,6 +289,18 @@ describe('InterfaceData', () => {
       const members = id.getMembers(false, true);
       assert.equal(members.length, 8);
     });
+    it('Confirms that getMembers() returns only named getters when requested', () => {
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
+      const members = id.getMembers(false, false, false);
+      assert.strictEqual(members.length, 3);
+    });
+    it('Confirms that getMembers() returns only named setters when requested', () => {
+      const source = loadSource(SETTERS_BOTH);
+      const id = new InterfaceData(source);
+      const members = id.getMembers(false, false, false);
+      assert.strictEqual(members.length, 2);
+    });
   });
 
   describe('getMembersBurnRecords', () => {
@@ -301,12 +313,12 @@ describe('InterfaceData', () => {
   });
 
   describe('getters', () => {
-    it('Confirms that getter returns returns all named and unnamed getters', () => {
+    it('Confirms that getter returns all named and unnamed getters', () => {
       const source = loadSource(GETTERS_BOTH);
       const id = new InterfaceData(source, GETTERS_BOTH);
       assert.ok(id.getters.length === 3);
     });
-    it('Confirms that getter returns all getters when file contains only an unnamed getter', () => {
+    it('Confirms that getter returns a getter when file contains only an unnamed getter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source, GETTERS_UNNAMED_ONLY);
       assert.ok(id.getters.length === 1);

@@ -507,6 +507,7 @@ class InterfaceData extends IDLData {
       let newGetterData = this._cloneObject(GETTER);
       newGetterData.source = source.trim();
 
+      // Extract extended attributes
       let workingString = newGetterData.source;
       if (workingString.includes("]")) {
         let pieces = workingString.split("]");
@@ -514,6 +515,7 @@ class InterfaceData extends IDLData {
         workingString = pieces[1].trim();
       }
 
+      // Extract arguments
       let pieces = workingString.split("(");
       let argsString = pieces[1];
       argsString = argsString.slice(0, -1);
@@ -523,12 +525,15 @@ class InterfaceData extends IDLData {
         if (arg!="") { newGetterData.arguments.push(arg); }
       });
 
+      // Process getter type
       workingString = pieces[0];
       pieces = workingString.split(" ");
       newGetterData.returnType = pieces[1];
       if (pieces[2]) {
+        // Named getter
         newGetterData.name = pieces[2];
       } else {
+        // Unnamed getter
         newGetterData.name = "(getter)";
       }
       if (!register.includes(newGetterData.name)) {
@@ -926,9 +931,9 @@ class InterfaceData extends IDLData {
   }
 
   getBurnRecords(includeFlags = false, includeOriginTrials = false) {
-    // Gets the burn record for the interface itself.
+    // Call on super gets the burn record for the interface itself.
     let records = super.getBurnRecords();
-    let members = this.getMembers(includeFlags, includeOriginTrials);
+    let members = this.getMembers(includeFlags, includeOriginTrials, false);
     for (let m of members) {
       if (!includeFlags && m._flagged) { continue; }
       if (!includeOriginTrials && m._originTrial) { continue; }
@@ -966,7 +971,7 @@ class InterfaceData extends IDLData {
     }
   }  
 
-  getMembers(inlcudeFlags = false, includeOriginTrials = false) {
+  getMembers(inlcudeFlags = false, includeOriginTrials = false, includeUnamed = true) {
     if (this._members.length > 0) { return this._members; }
 
     function _filterByFlag(member) {
@@ -977,20 +982,29 @@ class InterfaceData extends IDLData {
     
     let temp = this.constructors.filter(_filterByFlag);
     if (temp.length > 0) { this._members.push(...temp); }
-    temp = this.deleters.filter(_filterByFlag);
-    if (temp.length > 0) { this._members.push(...temp); }
     temp = this.eventHandlers.filter(_filterByFlag);
-    if (temp.length > 0) { this._members.push(...temp); }
-    temp = this.getters.filter(_filterByFlag);
-    if (temp.length > 0) { this._members.push(...temp); }
-    temp = this.iterable.filter(_filterByFlag);
     if (temp.length > 0) { this._members.push(...temp); }
     temp = this.methods.filter(_filterByFlag);
     if (temp.length > 0) { this._members.push(...temp); }
     temp = this.properties.filter(_filterByFlag);
     if (temp.length > 0) { this._members.push(...temp); }
-    temp = this.setters.filter(_filterByFlag);
-    if (temp.length > 0) { this._members.push(...temp); }
+
+    let getters;
+    let setters;
+    if (includeUnamed) {
+      getters = this.getters.filter(_filterByFlag);
+      setters = this.setters.filter(_filterByFlag);
+
+      temp = this.deleters.filter(_filterByFlag);
+      if (temp.length > 0) { this._members.push(...temp); }
+      temp = this.iterable.filter(_filterByFlag);
+      if (temp.length > 0) { this._members.push(...temp); }
+    } else {
+      getters = this.namedGetters.filter(_filterByFlag);
+      setters = this.namedSetters.filter(_filterByFlag);
+    }
+    if (getters.length > 0) { this._members.push(...getters); }
+    if (setters.length > 0) { this._members.push(...setters); }
 
     this._members.sort((a, b) => {
       if (a.name > b.name) { return 1; }
