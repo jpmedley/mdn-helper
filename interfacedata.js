@@ -944,7 +944,7 @@ class InterfaceData extends IDLData {
   }
 
   _buildRecord(member) {
-    let record = bcd.getRecordByKey(`${this.name}.${member.name}`, 'api');
+    let record = bcd.getRecordByKey(`${this.key}.${member.name}`, 'api');
     record.flag = member.flagged;
     record.name = member.name;
     record.origin_trial = member.originTrial;
