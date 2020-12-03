@@ -95,7 +95,11 @@ At least one of the following:
 
 ### interface
 
-Creates pages for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory.
+Creates one or more individual boilerplates for JavaScript platform APIs. The results are written to the `*path/to*/mdn-helper/out/` directory. The syntax description makes this look more complicated than it is. This can be summarized as `interface -n _interfaceName_` followed by commands for one or more individual pages. For example, the following would create a boilerplate for a property:
+
+`npm run interface -n CSSTransformValue -p length`
+
+Note that this command cannot create multiple pages of the same time in a single command. For example, to create boilerplates for two properties, you would need to run the command twice.
 
 **Syntax:** <code>interface -n _interfaceName_ [-l] [-r] [-c] [(-e | --event) _eventName_] [(-h | --handler) _handlerName_] [(-m | --method) _methodName_] [(-p | --property) _propertyName_] [(-w | --writefiles)</code>
 
