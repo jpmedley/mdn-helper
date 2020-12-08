@@ -40,8 +40,8 @@ const FLAGS = {
   "--method":"--method",
   "-p":"--property",
   "--property":"--property",
-  "-r":"--reference",
-  "--reference":"--reference",
+  "-r":"--interface",
+  "--reference":"--interface",
   "-s": "--css",
   "--css": "--css"
 }
@@ -132,7 +132,7 @@ class Builder {
           trueArgs.push(args[2] + '.' + args[2]);
           break;
         case '--header':
-        case '--reference':
+        case '--interface':
           trueArgs.push(arg);
           trueArgs.push(args[2]);
           break;
