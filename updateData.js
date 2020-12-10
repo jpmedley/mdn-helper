@@ -28,7 +28,6 @@ const IDL_DIR = `${__dirname}/idl/`;
 const ONE_HOUR = 3600000;
 const ONE_DAY = 86400000;
 const ONE_WEEK = 604800000;
-const ONE_MONTH = ONE_DAY * 30;
 const UPDATE_FILE = `${__dirname}/.update`;
 
 function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
@@ -71,10 +70,8 @@ function _isUpdateNeeded() {
       if (actualInterval > ONE_DAY) { updateNow = true; }
       break;
     case 'weekly':
-      if (actualInterval > ONE_WEEK) { updateNow = true; }
+      if (actualInterval > (ONE_WEEK)) { updateNow = true; }
       break;
-    case 'monthly':
-      if (actualInterval > ONE_MONTH) { updateNow = true; }
   }
   return updateNow;
 }
@@ -84,7 +81,7 @@ function _isForced(args) {
   if (args) {
     force = args.some(e => {
       return (e.includes('-f'));
-    });
+    })
   }
   return force;
 }
