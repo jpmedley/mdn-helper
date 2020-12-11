@@ -204,6 +204,18 @@
       "before": "",
       "action": {"name": "add_definitionList", "args": ["_frag_exceptions.html"]}
     },
+    "experimental": {
+      "question": "Is this an experimental API? You can find the answer in the browser compatibility data.",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "yes.",
+      "required": false,
+      "before": "",
+      "action": {"name": "add_string", "args": ["\n  - Experimental"]}
+    },
     "forbidden-response": {
       "question": "Is the response for this header forbidden?",
       "type": "Confirm",
@@ -437,6 +449,18 @@
     },
     "selector": {
       "question": "What is the name of the CSS selector?",
+      "type": "Input",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "action": null
+    },
+    "slug": {
+      "question": "What is the last step of the URL for this page?",
       "type": "Input",
       "pattern": "",
       "message": "",
