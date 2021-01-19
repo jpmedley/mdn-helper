@@ -1,7 +1,7 @@
 {
   "templates": {
     "abstract": {
-      "question": "Write or supply an abstract for the interface.",
+      "question": "Write a basic description of the spec.",
       "type": "Input",
       "help": "The abstract can sometimes be copied from the spec.",
       "message": "",
