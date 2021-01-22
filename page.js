@@ -91,7 +91,7 @@ class _Page {
     }
   }
 
-  async write() {
+  async _write() {
     this.render();
     let outFolder = utils.makeOutputFolder(this.sharedQuestions.name);
     let outPath = `${outFolder}/${this.sharedQuestions.name}_${this.name}_${this.type}.html`;
@@ -103,6 +103,32 @@ class _Page {
     }
     fs.writeFileSync(outPath, this.contents);
   }
+
+  async write() {
+    this.render();
+    let outFolder;
+    switch (this.type) {
+      case 'landing':
+        outFolder = utils.makeOutputFolder(`${this.sharedQuestions.name}_${this.type}`);
+        break;
+      case 'interface':
+        outFolder = utils.makeOutputFolder(`${this.name}`);
+        break;
+      default:
+        outFolder = utils.makeOutputFolder(`${this.sharedQuestions.interface}/${this.name}`);
+        break;
+    }
+    const outPath = `${outFolder}index.html`.toLowerCase();
+    if (fs.existsSync(outPath)) {
+      let msg = `A file already exits at:\n\t${outPath}\n\n`;
+      msg += 'Do you want to overwrite it?'
+      const answer = await utils.confirm(msg);
+      if (!answer) { return; }
+    }
+    fs.writeFileSync(outPath, this.contents);
+  }
 }
+
+
 
 module.exports.Page = _Page;
