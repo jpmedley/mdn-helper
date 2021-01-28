@@ -78,7 +78,7 @@ class FileProcesser {
         }
       } else {
         batch.push(l);
-        if (l.startsWith("};")) {
+        if (l.trim().startsWith("};")) {
           recording = false;
           let objectSource = batch.join('\n');
           interfaceMeta = new INTERFACE_OBJECTS[type](objectSource, options);

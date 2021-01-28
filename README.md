@@ -122,7 +122,7 @@ At least one of the following:
 
 ## update-data
 
-Downloads a new set of IDL files for use by the `build`, `burn`, and `find` commands. This command will run automatically either daily or weekly depending on the value set in your config file. Use `-f` or `--force` to update data sooner.
+Downloads a new set of IDL files for use by the `build`, `burn`, and `find` commands. This command will run automatically either daily or weekly depending on the value set in your config file. Use `-s` or `--sooner` to update data sooner.
 
 ### help
 

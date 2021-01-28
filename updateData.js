@@ -31,9 +31,9 @@ const ONE_WEEK = 604800000;
 const UPDATE_FILE = `${__dirname}/.update`;
 
 function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
-  const force = _isForced(args);
+  const sooner = _isSooner(args);
   const update = _isUpdateNeeded();
-  if (update || force) {
+  if (update || sooner) {
     utils.deleteUnemptyFolder(destination);
     _downloadBCD()
     _downloadIDL(source, destination)
@@ -76,14 +76,14 @@ function _isUpdateNeeded() {
   return updateNow;
 }
 
-function _isForced(args) {
-  let force = false;
+function _isSooner(args) {
+  let sooner = false;
   if (args) {
-    force = args.some(e => {
-      return (e.includes('-f'));
+    sooner = args.some(e => {
+      return (e.includes('-s'));
     })
   }
-  return force;
+  return sooner;
 }
 
 async function _downloadIDL(source, destination) {
