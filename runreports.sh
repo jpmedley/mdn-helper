@@ -14,7 +14,7 @@
 
 #!/bin/sh
 
-npm run update-data -- -f
+npm run update-data -- -s
 
 npm run burn bcd -- -c api -b all
 npm run burn bcd -- -c css -b all
