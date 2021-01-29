@@ -62,16 +62,17 @@ class FileProcesser {
         type = STARTS.find(f => {
           return l.startsWith(f);
         });
-        if (type) { 
+        if (type) {
+          if (l.includes("callback interface")) {
+            type = "interface";
+          }
           switch (type) {
             case "callback":
-              if(!l.includes("interface")) {
                 interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
+                resultCallback(interfaceMeta);
                 continue;
-              }
             case "dictionary":
             case "enum":
-              continue;
             default:
               break;
           }

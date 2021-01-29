@@ -104,6 +104,15 @@ class InterfaceSet {
   get interfaces() {
     return this._interfaces;
   }
+
+  get interfaceNames() {
+    const names = [];
+    const ifs = this.interfaces;
+    for (let i of ifs) {
+      names.push(i.name);
+    }
+    return names;
+  }
 }
 
 module.exports.InterfaceSet = InterfaceSet;

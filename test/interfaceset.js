@@ -32,7 +32,7 @@ describe('InterfaceSet', () => {
   });
 
   describe('findMatching', () => {
-    it('Confirms inclusiong of interfaces behind a flag', () => {
+    it('Confirms inclusion of interfaces behind a flag', () => {
       const matches = INTERFACE_SET.findMatching("*", true);
       assert.equal(matches.length, 74);
     })
