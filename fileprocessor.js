@@ -54,7 +54,7 @@ class FileProcesser {
     let interfaceMeta;
     let recording = false;
     let lines = this._sourceContents.split('\n');
-    let batch = [];
+    let hold = [];
     let type;
     const options = { "sourcePath": this._sourcePath };
     for (let l of lines) {
@@ -63,27 +63,29 @@ class FileProcesser {
           return l.startsWith(f);
         });
         if (type) { 
-          if (type === "callback") {
-            if (!l.includes("interface")) {
-              interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
-              resultCallback(interfaceMeta);
+          switch (type) {
+            case "callback":
+              if(!l.includes("interface")) {
+                interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
+                continue;
+              }
+            case "dictionary":
+            case "enum":
               continue;
-            } else {
-              type = "interface";
-            }
-
+            default:
+              break;
           }
           recording = true;
-          batch.push(l);
+          hold.push(l);
         }
       } else {
-        batch.push(l);
+        hold.push(l);
         if (l.trim().startsWith("};")) {
           recording = false;
-          let objectSource = batch.join('\n');
+          let objectSource = hold.join('\n');
           interfaceMeta = new INTERFACE_OBJECTS[type](objectSource, options);
           resultCallback(interfaceMeta);
-          batch = [];
+          hold = [];
         }
       }
     }
