@@ -28,7 +28,7 @@ const METAFILE = Object.freeze({
   type: ''
 });
 
-const STARTS = ["[", "callback", "dictionary", "enum", "interface", "partial"];
+const STARTS = ["[", "callback", "dictionary", "enum", "interface", "partial", "typedef"];
 const INTERFACE_OBJECTS = Object.freeze({
   "[": InterfaceData,
   "callback": CallbackData,
@@ -58,27 +58,42 @@ class FileProcesser {
     let type;
     const options = { "sourcePath": this._sourcePath };
     for (let l of lines) {
-      if (!recording) {
-        type = STARTS.find(f => {
+      type = ((l, currentType) => {
+        let start = STARTS.find(f => {
           return l.startsWith(f);
         });
-        if (type) {
-          if (l.includes("callback interface")) {
-            type = "interface";
-          }
+        if (start) {
+          if (l.trim().includes("[")) { return "interface"; }
+          if (l.trim().includes("callback interface")) { return "interface"; }
+          return start;
+        } else {
+          return currentType;
+        }
+      })(l, type);
+
+      // type = STARTS.find(f => {
+      //   return l.startsWith(f);
+      // });
+      if (!recording) {
+        // if (type) {
+          // if (l.includes("callback interface")) {
+          //   type = "interface";
+          // }
           switch (type) {
             case "callback":
-                interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
-                resultCallback(interfaceMeta);
-                continue;
+              interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
+              resultCallback(interfaceMeta);
+              continue;
             case "dictionary":
             case "enum":
+            case "typedef":
+              continue;
             default:
               break;
           }
           recording = true;
           hold.push(l);
-        }
+        // }
       } else {
         hold.push(l);
         if (l.trim().startsWith("};")) {

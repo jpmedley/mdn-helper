@@ -33,7 +33,7 @@ describe('FileProcessor', () => {
         is.add(result);
       });
       let msg = `Found interfaces are: ${is.interfaceNames}.`
-      assert.equal(is.count, 4, msg);
+      assert.equal(is.count, 2, msg);
     });
     it('Confirms that partial interfaces are handled', () => {
       const is = new InterfaceSet();
