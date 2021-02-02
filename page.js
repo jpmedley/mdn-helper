@@ -107,14 +107,18 @@ class _Page {
   async write() {
     this.render();
     let outFolder;
+    let lcName;
     switch (this.type) {
       case 'landing':
-        outFolder = utils.makeOutputFolder(`${this.sharedQuestions.name}_${this.type}`);
+        lcName = this.sharedQuestions.name.toLowerCase();
+        outFolder = utils.makeOutputFolder(`${lcName}_${this.type}`);
         break;
       case 'interface':
-        outFolder = utils.makeOutputFolder(`${this.name}`);
+        lcName = this.name.toLowerCase();
+        outFolder = utils.makeOutputFolder(`${lcName}`);
         break;
       default:
+        lcName = this.sharedQuestions.interface.toLowerCase();
         outFolder = utils.makeOutputFolder(`${this.sharedQuestions.interface}/${this.name}`);
         break;
     }
