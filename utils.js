@@ -25,7 +25,7 @@ let EXCLUSIONS = config.get('Application.deprecated');
 EXCLUSIONS.push(...config.get('Application.muted'));
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
-const TEMPLATES = 'templates/';
+const TEMPLATES = `${__dirname}/templates/`;
 const APP_ROOT = path.resolve(__dirname);
 
 const KEY_FILE_PATH = 'config/alternate-keys.json';
