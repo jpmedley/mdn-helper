@@ -188,7 +188,7 @@ function _makeOutputFolder(dirName) {
 function _makeFolder(dirName) {
   dirName = _resolveHome(dirName);
   if (fs.existsSync(dirName)) { return dirName; }
-  fs.mkdirSync(dirName);
+  fs.mkdirSync(dirName, { recursive: true });
   return dirName;
 }
 

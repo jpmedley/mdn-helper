@@ -119,7 +119,7 @@ class _Page {
         break;
       default:
         lcName = this.sharedQuestions.interface.toLowerCase();
-        outFolder = utils.makeOutputFolder(`${this.sharedQuestions.interface}/${this.name}`);
+        outFolder = utils.makeOutputFolder(`${lcName}/${this.name}`);
         break;
     }
     const outPath = `${outFolder}index.html`.toLowerCase();
