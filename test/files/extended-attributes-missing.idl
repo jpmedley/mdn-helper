@@ -1,0 +1,4 @@
+interface ExtendedAttribsReversed {
+    constructor();
+readonly attribute FontFaceSetLoadStatus status;
+};

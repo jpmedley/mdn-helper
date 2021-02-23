@@ -34,6 +34,7 @@ const DELETERS = './test/files/all-deleters.idl';
 const EVENTHANDLERS = './test/files/all-event-handlers.idl';
 const EXPOSED_MANY = './test/files/exposed-many.idl';
 const EXPOSED_ONE = './test/files/exposed-one.idl';
+const EXTENDED_ATTRIBUTES_MISSING = './test/files/extended-attributes-missing.idl';
 const EXTENDED_ATTRIBUTES_REVERSED = './test/files/extended-attributes-reversed.idl';
 const FLAGGED_INTERFACE = './test/files/interface-rte-test.idl';
 const FLAGGED_MEMBERS = './test/files/flagged-members.idl';
@@ -262,6 +263,11 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source, RUNTIMEENABLED_IFACE_EXPER_RE);
       assert.ok(id.flagged);
     });
+    it('Confirms that false is returned when etended attributes are not present', () => {
+      const source = loadSource(EXTENDED_ATTRIBUTES_MISSING);
+      const id = new InterfaceData(source, EXTENDED_ATTRIBUTES_MISSING);
+      assert.ok(!id.flagged);
+    });
   });
 
   describe('getMembers()', () => {
@@ -348,6 +354,11 @@ describe('InterfaceData', () => {
       const source = loadSource(FLAGGED_INTERFACE);
       const id = new InterfaceData(source, FLAGGED_INTERFACE);
       assert.ok(id.inTest === true);
+    });
+    it('Confirms that false is returned when etended attributes are not present', () => {
+      const source = loadSource(EXTENDED_ATTRIBUTES_MISSING);
+      const id = new InterfaceData(source, EXTENDED_ATTRIBUTES_MISSING);
+      assert.ok(!id.inTest === true);
     });
   });
 
@@ -544,6 +555,11 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source, RUNTIMEENABLED_IFACE_OT_RE);
       assert.ok(id.originTrial);
     });
+    it('Confirms that false is returned when etended attributes are not present', () => {
+      const source = loadSource(EXTENDED_ATTRIBUTES_MISSING);
+      const id = new InterfaceData(source, EXTENDED_ATTRIBUTES_MISSING);
+      assert.ok(!id.originTrial);
+    });
   });
 
   describe('parentClass', () => {
@@ -603,6 +619,11 @@ describe('InterfaceData', () => {
     it('Confirms that secureContext returns false when not present', () => {
       const source = loadSource(EXPOSED_ONE);
       const id = new InterfaceData(source, EXPOSED_ONE);
+      assert.ok(!id.secureContext);
+    });
+    it('Confirms that secureContext returns false when etended attributes are not present', () => {
+      const source = loadSource(EXTENDED_ATTRIBUTES_MISSING);
+      const id = new InterfaceData(source, EXTENDED_ATTRIBUTES_MISSING);
       assert.ok(!id.secureContext);
     });
   });

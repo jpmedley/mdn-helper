@@ -817,6 +817,7 @@ class InterfaceData extends IDLData {
 
   get secureContext() {
     let extAttributes = this._getInterfaceExtendedAttributes();
+    if (!extAttributes) { return false; }
     return extAttributes.includes("SecureContext");
   }
 
