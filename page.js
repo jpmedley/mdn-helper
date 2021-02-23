@@ -108,6 +108,7 @@ class _Page {
     this.render();
     let outFolder;
     let lcName;
+    let msg;
     switch (this.type) {
       case 'landing':
         lcName = this.sharedQuestions.name.toLowerCase();
@@ -124,12 +125,18 @@ class _Page {
     }
     const outPath = `${outFolder}index.html`.toLowerCase();
     if (fs.existsSync(outPath)) {
-      let msg = `A file already exits at:\n\t${outPath}\n\n`;
+      msg = `\nA file already exits at:\n\t${outPath}\n\n`;
       msg += 'Do you want to overwrite it?'
       const answer = await utils.confirm(msg);
-      if (!answer) { return; }
+      if (!answer) {
+        // Attractive message spacing.
+        console.log();
+        return;
+      }
     }
     fs.writeFileSync(outPath, this.contents);
+    msg = `\nA page has been written  to\n\t${outPath}\n`;
+    console.log(msg);
   }
 }
 

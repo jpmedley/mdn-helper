@@ -232,7 +232,6 @@ class _CLIBuilder extends Builder {
 
     // Process remaining arguments.
     args.forEach((arg, index, args) => {
-      console.log(arg);
       if ((arg.trim() === 'w') || arg.trim() === 'writeOnly') { return; }
       let members = arg.split(',');
       let aPage = new Page(members[1], members[0], sharedQuestions);
