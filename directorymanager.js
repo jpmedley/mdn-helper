@@ -61,7 +61,7 @@ class DirectoryManager {
       this._processDirectory(this._root);
       if (this._interfaceSet.count < 1) {
         let msg = `IDL files were not found in ${this._root}. `
-        msg += `Run "npm run update-data -- -f" and try again.`;
+        msg += `Run "npm run update-data -- -s" and try again.`;
         console.log(msg);
         process.exit();
       }
