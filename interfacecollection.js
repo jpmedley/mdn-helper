@@ -14,7 +14,7 @@
 
 'use strict';
 
-// This module exists to export an InterfaceSet() instance to a client
+// ThInterfaceCollectionis module exists to export an InterfaceSet() instance to a client
 // application. Within the architecture of this app, getting an 
 // InterfaceSet() requires instantiating DirectoryManager() and calling
 // one of its properties. This is bad design on my part and makes
@@ -28,6 +28,10 @@ const { DirectoryManager } = require('./directorymanager.js');
 class _InterfaceCollection extends DirectoryManager {
   constructor() {
     super(`${utils.APP_ROOT}/idl/`);
+  }
+  
+  get interfaces() {
+    return this.interfaceSet;
   }
 }
 
