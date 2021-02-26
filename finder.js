@@ -160,6 +160,7 @@ class IDLFinder {
     console.log(msg);
   }
 
+
   async findAndShow() {
     this._printInstructions();
     let metaFile = await this._find();
@@ -184,6 +185,17 @@ class IDLFinder {
     this._show(metaFile);
   }
 
+
+  async findAndReturn() {
+    let metaFile = await this._find();
+    let id;
+    const fp = new FileProcessor(metaFile.path);
+    fp.process((result) => {
+      id = result;
+    }, true);
+    return id;
+  }
+
   async findAndBuild() {
     this._printInstructions()
     let metaFile = await this._find();
@@ -191,7 +203,7 @@ class IDLFinder {
     const fp = new FileProcessor(metaFile.path);
     fp.process((result) => {
       id = result;
-    }, true)
+    }, true);
     const options = {
       interactive: this._interactive,
       interfaceData: id,
