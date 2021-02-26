@@ -17,13 +17,15 @@
 const fs = require('fs');
 const utils = require('./utils.js');
 
-const API_TEMPLATE = fs.readFileSync('templates/bcd-api.txt');
-const CONSTR_TEMPLATE = fs.readFileSync('templates/bcd-constructor.txt');
-const MEMBER_TEMPLATE = fs.readFileSync('templates/bcd-member.txt');
+const API_TEMPLATE = 'templates/bcd-api.txt';
+const CONSTR_TEMPLATE = 'templates/bcd-constructor.txt';
+const MEMBER_TEMPLATE = 'templates/bcd-member.txt';
 const NEST_LEVEL = 2;
 
-function _copyString(oldString) {
-  return (' ' + oldString).slice(1);
+function getTemplate(templateName) {
+  let source = fs.readFileSync(templateName);
+  source = (' ' + source).slice(1);
+  return source
 }
 
 class _BCDBuilder {
@@ -71,16 +73,16 @@ class _BCDBuilder {
       if (skipMembers.includes(m.name)) { continue; }
       if (m.type === 'Constructor') {
         if (!constructorFound) {
-          membersBCD.push(_copyString(CONSTR_TEMPLATE));
+          membersBCD.push(getTemplate(CONSTR_TEMPLATE));
           constructorFound = true;
         }
       } else {
-        let member = _copyString(MEMBER_TEMPLATE)
+        let member = getTemplate(MEMBER_TEMPLATE)
                      .replace(/\[\[member-name\]\]/g, m.name);
         membersBCD.push(member);
       }
     }
-    this._bcdString = _copyString(API_TEMPLATE);
+    this._bcdString = getTemplate(API_TEMPLATE);
     let memberString = '';
     if (membersBCD.length) {
       memberString = membersBCD.join(',\n');
