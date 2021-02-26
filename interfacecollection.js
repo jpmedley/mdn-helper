@@ -30,8 +30,8 @@ class _InterfaceCollection extends DirectoryManager {
     super(`${utils.APP_ROOT}/idl/`);
   }
   
-  get interfaces() {
-    return this.interfaceSet;
+ findExact(searchValOrArray, includeFlags=false, includeOriginTrials=false) {
+    return this.interfaceSet.findExact(searchValOrArray, includeFlags, includeOriginTrials);
   }
 }
 
