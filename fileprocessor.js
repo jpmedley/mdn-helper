@@ -18,6 +18,11 @@ const utils = require('./utils.js');
 
 const { CallbackData, DictionaryData, EnumData, InterfaceData } = require('./interfacedata.js');
 
+const EXTENDED_INTERFACE_RE = /\[[.^$\W\w]*\}/m;
+const LANDMARK = Obejct.freeze({
+  type: "",
+  location: null
+});
 const METAFILE = Object.freeze({
   flag: null,
   path: '',
@@ -51,6 +56,23 @@ class FileProcesser {
   }
 
   process(resultCallback) {
+    let landmarks = new Map();
+    let landmark;
+    let lines = this._sourceContents.split('\n');
+    lines.forEach((l, i, lines) => {
+      if (l.trim().startsWith('//')) { continue; }
+      if (!l.includes(';')) {
+        // landmark = Object.assign({}, LANDMARK);
+        // landmark.type = "ExtendedAttribute";
+        // landmark.location = i;
+        landmarks.set('ExtendedAttributes', [i]);
+      }
+      if (l.trim().startsWith(']')) {}
+      if (l.includes('interface mixin'))
+    });
+  }
+
+  process_(resultCallback) {
     let interfaceMeta;
     let recording = false;
     let lines = this._sourceContents.split('\n');
@@ -70,15 +92,7 @@ class FileProcesser {
           return currentType;
         }
       })(l, type);
-
-      // type = STARTS.find(f => {
-      //   return l.startsWith(f);
-      // });
       if (!recording) {
-        // if (type) {
-          // if (l.includes("callback interface")) {
-          //   type = "interface";
-          // }
           switch (type) {
             case "callback":
               interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
