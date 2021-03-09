@@ -18,8 +18,9 @@ const utils = require('./utils.js');
 
 const { CallbackData, DictionaryData, EnumData, InterfaceData } = require('./interfacedata.js');
 
-const EXTENDED_INTERFACE_RE = /\[[.^$\W\w]*\}/m;
-const LANDMARK = Obejct.freeze({
+// const INTERFACE_RE = /\[?\W?(callback)?\W?[.^$\W\w]*\}/m;
+const INTERFACE_RE = /\[?\W?(callback|partial)?\sinterface\s(mixin)?(\w*)\W?[.^$\W\w]*\}/m;
+const LANDMARK = Object.freeze({
   type: "",
   location: null
 });
@@ -43,6 +44,12 @@ const INTERFACE_OBJECTS = Object.freeze({
   "partial": InterfaceData
 });
 
+class IDLError extends Error {
+  constructor(message, fileName, lineNumber) {
+    super(message, fileName, lineNumber);
+  }
+}
+
 class RegExError extends Error {
   constructor(message='', fileName='', lineNumber='') {
     super(message, fileName, lineNumber);
@@ -55,21 +62,29 @@ class FileProcesser {
     this._sourceContents = utils.getIDLFile(this._sourcePath, { clean: true });
   }
 
+  // partial interface name
+  // interface mixin name
+  // callback interface name
   process(resultCallback) {
-    let landmarks = new Map();
-    let landmark;
-    let lines = this._sourceContents.split('\n');
-    lines.forEach((l, i, lines) => {
-      if (l.trim().startsWith('//')) { continue; }
-      if (!l.includes(';')) {
-        // landmark = Object.assign({}, LANDMARK);
-        // landmark.type = "ExtendedAttribute";
-        // landmark.location = i;
-        landmarks.set('ExtendedAttributes', [i]);
+    let interfaceMeta;
+    if (this._sourceContents.includes(' interface ')) {
+      let foundInterface = this._sourceContents.match(INTERFACE_RE);
+      if (!foundInterface) {
+        const msg = `File ${this._sourcePath} is malformed.`;
+        throw new IDLError(msg, this._sourcePath)
       }
-      if (l.trim().startsWith(']')) {}
-      if (l.includes('interface mixin'))
-    });
+      if (foundInterface[0].includes('partial')) {
+        console.log('partial');
+      } else if (foundInterface[0].includes('mixin')) {
+        console.log('mixin');
+      } else if (foundInterface[0].includes('callback')) {
+        // console.log('callback');
+        interfaceMeta = 
+      } else {
+        console.log('interface');
+      }
+    }
+    
   }
 
   process_(resultCallback) {
@@ -142,4 +157,5 @@ class FileProcesser {
 }
 
 module.exports.FileProcessor = FileProcesser;
+module.exports.IDLError = IDLError;
 module.exports.METAFILE = METAFILE;

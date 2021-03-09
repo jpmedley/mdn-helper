@@ -15,19 +15,36 @@
 'use strict';
 
 const assert = require('assert');
+const glob = require("glob");
 
-const { FileProcessor } = require('../fileprocessor.js');
+const { FileProcessor, IDLError } = require('../fileprocessor.js');
 const { InterfaceSet } = require('../interfaceset.js');
 
-const IDL_FILES = './test/files/';
+const ACTUAL_IDL_FILES = 'idl/**/**/**/*.idl';
+const TEST_IDL_FILES = './test/files/';
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
 describe('FileProcessor', () => {
   describe('process()', () => {
+    it('Confirms that interface structures can be interpreted in all IDL files', () => {
+      const foundFiles = glob.sync(ACTUAL_IDL_FILES);
+      let foundErr;
+      foundFiles.forEach((f) => {
+        try {
+          let fp = new FileProcessor(f);
+          fp.process((result) => {
+            // result not needed for this test.
+          });
+        } catch (err) {
+          foundErr = err;
+        }
+      });
+      assert.ok(!(foundErr instanceof IDLError));
+    })
     it('Confirms that the four interface data objects are in the resulting fileset', () => {
       const is = new InterfaceSet();
-      const testFile = `${IDL_FILES}multiple-structures.idl`;
+      const testFile = `${TEST_IDL_FILES}multiple-structures.idl`;
       let fp = new FileProcessor(testFile);
       fp.process((result) => {
         is.add(result);
@@ -37,7 +54,7 @@ describe('FileProcessor', () => {
     });
     it('Confirms that partial interfaces are handled', () => {
       const is = new InterfaceSet();
-      const testFile = `${IDL_FILES}interface-partial.idl`;
+      const testFile = `${TEST_IDL_FILES}interface-partial.idl`;
       let fp = new FileProcessor(testFile);
       fp.process((result) => {
         is.add(result);
@@ -47,7 +64,7 @@ describe('FileProcessor', () => {
     });
     it('Confirms that callback interfaces are handled', () => {
       const is = new InterfaceSet();
-      const testFile = `${IDL_FILES}interface-callback.idl`;
+      const testFile = `${TEST_IDL_FILES}interface-callback.idl`;
       let fp = new FileProcessor(testFile);
       fp.process((result) => {
         is.add(result);
