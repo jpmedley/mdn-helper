@@ -24,7 +24,6 @@ const { initiateLogger } = require('../log.js');
 initiateLogger();
 
 const ALTERNATE_KEY = './test/files/alternate-key.idl';
-const BURNABLE = './test/files/burnable.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
 const CONSTRUCTOR_BRACKET_ARG = './test/files/constructor-bracket-arg.idl';
@@ -41,9 +40,12 @@ const FLAGGED_MEMBERS = './test/files/flagged-members.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
+const INTERFACE_CALLBACK = './test/files/interface-callback.idl';
+const INTERFACE_MIXIN = './test/files/mixin.idl';
+const INTERFACE_NOPARENT = './test/files/interface-noparent.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
 const INTERFACE_PARTIAL = './test/files/interface-partial.idl';
-const INTERFACE_NOPARENT = './test/files/interface-noparent.idl';
+const INTERFACE_STANDARD = './test/files/burnable.idl';
 const ITERABLE_MULTI_ARG_SEQ = './test/files/iterable-multi-arg-sequence.idl';
 const ITERABLE_MULTI_ARG = './test/files/iterable-multi-arg.idl';
 const ITERABLE_ONE_ARG = './test/files/iterable-one-arg.idl';
@@ -55,7 +57,6 @@ const METHOD_PROMISES = './test/files/method-promises.idl';
 const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
 const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
-const MIXIN = './test/files/mixin.idl';
 const OT_MEMBERS = './test/files/ot-members.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
@@ -102,7 +103,6 @@ function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
 }
 
-
 describe('InterfaceData', () => {
   describe('Extended attributes', () => {
     it('Confirms that extended attribute order is irrelevant to reading their values', () => {
@@ -113,6 +113,14 @@ describe('InterfaceData', () => {
       assert.equal(id1.originTrial, id2.originTrial);
     });
   });
+
+  describe('Callback interfaces', () => {
+    it('Confirms that callback interfaces are loaded and processed', () => {
+      const source = loadSource(INTERFACE_CALLBACK);
+      const id = new InterfaceData(source, INTERFACE_CALLBACK);
+      assert.strictEqual(id.name, "InterfaceCallback");
+    })
+  })
 
   describe('Partial interfaces', () => {
     it('Confirms that partial interfaces are loaded and processed', () => {
@@ -272,25 +280,25 @@ describe('InterfaceData', () => {
 
   describe('getMembers()', () => {
     it('Confirms that getMembers() returns all items', () => {
-      const source = loadSource(BURNABLE);
+      const source = loadSource(INTERFACE_STANDARD);
       const id = new InterfaceData(source);
       const members = id.getMembers(true, true);
       assert.equal(members.length, 10);
     });
     it('Confirms that getMembers() returns only stable items', () => {
-      const source = loadSource(BURNABLE);
+      const source = loadSource(INTERFACE_STANDARD);
       const id = new InterfaceData(source);
       const members = id.getMembers(false, false);
       assert.equal(members.length, 7);
     });
     it('Confirms that getMembers() returns only stable and flagged items', () => {
-      const source = loadSource(BURNABLE);
+      const source = loadSource(INTERFACE_STANDARD);
       const id = new InterfaceData(source);
       const members = id.getMembers(true, false);
       assert.equal(members.length, 9);
     });
     it('Confirms that getMembers() returns only stable and origin trial items', () => {
-      const source = loadSource(BURNABLE);
+      const source = loadSource(INTERFACE_STANDARD);
       const id = new InterfaceData(source);
       const members = id.getMembers(false, true);
       assert.equal(members.length, 8);
@@ -311,7 +319,7 @@ describe('InterfaceData', () => {
 
   describe('getMembersBurnRecords', () => {
     it('Confirms return of records for an interface and a member', () => {
-      const source = loadSource(BURNABLE);
+      const source = loadSource(INTERFACE_STANDARD);
       const id = new InterfaceData(source);
       const records = id.getMembersBurnRecords('Burnable.check');
       assert.equal(records.length, 2);
@@ -391,8 +399,8 @@ describe('InterfaceData', () => {
   });
   describe('key', () => {
     it('Conirms that key returns the actual key', () => {
-      const source = loadSource(BURNABLE);
-      const id = new InterfaceData(source, BURNABLE);
+      const source = loadSource(INTERFACE_STANDARD);
+      const id = new InterfaceData(source, INTERFACE_STANDARD);
       assert.strictEqual(id.key, 'Burnable');
     });
     it('Confirms that an alternate key is returned', () => {
@@ -479,9 +487,9 @@ describe('InterfaceData', () => {
 
   describe('mixin', () => {
     it('Confirms that mixin IDL loads without errors', () => {
-      const source = loadSource(MIXIN);
+      const source = loadSource(INTERFACE_MIXIN);
       try {
-        const id = new InterfaceData(source, MIXIN);
+        const id = new InterfaceData(source, INTERFACE_MIXIN);
         assert.ok(id.mixin);
       } catch (error) {
         throw error;
@@ -490,17 +498,27 @@ describe('InterfaceData', () => {
   });
 
   describe('name', () => {
-    it('Confirms that the name property returns the correct value', () => {
-      const source = loadSource(BURNABLE);
-      const id = new InterfaceData(source, BURNABLE);
-      assert.equal(id.name, 'Burnable');
+    it('Confirms that the correct name is returned for a standard interface IDL', () => {
+      const source = loadSource(INTERFACE_STANDARD);
+      const id = new InterfaceData(source, INTERFACE_STANDARD);
+      assert.strictEqual(id.name, 'Burnable');
     });
-    it('Confirms that the name property is not "mixin"', () => {
-      const source = loadSource(MIXIN);
-      const id = new InterfaceData(source, MIXIN);
-      assert.notStrictEqual(id.name, 'mixin');
+    it('Confirms that the correct name is returned for a callback interface IDL', () => {
+      const source = loadSource(INTERFACE_CALLBACK);
+      const id = new InterfaceData(source, INTERFACE_CALLBACK);
+      assert.strictEqual(id.name, 'InterfaceCallback')
+    })
+    it('Confirms that the correct name is returned for a mixin interface IDL', () => {
+      const source = loadSource(INTERFACE_MIXIN);
+      const id = new InterfaceData(source, INTERFACE_MIXIN);
+      assert.strictEqual(id.name, 'Body');
     });
-  })
+    it('Confirms that the correct name is returned for a partial interface IDL', () => {
+      const source = loadSource(INTERFACE_PARTIAL);
+      const id = new InterfaceData(source, INTERFACE_PARTIAL);
+      assert.strictEqual(id.name, 'InterfacePartial')
+    });
+  });
 
   describe('namedGetters', () => {
     it('Confirms that named getters returns items when file contains named and unnamed getters', () => {
@@ -713,7 +731,7 @@ describe('InterfaceData', () => {
       const keyFile = './keyfile.txt';
       if (fs.existsSync(keyFile)) { fs.unlinkSync(keyFile); }
 
-      const source = loadSource(BURNABLE);
+      const source = loadSource(INTERFACE_STANDARD);
       const id = new InterfaceData(source);
       id.writeKeys(keyFile);
       const keyFileContents = fs.readFileSync(keyFile).toString();
