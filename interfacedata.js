@@ -756,7 +756,7 @@ class InterfaceData extends IDLData {
 
   get mixin() {
     // For backward compatibility
-    return (this._subType === 'mixixn');
+    return (this._subType === 'mixin');
   }
 
   get name() {
