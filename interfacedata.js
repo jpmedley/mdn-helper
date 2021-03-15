@@ -17,6 +17,7 @@
 const fs = require('fs');
 
 const { bcd } = require('./bcd.js');
+const { IDLError } = require('./errors.js');
 const { FlagStatus } = require('./flags.js')
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
@@ -133,12 +134,6 @@ const SETTER = Object.freeze({
   "tree": this.source, // Needed for Backward compatibility
   "type": "Setter"
 });
-
-class IDLError extends Error {
-  constructor(message, fileName, lineNumber) {
-    super(message, fileName, lineNumber);
-  }
-}
 
 let FLAGS;
 

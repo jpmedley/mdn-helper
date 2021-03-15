@@ -17,7 +17,8 @@
 const assert = require('assert');
 const glob = require("glob");
 
-const { FileProcessor, IDLError } = require('../fileprocessor.js');
+const { IDLError } = require('../errors.js');
+const { FileProcessor } = require('../fileprocessor.js');
 const { InterfaceSet } = require('../interfaceset.js');
 
 const ACTUAL_IDL_FILES = 'idl/**/**/**/*.idl';
