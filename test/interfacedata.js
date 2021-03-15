@@ -698,6 +698,29 @@ describe('InterfaceData', () => {
     });
   });
 
+  describe('subType', () => {
+    it('Confirms that standard is returned for standard interfaces', () => {
+      const source = loadSource(INTERFACE_STANDARD);
+      const id = new InterfaceData(source, INTERFACE_STANDARD);
+      assert.strictEqual(id.subType, 'standard');
+    });
+    it('Confirms that callback is returned for callback interfaces', () => {
+      const source = loadSource(INTERFACE_CALLBACK);
+      const id = new InterfaceData(source, INTERFACE_CALLBACK);
+      assert.strictEqual(id.subType, 'callback');
+    });
+    it('Confirms that mixin is returned for mixin interfaces', () => {
+      const source = loadSource(INTERFACE_MIXIN);
+      const id = new InterfaceData(source, INTERFACE_MIXIN);
+      assert.strictEqual(id.subType, 'mixin');
+    });
+    it('Confirms that partial is returned for partial interfaces', () => {
+      const source = loadSource(INTERFACE_PARTIAL);
+      const id = new InterfaceData(source, INTERFACE_PARTIAL);
+      assert.strictEqual(id.subType, 'partial');
+    });
+  });
+
   describe('unnamedGetters', () => {
     it('Confirms that unnamedGetters returns an object when file contains named and unnamed getters', () => {
       const source = loadSource(GETTERS_BOTH);

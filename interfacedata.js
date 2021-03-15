@@ -25,6 +25,7 @@ const CALLBACK_NAME_RE = /callback\s(\w+)/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
 const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
+const INTERFACE_DEFINITION_RE  = /(callback\s|partial\s)?interface\s(mixin\s)?(\w+)/;
 
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
@@ -132,6 +133,12 @@ const SETTER = Object.freeze({
   "tree": this.source, // Needed for Backward compatibility
   "type": "Setter"
 });
+
+class IDLError extends Error {
+  constructor(message, fileName, lineNumber) {
+    super(message, fileName, lineNumber);
+  }
+}
 
 let FLAGS;
 
@@ -253,6 +260,7 @@ class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
     this._type = "interface";
+    this._subType = null;
     this._constructors = [];
     this._deleters = [];
     this._eventHandlers = [];
@@ -280,9 +288,23 @@ class InterfaceData extends IDLData {
   }
 
   _processHeader() {
-    let matches = this._sourceData.match(INTERFACE_NAME_RE);
-    matches[1]? this._mixin = true: this._mixin = false;
-    this._name = matches[2];
+    // let matches = this._sourceData.match(INTERFACE_NAME_RE);
+    // matches[1]? this._mixin = true: this._mixin = false;
+    // this._name = matches[2];
+    let matches = this._sourceData.match(INTERFACE_DEFINITION_RE);
+    if (!matches) {
+      let msg = `Problem processing ${this._sourcePath}.\n`
+      msg += `${error.message}\n${error.stack}`;
+      throw new IDLError(msg, error.fileName, error.lineNumber);
+    }
+    if (matches[1]) {
+      this._subType = matches[1].trim();
+    } else if (matches[2]) {
+      this._subType = matches[2].trim();
+    } else {
+      this._subType = 'standard';
+    }
+    this._name = matches[3];
   }
 
   _processSource() {
@@ -321,7 +343,7 @@ class InterfaceData extends IDLData {
     } catch (error) {
       let msg = `Problem processing ${this._sourcePath}.\n`
       msg += `${error.message}\n${error.stack}`;
-      throw new Error(msg, error.fileName, error.lineNumber);
+      throw new IDLError(msg, error.fileName, error.lineNumber);
     }
   }
 
@@ -738,7 +760,8 @@ class InterfaceData extends IDLData {
   }
 
   get mixin() {
-    return this._mixin;
+    // For backward compatibility
+    return (this._subType === 'mixixn');
   }
 
   get name() {
@@ -819,6 +842,10 @@ class InterfaceData extends IDLData {
     let extAttributes = this._getInterfaceExtendedAttributes();
     if (!extAttributes) { return false; }
     return extAttributes.includes("SecureContext");
+  }
+
+  get subType() {
+    return this._subType;
   }
 
   // Backward compatibility
