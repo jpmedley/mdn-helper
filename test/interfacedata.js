@@ -115,18 +115,38 @@ describe('InterfaceData', () => {
   });
 
   describe('Callback interfaces', () => {
-    it('Confirms that callback interfaces are loaded and processed', () => {
+    it('Confirms that callback interface IDL is processed without errors', () => {
       const source = loadSource(INTERFACE_CALLBACK);
-      const id = new InterfaceData(source, INTERFACE_CALLBACK);
-      assert.strictEqual(id.name, "InterfaceCallback");
-    })
-  })
+      try {
+        const id = new InterfaceData(source, INTERFACE_CALLBACK);
+        assert.strictEqual(id.name, "InterfaceCallback");
+      } catch (error) {
+        throw error;
+      }
+    });
+  });
+
+  describe('mixin interfaces', () => {
+    it('Confirms that mixin interface IDL is processed without errors', () => {
+      const source = loadSource(INTERFACE_MIXIN);
+      try {
+        const id = new InterfaceData(source, INTERFACE_MIXIN);
+        assert.ok(id.mixin);
+      } catch (error) {
+        throw error;
+      }
+    });
+  });
 
   describe('Partial interfaces', () => {
-    it('Confirms that partial interfaces are loaded and processed', () => {
+    it('Confirms that partial interface IDL is processed without error', () => {
       const source = loadSource(INTERFACE_PARTIAL);
-      const id = new InterfaceData(source, INTERFACE_PARTIAL);
-      assert.equal(id.name, "InterfacePartial");
+      try {
+        const id = new InterfaceData(source, INTERFACE_PARTIAL);
+        assert.strictEqual(id.name, 'InterfacePartial');
+      } catch (error) {
+        throw error;
+      }
     });
   });
 
@@ -483,18 +503,6 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source, STRINGIFIER);
       assert.equal(id.methods[0].name, "toString");
     });
-  });
-
-  describe('mixin', () => {
-    it('Confirms that mixin IDL loads without errors', () => {
-      const source = loadSource(INTERFACE_MIXIN);
-      try {
-        const id = new InterfaceData(source, INTERFACE_MIXIN);
-        assert.ok(id.mixin);
-      } catch (error) {
-        throw error;
-      }
-    })
   });
 
   describe('name', () => {
