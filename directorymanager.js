@@ -42,7 +42,6 @@ class DirectoryManager {
         try {
           let fp = new FileProcessor(`${root}${contents[c].name}`);
           fp.process((result) => {
-            console.log(result);
             if (this._types.includes(result.type)) {
               if (!result.inTest) {
                 this._interfaceSet.add(result);
