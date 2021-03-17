@@ -25,6 +25,7 @@ const utils = require('./utils.js');
 const CALLBACK_NAME_RE = /callback\s(\w+)/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
+const INCLUDES_NAME_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/m;
 const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
 const INTERFACE_DEFINITION_RE  = /(callback\s|partial\s)?interface\s(mixin\s)?(\w+)/;
 
@@ -247,6 +248,28 @@ class EnumData extends IDLData {
       let matches = this._sourceData.match(ENUM_NAME_RE);
       this._name = matches[1];
     }
+    return this._name;
+  }
+}
+
+class IncludesData extends IDLData {
+  constructor(source, options={}) {
+    super(source, options);
+    this._type = "includes"
+    let matches = source.match(INCLUDES_NAME_RE);
+    if (!matches) {
+      const msg = `Malformed includes statement in ${this._sourcePath}.`
+      throw new IDLError(msg, 'interfacedata.js');
+    }
+    this._name = matches[1];
+    this._mixinName = matches[2];
+  }
+
+  get mixinName() {
+    return this._mixinName;
+  }
+
+  get name() {
     return this._name;
   }
 }
@@ -1042,4 +1065,5 @@ class InterfaceData extends IDLData {
 module.exports.CallbackData = CallbackData;
 module.exports.DictionaryData = DictionaryData;
 module.exports.EnumData = EnumData;
+module.exports.IncludesData = IncludesData;
 module.exports.InterfaceData = InterfaceData;
