@@ -33,7 +33,7 @@ describe('FileProcessor', () => {
       let foundErr;
       foundFiles.forEach((f) => {
         try {
-          let fp = new FileProcessor(f);
+          const fp = new FileProcessor(f);
           fp.process((result) => {
             // result not needed for this test.
           });
@@ -46,32 +46,72 @@ describe('FileProcessor', () => {
     it('Confirms that the four interface data objects are in the resulting fileset', () => {
       const is = new InterfaceSet();
       const testFile = `${TEST_IDL_FILES}multiple-structures.idl`;
-      let fp = new FileProcessor(testFile);
+      const fp = new FileProcessor(testFile);
       fp.process((result) => {
         is.add(result);
       });
       let msg = `Found interfaces are: ${is.interfaceNames}.`
-      assert.equal(is.count, 2, msg);
-    });
-    it('Confirms that partial interfaces are handled', () => {
-      const is = new InterfaceSet();
-      const testFile = `${TEST_IDL_FILES}interface-partial.idl`;
-      let fp = new FileProcessor(testFile);
-      fp.process((result) => {
-        is.add(result);
-      });
-      const ifs = is.interfaces;
-      assert.equal(ifs[0].name, "InterfacePartial");
+      assert.strictEqual(is.count, 4, msg);
     });
     it('Confirms that callback interfaces are handled', () => {
-      const is = new InterfaceSet();
       const testFile = `${TEST_IDL_FILES}interface-callback.idl`;
-      let fp = new FileProcessor(testFile);
+      const fp = new FileProcessor(testFile);
+      let iface;
       fp.process((result) => {
-        is.add(result);
+        iface = result;
       });
-      const ifs = is.interfaces;
-      assert.equal(ifs[0].name, "InterfaceCallback");
+      assert.strictEqual(iface.name, 'InterfaceCallback');
+    });
+    it('Confirms that callback functions are handled', () => {
+      const testFile = `${TEST_IDL_FILES}callback.idl`;
+      const fp = new FileProcessor(testFile);
+      let iface;
+      fp.process((result) => {
+        if (result.type === 'callback') {
+          iface = result;
+        }
+      });
+      assert.strictEqual(iface.name, 'DecodeErrorCallback');
+    });
+    it('Confirms that dictionaries are handled', () => {
+      const testFile = `${TEST_IDL_FILES}dictionary.idl`;
+      const fp = new FileProcessor(testFile);
+      let iface;
+      fp.process((result) => {
+        if (result.type === 'dictionary') {
+          iface = result;
+        }
+      });
+      assert.strictEqual(iface.name, 'USBDeviceFilter');
+    });
+    it('Confirms that enums are handled', () => {
+      const testFile = `${TEST_IDL_FILES}enum.idl`;
+      const fp = new FileProcessor(testFile);
+      let iface;
+      fp.process((result) => {
+        if (result.type === 'enum') {
+          iface = result;
+        }
+      });
+      assert.strictEqual(iface.name, `AudioContextState`);
+    })
+    it('Confirms that mixin interfaces are handled', () => {
+      const testFile = `${TEST_IDL_FILES}mixin.idl`;
+      const fp = new FileProcessor(testFile);
+      let iface;
+      fp.process((result) => {
+        iface = result;
+      });
+      assert.strictEqual(iface.name, 'Body');
+    });
+    it('Confirms that partial interfaces are handled', () => {
+      const testFile = `${TEST_IDL_FILES}interface-partial.idl`;
+      const fp = new FileProcessor(testFile);
+      let iface;
+      fp.process((result) => {
+        iface = result;
+      });
+      assert.strictEqual(iface.name, 'InterfacePartial');
     });
   });
 });

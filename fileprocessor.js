@@ -16,14 +16,15 @@
 
 const utils = require('./utils.js');
 
+const { IDLError } = require('./errors.js');
 const { CallbackData, DictionaryData, EnumData, InterfaceData } = require('./interfacedata.js');
 
-// const INTERFACE_RE = /\[?\W?(callback)?\W?[.^$\W\w]*\}/m;
-const INTERFACE_RE = /\[?\W?(callback|partial)?\sinterface\s(mixin)?(\w*)\W?[.^$\W\w]*\}/m;
-const LANDMARK = Object.freeze({
-  type: "",
-  location: null
-});
+const CALLBACK_RE = /^\s*callback\s*(\w*)\s*\=[^;]*;/m;
+const DICTIONARY_RE = /\s*dictionary\s*(\w*)[^{]*\{[^}]*\};/m;
+const ENUM_RE = /\s*enum\s*(\w*)[^{]*\{[^}]*\};/m;
+const INTERFACE_RE = /(\[[^\]]*\])?.*(interface)[^{]*\{[^\}]*\};/m;
+const INTERFACE_HEADER_RE = /\[?\W?(callback|partial)?\sinterface\s(mixin)?(\w*)\W?[.^$\W\w]*\}/m;
+
 const METAFILE = Object.freeze({
   flag: null,
   path: '',
@@ -41,20 +42,9 @@ const INTERFACE_OBJECTS = Object.freeze({
   "dictionary": DictionaryData,
   "enum": EnumData,
   "interface": InterfaceData,
+  "mixin": InterfaceData,
   "partial": InterfaceData
 });
-
-class IDLError extends Error {
-  constructor(message, fileName, lineNumber) {
-    super(message, fileName, lineNumber);
-  }
-}
-
-class RegExError extends Error {
-  constructor(message='', fileName='', lineNumber='') {
-    super(message, fileName, lineNumber);
-  }
-}
 
 class FileProcesser {
   constructor(sourcePath) {
@@ -62,29 +52,74 @@ class FileProcesser {
     this._sourceContents = utils.getIDLFile(this._sourcePath, { clean: true });
   }
 
-  // partial interface name
-  // interface mixin name
-  // callback interface name
+  // Gets new options argument with interfaces only default
   process(resultCallback) {
+    const processOptions = { "sourcePath": this._sourcePath };
+    this._processCallback(resultCallback, processOptions);
+    this._processInterface(resultCallback, processOptions);
+    this._processDictionary(resultCallback, processOptions);
+    this._processEnum(resultCallback, processOptions);
+  }
+
+  _processInterface(resultCallback, options) {
     let interfaceMeta;
     if (this._sourceContents.includes(' interface ')) {
-      let foundInterface = this._sourceContents.match(INTERFACE_RE);
+      let foundInterface = this._sourceContents.match(INTERFACE_HEADER_RE);
       if (!foundInterface) {
-        const msg = `File ${this._sourcePath} is malformed.`;
-        throw new IDLError(msg, this._sourcePath)
+        const msg = `File ${this._sourcePath} contains malformed interface.`;
+        throw new IDLError(msg, this._sourcePath);
       }
+      let interfaceActual = this._sourceContents.match(INTERFACE_RE);
       if (foundInterface[0].includes('partial')) {
-        console.log('partial');
+        interfaceMeta = new INTERFACE_OBJECTS['partial'](interfaceActual[0], options);
       } else if (foundInterface[0].includes('mixin')) {
-        console.log('mixin');
+        interfaceMeta = new INTERFACE_OBJECTS['mixin'](interfaceActual[0], options);
       } else if (foundInterface[0].includes('callback')) {
-        // console.log('callback');
-        interfaceMeta = 
+        // Callback Interface isn't the same as a callback function.
+        interfaceMeta = new INTERFACE_OBJECTS['interface'](interfaceActual[0], options);
       } else {
-        console.log('interface');
+        interfaceMeta = new INTERFACE_OBJECTS['interface'](interfaceActual[0], options);
       }
+      resultCallback(interfaceMeta);
     }
-    
+  }
+
+  _processCallback(resultCallback, options) {
+    if (this._sourceContents.includes('callback')) {
+      let foundCallback = this._sourceContents.match(CALLBACK_RE);
+      if (!foundCallback) {
+        // Change this to a regex to account for multiple spaces 
+        if (this._sourceContents.includes('callback interface')) { return; }
+        const msg = `File ${this._sourcePath} contains a malformed callback.`;
+        throw new IDLError(msg, this._sourcePath);
+      }
+      const interfaceMeta = new INTERFACE_OBJECTS['callback'](foundCallback[0], options);
+      resultCallback(interfaceMeta);
+    }
+  }
+
+  _processDictionary(resultCallback, options) {
+    if (this._sourceContents.includes('dictionary')) {
+      let foundDictionary = this._sourceContents.match(DICTIONARY_RE);
+      if (!foundDictionary) {
+        const msg = `File ${this._sourcePath} contains a malformed dictionary.`;
+        throw new IDLError(msg, this._sourcePath);
+      }
+      const interfaceMeta = new INTERFACE_OBJECTS['dictionary'](foundDictionary[0], options);
+      resultCallback(interfaceMeta);
+    }
+  }
+
+  _processEnum(resultCallback, options) {
+    if (this._sourceContents.includes('enum')) {
+      let foundEnum = this._sourceContents.match(ENUM_RE);
+      if (!foundEnum) {
+        const msg = `File ${this._sourcePath} contains a malformed enum.`;
+        throw new IDLError(msg, this._sourcePath);
+      }
+      const interfaceMeta = new INTERFACE_OBJECTS['enum'](foundEnum[0], options);
+      resultCallback(interfaceMeta);
+    }
   }
 
   process_(resultCallback) {
