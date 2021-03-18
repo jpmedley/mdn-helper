@@ -19,7 +19,6 @@ const glob = require("glob");
 
 const { IDLError } = require('../errors.js');
 const { FileProcessor } = require('../fileprocessor.js');
-const { InterfaceSet } = require('../interfaceset.js');
 
 const ACTUAL_IDL_FILES = 'idl/**/**/**/*.idl';
 const TEST_IDL_FILES = './test/files/';
@@ -44,14 +43,14 @@ describe('FileProcessor', () => {
       assert.ok(!(foundErr instanceof IDLError));
     })
     it('Confirms that the four interface data objects are in the resulting fileset', () => {
-      const is = new InterfaceSet();
       const testFile = `${TEST_IDL_FILES}multiple-structures.idl`;
       const fp = new FileProcessor(testFile);
+      let interfaceNames = [];
       fp.process((result) => {
-        is.add(result);
+        interfaceNames.push(result.name);
       });
-      let msg = `Found interfaces are: ${is.interfaceNames}.`
-      assert.strictEqual(is.count, 4, msg);
+      let msg = `Found interfaces are: ${interfaceNames}.`
+      assert.strictEqual(interfaceNames.length, 4);
     });
     it('Confirms that callback interfaces are read', () => {
       const testFile = `${TEST_IDL_FILES}interface-callback.idl`;
