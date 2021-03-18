@@ -93,7 +93,17 @@ describe('FileProcessor', () => {
         }
       });
       assert.strictEqual(iface.name, `AudioContextState`);
-    })
+    });
+    it('Confirms that identifiers containing "enum" are ignored', () => {
+      const testFile = `${TEST_IDL_FILES}alternate-key.idl`;
+      const fp = new FileProcessor(testFile);
+      assert.doesNotThrow(() => {
+        let iface = 0;
+        fp.process((result) => {
+          iface++;
+        });
+      }, IDLError);
+    });
     it('Confirms that mixin interfaces are read', () => {
       const testFile = `${TEST_IDL_FILES}mixin.idl`;
       const fp = new FileProcessor(testFile);

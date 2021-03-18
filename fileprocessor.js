@@ -27,7 +27,8 @@ const {
 
 const CALLBACK_RE = /^\s*callback\s*(\w*)\s*\=[^;]*;/m;
 const DICTIONARY_RE = /\s*dictionary\s*(\w*)[^{]*\{[^}]*\};/m;
-const ENUM_RE = /\s*enum\s*(\w*)[^{]*\{[^}]*\};/m;
+const ENUM_RE = /\b\s*enum\s*(\w*)[^{]*\{[^}]*\};/gm;
+const ENUM_CANDIDATE_RE = /\b\s*enum/;
 const INCLUDES_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/gm
 const INTERFACE_RE = /(\[[^\]]*\])?.*(interface)[^{]*\{[^\}]*\};/m;
 const INTERFACE_HEADER_RE = /\[?\W?(callback|partial)?\sinterface\s(mixin)?(\w*)\W?[.^$\W\w]*\}/m;
@@ -120,7 +121,8 @@ class FileProcesser {
   }
 
   _processEnum(resultCallback, options) {
-    if (this._sourceContents.includes('enum')) {
+    let enumCandidate = this._sourceContents.match(ENUM_CANDIDATE_RE);
+    if (!enumCandidate) { return; }
       let foundEnum = this._sourceContents.match(ENUM_RE);
       if (!foundEnum) {
         const msg = `File ${this._sourcePath} contains a malformed enum.`;
@@ -128,7 +130,6 @@ class FileProcesser {
       }
       const interfaceMeta = new INTERFACE_OBJECTS['enum'](foundEnum[0], options);
       resultCallback(interfaceMeta);
-    }
   }
 
   _processIncludes(resultCallback, options) {
