@@ -17,11 +17,18 @@
 const utils = require('./utils.js');
 
 const { IDLError } = require('./errors.js');
-const { CallbackData, DictionaryData, EnumData, InterfaceData } = require('./interfacedata.js');
+const { 
+  CallbackData, 
+  DictionaryData, 
+  EnumData, 
+  IncludesData, 
+  InterfaceData 
+} = require('./interfacedata.js');
 
 const CALLBACK_RE = /^\s*callback\s*(\w*)\s*\=[^;]*;/m;
 const DICTIONARY_RE = /\s*dictionary\s*(\w*)[^{]*\{[^}]*\};/m;
 const ENUM_RE = /\s*enum\s*(\w*)[^{]*\{[^}]*\};/m;
+const INCLUDES_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/gm
 const INTERFACE_RE = /(\[[^\]]*\])?.*(interface)[^{]*\{[^\}]*\};/m;
 const INTERFACE_HEADER_RE = /\[?\W?(callback|partial)?\sinterface\s(mixin)?(\w*)\W?[.^$\W\w]*\}/m;
 
@@ -41,6 +48,7 @@ const INTERFACE_OBJECTS = Object.freeze({
   "callback": CallbackData,
   "dictionary": DictionaryData,
   "enum": EnumData,
+  "includes": IncludesData,
   "interface": InterfaceData,
   "mixin": InterfaceData,
   "partial": InterfaceData
@@ -55,10 +63,11 @@ class FileProcesser {
   // Gets new options argument with interfaces only default
   process(resultCallback) {
     const processOptions = { "sourcePath": this._sourcePath };
-    this._processCallback(resultCallback, processOptions);
     this._processInterface(resultCallback, processOptions);
+    this._processCallback(resultCallback, processOptions);
     this._processDictionary(resultCallback, processOptions);
     this._processEnum(resultCallback, processOptions);
+    this._processIncludes(resultCallback, processOptions);
   }
 
   _processInterface(resultCallback, options) {
@@ -119,6 +128,21 @@ class FileProcesser {
       }
       const interfaceMeta = new INTERFACE_OBJECTS['enum'](foundEnum[0], options);
       resultCallback(interfaceMeta);
+    }
+  }
+
+  _processIncludes(resultCallback, options) {
+    if (this._sourceContents.includes('includes')) {
+      let foundIncludes = this._sourceContents.matchAll(INCLUDES_RE);
+      if (!foundIncludes) {
+        const msg = `File ${this._sourcePath} contains a malformed includes statement.`;
+        throw new IDLError(msg, this._sourcePath);
+      }
+      for ( const fi of foundIncludes) {
+        const interfaceMeta = new INTERFACE_OBJECTS['includes'](fi[0], options);
+        resultCallback(interfaceMeta);
+      }
+      return foundIncludes;
     }
   }
 
