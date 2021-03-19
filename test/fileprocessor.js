@@ -38,6 +38,7 @@ describe('FileProcessor', () => {
           });
         } catch (err) {
           foundErr = err;
+          console.log(err.message)
         }
       });
       assert.ok(!(foundErr instanceof IDLError));
@@ -51,6 +52,15 @@ describe('FileProcessor', () => {
       });
       let msg = `Found interfaces are: ${interfaceNames}.`
       assert.strictEqual(interfaceNames.length, 4);
+    });
+    it('Confirms that standard interfaces are read', () => {
+      const testFile = `${TEST_IDL_FILES}burnable.idl`;
+      const fp = new FileProcessor(testFile);
+      let iface;
+      fp.process((result) => {
+        iface = result;
+      });
+      assert.strictEqual(iface.name, 'Burnable');
     });
     it('Confirms that callback interfaces are read', () => {
       const testFile = `${TEST_IDL_FILES}interface-callback.idl`;

@@ -25,13 +25,15 @@ const {
   InterfaceData 
 } = require('./interfacedata.js');
 
-const CALLBACK_RE = /^\s*callback\s*(\w*)\s*\=[^;]*;/m;
+const CALLBACK_RE = /callback\s*(\w*)\s*=[^;]*;/;
+const CALLBACK_CANDIDATE_RE = /callback[\w\s]*=/;
 const DICTIONARY_RE = /\s*dictionary\s*(\w*)[^{]*\{[^}]*\};/m;
 const ENUM_RE = /\b\s*enum\s*(\w*)[^{]*\{[^}]*\};/gm;
 const ENUM_CANDIDATE_RE = /\b\s*enum/;
-const INCLUDES_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/gm
-const INTERFACE_RE = /(\[[^\]]*\])?.*(interface)[^{]*\{[^\}]*\};/m;
-const INTERFACE_HEADER_RE = /\[?\W?(callback|partial)?\sinterface\s(mixin)?(\w*)\W?[.^$\W\w]*\}/m;
+const INCLUDES_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/gm;
+const INTERFACE_RE = /(\[.*\])?.*(interface)[^\{]*\{.*(?<=});/s;
+const INTERFACE_CANDIDATE_RE = /(callback|partial)?\s*interface\s*(mixin)?[^\{]*/;
+const INTERFACE_HEADER_RE = INTERFACE_CANDIDATE_RE;
 
 const METAFILE = Object.freeze({
   flag: null,
@@ -72,30 +74,34 @@ class FileProcesser {
   }
 
   _processInterface(resultCallback, options) {
-    let interfaceMeta;
-    if (this._sourceContents.includes(' interface ')) {
-      let foundInterface = this._sourceContents.match(INTERFACE_HEADER_RE);
-      if (!foundInterface) {
-        const msg = `File ${this._sourcePath} contains malformed interface.`;
-        throw new IDLError(msg, this._sourcePath);
-      }
-      let interfaceActual = this._sourceContents.match(INTERFACE_RE);
-      if (foundInterface[0].includes('partial')) {
-        interfaceMeta = new INTERFACE_OBJECTS['partial'](interfaceActual[0], options);
-      } else if (foundInterface[0].includes('mixin')) {
-        interfaceMeta = new INTERFACE_OBJECTS['mixin'](interfaceActual[0], options);
-      } else if (foundInterface[0].includes('callback')) {
-        // Callback Interface isn't the same as a callback function.
-        interfaceMeta = new INTERFACE_OBJECTS['interface'](interfaceActual[0], options);
-      } else {
-        interfaceMeta = new INTERFACE_OBJECTS['interface'](interfaceActual[0], options);
-      }
-      resultCallback(interfaceMeta);
+    let interfaceCandidate = this._sourceContents.match(INTERFACE_CANDIDATE_RE);
+    if (!interfaceCandidate) { return; }
+    let foundInterface = this._sourceContents.match(INTERFACE_RE);
+    if (!foundInterface) {
+      const msg = `File ${this._sourcePath} contains malformed interface.`;
+      throw new IDLError(msg, this._sourcePath);
     }
+    let interfaceHeader = this._sourceContents.match(INTERFACE_HEADER_RE);
+    let interfaceMeta;
+    if (interfaceHeader[1] === 'callback') {
+      // Callback inerfaces (as opposed to callback functions) are treated the
+      // same as standard interfaces.
+      interfaceMeta = new INTERFACE_OBJECTS['interface'](foundInterface[0], options);
+    } else if (interfaceHeader[1] === 'partial') {
+      interfaceMeta = new INTERFACE_OBJECTS['partial'](foundInterface[0], options);
+    } else if (interfaceHeader[2] === 'mixin') {
+      interfaceMeta = new INTERFACE_OBJECTS['mixin'](foundInterface[0], options);
+    } else {
+      interfaceMeta = new INTERFACE_OBJECTS['interface'](foundInterface[0], options)
+;     }
+    resultCallback(interfaceMeta);
   }
 
   _processCallback(resultCallback, options) {
-    if (this._sourceContents.includes('callback')) {
+    let callbackCandidate = this._sourceContents.match(CALLBACK_CANDIDATE_RE);
+    if (!callbackCandidate) { return; }
+
+    // if (this._sourceContents.includes('callback')) {
       let foundCallback = this._sourceContents.match(CALLBACK_RE);
       if (!foundCallback) {
         // Change this to a regex to account for multiple spaces 
@@ -105,7 +111,7 @@ class FileProcesser {
       }
       const interfaceMeta = new INTERFACE_OBJECTS['callback'](foundCallback[0], options);
       resultCallback(interfaceMeta);
-    }
+    // }
   }
 
   _processDictionary(resultCallback, options) {
@@ -123,13 +129,13 @@ class FileProcesser {
   _processEnum(resultCallback, options) {
     let enumCandidate = this._sourceContents.match(ENUM_CANDIDATE_RE);
     if (!enumCandidate) { return; }
-      let foundEnum = this._sourceContents.match(ENUM_RE);
-      if (!foundEnum) {
-        const msg = `File ${this._sourcePath} contains a malformed enum.`;
-        throw new IDLError(msg, this._sourcePath);
-      }
-      const interfaceMeta = new INTERFACE_OBJECTS['enum'](foundEnum[0], options);
-      resultCallback(interfaceMeta);
+    let foundEnum = this._sourceContents.match(ENUM_RE);
+    if (!foundEnum) {
+      const msg = `File ${this._sourcePath} contains a malformed enum.`;
+      throw new IDLError(msg, this._sourcePath);
+    }
+    const interfaceMeta = new INTERFACE_OBJECTS['enum'](foundEnum[0], options);
+    resultCallback(interfaceMeta);
   }
 
   _processIncludes(resultCallback, options) {
