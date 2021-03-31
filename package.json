@@ -33,7 +33,7 @@
   "author": "Joseph Medley <jmedley@google.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@mdn/browser-compat-data": "^3.2.0",
+    "@mdn/browser-compat-data": "^3.2.2",
     "config": "^1.31.0",
     "download": "^8.0.0",
     "enquirer": "2.3.5",
