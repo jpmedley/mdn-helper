@@ -14,8 +14,6 @@
 
 'use strict';
 
-const TYPES = ["interface", "interface mixin", "callback"];
-
 class InterfaceSet {
   constructor() {
     this._interfaces = [];
@@ -115,4 +113,11 @@ class InterfaceSet {
   }
 }
 
+class InterfaceSearchSet extends InterfaceSet {
+  constructor() {
+    super();
+  }
+}
+
+module.exports.InterfaceSearchSet = InterfaceSearchSet;
 module.exports.InterfaceSet = InterfaceSet;

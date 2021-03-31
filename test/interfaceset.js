@@ -15,10 +15,13 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
 
+const { FileProcessor } = require('../fileprocessor.js');
 const { DirectoryManager } = require('../directorymanager.js');
+const { InterfaceSet } = require('../interfaceset.js');
 
-let INTERFACE_SET;
+let INTERFACE_SET = new InterfaceSet();
 
 const IDL_FILES = './test/files/';
 
@@ -27,8 +30,19 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 describe('InterfaceSet', () => {
 
   before(() => {
-    const dm = new DirectoryManager(IDL_FILES);
-    INTERFACE_SET = dm.interfaceSet;
+    // const dm = new DirectoryManager(IDL_FILES);
+    // INTERFACE_SET = dm.interfaceSet;
+    // const contents = fs.readdirSync(root, {withFileTypes: true});
+
+    const contents = fs.readdirSync(IDL_FILES, {withFileTypes: true});
+    for (const c of contents) {
+      if (!c.isFile()) { continue; }
+      if (!c.name.endsWith('.idl')) { continue; }
+      let fp = new FileProcessor(`${IDL_FILES}${c.name}`);
+      fp.process((interfaceObect) => {
+        INTERFACE_SET.add(interfaceObect);
+      });
+    }
   });
 
   describe('findMatching', () => {
