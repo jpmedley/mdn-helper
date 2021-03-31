@@ -14,6 +14,7 @@
       "NEW_WRITER": ["child-interfaces", "iterableMemberLink", "iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"]
     },
     "muted": [
+      "CSPViolationReportBody",
       "WebGL2ComputeRenderingContextBase",
       "WebGLDrawInstancedBaseVertexBaseInstance",
       "WebGLMultiDrawInstancedBaseVertexBaseInstance"
