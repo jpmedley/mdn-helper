@@ -137,7 +137,7 @@ class FileProcesser {
       throw new IDLError(msg, this._sourcePath);
     }
     const enumMeta = new IDL_OBJECTS['enum'](foundEnum[0], options);
-    enumMeta.flag = option.flag;
+    enumMeta.flag = options.flag;
     resultCallback(enumMeta);
   }
 
