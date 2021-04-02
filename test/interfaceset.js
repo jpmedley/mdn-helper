@@ -30,10 +30,6 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 describe('InterfaceSet', () => {
 
   before(() => {
-    // const dm = new DirectoryManager(IDL_FILES);
-    // INTERFACE_SET = dm.interfaceSet;
-    // const contents = fs.readdirSync(root, {withFileTypes: true});
-
     const contents = fs.readdirSync(IDL_FILES, {withFileTypes: true});
     for (const c of contents) {
       if (!c.isFile()) { continue; }
@@ -48,11 +44,11 @@ describe('InterfaceSet', () => {
   describe('findMatching', () => {
     it('Confirms inclusion of interfaces behind a flag', () => {
       const matches = INTERFACE_SET.findMatching("*", true);
-      assert.strictEqual(matches.length, 75);
+      assert.strictEqual(matches.length, 96);
     })
     it('Confirms return of matching items', ()=> {
       const matches = INTERFACE_SET.findMatching('Burnable');
-      assert.strictEqual(matches.length, 3);
+      assert.strictEqual(matches.length, 2);
     });
     it('Confirms flags returned', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceRTE2', true);
