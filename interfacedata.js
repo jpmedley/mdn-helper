@@ -144,11 +144,14 @@ class IDLData {
     FLAGS = new FlagStatus('./idl/platform/runtime_enabled_features.json5')
     this._sourceData = source;
     this._sourcePath = options.sourcePath;
+    this._flagged = null;
     this._flagged_sudo = true;
     this._key;
     this._keys = [];
     this._members = [];
     this._name;
+    this._originTrial = null;
+    this._originTrial_sudo = true;
     this._sources = [];
   }
 
@@ -170,6 +173,12 @@ class IDLData {
 
   get sourceContents() {
     return this._sourceData;
+  }
+
+  get originTrial() {
+    if (this._originTrial) { return this._originTrial}
+    this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
+    return this._originTrial;
   }
 
   get path() {
@@ -292,7 +301,6 @@ class InterfaceData extends IDLData {
     this._eventHandlers = [];
     this._exposed = null;
     this._extendedAttributes = null;
-    this._flagged = null;
     this._flagged_sudo = false;
     this._getters = [];
     this._hasConstructor = null;
@@ -300,7 +308,7 @@ class InterfaceData extends IDLData {
     this._iterable = [];
     this._maplike = [];
     this._methods = [];
-    this._originTrial = null;
+    this._originTrial_sudo = false;
     this._parentClass = null;
     this._properties = [];
     this._setlike = [];
@@ -842,12 +850,6 @@ class InterfaceData extends IDLData {
       if (setter.name === "(setter)") { return false; }
       return setter.name != "";
     })
-  }
-
-  get originTrial() {
-    if (this._originTrial) { return this._originTrial}
-    this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
-    return this._originTrial;
   }
 
   get parentClass() {
