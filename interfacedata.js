@@ -27,7 +27,6 @@ const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
 const INCLUDES_NAME_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/m;
 const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
-// const INTERFACE_DEFINITION_RE  = /(callback\s|partial\s)?interface\s(mixin\s)?(\w+)/;
 const INTERFACE_DEFINITION_RE = /(callback|partial)?\s*interface\s*(mixin)?\s*(\w+)/;
 
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
@@ -108,6 +107,7 @@ const METHOD = Object.freeze({
   "returnType": null,
   "resolution": null,
   "source": null,
+  "static": false,
   "tree": this.source, // Needed for Backward compatibility
   "type": "method"
 });
@@ -310,8 +310,7 @@ class InterfaceData extends IDLData {
     let matches = this._sourceData.match(INTERFACE_DEFINITION_RE);
     if (!matches) {
       let msg = `Problem processing ${this._sourcePath}.\n`
-      msg += `${error.message}\n${error.stack}`;
-      throw new IDLError(msg, error.fileName, error.lineNumber);
+      throw new IDLError(msg, this.fileName);
     }
     if (matches[1]) {
       this._subType = matches[1].trim();
@@ -382,8 +381,8 @@ class InterfaceData extends IDLData {
   }
 
   _getInlineExtendedAttributes(source, dataObject) {
-    if (source.startsWith("[")) { source = source.slice(1); }
-    const sources = source.split(",");
+    const matches = source.match(/\[?([^\]]*)\]?/);
+    const sources = matches[1].split(",");
     sources.forEach(elem => {
       let elems = elem.split("=");
       switch (elems[0]) {
@@ -712,8 +711,7 @@ class InterfaceData extends IDLData {
       'iterable',
       'maplike',
       'setlike',
-      'setter',
-      'stringifier'
+      'setter'
     ];
     let sources = [];
     let register = [];
@@ -732,12 +730,44 @@ class InterfaceData extends IDLData {
       let newMethodData = this._cloneObject(METHOD);
       newMethodData.source = source.trim();
 
-      let pieces = source.match(/(\[(\w*)\])?\s*(static)?\s*(\w*)\s*(\w*)\(([^;]*);/);
-      if (pieces) {
-        this._getInlineExtendedAttributes(pieces[1], newMethodData);
+      if (newMethodData.source === 'stringifier') {
+        newMethodData.name = 'toString';
+        newMethodData.returnType = 'String';
+        this._methods.push(newMethodData);
+        return;
+      }
 
-        newMethodData.returnType = pieces[4];
-        newMethodData.name = pieces[5];
+      let pieces;
+      if (source.includes('<')) {
+        pieces = source.match(/(\[([^\]]*)\])(\sstatic)?(\s\w*\b<.*>(?!>))\s(\w*)\(([^\)]*)\)/);
+      } else {
+        pieces = source.match(/(\[([^\]]*)\])?(\sstatic)?\s*(\w*)\s(\w*)\(([^\)]*)\)/);
+      }
+
+      if (pieces) {
+        if (pieces[2]) {
+          this._getInlineExtendedAttributes(pieces[1], newMethodData);
+        }
+        if (pieces[3]) {
+          newMethodData.static = true;
+        }
+        newMethodData.returnType = pieces[4].trim();
+        if (newMethodData.returnType.startsWith('Promise')) {
+          let resolution = pieces[4].split('<');
+          resolution[1] = resolution[1].slice(0,-1);
+          newMethodData.resolution = resolution[1];
+        }
+        newMethodData.name = pieces[5].trim();
+        if (pieces[6]) {
+          let args = pieces[6].split(",");
+          args.forEach((arg, i, args) => {
+            let temp = arg.trim();
+            if (temp != "") {
+              newMethodData.arguments.push(temp);
+            }
+          });
+        }
+        this._methods.push(newMethodData);
       }
     })
 
@@ -829,7 +859,6 @@ class InterfaceData extends IDLData {
   }
 
   _getProperties() {
-    // [CallWith=ExecutionContext] stringifier attribute [TreatNullAs=EmptyString] DOMString mediaText;
     const sources = this._filter('attribute');
     sources.forEach(source => {
       if (source.includes('EventHandler')) { return; }

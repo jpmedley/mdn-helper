@@ -39,6 +39,8 @@ const FLAGGED_INTERFACE = './test/files/interface-rte-test.idl';
 const FLAGGED_MEMBERS = './test/files/flagged-members.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
 const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
+const GETTERS_NO_RETURN = './test/files/getters-no-return.idl';
+const GETTERS_RETURN_VAL = './test/files/getters-return-val.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const INTERFACE_CALLBACK = './test/files/interface-callback.idl';
 const INTERFACE_MIXIN = './test/files/mixin.idl';
@@ -543,6 +545,11 @@ describe('InterfaceData', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source, GETTERS_UNNAMED_ONLY);
       assert.equal(id.namedGetters.length, 0);
+    });
+    it('Confirms that a named getter\'s return value is processed', () => {
+      const source = loadSource(GETTERS_RETURN_VAL);
+      const id = new InterfaceData(source, GETTERS_RETURN_VAL);
+      assert.strictEqual(id.namedGetters[0].returnType, 'SVGPoint');
     });
   });
 

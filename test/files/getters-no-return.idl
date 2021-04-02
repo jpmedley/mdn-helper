@@ -1,0 +1,3 @@
+interface GetterNoReturn {
+  getter CSSUnparsedSegment (unsigned long index);
+};
