@@ -29,10 +29,10 @@ const CALLBACK_RE = /callback\s*(\w*)\s*=[^;]*;/;
 const CALLBACK_CANDIDATE_RE = /callback[\w\s]*=/;
 const DICTIONARY_RE = /\s*dictionary\s*(\w*)[^{]*\{[^}]*\};/m;
 const ENUM_RE = /\b\s*enum\s*(\w*)[^{]*\{[^}]*\};/gm;
-const ENUM_CANDIDATE_RE = /\b\s*enum/;
+const ENUM_CANDIDATE_RE = /\b\s*enum\b/;
 const INCLUDES_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/gm;
 const INTERFACE_RE = /(\[.*\])?.*(interface)[^\{]*\{.*(?<=});/s;
-const INTERFACE_CANDIDATE_RE = /(callback|partial)?\s*interface\s*(mixin)?[^\{]*/;
+const INTERFACE_CANDIDATE_RE = /(callback|partial)?\s*(?<!")interface\s*(mixin)?[^\{]*/m;
 const INTERFACE_HEADER_RE = INTERFACE_CANDIDATE_RE;
 
 const METAFILE = Object.freeze({

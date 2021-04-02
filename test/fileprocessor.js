@@ -29,8 +29,9 @@ describe('FileProcessor', () => {
   describe('process()', () => {
     it('Confirms that interface structures can be interpreted in all IDL files', () => {
       const foundFiles = glob.sync(ACTUAL_IDL_FILES);
-      let foundErr;
+      let foundErr ='';
       foundFiles.forEach((f) => {
+        if (f.includes('testing/')) { return; }
         try {
           const fp = new FileProcessor(f);
           fp.process((result) => {
@@ -93,7 +94,7 @@ describe('FileProcessor', () => {
       });
       assert.strictEqual(iface.name, 'USBDeviceFilter');
     });
-    it('Confirms that enums are read', () => {
+    it('Confirms that a single enum is read', () => {
       const testFile = `${TEST_IDL_FILES}enum.idl`;
       const fp = new FileProcessor(testFile);
       let iface;
@@ -104,13 +105,21 @@ describe('FileProcessor', () => {
       });
       assert.strictEqual(iface.name, `AudioContextState`);
     });
+    it('Confirms that multiple enums are read from a single file', () => {
+      const testFile = `${TEST_IDL_FILES}enums.idl`;
+      const fp = new FileProcessor(testFile);
+      let iface = 0;
+      fp.process((result) => {
+        iface++;
+      });
+      assert.strictEqual(iface, 2);
+    });
     it('Confirms that identifiers containing "enum" are ignored', () => {
       const testFile = `${TEST_IDL_FILES}alternate-key.idl`;
       const fp = new FileProcessor(testFile);
       assert.doesNotThrow(() => {
-        let iface = 0;
         fp.process((result) => {
-          iface++;
+          // result not needed for this test.
         });
       }, IDLError);
     });
