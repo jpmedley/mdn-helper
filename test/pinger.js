@@ -49,7 +49,7 @@ describe('Pinger', () => {
       const pinger = new Pinger(records);
       pinger.pingRecords(false)
       .then(records => {
-        assert.equal(records[0].mdn_exists, false);
+        assert.strictEqual(records[0].mdn_exists, false);
       });
     });
 
@@ -65,7 +65,7 @@ describe('Pinger', () => {
       const pinger = new Pinger(records);
       pinger.pingRecords(false)
       .then(records => {
-        assert.equal(records[0].mdn_exists, false);
+        assert.strictEqual(records[0].mdn_exists, false);
       })
     })
   });

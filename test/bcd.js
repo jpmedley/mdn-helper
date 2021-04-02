@@ -22,11 +22,11 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 describe('BCD', () => {
   describe('getByKey()', () => {
     it('Confirms that null is returned for a fictitious key', () => {
-      assert.equal(bcd.getByKey('Medley'), null);
+      assert.strictEqual(bcd.getByKey('Medley'), null);
     });
 
     it('Confirms that a tree is returned for a real value', () => {
-      assert.notEqual(bcd.getByKey('Request'), null);
+      assert.notStrictEqual(bcd.getByKey('Request'), null);
     })
   });
 });

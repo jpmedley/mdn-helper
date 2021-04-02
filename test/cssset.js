@@ -23,12 +23,12 @@ describe('CSSSet', () => {
   describe('constructor', () => {
     it('Confirms that CSS data is loaded', () => {
       const cd = new CSSSet();
-      assert.equal((typeof cd.properties.parameters), 'object');
+      assert.strictEqual((typeof cd.properties.parameters), 'object');
     });
 
     it('Confirms that deep CSS data is accessible', () => {
       const cd = new CSSSet();
-      assert.equal(cd.properties.data[0].name, "animation-delay");
+      assert.strictEqual(cd.properties.data[0].name, "animation-delay");
     });
   });
 

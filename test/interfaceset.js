@@ -48,11 +48,11 @@ describe('InterfaceSet', () => {
   describe('findMatching', () => {
     it('Confirms inclusion of interfaces behind a flag', () => {
       const matches = INTERFACE_SET.findMatching("*", true);
-      assert.equal(matches.length, 75);
+      assert.strictEqual(matches.length, 75);
     })
     it('Confirms return of matching items', ()=> {
       const matches = INTERFACE_SET.findMatching('Burnable');
-      assert.equal(matches.length, 3);
+      assert.strictEqual(matches.length, 3);
     });
     it('Confirms flags returned', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceRTE2', true);
@@ -60,7 +60,7 @@ describe('InterfaceSet', () => {
     });
     it('Confirms flags not returned when not requested', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceRTE2', false);
-      assert.equal(matches.length, 0);
+      assert.strictEqual(matches.length, 0);
     });
     it('Confirms origin trials returned', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceOT', false, true);
@@ -68,7 +68,7 @@ describe('InterfaceSet', () => {
     });
     it('Confirms origin trials not returned when not requested', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceOT', false, false);
-      assert.equal(matches.length, 0);
+      assert.strictEqual(matches.length, 0);
     });
   });
 });

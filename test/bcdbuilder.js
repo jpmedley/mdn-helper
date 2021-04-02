@@ -86,7 +86,7 @@ describe('BCDBuilder', () => {
       const resultString = fs.readFileSync(jsonPath).toString();
       // Load a correctly-nested version of what was written and compare
       const comparisonString = fs.readFileSync('test/files/properly-nested-bcd.json').toString();
-      assert.equal(resultString, comparisonString);
+      assert.strictEqual(resultString, comparisonString);
     });
 
     it('Confirms that browsers are in the correct order in a written BCD file', () => {
