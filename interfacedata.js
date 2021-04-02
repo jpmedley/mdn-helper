@@ -144,11 +144,18 @@ class IDLData {
     FLAGS = new FlagStatus('./idl/platform/runtime_enabled_features.json5')
     this._sourceData = source;
     this._sourcePath = options.sourcePath;
+    this._flagged_sudo = true;
     this._key;
     this._keys = [];
     this._members = [];
     this._name;
     this._sources = [];
+  }
+
+  get flagged() {
+    if (this._flagged) { return this._flagged}
+    this._flagged = this._getRuntimeEnabledValue("experimental", this._getInterfaceExtendedAttributes());
+    return this._flagged;
   }
 
   get key() {
@@ -286,6 +293,7 @@ class InterfaceData extends IDLData {
     this._exposed = null;
     this._extendedAttributes = null;
     this._flagged = null;
+    this._flagged_sudo = false;
     this._getters = [];
     this._hasConstructor = null;
     this._inTest = null;
@@ -529,12 +537,6 @@ class InterfaceData extends IDLData {
       }
     }
     return this._exposed;
-  }
-
-  get flagged() {
-    if (this._flagged) { return this._flagged}
-    this._flagged = this._getRuntimeEnabledValue("experimental", this._getInterfaceExtendedAttributes());
-    return this._flagged;
   }
 
   _getGetters() {

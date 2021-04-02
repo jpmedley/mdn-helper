@@ -65,7 +65,10 @@ class FileProcesser {
 
   // Gets new options argument with interfaces only default
   process(resultCallback) {
-    const processOptions = { "sourcePath": this._sourcePath };
+    const processOptions = { 
+      "sourcePath": this._sourcePath,
+      "flag": false
+     };
     this._processInterface(resultCallback, processOptions);
     this._processCallback(resultCallback, processOptions);
     this._processDictionary(resultCallback, processOptions);
@@ -92,26 +95,24 @@ class FileProcesser {
     } else if (interfaceHeader[2] === 'mixin') {
       interfaceMeta = new INTERFACE_OBJECTS['mixin'](foundInterface[0], options);
     } else {
-      interfaceMeta = new INTERFACE_OBJECTS['interface'](foundInterface[0], options)
-;     }
+      interfaceMeta = new INTERFACE_OBJECTS['interface'](foundInterface[0], options);
+    }
+    options.flag = interfaceMeta.flag;
     resultCallback(interfaceMeta);
   }
 
   _processCallback(resultCallback, options) {
     let callbackCandidate = this._sourceContents.match(CALLBACK_CANDIDATE_RE);
     if (!callbackCandidate) { return; }
-
-    // if (this._sourceContents.includes('callback')) {
-      let foundCallback = this._sourceContents.match(CALLBACK_RE);
-      if (!foundCallback) {
-        // Change this to a regex to account for multiple spaces 
-        if (this._sourceContents.includes('callback interface')) { return; }
-        const msg = `File ${this._sourcePath} contains a malformed callback.`;
-        throw new IDLError(msg, this._sourcePath);
-      }
-      const interfaceMeta = new INTERFACE_OBJECTS['callback'](foundCallback[0], options);
-      resultCallback(interfaceMeta);
-    // }
+    let foundCallback = this._sourceContents.match(CALLBACK_RE);
+    if (!foundCallback) {
+      if (this._sourceContents.includes('callback interface')) { return; }
+      const msg = `File ${this._sourcePath} contains a malformed callback.`;
+      throw new IDLError(msg, this._sourcePath);
+    }
+    const interfaceMeta = new INTERFACE_OBJECTS['callback'](foundCallback[0], options);
+    interfaceMeta.flag = options.flag;
+    resultCallback(interfaceMeta);
   }
 
   _processDictionary(resultCallback, options) {
@@ -122,6 +123,7 @@ class FileProcesser {
         throw new IDLError(msg, this._sourcePath);
       }
       const interfaceMeta = new INTERFACE_OBJECTS['dictionary'](foundDictionary[0], options);
+      interfaceMeta.flag = options.flag;
       resultCallback(interfaceMeta);
     }
   }
@@ -135,6 +137,7 @@ class FileProcesser {
       throw new IDLError(msg, this._sourcePath);
     }
     const interfaceMeta = new INTERFACE_OBJECTS['enum'](foundEnum[0], options);
+    interfaceMeta.flag = option.flag;
     resultCallback(interfaceMeta);
   }
 
@@ -147,6 +150,7 @@ class FileProcesser {
       }
       for ( const fi of foundIncludes) {
         const interfaceMeta = new INTERFACE_OBJECTS['includes'](fi[0], options);
+        interfaceMeta.flag = options.flag;
         resultCallback(interfaceMeta);
       }
       return foundIncludes;
