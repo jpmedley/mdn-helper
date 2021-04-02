@@ -46,7 +46,7 @@ const METAFILE = Object.freeze({
 });
 
 const STARTS = ["[", "callback", "dictionary", "enum", "interface", "partial", "typedef"];
-const INTERFACE_OBJECTS = Object.freeze({
+const IDL_OBJECTS = Object.freeze({
   "[": InterfaceData,
   "callback": CallbackData,
   "dictionary": DictionaryData,
@@ -89,13 +89,13 @@ class FileProcesser {
     if (interfaceHeader[1] === 'callback') {
       // Callback inerfaces (as opposed to callback functions) are treated the
       // same as standard interfaces.
-      interfaceMeta = new INTERFACE_OBJECTS['interface'](foundInterface[0], options);
+      interfaceMeta = new IDL_OBJECTS['interface'](foundInterface[0], options);
     } else if (interfaceHeader[1] === 'partial') {
-      interfaceMeta = new INTERFACE_OBJECTS['partial'](foundInterface[0], options);
+      interfaceMeta = new IDL_OBJECTS['partial'](foundInterface[0], options);
     } else if (interfaceHeader[2] === 'mixin') {
-      interfaceMeta = new INTERFACE_OBJECTS['mixin'](foundInterface[0], options);
+      interfaceMeta = new IDL_OBJECTS['mixin'](foundInterface[0], options);
     } else {
-      interfaceMeta = new INTERFACE_OBJECTS['interface'](foundInterface[0], options);
+      interfaceMeta = new IDL_OBJECTS['interface'](foundInterface[0], options);
     }
     options.flag = interfaceMeta.flag;
     resultCallback(interfaceMeta);
@@ -110,9 +110,9 @@ class FileProcesser {
       const msg = `File ${this._sourcePath} contains a malformed callback.`;
       throw new IDLError(msg, this._sourcePath);
     }
-    const interfaceMeta = new INTERFACE_OBJECTS['callback'](foundCallback[0], options);
-    interfaceMeta.flag = options.flag;
-    resultCallback(interfaceMeta);
+    const callbackMeta = new IDL_OBJECTS['callback'](foundCallback[0], options);
+    callbackMeta.flag = options.flag;
+    resultCallback(callbackMeta);
   }
 
   _processDictionary(resultCallback, options) {
@@ -122,9 +122,9 @@ class FileProcesser {
         const msg = `File ${this._sourcePath} contains a malformed dictionary.`;
         throw new IDLError(msg, this._sourcePath);
       }
-      const interfaceMeta = new INTERFACE_OBJECTS['dictionary'](foundDictionary[0], options);
-      interfaceMeta.flag = options.flag;
-      resultCallback(interfaceMeta);
+      const dictionaryMeta = new IDL_OBJECTS['dictionary'](foundDictionary[0], options);
+      dictionaryMeta.flag = options.flag;
+      resultCallback(dictionaryMeta);
     }
   }
 
@@ -136,9 +136,9 @@ class FileProcesser {
       const msg = `File ${this._sourcePath} contains a malformed enum.`;
       throw new IDLError(msg, this._sourcePath);
     }
-    const interfaceMeta = new INTERFACE_OBJECTS['enum'](foundEnum[0], options);
-    interfaceMeta.flag = option.flag;
-    resultCallback(interfaceMeta);
+    const enumMeta = new IDL_OBJECTS['enum'](foundEnum[0], options);
+    enumMeta.flag = option.flag;
+    resultCallback(enumMeta);
   }
 
   _processIncludes(resultCallback, options) {
@@ -149,81 +149,13 @@ class FileProcesser {
         throw new IDLError(msg, this._sourcePath);
       }
       for ( const fi of foundIncludes) {
-        const interfaceMeta = new INTERFACE_OBJECTS['includes'](fi[0], options);
-        interfaceMeta.flag = options.flag;
-        resultCallback(interfaceMeta);
+        const includesMeta = new IDL_OBJECTS['includes'](fi[0], options);
+        includesMeta.flag = options.flag;
+        resultCallback(includesMeta);
       }
       return foundIncludes;
     }
   }
-
-  process_(resultCallback) {
-    let interfaceMeta;
-    let recording = false;
-    let lines = this._sourceContents.split('\n');
-    let hold = [];
-    let type;
-    const options = { "sourcePath": this._sourcePath };
-    for (let l of lines) {
-      type = ((l, currentType) => {
-        let start = STARTS.find(f => {
-          return l.startsWith(f);
-        });
-        if (start) {
-          if (l.trim().includes("[")) { return "interface"; }
-          if (l.trim().includes("callback interface")) { return "interface"; }
-          return start;
-        } else {
-          return currentType;
-        }
-      })(l, type);
-      if (!recording) {
-          switch (type) {
-            case "callback":
-              interfaceMeta = new INTERFACE_OBJECTS[type](l, options);
-              resultCallback(interfaceMeta);
-              continue;
-            case "dictionary":
-            case "enum":
-            case "typedef":
-              continue;
-            default:
-              break;
-          }
-          recording = true;
-          hold.push(l);
-        // }
-      } else {
-        hold.push(l);
-        if (l.trim().startsWith("};")) {
-          recording = false;
-          let objectSource = hold.join('\n');
-          interfaceMeta = new INTERFACE_OBJECTS[type](objectSource, options);
-          resultCallback(interfaceMeta);
-          hold = [];
-        }
-      }
-    }
-  }
-
-  __getInterfaceMeta(source) {
-    let im = Object.assign({}, METAFILE);
-    im.path = this._sourcePath;
-    im.keys = [];
-    im.key = im.keys[0];
-    im.tree = source;
-    return im;
-  }
-
-  _getInterfaceMeta(interfaceData) {
-    let im = Object.assign({}, METAFILE);
-    im.path = this._sourcePath;
-    im.keys = [];
-    im.keys.push(...interfaceData.keys);
-    im.key = im.keys[0];
-    return im;
-  }
-
 }
 
 module.exports.FileProcessor = FileProcesser;
