@@ -181,6 +181,10 @@ class IDLData {
     return this._originTrial;
   }
 
+  set originTrial(originTrial) {
+    this._originTrial = originTrial;
+  }
+
   get path() {
     return this._sourcePath;
   }

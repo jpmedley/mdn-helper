@@ -67,7 +67,8 @@ class FileProcesser {
   process(resultCallback) {
     const processOptions = { 
       "sourcePath": this._sourcePath,
-      "flag": false
+      "flag": false,
+      "originTrial": false
      };
     this._processInterface(resultCallback, processOptions);
     this._processCallback(resultCallback, processOptions);
@@ -98,6 +99,7 @@ class FileProcesser {
       interfaceMeta = new IDL_OBJECTS['interface'](foundInterface[0], options);
     }
     options.flag = interfaceMeta.flag;
+    options.originTrial = interfaceMeta.originTrial;
     resultCallback(interfaceMeta);
   }
 
@@ -112,6 +114,7 @@ class FileProcesser {
     }
     const callbackMeta = new IDL_OBJECTS['callback'](foundCallback[0], options);
     callbackMeta.flag = options.flag;
+    callbackMeta.originTrial = options.originTrial;
     resultCallback(callbackMeta);
   }
 
@@ -124,6 +127,7 @@ class FileProcesser {
       }
       const dictionaryMeta = new IDL_OBJECTS['dictionary'](foundDictionary[0], options);
       dictionaryMeta.flag = options.flag;
+      dictionaryMeta.originTrial = options.originTrial;
       resultCallback(dictionaryMeta);
     }
   }
@@ -138,6 +142,7 @@ class FileProcesser {
     }
     const enumMeta = new IDL_OBJECTS['enum'](foundEnum[0], options);
     enumMeta.flag = options.flag;
+    enumMeta.originTrial = options.originTrial;
     resultCallback(enumMeta);
   }
 
@@ -151,6 +156,7 @@ class FileProcesser {
       for ( const fi of foundIncludes) {
         const includesMeta = new IDL_OBJECTS['includes'](fi[0], options);
         includesMeta.flag = options.flag;
+        includesMeta.originTrial = options.originTrial;
         resultCallback(includesMeta);
       }
       return foundIncludes;
