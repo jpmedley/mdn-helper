@@ -49,16 +49,16 @@ function _finderFactory(args) {
 }
 
 class CSSFinder {
-  constructor(args) {
+  constructor(args, options) {
     console.log("CSSFinder is not yet available.\n");
     process.exit();
   }
 }
 
 class IDLFinder {
-  constructor(args) {
+  constructor(args, options = { iDLDirectory: `${utils.APP_ROOT}/idl/` }) {
     this._processArguments(args)
-    let dm = new DirectoryManager(`${utils.APP_ROOT}/idl/`)
+    let dm = new DirectoryManager(options.iDLDirectory);
     this._interfaces = dm.interfaceSet;
   }
 
@@ -120,7 +120,8 @@ class IDLFinder {
     }
   }
 
-  async _select(matches) {
+  async _find() {
+    const matches = this._findInterfaces(this._searchString);
     let names = [];
     for (let m of matches) {
       let steps = m.path.split('/');
@@ -141,12 +142,6 @@ class IDLFinder {
       return elem.path.includes(key);
     });
     return answerData;
-  }
-
-  async _find() {
-    const matches = this._findInterfaces(this._searchString);
-    const answer = await this._select(matches);
-    return answer;
   }
 
   _show(file) {
