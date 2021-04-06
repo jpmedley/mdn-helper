@@ -141,7 +141,7 @@ describe('FileProcessor', () => {
           iface = result;
         }
       });
-      assert.strictEqual(iface.name, 'Element');
+      assert.strictEqual(iface.name, 'Including');
     });
     it('Confirms that multiple includes statements are read', () => {
       const testFile = `${TEST_IDL_FILES}mixin-includes-multiple.idl`

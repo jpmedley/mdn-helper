@@ -35,7 +35,7 @@ describe('IncludesData', () => {
       const includesSource = loadSource(MIXIN_INCLUDES);
       const options = { sourcePath: MIXIN_INCLUDES };
       const id = new IncludesData(includesSource, options);
-      assert.strictEqual(id.name, 'Element');
+      assert.strictEqual(id.name, 'Including');
     });
   });
 });

@@ -49,4 +49,4 @@
     [RuntimeEnabled=AccessibilityAriaVirtualContent, CEReactions, Reflect=aria_virtualcontent] attribute DOMString? ariaVirtualContent;
 };
 
-Element includes AriaAttributes;
+Including includes MixinIncludes;
