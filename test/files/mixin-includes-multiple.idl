@@ -7,7 +7,7 @@
 // https://w3c.github.io/aria/#idl-interface
 [
     RuntimeEnabled=AOMAriaProperties
-] interface mixin AriaAttributes {
+] interface mixin MixinIncludesMultiple {
     [CEReactions, Reflect=aria_atomic] attribute DOMString? ariaAtomic;
     [CEReactions, Reflect=aria_autocomplete] attribute DOMString? ariaAutoComplete;
     [CEReactions, Reflect=aria_busy] attribute DOMString? ariaBusy;

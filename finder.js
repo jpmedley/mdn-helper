@@ -182,13 +182,15 @@ class IDLFinder {
 
 
   async findAndReturn() {
-    let metaFile = await this._find();
-    let id;
-    const fp = new FileProcessor(metaFile.path);
-    fp.process((result) => {
-      id = result;
-    }, true);
-    return id;
+    let metaFiles = this._findInterfaces(this._searchString);
+    let interfaceDataFiles = [];
+    metaFiles.forEach(mf => {
+      let fp = new FileProcessor(mf.path);
+      fp.process(result => {
+        interfaceDataFiles.push(result);
+      });
+    });
+    return interfaceDataFiles;
   }
 
   async findAndBuild() {
