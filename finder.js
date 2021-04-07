@@ -68,10 +68,6 @@ class IDLFinder {
       this._includeFlags,
       this._includeOriginTrials
     );
-    if (matches.length == 0) {
-      console.log(NOTHING_FOUND);
-      process.exit();
-    }
     return matches;
   }
 
@@ -120,8 +116,12 @@ class IDLFinder {
     }
   }
 
-  async _find() {
+  async _findForUI() {
     const matches = this._findInterfaces(this._searchString);
+    if (matches.length == 0) {
+      console.log(NOTHING_FOUND);
+      process.exit();
+    }
     let names = [];
     for (let m of matches) {
       let steps = m.path.split('/');
@@ -158,7 +158,7 @@ class IDLFinder {
 
   async findAndShow() {
     this._printInstructions();
-    let metaFile = await this._find();
+    let metaFile = await this._findForUI();
     if (this._ping) {
       let id;
       const fp = new FileProcessor(metaFile.path);
@@ -183,6 +183,7 @@ class IDLFinder {
 
   async findAndReturn() {
     let metaFiles = this._findInterfaces(this._searchString);
+    if (!metaFiles) { return; }
     let interfaceDataFiles = [];
     metaFiles.forEach(mf => {
       let fp = new FileProcessor(mf.path);
@@ -195,7 +196,7 @@ class IDLFinder {
 
   async findAndBuild() {
     this._printInstructions()
-    let metaFile = await this._find();
+    let metaFile = await this._findForUI();
     let id;
     const fp = new FileProcessor(metaFile.path);
     fp.process((result) => {

@@ -15,6 +15,7 @@
 'use strict';
 
 const assert = require('assert');
+const { find } = require('shelljs');
 
 const { Finder } = require('../finder.js');
 
@@ -27,14 +28,27 @@ describe('IDLFinder', () => {
     it('Confirms return of a mixin interface as itself', (done) => {
       const searchString = ["", "MixinIncludes"];
       let finder = new Finder(searchString, { iDLDirectory: TEST_IDL_FILES });
-      // let id = finder.findAndReturn();
-      // assert.strictEqual(id.name, 'MixinIncludes');
       finder.findAndReturn()
       .then(ids => {
         const id = ids.find(i => {
           return (i.name === 'MixinIncludes');
         });
         assert.strictEqual(id.name, 'MixinIncludes');
+        // done();
+        this.timeout(15000);
+        setTimeout(done, 12000);
+      });
+    });
+
+    it('Confirms return of a mixin on the implementing interface', (done) => {
+      const searchString = ["", "Including"];
+      let finder = new Finder(searchString, { iDLDirectory: TEST_IDL_FILES });
+      finder.findAndReturn()
+      .then(ids => {
+        const id = ids.find(i => {
+          return (i.name === 'Including');
+        });
+        assert.strictEqual(id.name, 'Including');
         done();
       });
     });
