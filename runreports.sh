@@ -27,6 +27,7 @@ npm run burn chrome
 npm run burn chrome -- -i
 npm run burn chrome -- -r fugu-wl.json
 npm run burn chrome -- -r houdini-rl.json
+npm run burn chrome -- -r reporting-rl.json
 
 npm run burn urls -- -c api
 npm run burn urls -- -c css
