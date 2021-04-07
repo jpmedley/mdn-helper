@@ -1,0 +1,16 @@
+{
+  "reportingList": [
+    "CoopAccessViolationReportBody",
+    "CSPViolationReportBody",
+    "DeprecationReportBody",
+    "DocumentPolicyViolationReportBody",
+    "HIDInputReportEvent",
+    "InterventionReportBody",
+    "PermissionsPolicyViolationReportBody",
+    "Report",
+    "ReportBody",
+    "ReportingObserver",
+    "RTCLegacyStatsReport",
+    "RTCStatsReport"
+  ]
+}
