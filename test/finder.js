@@ -25,7 +25,9 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 
 describe('IDLFinder', () => {
   describe('findAndReturn()', () => {
-    it('Confirms return of a mixin interface as itself', (done) => {
+    it('Confirms return of a mixin interface as itself', function(done) {
+      this.timeout(15000);
+      setTimeout(done, 12000);
       const searchString = ["", "MixinIncludes"];
       let finder = new Finder(searchString, { iDLDirectory: TEST_IDL_FILES });
       finder.findAndReturn()
@@ -34,22 +36,22 @@ describe('IDLFinder', () => {
           return (i.name === 'MixinIncludes');
         });
         assert.strictEqual(id.name, 'MixinIncludes');
-        // done();
-        this.timeout(15000);
-        setTimeout(done, 12000);
       });
     });
 
-    it('Confirms return of a mixin on the implementing interface', (done) => {
+    it('Confirms return of a mixin on the implementing interface', function(done) {
+      this.timeout(15000);
+      setTimeout(done, 12000);
       const searchString = ["", "Including"];
       let finder = new Finder(searchString, { iDLDirectory: TEST_IDL_FILES });
       finder.findAndReturn()
       .then(ids => {
         const id = ids.find(i => {
-          return (i.name === 'Including');
+          if (i.name === 'Including') {
+            assert.ok(true);
+            return i;
+          }
         });
-        assert.strictEqual(id.name, 'Including');
-        done();
       });
     });
   });
