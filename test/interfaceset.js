@@ -66,5 +66,9 @@ describe('InterfaceSet', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceOT', false, false);
       assert.strictEqual(matches.length, 0);
     });
+    it('Confirms a mixin is returned under its implementor\'s name', () => {
+      const matches = INTERFACE_SET.findMatching('MixinIncludes', false, false);
+      assert.strictEqual(matches.length, 2);
+    })
   });
 });
