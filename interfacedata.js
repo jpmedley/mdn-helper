@@ -276,8 +276,8 @@ class EnumData extends IDLData {
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+    // this._type = ( options.type ? options.type : 'interface' );
     this._type = "interface";
-    this._subType = null;
     this._constructors = [];
     this._deleters = [];
     this._eventHandlers = [];
@@ -310,13 +310,13 @@ class InterfaceData extends IDLData {
       let msg = `Problem processing ${this._sourcePath}.\n`
       throw new IDLError(msg, this.fileName);
     }
-    if (matches[1]) {
-      this._subType = matches[1].trim();
-    } else if (matches[2]) {
-      this._subType = matches[2].trim();
-    } else {
-      this._subType = 'standard';
-    }
+    // if (matches[1]) {
+    //   this._subType = matches[1].trim();
+    // } else if (matches[2]) {
+    //   this._subType = matches[2].trim();
+    // } else {
+    //   this._subType = 'standard';
+    // }
     this._name = matches[3];
   }
 
@@ -813,7 +813,7 @@ class InterfaceData extends IDLData {
 
   get mixin() {
     // For backward compatibility
-    return (this._subType === 'mixin');
+    return (this.type === 'mixin');
   }
 
   get name() {
@@ -890,9 +890,9 @@ class InterfaceData extends IDLData {
     return extAttributes.includes("SecureContext");
   }
 
-  get subType() {
-    return this._subType;
-  }
+  // get subType() {
+  //   return this._subType;
+  // }
 
   // Backward compatibility
   getSecureContext() {
@@ -1092,9 +1092,8 @@ class InterfaceData extends IDLData {
 
 class IncludesData extends InterfaceData {
   constructor(source, options={}) {
-    // super(source, options);
     super(options.realSource, options);
-    // this._type = "includes"
+    this._type = "includes";
     let matches = source.match(INCLUDES_NAME_RE);
     if (!matches) {
       const msg = `Malformed includes statement in ${this._sourcePath}.`
@@ -1106,10 +1105,6 @@ class IncludesData extends InterfaceData {
 
   set flagged(flag) {
     this._flagged = flag;
-  }
-
-  get isMixin() {
-    return (this._mixinName ? true : false);
   }
 
   get mixinName() {

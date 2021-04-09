@@ -94,6 +94,7 @@ class FileProcesser {
     } else if (interfaceHeader[1] === 'partial') {
       interfaceMeta = new IDL_OBJECTS['partial'](foundInterface[0], options);
     } else if (interfaceHeader[2] === 'mixin') {
+      options.type = 'mixin';
       interfaceMeta = new IDL_OBJECTS['mixin'](foundInterface[0], options);
     } else {
       interfaceMeta = new IDL_OBJECTS['interface'](foundInterface[0], options);

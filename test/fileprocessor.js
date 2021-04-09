@@ -136,10 +136,9 @@ describe('FileProcessor', () => {
       const testFile = `${TEST_IDL_FILES}mixin-includes.idl`;
       const fp = new FileProcessor(testFile);
       fp.process((result) => {
-        if (result.isMixin) {
-          assert.ok(result.isMixin);
+        if (result.type === 'includes') {
+          assert.ok(result.type === 'includes');
         }
-        
       });
     });
     it('Confirms that multiple includes statements are read', () => {
@@ -147,7 +146,7 @@ describe('FileProcessor', () => {
       const fp = new FileProcessor(testFile);
       let includesCount = 0;
       fp.process((result) => {
-        if (result.isMixin) {
+        if (result.type === 'includes') {
           includesCount++;
         }
       });
