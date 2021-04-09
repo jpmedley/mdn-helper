@@ -26,15 +26,20 @@ initiateLogger();
 const MIXIN_INCLUDES = './test/files/mixin-includes.idl';
 
 function loadSource(sourcePath) {
-  return utils.getIDLFile(sourcePath);
+  return utils.getIDLFile(sourcePath, { clean: true });
 }
 
 describe('IncludesData', () => {
   describe('Properties', () => {
     it('Confirms that the name property returns the correct value', () => {
       const includesSource = loadSource(MIXIN_INCLUDES);
-      const options = { sourcePath: MIXIN_INCLUDES };
-      const id = new IncludesData(includesSource, options);
+      const sources = includesSource.split('Including');
+      const options = { 
+        realSource: sources[0].trim(),
+        sourcePath: MIXIN_INCLUDES
+      };
+      const proximateSource = `Including${sources[1]}`;
+      const id = new IncludesData(proximateSource, options);
       assert.strictEqual(id.name, 'Including');
     });
   });

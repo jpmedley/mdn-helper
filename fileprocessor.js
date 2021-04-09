@@ -98,8 +98,9 @@ class FileProcesser {
     } else {
       interfaceMeta = new IDL_OBJECTS['interface'](foundInterface[0], options);
     }
-    options.flag = interfaceMeta.flag;
+    options.flag = interfaceMeta.flagged;
     options.originTrial = interfaceMeta.originTrial;
+    options.realSource = foundInterface[0];
     resultCallback(interfaceMeta);
   }
 
@@ -155,7 +156,7 @@ class FileProcesser {
       }
       for ( const fi of foundIncludes) {
         const includesMeta = new IDL_OBJECTS['includes'](fi[0], options);
-        includesMeta.flag = options.flag;
+        includesMeta.flagged = options.flag;
         includesMeta.originTrial = options.originTrial;
         resultCallback(includesMeta);
       }

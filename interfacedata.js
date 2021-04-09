@@ -273,28 +273,6 @@ class EnumData extends IDLData {
   }
 }
 
-class IncludesData extends IDLData {
-  constructor(source, options={}) {
-    super(source, options);
-    this._type = "includes"
-    let matches = source.match(INCLUDES_NAME_RE);
-    if (!matches) {
-      const msg = `Malformed includes statement in ${this._sourcePath}.`
-      throw new IDLError(msg, 'interfacedata.js');
-    }
-    this._name = matches[1];
-    this._mixinName = matches[2];
-  }
-
-  get mixinName() {
-    return this._mixinName;
-  }
-
-  get name() {
-    return this._name;
-  }
-}
-
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
@@ -1109,6 +1087,37 @@ class InterfaceData extends IDLData {
     });
 
     return this._members;
+  }
+}
+
+class IncludesData extends InterfaceData {
+  constructor(source, options={}) {
+    // super(source, options);
+    super(options.realSource, options);
+    // this._type = "includes"
+    let matches = source.match(INCLUDES_NAME_RE);
+    if (!matches) {
+      const msg = `Malformed includes statement in ${this._sourcePath}.`
+      throw new IDLError(msg, 'interfacedata.js');
+    }
+    this._name = matches[1];
+    this._mixinName = matches[2];
+  }
+
+  set flagged(flag) {
+    this._flagged = flag;
+  }
+
+  get isMixin() {
+    return (this._mixinName ? true : false);
+  }
+
+  get mixinName() {
+    return this._mixinName;
+  }
+
+  set originTrial(originTrial) {
+    this._originTrial = originTrial;
   }
 }
 

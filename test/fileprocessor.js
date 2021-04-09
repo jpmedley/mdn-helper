@@ -135,20 +135,19 @@ describe('FileProcessor', () => {
     it('Confirms that includes statements are read', () => {
       const testFile = `${TEST_IDL_FILES}mixin-includes.idl`;
       const fp = new FileProcessor(testFile);
-      let iface;
       fp.process((result) => {
-        if (result.type === 'includes') {
-          iface = result;
+        if (result.isMixin) {
+          assert.ok(result.isMixin);
         }
+        
       });
-      assert.strictEqual(iface.name, 'Including');
     });
     it('Confirms that multiple includes statements are read', () => {
-      const testFile = `${TEST_IDL_FILES}mixin-includes-multiple.idl`
+      const testFile = `${TEST_IDL_FILES}mixin-includes-multiple.idl`;
       const fp = new FileProcessor(testFile);
       let includesCount = 0;
       fp.process((result) => {
-        if (result.type === 'includes') {
+        if (result.isMixin) {
           includesCount++;
         }
       });
