@@ -58,7 +58,8 @@ class CSSFinder {
 class IDLFinder {
   constructor(args, options = { iDLDirectory: `${utils.APP_ROOT}/idl/` }) {
     this._processArguments(args)
-    let dm = new DirectoryManager(options.iDLDirectory);
+    const dmOptions = { types: ['interface', 'includes'] }
+    let dm = new DirectoryManager(options.iDLDirectory, dmOptions);
     this._interfaces = dm.interfaceSet;
   }
 
@@ -125,7 +126,11 @@ class IDLFinder {
     let names = [];
     for (let m of matches) {
       let steps = m.path.split('/');
-      names.push(`${m.keys[0]} (${steps[steps.length-1]})`);
+      const type = ((m) => {
+        if (m.type === 'includes') { return 'mixin'; }
+        return m.type;
+      })(m);
+      names.push(`${m.keys[0]} (${type} from ${steps[steps.length-1]})`);
     }
     names = names.sort();
     names.push(CANCEL);
@@ -136,10 +141,15 @@ class IDLFinder {
     });
     let answer = await prompt.run();
     if (answer === CANCEL) { process.exit(); }
-    const pieces = answer.split('(');
-    const key = pieces[1].slice(0, -1).trim();
+    const pieces = answer.split(' ');
+    const key = pieces[3].slice(0, -1).trim();
+    const name = pieces[0].trim();
     const answerData = matches.find(elem => {
-      return elem.path.includes(key);
+      if (elem.type === 'includes') {
+        return elem.name === name;
+      } else {
+        return elem.path.includes(key);
+      }
     });
     return answerData;
   }
@@ -197,11 +207,14 @@ class IDLFinder {
   async findAndBuild() {
     this._printInstructions()
     let metaFile = await this._findForUI();
-    let id;
+    let ids = [];
     const fp = new FileProcessor(metaFile.path);
     fp.process((result) => {
-      id = result;
+      ids.push(result);
     }, true);
+    let id = ids.find((id) => {
+      return id.name === metaFile.name;
+    })
     const options = {
       interactive: this._interactive,
       interfaceData: id,
