@@ -290,6 +290,7 @@ class InterfaceData extends IDLData {
     this._iterable = [];
     this._maplike = [];
     this._methods = [];
+    this._mixin = false;
     this._originTrial_sudo = false;
     this._parentClass = null;
     this._properties = [];
@@ -310,13 +311,9 @@ class InterfaceData extends IDLData {
       let msg = `Problem processing ${this._sourcePath}.\n`
       throw new IDLError(msg, this.fileName);
     }
-    // if (matches[1]) {
-    //   this._subType = matches[1].trim();
-    // } else if (matches[2]) {
-    //   this._subType = matches[2].trim();
-    // } else {
-    //   this._subType = 'standard';
-    // }
+    if (matches[2]) {
+      this._mixin = true;
+    }
     this._name = matches[3];
   }
 
@@ -812,8 +809,7 @@ class InterfaceData extends IDLData {
   }
 
   get mixin() {
-    // For backward compatibility
-    return (this.type === 'mixin');
+    return this._mixin;
   }
 
   get name() {

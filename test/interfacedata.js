@@ -18,6 +18,7 @@ const assert = require('assert');
 const fs = require('fs');
 const utils = require('../utils.js');
 
+const { FileProcessor } = require('../fileprocessor.js');
 const { InterfaceData } = require('../interfacedata.js');
 const { initiateLogger } = require('../log.js');
 
@@ -44,6 +45,7 @@ const GETTERS_RETURN_VAL = './test/files/getters-return-val.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const INTERFACE_CALLBACK = './test/files/interface-callback.idl';
 const INTERFACE_MIXIN = './test/files/mixin.idl';
+const INTERFACE_MIXIN_INCLUDES = './test/files/mixin-includes.idl';
 const INTERFACE_NOPARENT = './test/files/interface-noparent.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
 const INTERFACE_PARTIAL = './test/files/interface-partial.idl';
@@ -493,6 +495,25 @@ describe('InterfaceData', () => {
       const source = loadSource(STRINGIFIER);
       const id = new InterfaceData(source);
       assert.strictEqual(id.methods[0].name, "toString");
+    });
+  });
+
+  describe('mixin', () => {
+    it('Confirms that a mixin interface returns true for its mixin property', () => {
+      const fp = new FileProcessor(INTERFACE_MIXIN_INCLUDES);
+      const interfaces = [];
+      fp.process(result => {
+        interfaces.push(result);
+      });
+      assert.ok(interfaces[0].mixin);
+    });
+    it('Confirms that an included interface returns false for its mixin property', () => {
+      const fp = new FileProcessor(INTERFACE_MIXIN_INCLUDES);
+      const interfaces = [];
+      fp.process(result => {
+        interfaces.push(result);
+      });
+      assert.ok(interfaces[1].mixin);
     });
   });
 
