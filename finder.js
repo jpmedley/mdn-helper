@@ -63,6 +63,34 @@ class IDLFinder {
     this._interfaces = dm.interfaceSet;
   }
 
+  async _confirmPings(interfaces) {
+    if (interfaces[0].mixin) {
+      let promptMsg = `\nThe ${interfaces[0].name} interface is a mixin and will not appear with that\n`;
+          promptMsg += `name on MDN. Its members will appear as part of the interfaces below. Which\n`;
+          promptMsg += `interfaces would yo like to ping?\n`;
+      let names = []
+      for (let i of interfaces) {
+        if (i.type === 'includes') {
+          names.push(i.name);
+        }
+      }
+      names = names.sort();
+      names.push(CANCEL);
+      const prompt = new Select({
+        name: 'interface',
+        message: promptMsg,
+        choices: names
+      });
+      let answer = await prompt.run();
+      if (answer === CANCEL) { return; }
+      return interfaces.find(i => {
+        return i.name === answer;
+      });
+    } else {
+      return interfaces[0];
+    }
+  }
+
   _findInterfaces(interfacesNamed) {
     const matches = this._interfaces.findMatching(
       interfacesNamed,
@@ -170,23 +198,25 @@ class IDLFinder {
     this._printInstructions();
     let metaFile = await this._findForUI();
     if (this._ping) {
-      let id;
+      let ids = [];
       const fp = new FileProcessor(metaFile.path);
       fp.process((result) => {
-        id = result;
-      }, true);
-      console.log('Checking for existing MDN pages. This may take a few minutes.\n');
-      const pingRecords = await id.ping(false);
-      console.log('Exists?   Interface');
-      console.log('-'.repeat(51));
-      pingRecords.forEach(r => {
-        let exists = r.mdn_exists.toString().padEnd(10);
-        console.log(`${exists}${r.key}`);
-      })
-      console.log();
-      await utils.pause();
+        ids.push(result);
+      });
+      let id = await this._confirmPings(ids);
+      if (id) {
+        console.log('Checking for existing MDN pages. This may take a few minutes.\n');
+        const pingRecords = await id.ping(false);
+        console.log('Exists?   Interface');
+        console.log('-'.repeat(51));
+        pingRecords.forEach(r => {
+          let exists = r.mdn_exists.toString().padEnd(10);
+          console.log(`${exists}${r.key}`);
+        })
+        console.log();
+        await utils.pause();
+      }
     }
-
     this._show(metaFile);
   }
 
