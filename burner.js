@@ -419,7 +419,7 @@ class ChromeBurner extends Burner {
     this._loadReportingList();
     this._startBurnLogFile();
     this._openResultsFile();
-    const burnTypes = ["interface"];
+    const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     const interfaceSet = dm.interfaceSet;
     let interfaces;
@@ -456,6 +456,7 @@ class ChromeBurner extends Burner {
   }
 
   _isBurnable(interfaceData) {
+    if (interfaceData.mixin) { return false; }
     if (utils.isExcluded(interfaceData.name)) { return false; }
     if (BURNABLE_TYPES.includes(interfaceData.type)) { return true; }
     return true;

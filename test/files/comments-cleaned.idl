@@ -2,4 +2,3 @@ interface mixin Comments {
     [CallWith=ScriptState, Measure, RaisesException] Animation animate(object? keyframes, optional (unrestricted double or KeyframeAnimationOptions) options);
     [RuntimeEnabled=WebAnimationsAPI] sequence<Animation> getAnimations(optional GetAnimationsOptions options = {});
 };
-Element includes Animatable;

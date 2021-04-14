@@ -17,14 +17,17 @@
 const fs = require('fs');
 
 const { bcd } = require('./bcd.js');
+const { IDLError } = require('./errors.js');
 const { FlagStatus } = require('./flags.js')
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 
-const CALLBACK_NAME_RE = /callback\s(\w+)/;
+const CALLBACK_NAME_RE = /callback\s*(\w*)\s*=[^;]*;/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
+const INCLUDES_NAME_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/m;
 const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
+const INTERFACE_DEFINITION_RE = /(callback|partial)?\s*interface\s*(mixin)?\s*(\w+)/;
 
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
 const EXPOSED_RE = /Exposed=?([^\n]*)/;
@@ -104,6 +107,7 @@ const METHOD = Object.freeze({
   "returnType": null,
   "resolution": null,
   "source": null,
+  "static": false,
   "tree": this.source, // Needed for Backward compatibility
   "type": "method"
 });
@@ -140,11 +144,21 @@ class IDLData {
     FLAGS = new FlagStatus('./idl/platform/runtime_enabled_features.json5')
     this._sourceData = source;
     this._sourcePath = options.sourcePath;
+    this._flagged = null;
+    this._flagged_sudo = true;
     this._key;
     this._keys = [];
     this._members = [];
     this._name;
+    this._originTrial = null;
+    this._originTrial_sudo = true;
     this._sources = [];
+  }
+
+  get flagged() {
+    if (this._flagged) { return this._flagged}
+    this._flagged = this._getRuntimeEnabledValue("experimental", this._getInterfaceExtendedAttributes());
+    return this._flagged;
   }
 
   get key() {
@@ -159,6 +173,16 @@ class IDLData {
 
   get sourceContents() {
     return this._sourceData;
+  }
+
+  get originTrial() {
+    if (this._originTrial) { return this._originTrial}
+    this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
+    return this._originTrial;
+  }
+
+  set originTrial(originTrial) {
+    this._originTrial = originTrial;
   }
 
   get path() {
@@ -252,20 +276,22 @@ class EnumData extends IDLData {
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
+    // this._type = ( options.type ? options.type : 'interface' );
     this._type = "interface";
     this._constructors = [];
     this._deleters = [];
     this._eventHandlers = [];
     this._exposed = null;
     this._extendedAttributes = null;
-    this._flagged = null;
+    this._flagged_sudo = false;
     this._getters = [];
     this._hasConstructor = null;
     this._inTest = null;
     this._iterable = [];
     this._maplike = [];
     this._methods = [];
-    this._originTrial = null;
+    this._mixin = false;
+    this._originTrial_sudo = false;
     this._parentClass = null;
     this._properties = [];
     this._setlike = [];
@@ -280,9 +306,15 @@ class InterfaceData extends IDLData {
   }
 
   _processHeader() {
-    let matches = this._sourceData.match(INTERFACE_NAME_RE);
-    matches[1]? this._mixin = true: this._mixin = false;
-    this._name = matches[2];
+    let matches = this._sourceData.match(INTERFACE_DEFINITION_RE);
+    if (!matches) {
+      let msg = `Problem processing ${this._sourcePath}.\n`
+      throw new IDLError(msg, this.fileName);
+    }
+    if (matches[2]) {
+      this._mixin = true;
+    }
+    this._name = matches[3];
   }
 
   _processSource() {
@@ -321,7 +353,7 @@ class InterfaceData extends IDLData {
     } catch (error) {
       let msg = `Problem processing ${this._sourcePath}.\n`
       msg += `${error.message}\n${error.stack}`;
-      throw new Error(msg, error.fileName, error.lineNumber);
+      throw new IDLError(msg, error.fileName, error.lineNumber);
     }
   }
 
@@ -344,8 +376,8 @@ class InterfaceData extends IDLData {
   }
 
   _getInlineExtendedAttributes(source, dataObject) {
-    if (source.startsWith("[")) { source = source.slice(1); }
-    const sources = source.split(",");
+    const matches = source.match(/\[?([^\]]*)\]?/);
+    const sources = matches[1].split(",");
     sources.forEach(elem => {
       let elems = elem.split("=");
       switch (elems[0]) {
@@ -492,12 +524,6 @@ class InterfaceData extends IDLData {
       }
     }
     return this._exposed;
-  }
-
-  get flagged() {
-    if (this._flagged) { return this._flagged}
-    this._flagged = this._getRuntimeEnabledValue("experimental", this._getInterfaceExtendedAttributes());
-    return this._flagged;
   }
 
   _getGetters() {
@@ -693,44 +719,89 @@ class InterfaceData extends IDLData {
       let newMethodData = this._cloneObject(METHOD);
       newMethodData.source = source.trim();
 
-      let workingString = newMethodData.source;
-      if (workingString.includes("]")) {
-        let pieces = workingString.split("]");
-        this._getInlineExtendedAttributes(pieces[0], newMethodData);
-        workingString = pieces[1].trim();
+      if (newMethodData.source === 'stringifier') {
+        newMethodData.name = 'toString';
+        newMethodData.returnType = 'String';
+        this._methods.push(newMethodData);
+        return;
       }
 
-      if (workingString === "stringifier") {
-        newMethodData.name = "toString";
-        newMethodData.returnType = "String";
+      let pieces;
+      if (source.includes('<')) {
+        pieces = source.match(/(\[([^\]]*)\])(\sstatic)?(\s\w*\b<.*>(?!>))\s(\w*)\(([^\)]*)\)/);
       } else {
-        let methodName = workingString.match(/\s(\w+)\s*\(/);
-        newMethodData.name = methodName[1];
+        pieces = source.match(/(\[([^\]]*)\])?(\sstatic)?\s*(\w*)\s(\w*)\(([^\)]*)\)/);
       }
 
-      let pieces = workingString.split(newMethodData.name);
-      if (pieces[0].includes("Promise")) {
-        newMethodData.returnType = "Promise";
-        let resolution = pieces[0].split("Promise");
-        newMethodData.resolution = resolution[1].trim().slice(0, -1).slice(1);
-      } else {
-        newMethodData.returnType = pieces[0].trim();
+      if (pieces) {
+        if (pieces[2]) {
+          this._getInlineExtendedAttributes(pieces[1], newMethodData);
+        }
+        if (pieces[3]) {
+          newMethodData.static = true;
+        }
+        newMethodData.returnType = pieces[4].trim();
+        if (newMethodData.returnType.startsWith('Promise')) {
+          let resolution = pieces[4].split('<');
+          resolution[1] = resolution[1].slice(0,-1);
+          newMethodData.resolution = resolution[1];
+        }
+        newMethodData.name = pieces[5].trim();
+        if (pieces[6]) {
+          let args = pieces[6].split(",");
+          args.forEach((arg, i, args) => {
+            let temp = arg.trim();
+            if (temp != "") {
+              newMethodData.arguments.push(temp);
+            }
+          });
+        }
+        this._methods.push(newMethodData);
       }
+    })
 
-      if (pieces[1]) {
-        workingString = pieces[1].slice(0, -1).slice(1);
-        let args = workingString.split(",");
-        args.forEach((arg, i, args) => {
-          args[1] = arg.trim();
-          if (arg != "") { newMethodData.arguments.push(arg); }
-        });
-      }
+    // sources.forEach(source => {
+    //   let newMethodData = this._cloneObject(METHOD);
+    //   newMethodData.source = source.trim();
+
+    //   let workingString = newMethodData.source;
+    //   if (workingString.includes("]")) {
+    //     let pieces = workingString.split("]");
+        // this._getInlineExtendedAttributes(pieces[0], newMethodData);
+    //     workingString = pieces[1].trim();
+    //   }
+
+    //   if (workingString === "stringifier") {
+    //     newMethodData.name = "toString";
+    //     newMethodData.returnType = "String";
+    //   } else {
+    //     let methodName = workingString.match(/\s(\w+)\s*\(/);
+    //     newMethodData.name = methodName[1];
+    //   }
+
+    //   let pieces = workingString.split(newMethodData.name);
+    //   if (pieces[0].includes("Promise")) {
+    //     newMethodData.returnType = "Promise";
+    //     let resolution = pieces[0].split("Promise");
+    //     newMethodData.resolution = resolution[1].trim().slice(0, -1).slice(1);
+    //   } else {
+    //     newMethodData.returnType = pieces[0].trim();
+    //   }
+
+    //   if (pieces[1]) {
+    //     workingString = pieces[1].slice(0, -1).slice(1);
+    //     let args = workingString.split(",");
+    //     args.forEach((arg, i, args) => {
+    //       args[1] = arg.trim();
+    //       if (arg != "") { newMethodData.arguments.push(arg); }
+    //     });
+    //   }
       
-      if (!register.includes(newMethodData.name)) {
-        register.push(newMethodData.name);
-        this._methods.push(JSON.parse(JSON.stringify(newMethodData)));
-      }
-    });
+    //   if (!register.includes(newMethodData.name)) {
+    //     register.push(newMethodData.name);
+    //     this._methods.push(JSON.parse(JSON.stringify(newMethodData)));
+    //   }
+    // });
   }
 
   get methods() {
@@ -757,12 +828,6 @@ class InterfaceData extends IDLData {
       if (setter.name === "(setter)") { return false; }
       return setter.name != "";
     })
-  }
-
-  get originTrial() {
-    if (this._originTrial) { return this._originTrial}
-    this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
-    return this._originTrial;
   }
 
   get parentClass() {
@@ -820,6 +885,10 @@ class InterfaceData extends IDLData {
     if (!extAttributes) { return false; }
     return extAttributes.includes("SecureContext");
   }
+
+  // get subType() {
+  //   return this._subType;
+  // }
 
   // Backward compatibility
   getSecureContext() {
@@ -1017,7 +1086,34 @@ class InterfaceData extends IDLData {
   }
 }
 
+class IncludesData extends InterfaceData {
+  constructor(source, options={}) {
+    super(options.realSource, options);
+    this._type = "includes";
+    let matches = source.match(INCLUDES_NAME_RE);
+    if (!matches) {
+      const msg = `Malformed includes statement in ${this._sourcePath}.`
+      throw new IDLError(msg, 'interfacedata.js');
+    }
+    this._name = matches[1];
+    this._mixinName = matches[2];
+  }
+
+  set flagged(flag) {
+    this._flagged = flag;
+  }
+
+  get mixinName() {
+    return this._mixinName;
+  }
+
+  set originTrial(originTrial) {
+    this._originTrial = originTrial;
+  }
+}
+
 module.exports.CallbackData = CallbackData;
 module.exports.DictionaryData = DictionaryData;
 module.exports.EnumData = EnumData;
+module.exports.IncludesData = IncludesData;
 module.exports.InterfaceData = InterfaceData;

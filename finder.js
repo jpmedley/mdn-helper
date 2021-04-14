@@ -49,16 +49,17 @@ function _finderFactory(args) {
 }
 
 class CSSFinder {
-  constructor(args) {
+  constructor(args, options) {
     console.log("CSSFinder is not yet available.\n");
     process.exit();
   }
 }
 
 class IDLFinder {
-  constructor(args) {
+  constructor(args, options = { iDLDirectory: `${utils.APP_ROOT}/idl/` }) {
     this._processArguments(args)
-    let dm = new DirectoryManager(`${utils.APP_ROOT}/idl/`)
+    const dmOptions = { types: ['interface', 'includes'] }
+    let dm = new DirectoryManager(options.iDLDirectory, dmOptions);
     this._interfaces = dm.interfaceSet;
   }
 
@@ -68,10 +69,6 @@ class IDLFinder {
       this._includeFlags,
       this._includeOriginTrials
     );
-    if (matches.length == 0) {
-      console.log(NOTHING_FOUND);
-      process.exit();
-    }
     return matches;
   }
 
@@ -120,11 +117,20 @@ class IDLFinder {
     }
   }
 
-  async _select(matches) {
+  async _findForUI() {
+    const matches = this._findInterfaces(this._searchString);
+    if (matches.length == 0) {
+      console.log(NOTHING_FOUND);
+      process.exit();
+    }
     let names = [];
     for (let m of matches) {
       let steps = m.path.split('/');
-      names.push(`${m.keys[0]} (${steps[steps.length-1]})`);
+      const type = ((m) => {
+        if (m.type === 'includes') { return 'mixin'; }
+        return m.type;
+      })(m);
+      names.push(`${m.keys[0]} (${type} from ${steps[steps.length-1]})`);
     }
     names = names.sort();
     names.push(CANCEL);
@@ -135,18 +141,17 @@ class IDLFinder {
     });
     let answer = await prompt.run();
     if (answer === CANCEL) { process.exit(); }
-    const pieces = answer.split('(');
-    const key = pieces[1].slice(0, -1).trim();
+    const pieces = answer.split(' ');
+    const key = pieces[3].slice(0, -1).trim();
+    const name = pieces[0].trim();
     const answerData = matches.find(elem => {
-      return elem.path.includes(key);
+      if (elem.type === 'includes') {
+        return elem.name === name;
+      } else {
+        return elem.path.includes(key);
+      }
     });
     return answerData;
-  }
-
-  async _find() {
-    const matches = this._findInterfaces(this._searchString);
-    const answer = await this._select(matches);
-    return answer;
   }
 
   _show(file) {
@@ -163,7 +168,7 @@ class IDLFinder {
 
   async findAndShow() {
     this._printInstructions();
-    let metaFile = await this._find();
+    let metaFile = await this._findForUI();
     if (this._ping) {
       let id;
       const fp = new FileProcessor(metaFile.path);
@@ -187,23 +192,29 @@ class IDLFinder {
 
 
   async findAndReturn() {
-    let metaFile = await this._find();
-    let id;
-    const fp = new FileProcessor(metaFile.path);
-    fp.process((result) => {
-      id = result;
-    }, true);
-    return id;
+    let metaFiles = this._findInterfaces(this._searchString);
+    if (!metaFiles) { return; }
+    let interfaceDataFiles = [];
+    metaFiles.forEach(mf => {
+      let fp = new FileProcessor(mf.path);
+      fp.process(result => {
+        interfaceDataFiles.push(result);
+      });
+    });
+    return interfaceDataFiles;
   }
 
   async findAndBuild() {
     this._printInstructions()
-    let metaFile = await this._find();
-    let id;
+    let metaFile = await this._findForUI();
+    let ids = [];
     const fp = new FileProcessor(metaFile.path);
     fp.process((result) => {
-      id = result;
+      ids.push(result);
     }, true);
+    let id = ids.find((id) => {
+      return id.name === metaFile.name;
+    })
     const options = {
       interactive: this._interactive,
       interfaceData: id,

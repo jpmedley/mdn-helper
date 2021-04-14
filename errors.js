@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,10 @@
 
 'use strict';
 
-const assert = require('assert');
+class IDLError extends Error {
+  constructor(message, fileName, lineNumber) {
+    super(message, fileName, lineNumber);
+  }
+}
 
-const { bcd } = require('../bcd.js')
-global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
-
-describe('BCD', () => {
-  describe('getByKey()', () => {
-    it('Confirms that null is returned for a fictitious key', () => {
-      assert.strictEqual(bcd.getByKey('Medley'), null);
-    });
-
-    it('Confirms that a tree is returned for a real value', () => {
-      assert.notStrictEqual(bcd.getByKey('Request'), null);
-    })
-  });
-});
+module.exports.IDLError = IDLError;

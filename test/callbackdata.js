@@ -15,18 +15,26 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
+const utils = require('../utils.js');
 
-const { bcd } = require('../bcd.js')
-global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
+const { CallbackData } = require('../interfacedata.js');
+const { initiateLogger } = require('../log.js');
 
-describe('BCD', () => {
-  describe('getByKey()', () => {
-    it('Confirms that null is returned for a fictitious key', () => {
-      assert.strictEqual(bcd.getByKey('Medley'), null);
+initiateLogger();
+
+const CALLBACK = './test/files/callback.idl';
+
+function loadSource(sourcePath) {
+  return utils.getIDLFile(sourcePath);
+}
+
+describe('CallbackData', () => {
+  describe('Properties', () => {
+    it('Confirms that the name property returns the correct value', () => {
+      const callbackSource = loadSource(CALLBACK);
+      const cs = new CallbackData(callbackSource, CALLBACK);
+      assert.strictEqual(cs.name, 'DecodeErrorCallback');
     });
-
-    it('Confirms that a tree is returned for a real value', () => {
-      assert.notStrictEqual(bcd.getByKey('Request'), null);
-    })
   });
 });

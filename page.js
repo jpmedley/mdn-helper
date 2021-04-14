@@ -32,7 +32,15 @@ class _Page {
     let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) + help[this.type] + '\n';
     this.questions = new Questions(introMessage);
     this.questions.add(type, name);
-    this.contents = utils.getTemplate(this.type.toLowerCase());
+    const interfaceTypes = ['interface', 'includes'];
+    let templateType;
+    if (interfaceTypes.includes(this.type)) {
+      templateType = 'interface';
+    } else {
+      templateType = this.type.toLowerCase();
+    }
+    this.contents = utils.getTemplate(templateType)
+    // this.contents = utils.getTemplate(this.type.toLowerCase());
     const reg = RegExp(TOKEN_RE, 'g');
     let matches;
     while ((matches = reg.exec(this.contents)) != null) {

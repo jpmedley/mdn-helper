@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2019 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,26 +15,26 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
+const utils = require('../utils.js');
 
-const { CSSSet } = require('../cssset.js');
-const updated = require('../updateData.js').update();
+const { EnumData } = require('../interfacedata.js');
+const { initiateLogger } = require('../log.js');
 
-describe('CSSSet', () => {
-  describe('constructor', () => {
-    it('Confirms that CSS data is loaded', () => {
-      const cd = new CSSSet();
-      assert.strictEqual((typeof cd.properties.parameters), 'object');
-    });
+initiateLogger();
 
-    it('Confirms that deep CSS data is accessible', () => {
-      const cd = new CSSSet();
-      assert.strictEqual(cd.properties.data[0].name, "animation-delay");
-    });
-  });
+const ENUM = './test/files/enum.idl';
 
-  describe('findMatching', () => {
-    it('Confirms something', () => {
+function loadSource(sourcePath) {
+  return utils.getIDLFile(sourcePath);
+}
 
+describe('EnumData', () => {
+  describe('Properties', () => {
+    it('Confirms that the name property returns the correct value', () => {
+      const enumSource = loadSource(ENUM);
+      const es = new EnumData(enumSource, ENUM);
+      assert.strictEqual(es.name, 'AudioContextState');
     });
   });
 });

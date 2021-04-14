@@ -38,7 +38,7 @@ describe('Utils', () => {
       const comparisonFile = buffer.toString();
       const options = { "clean": true }
       const cleanedFile = utils.getIDLFile(COMMENTS, options);
-      assert.equal(cleanedFile, comparisonFile);
+      assert.strictEqual(cleanedFile, comparisonFile);
     });
   });
 });
