@@ -15,6 +15,7 @@
     },
     "muted": [
       "CSPViolationReportBody",
+      "NativeIOFileManager",
       "WebGL2ComputeRenderingContextBase",
       "WebGLDrawInstancedBaseVertexBaseInstance",
       "WebGLMultiDrawInstancedBaseVertexBaseInstance"
