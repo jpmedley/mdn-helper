@@ -1,8 +1,9 @@
 {
   "Application": {
+    "bcdCommitDirectory": "$HOME/Desktop/out/",
     "help": "VERBOSE",
     "log": false,
-    "outputDirectory": "out/",
+    "outputDirectory": "$HOME/Desktop/out/",
     "questionsFile": "standard-questions.json",
     "test": false,
     "update": "daily",

@@ -1,13 +1,11 @@
 # mdn-helper
-Removes repetitive work of creating MDN markup and text. Much of the work of creating a new MDN reference page is in creating  boilerplate such as headings, specification tables, and standardized intro text. Once this is created API specific content must be added to the boilerplate. A significant portion of that content is duplicated between one or more pages of the API.
-
-This tool simplifies this process. First, it takes a command line indicating the interfaces and members to be created. It then prompts the answers to API specific content. It combines those answers with templates and writes nearly complete pages ready for pasting directly into the MDN page editor.
+Removes repetitive work of creating MDN markup and text. Much of the work of creating a new MDN reference page is in creating boilerplate such as headings, specification tables, and standardized intro text. Once this is created API specific content must be added to the boilerplate. A significant portion of that content is duplicated between one or more pages of the API.
 
 The current version only handles JavaScript APIs.
 
 ## Installation
 
-1. Install [node.js](https://nodejs.org), version 10 or later.
+1. Install [node.js](https://nodejs.org), version 12 or later.
 
 1. Clone this repository.
 
@@ -15,7 +13,7 @@ The current version only handles JavaScript APIs.
 
 1. Change to the `mdn-helper` directory and run `npm install`.
 
-1. Enter `npm run update-data` to download the IDL files needed for the `build`, `burn`, and `find` commands. This script will run automatically at startup approximately every twenty-four hours.
+1. Enter `npm run update-data` to download data files needed for the `build`, `burn`, and `find` commands. This script will run automatically at startup approximately every twenty-four hours.
 
 ## Usage
 
@@ -27,7 +25,7 @@ From within the mdn-helper direcory:
 
 ### build
 
-Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, builds a JSON file for the [Browser compatibility Database](https://github.com/mdn/browser-compat-data), the builds boilerplate pages formatted for publishing on MDN. Use `-i` or `--interactive` to interactively fill in missing information through a series of questions. Use `-j` or `--jsonOnly` to create a new JSON boilerplate for the browser compatibility data database, but no draft MDN pages.
+Searches for APIs with filenames matching the provided string, prompts you to select a specific interface, builds a JSON file for the [Browser compatibility Database](https://github.com/mdn/browser-compat-data), and boilerplate pages formatted for publishing on MDN. 
 
 **Syntax:** `build idl _searchString_ -- [(-i | --interactive)] [(-j | --jsonOnly)]`
 
@@ -39,7 +37,7 @@ Builds several types of burn-down lists. This has several syntaxes.
 
 **Syntax:** `burn chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist)]`
 
-Generates a csv listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--reportinglist` to include of list of interfaces to burn.
+Generates a csv file listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--reportinglist` to include of list of interfaces to burn.
 
 **Syntax:** `burn urls -- [(-c | --category) _category_]`
 
@@ -58,19 +56,9 @@ Deletes selected folders from the `*path/to*/mdn-helper/out/` directory.
 
 **Syntax:** `clean`
 
-### css
-
-Creates a pages for a CSS property. The results are written to the `*path/to*/mdn-helper/out/` directory.
-
-**Syntax:** `css -- -n _propertyName_`
-
-**Flag:**
-
-`-n`: The name of the css property being documented. This flag provides the CSS page\'s name.
-
 ### find
 
-Searches Chrome's IDL files for filenames matching the provided string, prompts you to select a specific file, then displays the contents of that file.
+Searches for interfaces matching the provided string, prompts you to select a specific file, then displays the Chrome IDL file for that interface. (For an explanation of why it uses Chrome, see [Data Sources](#data-sources), below.)
 
 **Syntax:** `find idl _searchString_ -- [(-p | --ping)]`
 
@@ -149,6 +137,14 @@ Prints help text to the console.
 ## configuration
 
 When installed, no configuration is needed. [Instructions are provided](help/CONFIGURING.md) for a few options that you may want to change.
+
+## Data Sources
+
+MDN Helper uses Chrome as its starting point because of the ease of reading API surfaces from its source code as compared to other browsers and because Chrome is often the first browser to implement new web platform features. (If you know of an easily downloaded data set that is a reliable proxy for the features of another browser, please contact me at the email address in my GitHub profile.)
+
+MDN Helper does not use data in web platform specs because working out which version of a spec to use as a starting point is not something that can be done algorithmically. Also, this tool was created to assist with new web platform features. For such featues, the first implementation may not include every feature described in a spec. Those unimplemented features can and do go through design changes before implementation.
+
+If you need to document a new feature that was implemented by a browser other than Chrome, see [Documenting New Features](help/BUILDING-PAGES.md#documenting-new-features).
 
 ## Contributing
 
