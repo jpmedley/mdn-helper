@@ -130,7 +130,6 @@ describe('FileProcessor', () => {
       fp.process((result) => {
         iface = result;
       });
-      console.log(iface.name);
       assert.strictEqual(iface.name, 'Body');
     });
     it('Confirms that includes statements are read', () => {
