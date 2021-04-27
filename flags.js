@@ -15,7 +15,7 @@
 'use strict';
 
 const fs = require('fs');
-const json5 = require('json5');
+const utils = require('./utils.js');
 
 const NO_FLAG = 'No flag found';
 
@@ -28,10 +28,9 @@ class _FlagStatus {
   }
 
   _loadFlags() {
-    const flagFileContents = fs.readFileSync(this._flagPath).toString();
-    const flagArray = json5.parse(flagFileContents).data;
+    const flagJSON = utils.getJSON(this._flagPath);
+    const flagArray = flagJSON.data;
     for (let f of flagArray) {
-      // this[f.name] = f.status;
       this[f.name] = f;
     }
   }
