@@ -26,16 +26,12 @@ const CALLBACK_NAME_RE = /callback\s*(\w*)\s*=[^;]*;/;
 const DICTIONARY_NAME_RE = /dictionary\s(\w+)/;
 const ENUM_NAME_RE = /enum\s(\w+)/;
 const INCLUDES_NAME_RE = /^\s?(\w*)\s*includes\s*(\w*)\s*;/m;
-const INTERFACE_NAME_RE = /interface\s(mixin\s)?(\w+)/;
 const INTERFACE_DEFINITION_RE = /(callback|partial)?\s*interface\s*(mixin)?\s*(\w+)/;
 
 const CONSTRUCTOR_RE = /(\[(([^\]]*))\])?\sconstructor(\([^;]*)/g;
-const EXPOSED_RE = /Exposed=?([^\n]*)/;
 const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[([^\]]*)\]\s+interface/m;
-const EXTENDED_ATTRIBUTES_RE = /\[\W*([^\]]+)\]/;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
-const RUNTIMEENABLED_RE = /RuntimeEnabled=([^\b]*)\b/;
 
 const CONSTRUCTOR = Object.freeze({
   "arguments": [],
@@ -275,7 +271,6 @@ class EnumData extends IDLData {
 class InterfaceData extends IDLData {
   constructor(source, options = {}) {
     super(source, options);
-    // this._type = ( options.type ? options.type : 'interface' );
     this._type = "interface";
     this._constructors = [];
     this._deleters = [];
@@ -757,50 +752,7 @@ class InterfaceData extends IDLData {
         }
         this._methods.push(newMethodData);
       }
-    })
-
-    // sources.forEach(source => {
-    //   let newMethodData = this._cloneObject(METHOD);
-    //   newMethodData.source = source.trim();
-
-    //   let workingString = newMethodData.source;
-    //   if (workingString.includes("]")) {
-    //     let pieces = workingString.split("]");
-        // this._getInlineExtendedAttributes(pieces[0], newMethodData);
-    //     workingString = pieces[1].trim();
-    //   }
-
-    //   if (workingString === "stringifier") {
-    //     newMethodData.name = "toString";
-    //     newMethodData.returnType = "String";
-    //   } else {
-    //     let methodName = workingString.match(/\s(\w+)\s*\(/);
-    //     newMethodData.name = methodName[1];
-    //   }
-
-    //   let pieces = workingString.split(newMethodData.name);
-    //   if (pieces[0].includes("Promise")) {
-    //     newMethodData.returnType = "Promise";
-    //     let resolution = pieces[0].split("Promise");
-    //     newMethodData.resolution = resolution[1].trim().slice(0, -1).slice(1);
-    //   } else {
-    //     newMethodData.returnType = pieces[0].trim();
-    //   }
-
-    //   if (pieces[1]) {
-    //     workingString = pieces[1].slice(0, -1).slice(1);
-    //     let args = workingString.split(",");
-    //     args.forEach((arg, i, args) => {
-    //       args[1] = arg.trim();
-    //       if (arg != "") { newMethodData.arguments.push(arg); }
-    //     });
-    //   }
-      
-    //   if (!register.includes(newMethodData.name)) {
-    //     register.push(newMethodData.name);
-    //     this._methods.push(JSON.parse(JSON.stringify(newMethodData)));
-    //   }
-    // });
+    });
   }
 
   get methods() {
@@ -884,10 +836,6 @@ class InterfaceData extends IDLData {
     if (!extAttributes) { return false; }
     return extAttributes.includes("SecureContext");
   }
-
-  // get subType() {
-  //   return this._subType;
-  // }
 
   // Backward compatibility
   getSecureContext() {
