@@ -15,6 +15,7 @@
 'use strict';
 
 const fs = require('fs');
+const { fileURLToPath } = require('url');
 const utils = require('./utils.js');
 
 const NO_FLAG = 'No flag found';

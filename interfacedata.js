@@ -137,11 +137,10 @@ const SETTER = Object.freeze({
   "type": "Setter"
 });
 
-let FLAGS;
+let FLAGS= new FlagStatus('./idl/platform/runtime_enabled_features.json5');
 
 class IDLData {
   constructor(source, options = {}) {
-    FLAGS = new FlagStatus('./idl/platform/runtime_enabled_features.json5')
     this._sourceData = source;
     this._sourcePath = options.sourcePath;
     this._flagged = null;
