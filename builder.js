@@ -16,8 +16,6 @@
 
 const { bcd } = require('./bcd.js');
 const { BCDBuilder } = require('./bcdbuilder.js');
-const config = require('config');
-const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Page } = require('./page.js');
 const { Questions } = require('./questions.js');

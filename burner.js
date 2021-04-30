@@ -15,7 +15,6 @@
 'use strict';
 
 const { bcd } = require('./bcd.js');
-// const cb = require('prompt-checkbox');
 const { DirectoryManager } = require('./directorymanager.js');
 const fs = require('fs');
 const { initiateLogger } = require('./log.js');

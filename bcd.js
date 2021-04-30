@@ -80,10 +80,6 @@ class BCD {
     let chain = key.split(".").reverse();
     while (chain.length) {
       let link = chain[chain.length - 1];
-      // if (link.startsWith('on')) {
-      //   link = link.replace('on', '');
-      //   link += '_event';
-      // }
       if (!branch[link]) { return null; }
       branch = branch[link];
       chain.pop();
