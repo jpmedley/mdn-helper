@@ -16,6 +16,9 @@
     },
     "muted": [
       "CSPViolationReportBody",
+      "FontManager",
+      "FontMetadata",
+      "FontTableMap",
       "NativeIOFileManager",
       "WebGL2ComputeRenderingContextBase",
       "WebGLDrawInstancedBaseVertexBaseInstance",
