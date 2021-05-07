@@ -14,7 +14,10 @@ tags:
 
 <h2 id="Syntax">Syntax</h2>
 
-<pre class="brush: js">[[shared:interface]].[[property]];</pre>
+<pre class="brush: js">let a[[property]] = [[shared:interface]].[[property]];
+// Remove this one if the property is read only.
+[[shared:interface]].[[property]] = a[[Property]];
+</pre>
 
 <h3>Value</h3>
 <p>[[return]]</p>
