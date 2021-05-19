@@ -552,6 +552,7 @@ class InterfaceData extends IDLData {
       if (pieces[2]) {
         // Named getter
         newGetterData.name = pieces[2];
+        newGetterData.type = 'method';
       } else {
         // Unnamed getter
         newGetterData.name = "(getter)";

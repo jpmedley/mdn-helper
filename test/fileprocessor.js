@@ -161,5 +161,16 @@ describe('FileProcessor', () => {
       });
       assert.strictEqual(iface.name, 'InterfacePartial');
     });
+    it('Confirms that named getters are processed as methods', () => {
+      const testFile = `${TEST_IDL_FILES}getters-named-only.idl`;
+      const fp = new FileProcessor(testFile);
+      let found;
+      fp.process(result => {
+        found = result.getters.find(g => {
+          return g.type === 'method'; 
+        });
+      });
+      assert.strictEqual(found.name, 'getItem');
+    });
   });
 });

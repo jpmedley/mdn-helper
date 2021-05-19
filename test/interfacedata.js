@@ -345,6 +345,14 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.ok(id.getters.length === 3);
     });
+    it('Confirms that named getters have a type equal to method', () => {
+      const source = loadSource(GETTERS_BOTH);
+      const id = new InterfaceData(source);
+      const named = id.getters.find(g => {
+        return g.name === 'getItem';
+      });
+      assert.strictEqual(named.type, 'method');
+    })
     it('Confirms that getter returns a getter when file contains only an unnamed getter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
       const id = new InterfaceData(source);
