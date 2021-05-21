@@ -34,18 +34,27 @@ function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
   const sooner = _isSooner(args);
   const update = _isUpdateNeeded();
   if (update || sooner) {
-    utils.deleteUnemptyFolder(destination);
-    _downloadBCD()
-    _downloadIDL(source, destination)
-    .then(() => {
-      fs.writeFileSync(UPDATE_FILE, (new Date().toString()));
-      console.log('Data update complete.\n');
-    });
-    return true;
+    return _updateNow(args, source, destination);
   } else {
     return false;
   }
 
+}
+
+function _updateNow(args, source = IDL_ZIP, destination = IDL_DIR) {
+  utils.deleteUnemptyFolder(destination);
+  _downloadBCD();
+  _downloadIDL(source, destination)
+  .then(() => {
+    fs.writeFileSync(UPDATE_FILE, (new Date().toString()));
+    console.log('Data update complete.\n');
+  });
+  return true;
+}
+
+function _updateForAdmin(args, source = IDL_ZIP, destination = IDL_DIR) {
+  _updateNow(args, source, destination);
+  _downloadPopularities();
 }
 
 function _isUpdateNeeded() {
@@ -119,5 +128,12 @@ function _downloadBCD() {
   shell.exec('curl https://raw.githubusercontent.com/mdn/browser-compat-data/master/schemas/compat-data.schema.json > test/files/compat-data.schema.json');
 }
 
+function _downloadPopularities() {
+  console.log('\nDownloading latest popularities.json.\n');
+  shell.exec('curl https://raw.githubusercontent.com/mdn/content/main/files/popularities.json > popularities.json');
+}
+
 module.exports.isUpdateNeeded = _isUpdateNeeded;
 module.exports.update = _update;
+module.exports.updateForAdmin = _updateForAdmin;
+module.exports.updateNow = _updateNow;

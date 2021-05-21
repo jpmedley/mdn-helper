@@ -18,10 +18,10 @@ global.__appName = 'app_Burner';
 
 const { BurnerFactory } = require('./burner.js');
 const { printWelcome } = require('./utils.js');
-const { update } = require('./updateData.js');
+const { updateForAdmin } = require('./updateData.js');
 
 printWelcome();
-update();
+updateForAdmin();
 
 const burner = BurnerFactory(process.argv);
 burner.burn();
