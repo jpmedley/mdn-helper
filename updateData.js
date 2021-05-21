@@ -133,6 +133,7 @@ function _downloadPopularities() {
   shell.exec('curl https://raw.githubusercontent.com/mdn/content/main/files/popularities.json > popularities.json');
 }
 
+module.exports.downloadPopularities = _downloadPopularities;
 module.exports.isUpdateNeeded = _isUpdateNeeded;
 module.exports.update = _update;
 module.exports.updateForAdmin = _updateForAdmin;
