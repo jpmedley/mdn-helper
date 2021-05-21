@@ -105,18 +105,18 @@ function _burnerFactory(args) {
     throw new Error(msg);
   }
   const burnerType = args[0].toLowerCase();
-  args.shift();
-  switch (burnerType) {
-    case 'bcd':
-      return new BCDBurner({ args: args });
-    case 'chrome':
-      return new ChromeBurner({ args: args });
-    case 'urls':
-      return new URLBurner({ args: args });
-    default:
-      msg = 'Burner type is invalid or misspelled. ' + msg;
-      throw new Error(msg);
+  const BURNERS = {
+    "bcd": BCDBurner,
+    "chrome": ChromeBurner,
+    "urls": URLBurner
   }
+  const newBurner = BURNERS[burnerType];
+  if (!newBurner) {
+    msg = 'Burner type is invalid or misspelled. ' + msg;
+    throw new Error(msg);
+  }
+  args.shift();
+  return new newBurner({ args: args });
 }
 
 class Burner {
