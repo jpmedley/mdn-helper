@@ -21,12 +21,9 @@ const { Popularities } = require('../popularities.js');
 describe('Popularities', () => {
   describe('getRating()', () => {
     it('Verifies that a number is returned', () => {
-      // Element/getAttribute
       const pops = new Popularities('/API');
       const rating = pops.getRating('/Element/getAttribute');
-      console.log("RATING = " + (typeof rating));
-      // process.exit();
-      // assert.ok(typeof rating === 'number');})
+      assert.ok(typeof rating === 'number');
     });
   });
 
