@@ -19,15 +19,17 @@ const { downloadPopularities } = require('./updateData.js');
 const { getFile } = require('./utils.js');
 
 class popularities {
-  constructor(category) {
+  constructor(category, options = {}) {
+    this._sourcePath = 'popularities.json';
+    if (options.source) { this._sourcePath = options.source }
     this._popularities = this._loadPopularities(category);
   }
 
   _loadPopularities(filter) {
-    if (!fs.existsSync('popularities.json')) {
+    if (!fs.existsSync(this._sourcePath)) {
       downloadPopularities();
     }
-    const source = getFile('popularities.json');
+    const source = getFile(this._sourcePath);
     let someData = source.split(',');
     someData.shift();
     someData.pop();
@@ -47,7 +49,7 @@ class popularities {
     });
     val = val.split(":")[1];
     val = val.trim();
-    return new Number(val);
+    return Number(val);
   }
 }
 
