@@ -95,6 +95,7 @@ class _Page {
       } else {
         answer = this.questions.questions[matches[1]].answer
       }
+      if (answer === null) { answer = ''; }
       this.contents = this.contents.replace(matches[0], answer);
     }
   }
