@@ -171,13 +171,8 @@ class IDLFinder {
     if (answer === CANCEL) { process.exit(); }
     const pieces = answer.split(' ');
     const key = pieces[3].slice(0, -1).trim();
-    const name = pieces[0].trim();
     const answerData = matches.find(elem => {
-      if (elem.type === 'includes') {
-        return elem.name === name;
-      } else {
-        return elem.path.includes(key);
-      }
+      return elem._sourcePath.includes(key);
     });
     return answerData;
   }
