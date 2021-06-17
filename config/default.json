@@ -22,7 +22,9 @@
       "NativeIOFileManager",
       "WebGL2ComputeRenderingContextBase",
       "WebGLDrawInstancedBaseVertexBaseInstance",
-      "WebGLMultiDrawInstancedBaseVertexBaseInstance"
+      "WebGLMultiDrawInstancedBaseVertexBaseInstance",
+      "WindowControlsOverlay",
+      "WindowControlsOverlayGeometryChangeEvent"
     ],
     "deprecated": [
       "AnimationEffectTiming",
