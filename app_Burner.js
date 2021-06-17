@@ -21,7 +21,7 @@ const { printWelcome } = require('./utils.js');
 const { updateForAdmin } = require('./updateData.js');
 
 printWelcome();
-updateForAdmin();
+// updateForAdmin();
 
 const burner = BurnerFactory(process.argv);
 burner.burn();
