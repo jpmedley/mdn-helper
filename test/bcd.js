@@ -27,6 +27,17 @@ describe('BCD', () => {
 
     it('Confirms that a tree is returned for a real value', () => {
       assert.notStrictEqual(bcd.getByKey('Request'), null);
-    })
+    });
+  });
+
+  describe('getRecordByKey()', () => {
+    it('Confirms that a constructed URL is returned when one is missing from BCD', () => {
+      let found = bcd.getRecordByKey('Medley');
+      assert.strictEqual(found.mdn_url, 'https://developer.mozilla.org/en-US/docs/Web/API/Medley');
+    });
+    it('Confirms that a multipart key is correctly converted to a URL', () => {
+      let found = bcd.getRecordByKey('Medley.joe');
+      assert.strictEqual(found.mdn_url, 'https://developer.mozilla.org/en-US/docs/Web/API/Medley/joe');
+    });
   });
 });

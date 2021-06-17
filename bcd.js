@@ -17,7 +17,7 @@
 const bcd = require('@mdn/browser-compat-data');
 
 const SKIPABLE = ['__compat','__name','__parent','browsers','description','mathml','mdn_url','getPossibleKeys','webdriver','webextensions','xpath','xslt'];
-const URL_ROOT = 'https://developer.mozilla.org/docs/Web/';
+const URL_ROOT = 'https://developer.mozilla.org/en-US/docs/Web/';
 
 const EMPTY_BURN_RECORD = Object.freeze({
   key: null,
@@ -114,14 +114,14 @@ class BCD {
       burnRecord.bcd = true;
       if (bcdData.__compat) {
         burnRecord.mdn_url = bcdData.__compat.mdn_url;
-        if (!burnRecord.mdn_url) {
-          let path = key.replace(".", "/");
-          burnRecord.mdn_url = `${URL_ROOT}${trunk.toUpperCase()}/${path}`;
-        }
       }
     } else {
       burnRecord.bcd = false;
       burnRecord.mdn_exists = false;
+    }
+    if (!burnRecord.mdn_url) {
+      let path = key.replace(".", "/");
+      burnRecord.mdn_url = `${URL_ROOT}${trunk.toUpperCase()}/${path}`;
     }
     return burnRecord;
   }
