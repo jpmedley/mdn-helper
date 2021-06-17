@@ -21,9 +21,14 @@ const { Popularities } = require('../popularities.js');
 describe('Popularities', () => {
   describe('getRating()', () => {
     it('Verifies that a number is returned', () => {
-      const pops = new Popularities('/API');
+      const pops = new Popularities('/API', { source: 'test/files/popularities.json' });
       const rating = pops.getRating('/Element/getAttribute');
       assert.ok(typeof rating === 'number');
+    });
+    it('Verifies 0 is returned if no value is found', () => {
+      const pops = new Popularities('/API', { source: 'test/files/popularities.json' });
+      const rating = pops.getRating('/Element/getJoe');
+      assert.strictEqual(rating, 0);
     });
   });
 

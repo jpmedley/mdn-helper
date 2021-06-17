@@ -47,8 +47,12 @@ class popularities {
     let val = this._popularities.find(f => {
       return f.includes(key);
     });
-    val = val.split(":")[1];
-    val = val.trim();
+    if (val) {
+      val = val.split(":")[1];
+      val = val.trim();
+    } else {
+      val = 0;
+    }
     return Number(val);
   }
 }
