@@ -152,8 +152,14 @@ class Burner {
     if (this._reportingList) {
       this._outFileName += `-${this._reportingListName}`;
     }
+    if (this._includeFlags && this._includeOriginTrials) {
+      this._outFileName =+ `-with-flags`;
+    }
     if (this._interfacesOnly) {
       this._outFileName += `-interfaces`;
+    }
+    if (this._childrenOnly) {
+      this._outFileName += `-children`;
     }
     this._outFileName += `-burnlist-${utils.today()}.csv`;
   }
@@ -399,6 +405,7 @@ class ChromeBurner extends Burner {
     this._includeOriginTrials = false;
     this._includeTestFlags = false;
     this._interfacesOnly = options._interfacesOnly ? options._interfacesOnly : false;
+    this._childrenOnly = options._childrenOnly ? options._childrenOnly : false;
     this._type = 'chrome';
   }
 
@@ -504,8 +511,8 @@ class ChromeBurner extends Burner {
 
   _record(records) {
     for (let r of records) {
-      
-
+      if ((r.type === 'interface') && r.mdn_exists && this._childrenOnly) { continue; }
+      // if (!r.mdn_exists) { break; }
       if (!r.bcd || !r.mdn_exists) {
         if (r.mdn_exists === null) { 
           r.mdn_exists = "Unknown";
@@ -532,6 +539,13 @@ class ChromeBurner extends Burner {
     this._interfacesOnly = args.some(arg => {
       return (arg.includes('-i') || arg.includes('--interfaces-only'));
     });
+    this._childrenOnly = args.some(arg => {
+      return (arg.includes('-c') || arg.includes('--children-only'));
+    });
+    if (this._childrenOnly && this._interfacesOnly) {
+      const msg = 'The --children-only (-c) and --interfaces-only (-i) flags cannot be used together.';
+      throw new Error(msg);
+    }
   }
 }
 

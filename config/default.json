@@ -16,6 +16,7 @@
     },
     "muted": [
       "CSPViolationReportBody",
+      "CSSContainerRule",
       "FontManager",
       "FontMetadata",
       "FontTableMap",
