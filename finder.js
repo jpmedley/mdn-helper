@@ -172,7 +172,7 @@ class IDLFinder {
     const pieces = answer.split(' ');
     const key = pieces[3].slice(0, -1).trim();
     const answerData = matches.find(elem => {
-      return elem._sourcePath.includes(key);
+      return elem._sourcePath.includes(`/${key}`);
     });
     return answerData;
   }
