@@ -23,6 +23,8 @@
       "WebGL2ComputeRenderingContextBase",
       "WebGLDrawInstancedBaseVertexBaseInstance",
       "WebGLMultiDrawInstancedBaseVertexBaseInstance",
+      "WebGLTimerQueryEXT",
+      "WebGLVertexArrayObjectOES",
       "WindowControlsOverlay",
       "WindowControlsOverlayGeometryChangeEvent"
     ],
