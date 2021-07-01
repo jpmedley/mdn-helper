@@ -21,7 +21,8 @@ const { FileProcessor } = require('./fileprocessor.js');
 const { IDLBuilder } = require('./builder.js');
 const utils = require('./utils.js');
 
-const NOTHING_FOUND = "Could not find matching IDL files.\n\nTry running this command with the -f or -o flags to search for items behind\nflags or in origin trials.\n"
+const NOTHING_FOUND = "Could not find matching IDL files.\n"
+const TRY_RUNNING = "\nTry running this command with the -f or -o flags to search for items behind\nflags or in origin trials.\n";
 const CANCEL = '(none)';
 
 function _finderFactory(args) {
@@ -149,6 +150,9 @@ class IDLFinder {
     const matches = this._findInterfaces(this._searchString);
     if (matches.length == 0) {
       console.log(NOTHING_FOUND);
+      if (!this._includeFlags && !this._includeOriginTrials) {
+        console.log(TRY_RUNNING);
+      }
       process.exit();
     }
     let names = [];
