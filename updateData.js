@@ -100,11 +100,12 @@ async function _downloadIDL(source, destination) {
   utils.makeFolder('idl');
   shell.exec(`curl ${source} > ${destination}${IDL_ZIP_NANE}`);
   var filter = (path, entry) => {
-    if (path.includes('bindings/')) { return false }
-    if (path.includes('build/')) { return false }
-    if (path.includes('platform/fonts/')) { return false }
-    if (path.includes('platform/loader/')) { return false }
-    if (path.includes('platform/network/')) { return false }
+    if (path.includes('bindings/')) { return false; }
+    if (path.includes('build/')) { return false; }
+    if (path.includes('extensions/')) { return false; }
+    if (path.includes('platform/fonts/')) { return false; }
+    if (path.includes('platform/loader/')) { return false; }
+    if (path.includes('platform/network/')) { return false; }
     if (path.includes('.idl')) { return true; }
     if (path.includes('.json5')) { return true; }
     return false;
