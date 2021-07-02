@@ -35,6 +35,7 @@
       "GPUComputePipeline",
       "GPUDevice",
       "GPUDeviceLostInfo",
+      "GPUExternalTexture",
       "GPUMapMode",
       "GPUOutOfMemoryError",
       "GPUPipelineLayout",
