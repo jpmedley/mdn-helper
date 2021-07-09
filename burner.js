@@ -152,11 +152,11 @@ class Burner {
     if (this._reportingList) {
       this._outFileName += `-${this._reportingListName}`;
     }
-    if (this._includeFlags && this._includeOriginTrials) {
-      this._outFileName =+ `-with-flags`;
-    }
     if (this._interfacesOnly) {
       this._outFileName += `-interfaces`;
+    }
+    if (this._includeFlags && this._includeOriginTrials) {
+      this._outFileName += `-with-flags`;
     }
     if (this._childrenOnly) {
       this._outFileName += `-children`;
