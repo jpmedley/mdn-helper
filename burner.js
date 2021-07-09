@@ -449,6 +449,14 @@ class ChromeBurner extends Burner {
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
       }
+    } else if (this._childrenOnly) {
+      interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
+      for (const [key, val] of interfaces) {
+        if (!this._isBurnable(val)) { continue; }
+        let burnRecords = val.getBurnRecords(this._includeFlags, this._includeOriginTrials);
+        burnRecords = await this._ping(burnRecords);
+        this._recordChildren(burnRecords);
+      }
     } else {
       interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
       for (const [key, val] of interfaces) {
@@ -524,6 +532,15 @@ class ChromeBurner extends Burner {
         line += '\n';
         fs.write(this._outFileHandle, line, ()=>{});
         this._outputLines++;
+      }
+    }
+  }
+
+  _recordChildren(records) {
+    if (!records[0].name.includes('.')) {
+      if (records[0].mdn_exists) {
+        records.shift();
+        this._record(records);
       }
     }
   }
