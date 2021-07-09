@@ -33,6 +33,8 @@ const EXTENDED_ATTRIBUTES_INTERFACE_RE = /\[([^\]]*)\]\s+interface/m;
 const INSIDE_PARENS_RE = /\(([^\)]*)\)/;
 const INTERFACE_INHERITANCE_RE = /interface\s([^{]+){/;
 
+const RUNTINE_ENABLED = /RuntimeEnabled=([^,\n]*)/;
+
 const CONSTRUCTOR = Object.freeze({
   "arguments": [],
   "flag": this.flagged, // Needed for Backward compatibility
@@ -140,19 +142,22 @@ class IDLData {
     this._sourceData = source;
     this._sourcePath = options.sourcePath;
     this._flagged = null;
-    this._flagged_sudo = true;
     this._key;
     this._keys = [];
     this._members = [];
     this._name;
     this._originTrial = null;
-    this._originTrial_sudo = true;
     this._sources = [];
   }
 
   get flagged() {
-    if (this._flagged) { return this._flagged}
-    this._flagged = this._getRuntimeEnabledValue("experimental", this._getInterfaceExtendedAttributes());
+    if (this._flagged) { return this._flagged; }
+    this._flagged = false;
+    const flagName = this._getAttributeValue(RUNTINE_ENABLED);
+    if (flagName) {
+      const status = FLAGS.getHighestResolvedStatus(flagName);
+      this._flagged = ((status === 'experimental') || (status === 'test'));
+    }
     return this._flagged;
   }
 
@@ -277,7 +282,6 @@ class InterfaceData extends IDLData {
     this._eventHandlers = [];
     this._exposed = null;
     this._extendedAttributes = null;
-    this._flagged_sudo = false;
     this._getters = [];
     this._hasConstructor = null;
     this._inTest = null;
@@ -285,11 +289,11 @@ class InterfaceData extends IDLData {
     this._maplike = [];
     this._methods = [];
     this._mixin = false;
-    this._originTrial_sudo = false;
     this._parentClass = null;
     this._properties = [];
     this._setlike = [];
     this._setters = [];
+    this._rawExtendedAttributes = null;
     this._processSource();
   }
 
@@ -311,7 +315,18 @@ class InterfaceData extends IDLData {
     this._name = matches[3];
   }
 
+  // Long term, this should replace _getInterfaceExtendedAttributes(),
+  // which is inadequate to the variety of formatting
+  _processExtendedAttributes() {
+    if (this._rawExtendedAttributes) { return; }
+    let matches = this._sourceData.match(EXTENDED_ATTRIBUTES_INTERFACE_RE);
+    if (matches) {
+      this._rawExtendedAttributes = matches[1].trim();
+    }
+  }
+
   _processSource() {
+    this._processExtendedAttributes();
     this._processHeader();
     let recording = false;
     const lines = this._sourceData.split('\n');
@@ -363,7 +378,7 @@ class InterfaceData extends IDLData {
     }
     return false;
   }
-  
+
   _getRuntimeEnabledValue__(expectedStatus, forFlag) {
     let status = FLAGS.getHighestResolvedStatus(forFlag);
     return (status === expectedStatus);
@@ -387,6 +402,7 @@ class InterfaceData extends IDLData {
 
   _getInterfaceExtendedAttributes() {
     if (this._extendedAttributes) { return this._extendedAttributes; }
+    // let matches = this._rawExtendedAttributes;
     let matches = this._sourceData.match(EXTENDED_ATTRIBUTES_INTERFACE_RE);
     if (matches) {
       let realMatches = matches[1].trim();
@@ -492,6 +508,15 @@ class InterfaceData extends IDLData {
       newEventHandler.name = pieces[2].trim();
       this._eventHandlers.push(JSON.parse(JSON.stringify(newEventHandler)));
     });
+  }
+
+  _getAttributeValue(regex) {
+    if (!this._rawExtendedAttributes) { return null; }
+    const matches = this._rawExtendedAttributes.match(regex);
+    if (matches) {
+      return matches[1].trim();
+    }
+    return null;
   }
 
   get eventHandlers() {
