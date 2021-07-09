@@ -17,7 +17,7 @@
 const bcd = require('@mdn/browser-compat-data');
 
 const SKIPABLE = ['__compat','__name','__parent','browsers','description','mathml','mdn_url','getPossibleKeys','webdriver','webextensions','xpath','xslt'];
-const URL_ROOT = 'https://developer.mozilla.org/docs/Web/';
+const URL_ROOT = 'https://developer.mozilla.org/en-US/docs/Web/';
 
 const EMPTY_BURN_RECORD = Object.freeze({
   key: null,

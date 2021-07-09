@@ -44,7 +44,7 @@ describe('InterfaceSet', () => {
   describe('findMatching', () => {
     it('Confirms inclusion of interfaces behind a flag', () => {
       const matches = INTERFACE_SET.findMatching("*", true);
-      assert.strictEqual(matches.length, 96);
+      assert.strictEqual(matches.length, 86);
     })
     it('Confirms return of matching items', ()=> {
       const matches = INTERFACE_SET.findMatching('Burnable');
