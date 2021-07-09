@@ -29,14 +29,21 @@ describe('FlagStatus', () => {
     it(`Confirms that a present flag with no status returns ${NO_FLAG}`, () => {
       assert.strictEqual(global.__Flags.getActualStatus('RTENoStatus'), NO_FLAG);
     });
+    it('Confirms that an OS-specific value returns a structure', () => {
+      const oteComplex = global.__Flags.getActualStatus('OTEComplex');
+      assert.strictEqual(oteComplex['Android'], 'experimental');
+    });
   })
 
   describe('getPlatformStatus()', () => {
-    it('Confirms that a default status is returned', () => {
+    it('Confirms that a default status is returned, when multiple statuses present', () => {
       assert.strictEqual(global.__Flags.getPlatformStatus('RTEComplex', 'default'), 'experimental');
     });
-    it('Confirms that Android status is returned', () => {
+    it('Confirms that Android status is returned when multiple statuses present', () => {
       assert.strictEqual(global.__Flags.getPlatformStatus('RTEComplex', 'Android'), 'stable');
+    });
+    it('Confirms return of value with single-item complex value', () => {
+      assert.strictEqual(global.__Flags.getPlatformStatus('OTEComplex', 'Android'), 'experimental');
     });
   });
 

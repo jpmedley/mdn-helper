@@ -1,0 +1,7 @@
+[
+    Exposed=Window,
+    RuntimeEnabled=OTEComplex
+] interface RuntimeComplextOT {
+    constructor();
+readonly attribute FontFaceSetLoadStatus status;
+};
