@@ -207,9 +207,9 @@ class IDLData {
 
   getBurnRecords() {
     let record = bcd.getRecordByKey(this.key, 'api');
-    record.flag = this.flagged;
+    record.flag = this._flagged;
     record.name = this.key;
-    record.origin_trial = this.originTrial;
+    record.origin_trial = this._originTrial;
     record.type = this.type;
     return new Array(record);
   }
