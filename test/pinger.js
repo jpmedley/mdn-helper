@@ -23,7 +23,7 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 
 describe('Pinger', () => {
   describe('pingRecords', () => {
-    it('Returns true when the record\'s url is found', () => {
+    it('Verifies that a valid URL can ping MDN', () => {
       let record = Object.assign({}, EMPTY_BURN_DATA);
       record.bcd = true;
       record.key = "Event";
@@ -38,11 +38,11 @@ describe('Pinger', () => {
       });
     });
 
-    it('Returns true when the record\'s url does not exist', () => {
+    it('Verifies setting of mdn_exists to false on failed ping', () => {
       let record = Object.assign({}, EMPTY_BURN_DATA);
       record.bcd = true;
       record.key = "Event";
-      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/Events'
+      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/Events/ondance'
       record.type = "reference"
       let records = [];
       records.push(record);
@@ -52,21 +52,5 @@ describe('Pinger', () => {
         assert.strictEqual(records[0].mdn_exists, false);
       });
     });
-
-    it('verifies response for something that could exist', () => {
-      let record = Object.assign({}, EMPTY_BURN_DATA);
-      record.bcd = true;
-      record.key = "Event";
-      // This will need to change if the page is ever created.
-      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/TransitionEvent/propertyName'
-      record.type = "property"
-      let records = [];
-      records.push(record);
-      const pinger = new Pinger(records);
-      pinger.pingRecords(false)
-      .then(records => {
-        assert.strictEqual(records[0].mdn_exists, false);
-      })
-    })
   });
 });
