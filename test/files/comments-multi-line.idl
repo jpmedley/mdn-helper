@@ -1,0 +1,6 @@
+interface IterableSeqArg {
+  iterable<sequence<CSSStyleValue>>;
+  attribute octet notDeleter;
+  /* This is a multi-line comment.
+  It should not appear as an "unnamed" method. */
+};

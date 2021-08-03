@@ -25,6 +25,7 @@ const { initiateLogger } = require('../log.js');
 initiateLogger();
 
 const ALTERNATE_KEY = './test/files/alternate-key.idl';
+const COMMENTS_MULTI_LINE = './test/files/comments-multi-line.idl';
 const CONSTRUCTORS = './test/files/all-constructors.idl';
 const CONSTRUCTOR_ARGUMENTS = './test/files/constructor-arguments.idl';
 const CONSTRUCTOR_BRACKET_ARG = './test/files/constructor-bracket-arg.idl';
@@ -508,6 +509,22 @@ describe('InterfaceData', () => {
       const source = loadSource(STRINGIFIER);
       const id = new InterfaceData(source);
       assert.strictEqual(id.methods[0].name, "toString");
+    });
+    it('Confirms that processing iterables doesn\'t add a false positive', () => {
+      const source = loadSource(ITERABLE_SEQUENCE_ARG);
+      const id = new InterfaceData(source);
+      const found = id.methods.find(e => {
+        return (e.name === "");
+      });
+      assert.ok(typeof found === "undefined");
+    });
+    it('Confirms that mutli-line comments donn\'t add false methods', () => {
+      const source = loadSource(COMMENTS_MULTI_LINE);
+      const id = new InterfaceData(source);
+      const found = id.methods.find(e => {
+        return (e.name === "");
+      });
+      assert.ok(typeof found === "undefined");
     });
   });
 
