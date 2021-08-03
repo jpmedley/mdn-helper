@@ -236,7 +236,7 @@ function _today() {
       mm = '0'+mm
   }
 
-  today = dd + '-' + mm + '-' + yyyy;
+  today = `${yyyy}-${mm}-${dd}`;
   return today;
 }
 
