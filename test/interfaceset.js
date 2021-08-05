@@ -18,7 +18,6 @@ const assert = require('assert');
 const fs = require('fs');
 
 const { FileProcessor } = require('../fileprocessor.js');
-const { DirectoryManager } = require('../directorymanager.js');
 const { InterfaceSet } = require('../interfaceset.js');
 
 let INTERFACE_SET = new InterfaceSet();
@@ -64,7 +63,6 @@ describe('InterfaceSet', () => {
     });
     it('Confirms origin trials not returned when not requested', () => {
       const matches = INTERFACE_SET.findMatching('InterfaceOT', false, false);
-      console.log(matches[0]);
       assert.strictEqual(matches.length, 0);
     });
     it('Confirms a mixin is returned under its implementor\'s name', () => {
