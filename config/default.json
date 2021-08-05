@@ -108,8 +108,5 @@
       "WebGLTimerQueryEXT",
       "WebGLVertexArrayObjectOES"
     ]
-  },
-  "User": {
-    "reportingListDirectory": "$HOME/Desktop/reportingLists/"
   }
 }
