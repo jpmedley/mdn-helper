@@ -13,6 +13,7 @@
     "header": "node app_Manual.js header",
     "help": "node app_Help.js",
     "interface": "node app_Manual.js interface",
+    "report": "node app_Burner.js",
     "update": "node app_updateData.js",
     "update-data": "node app_UpdateData.js",
     "reportinglists": "node app_Burner.js chrome -w",
