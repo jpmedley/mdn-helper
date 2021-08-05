@@ -32,38 +32,22 @@ describe('Pinger', () => {
       let records = [];
       records.push(record);
       const pinger = new Pinger(records);
-      pinger.pingRecords(false)
+      return pinger.pingRecords(false)
       .then(records => {
         assert.ok(records[0].mdn_exists);
       });
     });
 
-    it('Returns true when the record\'s url does not exist', () => {
+    it('Returns false when the record\'s page does not exist', () => {
       let record = Object.assign({}, EMPTY_BURN_DATA);
       record.bcd = true;
       record.key = "Event";
-      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/Events'
-      record.type = "reference"
-      let records = [];
-      records.push(record);
-      const pinger = new Pinger(records);
-      pinger.pingRecords(false)
-      .then(records => {
-        assert.strictEqual(records[0].mdn_exists, false);
-      });
-    });
-
-    it('verifies response for something that could exist', () => {
-      let record = Object.assign({}, EMPTY_BURN_DATA);
-      record.bcd = true;
-      record.key = "Event";
-      // This will need to change if the page is ever created.
-      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/TransitionEvent/propertyName'
+      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/TransitionEvent/wonderful'
       record.type = "property"
       let records = [];
       records.push(record);
       const pinger = new Pinger(records);
-      pinger.pingRecords(false)
+      return pinger.pingRecords(false)
       .then(records => {
         assert.strictEqual(records[0].mdn_exists, false);
       })
