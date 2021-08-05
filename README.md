@@ -13,7 +13,7 @@ The current version only handles JavaScript APIs.
 
 1. Change to the `mdn-helper` directory and run `npm install`.
 
-1. Enter `npm run update-data` to download data files needed for the `build`, `burn`, and `find` commands. This script will run automatically at startup approximately every twenty-four hours.
+1. Enter `npm run update-data` to download data files needed for the `build`, `find`, and `report` commands. This script will run automatically at startup approximately every twenty-four hours.
 
 ## Usage
 
@@ -31,19 +31,19 @@ Searches for APIs with filenames matching the provided string, prompts you to se
 
 For detailed instructions, see [Building MDN Pages](/help/BUILDING-PAGES.md).
 
-### burn
+### report
 
-Builds several types of burn-down lists. This has several syntaxes.
+Builds several types of reports. This has several syntaxes.
 
-**Syntax:** `burn chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist)]`
+**Syntax:** `report chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist)]`
 
-Generates a csv file listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--reportinglist` to include of list of interfaces to burn.
+Generates a csv file listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--reportinglist` report on a specific list of interfaces.
 
-**Syntax:** `burn urls -- [(-c | --category) _category_]`
+**Syntax:** `report urls -- [(-c | --category) _category_]`
 
 Generates a csv listing BCD entries that are lacking a corresponding MDN page. `_category_` must be one of 'api', 'css', 'html', 'javascript', or 'svg'. If you don't enter one of these values, you will be prompted for one of them.
 
-**Syntax:** `burn bcd -- [(-c | --category) _category_] [(-b | --browsers) _browsers_]`
+**Syntax:** `report bcd -- [(-c | --category) _category_] [(-b | --browsers) _browsers_]`
 
 Generates a csv listing BCD entries where the browser value is either null or missing.
 
@@ -110,7 +110,7 @@ At least one of the following:
 
 ## update-data
 
-Downloads a new set of IDL files for use by the `build`, `burn`, and `find` commands. This command will run automatically either daily or weekly depending on the value set in your config file. Use `-s` or `--sooner` to update data sooner.
+Downloads a new set of IDL files for use by the `build`, `find`, and `report` commands. This command will run automatically either daily or weekly depending on the value set in your config file. Use `-s` or `--sooner` to update data sooner.
 
 ### help
 

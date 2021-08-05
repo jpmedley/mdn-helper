@@ -117,6 +117,20 @@ function _getConfig(parameter) {
   }
   return config.get('Application.' + parameter);
 }
+function _getConfigs(parameter) {
+  let returns = {};
+  if (config.has(`User.${parameter}`)) {
+    returns.user = config.get(`User.${parameter}`);
+    returns.user = _terminatePath(returns.user);
+    returns.user = _resolveHome(returns.user);
+  }
+  if (config.has(`Application.${parameter}`)) {
+    returns.app = config.get(`Application.${parameter}`);
+    returns.app = _terminatePath(returns.app);
+    returns.app = _resolveHome(returns.app);
+  }
+  return returns;
+}
 
 function _getOutputFile(filePath, reuse = false) {
   if (!reuse) {
@@ -222,6 +236,11 @@ function _resolveHome(path) {
   return path.replace('$HOME',homedir());
 }
 
+function _terminatePath(path) {
+  if (path.endsWith('/')) { return path; }
+  return `${path}/`;
+}
+
 function _today() {
   let today = new Date();
   let dd = today.getDate();
@@ -250,6 +269,7 @@ module.exports.displayConfig = _displayConfig;
 module.exports.getAlternateKey = _getAlternateKey;
 module.exports.getBCDPath = _getBCDPath
 module.exports.getConfig = _getConfig;
+module.exports.getConfigs = _getConfigs;
 module.exports.getFile = _getFile;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getJSON = _getJSON;
@@ -262,5 +282,6 @@ module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.pause = _pause;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
-module.exports.resolveHome = _resolveHome
+module.exports.resolveHome = _resolveHome;
+module.exports.terminatePath = _terminatePath;
 module.exports.today = _today;

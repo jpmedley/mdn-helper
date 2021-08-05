@@ -7,10 +7,10 @@
     for the browser compatibility data database, but no draft MDN pages. Use -l
     or --landingPage to create only a landing page.
 
-  burn bcd -- [(-c | --category) _category_] [(-b | --browsers) browsers] [(-r | --reportinglist) reportinglist]
-  burn chrome  -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist) reportinglist]
-  burn urls -- [(-c | --category) category]
-    Builds several types of burn-down lists.
+  report bcd -- [(-c | --category) _category_] [(-b | --browsers) browsers] [(-r | --reportinglist) reportinglist]
+  report chrome  -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist) reportinglist]
+  report urls -- [(-c | --category) category]
+    Builds several types of reports.
 
     The first syntax generates a csv listing BCD entries where the browser
     value is either null or missing. 'category must be one of 'api', 'css',
@@ -20,8 +20,8 @@
     The second generates a csv listing Chrome APIs that are lacking an MDN page.
     Use -f or --flags to include APIs behind a flag. Use -i or --interfaces-only
     run a report containing only interfaces. Use -o or --origin-trials to
-    include APIs currently in a Chrome origin trial. Use -r or --reportinglist to
-    include of list of interfaces to burn.
+    include APIs currently in a Chrome origin trial. Use -r or --reportinglist
+    report on a specific list of interfaces.
 
     The last generates a csv listing BCD entries that are lacking a
     corresponding MDN page.
@@ -53,7 +53,7 @@
     *path/to*/mdn-helper/out/ directory.
 
   update-data
-    Downloads a new set of IDL files for use by the `build`, `burn`, and `find`
+    Downloads a new set of IDL files for use by the `build`, `find`, and `report`
     commands. This command will run automatically either daily or weekly
     depending on the value set in your config file. Use `-s` or `--sooner` to
     update data sooner.

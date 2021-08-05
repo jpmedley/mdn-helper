@@ -169,8 +169,10 @@ class Burner {
     const buffer = fs.readFileSync(this._reportingListPath);
     this._reportingList = JSON.parse(buffer.toString()).reportingList;
     this._reportingListName = (() => {
-      const wl = this._reportingListPath.match(/\/(\S+)\.js/);
-      return `${wl[1]}`;
+      const wls = this._reportingListPath.split('/');
+      let wl = wls[wls.length - 1];
+      const name = wl.match(/(\S+)\.js/);
+      return `${name[1]}`;
     })();
   }
 
@@ -179,9 +181,30 @@ class Burner {
       return (arg.includes('-r') || (arg.includes('--reportinglist')));
     });
     if (reportingList > -1) {
-      const reportingListDir = utils.getConfig('reportingListDirectory');
-      this._reportingListPath = `${reportingListDir}${args[reportingList +1]}`;
+      this._reportingListPath = this._resolveReportingListPath(args[reportingList + 1]);
     }
+  }
+
+  _resolveReportingListPath(reportingList) {
+    // If the command line file is a complete path it will exist.
+    // Simply return it.
+    if (fs.existsSync(reportingList)) { return reportingList; }
+    const locations = utils.getConfigs('reportingListDirectory');
+    const userList = fs.existsSync(`${locations.user}${reportingList}`);
+    const appList = fs.existsSync(`${locations.app}${reportingList}`);
+    let msg;
+    if (userList && appList) {
+      msg = `A reporting list named ${reportingList} was found in both the user directory\n`;
+      msg = `${msg}and the application directory. Please rename one of them and try again.`;
+      console.log(msg);
+      process.exit();
+    }
+    if (userList) { return `${locations.user}${reportingList}` }
+    if (appList) { return `${locations.app}${reportingList}` }
+    msg = `Could not find reporting list named ${reportingList}. Check the spelling\n`;
+    msg = `${msg}and path, then try again.`;
+    console.log(msg);
+    process.exit();
   }
 
   _startBurnLogFile() {

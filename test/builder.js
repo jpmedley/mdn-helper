@@ -27,28 +27,6 @@ const BURNABLE = './test/files/burnable.idl';
 
 const tempFolder = 'tmp/';
 
-describe('CSSBuilder', () => {
-  describe('build()', () => {
-
-    beforeEach(() => {
-      utils.deleteUnemptyFolder(tempFolder);
-      utils.makeFolder(tempFolder);
-    });
-
-    it('Confirms that a CSS property page is written', () => {
-
-    });
-
-    it('Confirms that BCD is written to a file', () => {
-      
-    });
-
-    afterEach(() => {
-      utils.deleteUnemptyFolder('tmp/');
-    });
-  })
-})
-
 describe('IDLBuilder', () => {
   describe('build()', () => {
 

@@ -32,25 +32,25 @@ describe('Pinger', () => {
       let records = [];
       records.push(record);
       const pinger = new Pinger(records);
-      pinger.pingRecords(false)
+      return pinger.pingRecords(false)
       .then(records => {
         assert.ok(records[0].mdn_exists);
       });
     });
 
-    it('Verifies setting of mdn_exists to false on failed ping', () => {
+    it('Returns false when the record\'s page does not exist', () => {
       let record = Object.assign({}, EMPTY_BURN_DATA);
       record.bcd = true;
       record.key = "Event";
-      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/Events/ondance'
-      record.type = "reference"
+      record.mdn_url = 'https://developer.mozilla.org/docs/Web/API/TransitionEvent/wonderful'
+      record.type = "property"
       let records = [];
       records.push(record);
       const pinger = new Pinger(records);
-      pinger.pingRecords(false)
+      return pinger.pingRecords(false)
       .then(records => {
         assert.strictEqual(records[0].mdn_exists, false);
-      });
-    });
+      })
+    })
   });
 });
