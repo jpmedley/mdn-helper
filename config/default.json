@@ -110,5 +110,6 @@
     ]
   },
   "User": {
+    "reportingListDirectory": "$HOME/Desktop/reportingLists/"
   }
 }
