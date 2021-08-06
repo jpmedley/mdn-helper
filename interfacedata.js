@@ -710,8 +710,10 @@ class InterfaceData extends IDLData {
   }
 
   _getMethods() {
+    // The space in 'attribute ' prevents the find from excluding items
+    // containing 'attributes'.
     const nonMethods = [
-      'attribute',
+      'attribute ',
       'const',
       'constructor',
       'deleter',
@@ -750,7 +752,8 @@ class InterfaceData extends IDLData {
       if (source.includes('<')) {
         pieces = source.match(/(\[([^\]]*)\])(\sstatic)?(\s\w*\b<.*>(?!>))\s(\w*)\(([^\)]*)\)/);
       } else {
-        pieces = source.match(/(\[([^\]]*)\])?(\sstatic)?\s*(\w*)\s(\w*)\(([^\)]*)\)/);
+        // pieces = source.match(/(\[([^\]]*)\])?(\sstatic)?\s*(\w*)\s(\w*)\(([^\)]*)\)/);
+        pieces = source.match(/(\[([^\]]*)\])?(\sstatic)?\s*(\w*\??)\s(\w*)\(([^\)]*)\)/);
       }
 
       if (pieces) {
@@ -818,7 +821,9 @@ class InterfaceData extends IDLData {
   }
 
   _getProperties() {
-    const sources = this._filter('attribute');
+    // The space in 'attribute ' prevents the find from returning items
+    // containing 'attributes'.
+    const sources = this._filter('attribute ');
     sources.forEach(source => {
       if (source.includes('EventHandler')) { return; }
       let newPropertyData = this._cloneObject(PROPERTY);

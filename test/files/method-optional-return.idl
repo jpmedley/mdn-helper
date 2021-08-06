@@ -1,0 +1,4 @@
+interface Properties {
+    attribute FontFaceLoadStatus status;
+    OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, optional CanvasContextCreationAttributesModule attributes = {});
+};

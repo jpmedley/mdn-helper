@@ -57,12 +57,14 @@ const ITERABLE_SEQUENCE_ARG = './test/files/iterable-sequence-arg.idl';
 const METHOD_ARGUMENTS_COUNT = './test/files/method-argument-count.idl';
 const METHOD_MULTI_RETURNS = './test/files/method-multi-returns.idl';
 const METHOD_NO_ARGUMENTS = './test/files/method-noarguments.idl';
+const METHOD_OPTIONAL_RETURN = './test/files/properties-distinguish.idl';
 const METHOD_PROMISES = './test/files/method-promises.idl';
 const METHOD_PROMISE_RESOLUTION = './test/files/method-promise-resolution.idl';
 const METHOD_PROMISE_VOID = './test/files/method-promise-void.idl';
 const METHOD_SYNCHRONOUS = './test/files/method-synchronous.idl';
 const OT_MEMBERS = './test/files/ot-members.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
+const PROPERTIES_DISTINGUISH = './test/files/properties-distinguish.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
 const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
@@ -526,6 +528,14 @@ describe('InterfaceData', () => {
       });
       assert.ok(typeof found === "undefined");
     });
+    it('Confirms that return value with "?" is processed', () => {
+      const source = loadSource(METHOD_OPTIONAL_RETURN);
+      const id = new InterfaceData(source);
+      const found = id.methods.find(e => {
+        return (e.name === 'getContext');
+      });
+      assert.ok(found.returnType === 'OffscreenRenderingContext?');
+    });
   });
 
   describe('mixin', () => {
@@ -662,8 +672,13 @@ describe('InterfaceData', () => {
     it('Confirms that return type is recorded', () => {
       const source = loadSource(PROPERTIES_BASIC);
       const id = new InterfaceData(source);
-      const properties = id.properties;
       assert.strictEqual(id.properties[0].returnType, 'FontFaceLoadStatus');
+    });
+    it('Confirms that a false positive is avoided', () => {
+      // A false positive is a method that contians the word 'attribute' within
+      const source = loadSource(PROPERTIES_DISTINGUISH);
+      const id = new InterfaceData(source);
+      assert.strictEqual(id.properties.length, 1);
     });
   });
 
