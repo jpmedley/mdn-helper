@@ -31,9 +31,9 @@ const APP_ROOT = path.resolve(__dirname);
 const KEY_FILE_PATH = 'config/alternate-keys.json';
 
 const BLANK_LINE_RE = /^\s*$(\r\n|\r|\n)/gm;
-const COMMENT_START_RE = /^\/\*$(\r\n|\r|\n)/gm;
-const COMMENT_MULTILINE_RE = /^\s\*.*$(\r\n|\r|\n)/gm;
+const COMMENT_MULTILINE_RE = /^\s*\/\*([\s\S](?!\*\/))*\s?\*\//gm;
 const COMMENT_SINGLELINE_RE = /\/\/.*$(\r\n|\r|\n)/gm;
+const URL_RE = /https:\/\/(.(?!\*))*/g;
 
 let OUT = config.get('Application.outputDirectory');
 OUT = _resolveHome(OUT);
@@ -147,7 +147,10 @@ function _getIDLFile(filePath, options = { "clean": false }) {
   const buffer = fs.readFileSync(filePath);
   let fileContents = buffer.toString();
   if (options.clean) {
-    fileContents = fileContents.replace(COMMENT_START_RE, "");
+    // Remove if no regressions appear because of its absence.
+    // fileContents = fileContents.replace(COMMENT_START_RE, "");
+    // URLs can cause false positives when removing comments
+    fileContents = fileContents.replace(URL_RE, "");
     fileContents = fileContents.replace(COMMENT_MULTILINE_RE, "");
     fileContents = fileContents.replace(COMMENT_SINGLELINE_RE, "");
     fileContents = fileContents.replace(BLANK_LINE_RE, "");

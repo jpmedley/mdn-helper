@@ -33,7 +33,7 @@ describe('Utils', () => {
   });
 
   describe('getIDLFile()', () => {
-    it('Verifies that blank lines and comments are purged', () => {
+    it('Verifies that all possible comments and whitespace are removed', () => {
       let buffer = fs.readFileSync(COMMENTS_CLEANED);
       const comparisonFile = buffer.toString();
       const options = { "clean": true }
