@@ -154,8 +154,8 @@ function _getIDLFile(filePath, options = { "clean": false }) {
     fileContents = fileContents.replace(COMMENT_MULTILINE_RE, "");
     fileContents = fileContents.replace(COMMENT_SINGLELINE_RE, "");
     fileContents = fileContents.replace(BLANK_LINE_RE, "");
-    fileContents = fileContents.replace("[EnforceRange]", "");
-    fileContents = fileContents.replace("[TreatNullAs=EmptyString] ", "");
+    fileContents = fileContents.replaceAll("[EnforceRange]", "");
+    fileContents = fileContents.replaceAll("[TreatNullAs=EmptyString] ", "");
   }
   return fileContents;
 }
