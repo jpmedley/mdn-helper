@@ -1,2 +1,2 @@
-<dt>{{domxref('[[shared:interface]].[[argument]]')}}</dt>
-<dd>TBD</dd>
+- {{domxref('[[shared:interface]].[[argument]]')}}
+  - : TBD

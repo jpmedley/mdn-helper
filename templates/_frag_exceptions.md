@@ -1,2 +1,2 @@
-<dt>[[argument]]</dt>
-<dd>[[argument-definition]]</dd>
+- [[argument]]
+  - : [[argument-definition]]

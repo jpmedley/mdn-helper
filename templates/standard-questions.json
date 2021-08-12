@@ -115,7 +115,7 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "<p>None.</p>",
+      "default": "None.",
       "required": false,
       "before": "",
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
@@ -357,7 +357,7 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "<p>None.</p>",
+      "default": "None.",
       "required": false,
       "before": "",
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
@@ -381,7 +381,7 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "<p>None.</p>",
+      "default": "None.",
       "required": false,
       "before": "",
       "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}

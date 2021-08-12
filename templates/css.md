@@ -8,7 +8,7 @@ tags:
   - 'recipe:css-property'
 browser-compat: css.selectors.[[selector]]
 ---
-<div>{{CSSRef}}</div>
+{{CSSRef}}
 
 The **`[[selector]]`** [CSS](/docs/Web/CSS) [pseudo-class](/docs/Web/CSS/Pseudo-classes) [[description]]
 
@@ -47,8 +47,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 {{Specifications}}
 
 ## Browser compatibility
-
-<div class="hidden">The compatibility table in this page is generated from structured data. If you'd like to contribute to the data, please check out [https://github.com/mdn/browser-compat-data](https://github.com/mdn/browser-compat-data) and send us a pull request.</div>
 
 {{Compat}}
 

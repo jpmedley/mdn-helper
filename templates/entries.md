@@ -10,23 +10,20 @@ tags:
   - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].entries
 ---
-<div>[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}</div>
+[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`[[shared:interface]].entries()`** method returns an array of a given object's own enumerable property `[key, value]` pairs, in the same order as that provided by a {{jsxref("Statements/for...in", "for...in")}} loop (the difference being that a for-in loop enumerates properties in the prototype chain as well).
 
 ## Syntax
 
-<pre class="brush: js">[[shared:interface]].entries(obj);</pre>
+```js
+[[shared:interface]].entries(obj);
+```
 
 ### Parameters
 
-<dl>
-
-<dt>`obj`</dt>
-
-<dd>The {{domxref('[[shared:interface]]')}} whose enumerable own property `[key, value]` pairs are to be returned.</dd>
-
-</dl>
+- `obj`
+  - : The {{domxref('[[shared:interface]]')}} whose enumerable own property `[key, value]` pairs are to be returned.
 
 ### Return value
 
@@ -38,7 +35,9 @@ Fill in a simple example that nicely shows a typical usage of the API, then perh
 
 This text should be replaced with a brief description of what the example demonstrates.
 
-<pre class="brush: js">my code block</pre>
+```js
+my code block
+```
 
 And/or include a list of links to useful code samples that live elsewhere:
 
@@ -51,8 +50,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 {{Specifications}}
 
 ## Browser compatibility
-
-<div class="hidden">The compatibility table in this page is generated from structured data. If you'd like to contribute to the data, please check out [https://github.com/mdn/browser-compat-data](https://github.com/mdn/browser-compat-data) and send us a pull request.</div>
 
 {{Compat}}
 
