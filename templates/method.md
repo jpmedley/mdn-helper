@@ -11,21 +11,19 @@ browser-compat: api.[[shared:interface]].[[method]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[property]]`** [[readOnly]] property of the {{domxref("[[shared:interface]]")}} interface [[description]]
+The **`[[method]]`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
 
 ## Syntax
 
 ```js
-let a[[property]] = [[shared:interface]].[[property]];
-// Remove this one if the property is read only.
-[[shared:interface]].[[property]] = a[[Property]];
+[[shared:interface]].[[method]]()
 ```
 
 ### Parameters
 
 [[arguments]]
 
-### Returj Value
+### Return Value
 
 [[return]]
 

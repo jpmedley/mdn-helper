@@ -181,7 +181,6 @@ function _getJSON(path) {
 }
 
 function _getTemplate(name) {
-  // if (!name.endsWith(".html")) { name += ".html"; }
   if (!name.endsWith(".md")) { name += ".md"; }
   let templatePath = TEMPLATES + name;
   let buffer = fs.readFileSync(templatePath);
