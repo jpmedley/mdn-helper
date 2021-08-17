@@ -19,6 +19,10 @@
     "reportinglists": "node app_Burner.js chrome -w",
     "show-reportinglists": "ls reportinglists"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jpmedley/mdn-helper.git"
+  },
   "keywords": [
     "MDN",
     "contributing"
@@ -31,8 +35,11 @@
       "pre-push": "node presubmit.js"
     }
   },
-  "author": "Joseph Medley <jmedley@google.com>",
+  "author": "Joseph Medley <medleyj64119@gmail.com>",
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jpmedley/mdn-helper/issues"
+  },
   "dependencies": {
     "@mdn/browser-compat-data": "^3.3.14",
     "config": "^1.31.0",
