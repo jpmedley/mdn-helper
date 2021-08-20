@@ -71,7 +71,10 @@ describe('FlagStatus', () => {
     });
     it ('Confirms that a key returns "origintrial" on an origin trial flag', () => {
       assert.strictEqual(global.__Flags.getHighestResolvedStatus('OTEExperimental'), 'origintrial');
-    })
+    });
+    it ('Confirms that a key returns "stable" on a stable origin trial flag', () => {
+      assert.strictEqual(global.__Flags.getHighestResolvedStatus('OTEEnabled'), 'stable');
+    });
     it('Confirms that "stable" is returned when key is not in JSON file', () => {
       assert.strictEqual(global.__Flags.getHighestResolvedStatus('RTENotInJSON'), 'stable');
     });
