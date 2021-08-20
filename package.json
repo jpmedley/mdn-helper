@@ -1,5 +1,5 @@
 {
-  "name": "mdn-helper",
+  "name": "@jpmedley/mdn-helper",
   "version": "1.1.1",
   "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
   "main": "index.js",
@@ -48,5 +48,17 @@
     "shelljs": "^0.8.4",
     "tar": "^6.1.0",
     "winston": "^3.3.3"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpmedley/mdn-helper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jpmedley/mdn-helper/issues"
+  },
+  "homepage": "https://github.com/jpmedley/mdn-helper#readme"
 }
