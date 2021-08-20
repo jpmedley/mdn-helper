@@ -95,7 +95,8 @@ class _FlagStatus {
     } else {
       if (this[key]) {
         if (this[key].origin_trial_feature_name) {
-          return 'origintrial';
+          if (this[key].status === 'experimental') { return 'origintrial'; }
+          return this[key].status;
         }
       }
       return actualStatus;

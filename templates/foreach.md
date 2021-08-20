@@ -10,51 +10,32 @@ tags:
   - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].forEach
 ---
-<div>[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`[[shared:interface]].forEach()`** method executes a provided function once for each element of {{domxref('[[shared:interface]]')}}.
 
 ## Syntax
 
-<pre class="brush: js">[[shared:interface]].forEach(function callback(currentValue[, index[, array]]) {
+```js
+[[shared:interface]].forEach(function callback(element[, index[, array]]) {
     //your iterator
-}[, thisArg]);</pre>
+}[, thisArg]);
+```
 
 ### Parameters
 
-<dl>
+- `callback`
+  - : The function to execute for each element, taking three arguments:
 
-<dt>`callback`</dt>
+    - `element`
+      - : The value of the current element being processed.
+    - `index`{{optional_inline}}
+      - : The index of the current element being processed.
+    - `array`{{optional_inline}}
+      - : The [[shared:interface]] that`forEach()` is being called on.
 
-<dd>The function to execute for each element, taking three arguments:
-
-<dl>
-
-<dt>`currentValue`</dt>
-
-<dd>The value of the current element being processed.</dd>
-
-<dt>`index`{{optional_inline}}</dt>
-
-<dd>The index of the current element being processed.</dd>
-
-<dt>`array`{{optional_inline}}</dt>
-
-<dd>The [[shared:interface]] that`forEach()` is being called on.</dd>
-
-</dl>
-
-</dd>
-
-<dt>`thisArg` {{Optional_inline}}</dt>
-
-<dd>
-
-Value to use as `**this**` (i.e the reference `Object`) when executing `callback`.
-
-</dd>
-
-</dl>
+- `thisArg` {{Optional_inline}}
+  - : Value to use as `**this**` (i.e the reference `Object`) when executing `callback`.
 
 ### Return value
 
@@ -66,7 +47,9 @@ Fill in a simple example that nicely shows a typical usage of the API, then perh
 
 This text should be replaced with a brief description of what the example demonstrates.
 
-<pre class="brush: js">my code block</pre>
+```js
+my code block
+```
 
 And/or include a list of links to useful code samples that live elsewhere:
 
@@ -79,8 +62,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 {{Specifications}}
 
 ## Browser compatibility
-
-<div class="hidden">The compatibility table in this page is generated from structured data. If you'd like to contribute to the data, please check out [https://github.com/mdn/browser-compat-data](https://github.com/mdn/browser-compat-data) and send us a pull request.</div>
 
 {{Compat}}
 

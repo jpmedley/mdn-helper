@@ -103,7 +103,7 @@ class _Page {
   async _write() {
     this.render();
     let outFolder = utils.makeOutputFolder(this.sharedQuestions.name);
-    let outPath = `${outFolder}/${this.sharedQuestions.name}_${this.name}_${this.type}.html`;
+    let outPath = `${outFolder}/${this.sharedQuestions.name}_${this.name}_${this.type}.md`;
     if (fs.existsSync(outPath)) {
       let msg = `A file already exits for ${this.name} ${this.type}. `;
       msg += 'Do you want to overwrite it?'
@@ -132,7 +132,7 @@ class _Page {
         outFolder = utils.makeOutputFolder(`${lcName}/${this.name}`);
         break;
     }
-    const outPath = `${outFolder}index.html`.toLowerCase();
+    const outPath = `${outFolder}index.md`.toLowerCase();
     if (fs.existsSync(outPath)) {
       msg = `\nA file already exits at:\n\t${outPath}\n\n`;
       msg += 'Do you want to overwrite it?'
