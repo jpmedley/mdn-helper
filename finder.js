@@ -206,19 +206,35 @@ class IDLFinder {
       if (id) {
         console.log('Checking for existing MDN pages. This may take a few minutes.\n');
         const pingRecords = await id.ping(false);
-        console.log('Exists?   Interface');
-        console.log('-'.repeat(51));
-        pingRecords.forEach(r => {
-          let exists = r.mdn_exists.toString().padEnd(10);
-          console.log(`${exists}${r.key}`);
-        })
-        console.log();
+        this._showPingResults(pingRecords);
         await utils.pause();
       }
     }
     this._show(metaFile);
   }
 
+
+  _showPingResults(pingRecords) {
+    let lines = [];
+    let longest = 0;
+    pingRecords.forEach(r => {
+      if (r.key.length > longest) { longest = r.key.length; }
+    });
+    pingRecords.forEach(r => {
+      let exists = r.mdn_exists.toString().padEnd(8);
+      let key = r.key.toString().padEnd(longest + 1);
+      let url = r.mdn_url.toString();
+      lines.push(`${exists}${key}${url}`);
+    });
+    let ifaceHeader = "Interface".padEnd(longest + 1);
+    let header = `Exists? ${ifaceHeader}URL`;
+    console.log(header);
+    console.log('-'.repeat(header.length * 2));
+    lines.forEach(l => {
+      console.log(l);
+    })
+    console.log();
+  }
 
   async findAndReturn() {
     let metaFiles = this._findInterfaces(this._searchString);
