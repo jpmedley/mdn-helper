@@ -97,7 +97,7 @@ function _isSooner(args) {
 
 async function _downloadIDL(source, destination) {
   console.log('\nDownloading IDL and related data files from Chrome source code.\n');
-  utils.makeFolder('idl');
+  utils.makeFolder(IDL_DIR);
   shell.exec(`curl ${source} > ${destination}${IDL_ZIP_NANE}`);
   var filter = (path, entry) => {
     if (path.includes('bindings/')) { return false; }
@@ -114,8 +114,8 @@ async function _downloadIDL(source, destination) {
     console.log(message);
   }
   tar.x({
-    cwd: './idl',
-    file: `./idl/${IDL_ZIP_NANE}`,
+    cwd: IDL_DIR,
+    file: `${IDL_DIR}${IDL_ZIP_NANE}`,
     filter: filter,
     sync: true,
     warn: warn
@@ -125,8 +125,9 @@ async function _downloadIDL(source, destination) {
 
 function _downloadBCD() {
   console.log('\nInstalling latest browser compatibility data.\n');
-  shell.exec('npm install @mdn/browser-compat-data@latest')
-  shell.exec('curl https://raw.githubusercontent.com/mdn/browser-compat-data/master/schemas/compat-data.schema.json > test/files/compat-data.schema.json');
+  shell.exec('npm install @mdn/browser-compat-data@latest');
+  const bcdDownload = `curl https://raw.githubusercontent.com/mdn/browser-compat-data/main/schemas/compat-data.schema.json > ${__dirname}/test/files/compat-data.schema.json`;
+  shell.exec(bcdDownload);
 }
 
 function _downloadPopularities() {

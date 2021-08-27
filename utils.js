@@ -15,6 +15,9 @@
 'use strict';
 
 const config = require('config');
+// Make config module paths work in multiple contexts.
+process.env["NODE_CONFIG_DIR"] = `${__dirname}/config`;
+
 const { Confirm, Input } = require('enquirer');
 const fs = require('fs');
 const { homedir } = require('os');
