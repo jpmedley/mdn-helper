@@ -65,6 +65,12 @@ async function _confirm(msg, initial = "true") {
   return await prompt.run();
 }
 
+function _confirmPath(fileName) {
+  const last = fileName.lastIndexOf("/");
+  const path = fileName.substring(0, last);
+  return _makeFolder(path);
+}
+
 function _deleteFile(file) {
   if (fs.existsSync(file)) {
     fs.unlinkSync(file);
@@ -271,6 +277,7 @@ module.exports.APP_ROOT = APP_ROOT;
 module.exports.OUT = OUT;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
+module.exports.confirmPath = _confirmPath;
 module.exports.deleteFile = _deleteFile
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.displayConfig = _displayConfig;

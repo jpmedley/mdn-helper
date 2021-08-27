@@ -39,12 +39,11 @@ class _BCDBuilder {
 
   async write(outFilePath) {
     if (fs.existsSync(outFilePath)) { return; }
+    utils.confirmPath(outFilePath);
     // Poor man's way of fixing the nesting.
     const temp = JSON.parse(this._bcdString);
     this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
-    let file = utils.getOutputFile(outFilePath);
-    fs.writeSync(file, this._bcdString);
-    fs.closeSync(file);
+    fs.writeFileSync(outFilePath, this._bcdString);
     if (this._verbose) {
       const msg = `BCD boilerplate has been written to ${outFilePath}.`
       console.log(msg);
