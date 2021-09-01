@@ -64,7 +64,7 @@ class IDLFinder {
     this._interfaces = dm.interfaceSet;
   }
 
-  async _confirmPings(interfaces) {
+  async _selectMixinsToPing(interfaces) {
     if (interfaces[0].mixin) {
       let promptMsg = `\nThe ${interfaces[0].name} interface is a mixin and will not appear with that\n`;
           promptMsg += `name on MDN. Its members will appear as part of the interfaces below. Which\n`;
@@ -202,7 +202,7 @@ class IDLFinder {
       fp.process((result) => {
         ids.push(result);
       });
-      let id = await this._confirmPings(ids);
+      let id = await this._selectMixinsToPing(ids);
       if (id) {
         console.log('Checking for existing MDN pages. This may take a few minutes.\n');
         const pingRecords = await id.ping(false);

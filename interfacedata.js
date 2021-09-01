@@ -982,11 +982,30 @@ class InterfaceData extends IDLData {
     // Call on super gets the burn record for the interface itself.
     let records = super.getBurnRecords();
     let members = this.getMembers(includeFlags, includeOriginTrials, false);
+    let record;
     for (let m of members) {
       if (!includeFlags && m._flagged) { continue; }
       if (!includeOriginTrials && m._originTrial) { continue; }
-      let record = this._buildRecord(m);
+      record = this._buildRecord(m);
       records.push(record);
+    }
+    if (this.maplikeMethods) {
+      let maklike = this.maplikeMethods;
+      for (let mm of maklike) {
+        if (!includeFlags && mm._flagged) { continue; }
+        if (!includeOriginTrials && mm._originTrial) { continue; }
+        record = this._buildRecord(mm);
+        records.push(record);
+      }
+    }
+    if (this.setlikeMethods) {
+      let setlike = this.setlikeMethods;
+      for (let s of setlike) {
+        if (!includeFlags && s._flagged) { continue; }
+        if (!includeOriginTrials && s._originTrial) { continue; }
+        record = this._buildRecord(s);
+        records.push(record);
+      }
     }
     return records;
   }
