@@ -22,7 +22,7 @@
       "default": "false",
       "required": true,
       "before": "",
-      "action": {"name": "add_block", "args": ["_frag_accessibility.html"]}
+      "action": {"name": "add_block", "args": ["_frag_accessibility.md"]}
     },
     "argument-definition": {
       "question": "What is the definition for this argument?",
@@ -46,7 +46,7 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_arguments.html"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_arguments.md"]}
     },
     "child-interfaces": {
       "question": "Does this interface have any children?",
@@ -58,7 +58,7 @@
       "default": "false",
       "required": true,
       "before": "",
-      "action": {"name": "add_block", "args": ["_frag_childinterfaces.html"]}
+      "action": {"name": "add_block", "args": ["_frag_childinterfaces.md"]}
     },
     "constructor": {
       "question": "Does this interface have a constructor?",
@@ -70,7 +70,7 @@
       "default": "true",
       "required": true,
       "before": "",
-      "action": {"name": "add_block", "args": ["_frag_constructor.html"]}
+      "action": {"name": "add_block", "args": ["_frag_constructor.md"]}
     },
     "cors-response": {
       "question": "Is the response for this header CORS safelisted?",
@@ -118,7 +118,7 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_members.md"]}
     },
     "directive-values": {
       "question": "What are the possible values for this directive? Please enter all arguments with commas\n between each.",
@@ -166,7 +166,7 @@
       "default": "No",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_members.md"]}
     },
     "eventName": {
       "question": "What is the name of the event passed to this handler?",
@@ -202,7 +202,7 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_exceptions.html"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_exceptions.md"]}
     },
     "experimental": {
       "question": "Is this an experimental API? You can find the answer in the browser compatibility data.",
@@ -286,7 +286,7 @@
       "default": "",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_members.md"]}
     },
     "isSecureContext": {
       "question": "Does this API require a secure context? If so, press return to make the pages\ndisplay a blurb declaring it as such. Otherwise, enter 'n' and press return.\n",
@@ -360,7 +360,7 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_members.md"]}
     },
     "parameters": {
       "question": "Does this item have any parameters? Please enter all arguments with commas\n between each.",
@@ -384,7 +384,7 @@
       "default": "None.",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_members.html"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_members.md"]}
     },
     "readOnly": {
       "question": "Is this item read only?",
@@ -445,7 +445,7 @@
       "default": "false",
       "required": true,
       "before": "",
-      "action": {"name": "add_block", "args": ["_frag_seealso.html"]}
+      "action": {"name": "add_block", "args": ["_frag_seealso.md"]}
     },
     "selector": {
       "question": "What is the name of the CSS selector?",
