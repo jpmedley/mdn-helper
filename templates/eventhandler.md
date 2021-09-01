@@ -11,7 +11,7 @@ browser-compat: api.[[shared:interface]].[[EventHandler]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[EventHandler]]`** EventHandler of the {{domxref("[[shared:interface]]")}} interface is an {{event("Event_handlers")}} that processes [[eventName]] events.
+The **`[[EventHandler]]`** EventHandler of the {{domxref("[[shared:interface]]")}} interface processes [[eventName]] events.
 
 The [[eventName]] event fires when [[eventOccurs]].
 
