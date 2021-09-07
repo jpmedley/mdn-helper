@@ -11,7 +11,7 @@ browser-compat: api.[[shared:interface]].[[property]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[property]]`** [[readOnly]] property of the {{domxref("[[shared:interface]]")}} interface [[description]]
+The **`[[property]]`**[[readOnly]] property of the {{domxref("[[shared:interface]]")}} interface [[description]]
 
 ## Syntax
 

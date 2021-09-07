@@ -394,7 +394,7 @@
       "message": "",
       "hidden": false,
       "replace": "*",
-      "default": "read-only",
+      "default": " read-only",
       "required": true,
       "before": "",
       "action": {"name": "add_string", "args": ["read-only"]}
