@@ -17,9 +17,8 @@ The **`[[shared:interface]].forEach()`** method executes a provided function onc
 ## Syntax
 
 ```js
-[[shared:interface]].forEach(function callback(element[, index[, array]]) {
-    //your iterator
-}[, thisArg]);
+[[shared:interface]].forEach(callback);
+[[shared:interface]].forEach(callback, thisArg);
 ```
 
 ### Parameters
@@ -29,12 +28,12 @@ The **`[[shared:interface]].forEach()`** method executes a provided function onc
 
     - `element`
       - : The value of the current element being processed.
-    - `index`{{optional_inline}}
+    - `index`
       - : The index of the current element being processed.
-    - `array`{{optional_inline}}
+    - `array`
       - : The [[shared:interface]] that`forEach()` is being called on.
 
-- `thisArg` {{Optional_inline}}
+- `thisArg`
   - : Value to use as `**this**` (i.e the reference `Object`) when executing `callback`.
 
 ### Return value
