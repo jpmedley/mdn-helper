@@ -11,7 +11,7 @@ browser-compat: api.[[shared:interface]].[[method]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[method]]`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
 
 ## Syntax
 
