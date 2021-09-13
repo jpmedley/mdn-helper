@@ -17,6 +17,7 @@
     "muted": [
       "CSPViolationReportBody",
       "CSSContainerRule",
+      "FileSystemFileHandle.createSyncAccessHandle",
       "FontManager",
       "FontMetadata",
       "FontTableMap",
