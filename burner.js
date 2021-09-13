@@ -543,7 +543,6 @@ class ChromeBurner extends Burner {
   _record(records) {
     for (let r of records) {
       if ((r.type === 'interface') && r.mdn_exists && this._childrenOnly) { continue; }
-      // if (!r.mdn_exists) { break; }
       if (!r.bcd || !r.mdn_exists) {
         if (r.mdn_exists === null) { 
           r.mdn_exists = "Unknown";
