@@ -424,6 +424,7 @@ class BCDBurner extends Burner {
 class ChromeBurner extends Burner {
   constructor(options) {
     super(options);
+    this._includeAll = false;
     this._includeFlags = false;
     this._includeOriginTrials = false;
     this._includeTestFlags = false;
@@ -543,8 +544,11 @@ class ChromeBurner extends Burner {
   _record(records) {
     for (let r of records) {
       if ((r.type === 'interface') && r.mdn_exists && this._childrenOnly) { continue; }
-      // if (!r.mdn_exists) { break; }
-      if (!r.bcd || !r.mdn_exists) {
+      const record = (() => {
+        if (this._includeAll) { return true; }
+        return (!r.bcd || !r.mdn_exists);
+      })();
+      if (record) {
         if (r.mdn_exists === null) { 
           r.mdn_exists = "Unknown";
           r.mdn_url = "No URL found in compatibility data";
@@ -581,6 +585,9 @@ class ChromeBurner extends Burner {
     });
     this._childrenOnly = args.some(arg => {
       return (arg.includes('-c') || arg.includes('--children-only'));
+    });
+    this._includeAll = args.some(arg => {
+      return (arg.includes('-a') || arg.includes('--all'));
     });
     if (this._childrenOnly && this._interfacesOnly) {
       const msg = 'The --children-only (-c) and --interfaces-only (-i) flags cannot be used together.';

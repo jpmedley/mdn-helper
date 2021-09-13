@@ -8,7 +8,7 @@
     or --landingPage to create only a landing page.
 
   report bcd -- [(-c | --category) _category_] [(-b | --browsers) browsers] [(-r | --reportinglist) reportinglist]
-  report chrome  -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist) reportinglist]
+  report chrome  -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist) reportinglist] [(-a | --all)]
   report urls -- [(-c | --category) category]
     Builds several types of reports.
 
@@ -21,7 +21,8 @@
     Use -f or --flags to include APIs behind a flag. Use -i or --interfaces-only
     run a report containing only interfaces. Use -o or --origin-trials to
     include APIs currently in a Chrome origin trial. Use -r or --reportinglist
-    report on a specific list of interfaces.
+    report on a specific list of interfaces. Use -a or --all to run a report
+    that lists all IDL members whether documented or not.
 
     The last generates a csv listing BCD entries that are lacking a
     corresponding MDN page.

@@ -35,9 +35,9 @@ For detailed instructions, see [Building MDN Pages](/help/BUILDING-PAGES.md).
 
 Builds several types of reports. This has several syntaxes.
 
-**Syntax:** `report chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist)]`
+**Syntax:** `report chrome -- [(-f | --flags)] [(-i | --interfaces-only)] [(-o | --origin-trials)] [(-r | --reportinglist) _reportingList_] [(-a | --all)]`
 
-Generates a csv file listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--reportinglist` report on a specific list of interfaces.
+Generates a csv file listing Chrome APIs that are lacking an MDN page. Use `-f` or `--flags` to include APIs behind a flag. Use `-i` or `--interfaces-only` run a report containing only interfaces. Use `-o` or `--origin-trials` to include APIs currently in a Chrome origin trial. Use `-w` or `--reportinglist` report on a specific list of interfaces. Use `-a` or `--all` to run a report that lists all IDL members whether documented or not.
 
 **Syntax:** `report urls -- [(-c | --category) _category_]`
 
