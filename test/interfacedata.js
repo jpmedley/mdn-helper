@@ -68,6 +68,7 @@ const PROPERTIES_DISTINGUISH = './test/files/properties-distinguish.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
 const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
 const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
+const PROPERTIES_OTHER = './test/files/properties-other.idl';
 const PROPERTIES_SETLIKE = './test/files/properties-setlike.idl';
 const PROPERTIES_SETLIKE_READONLY = './test/files/properties-setlike-readonly.idl';
 const RUNTIMEENABLED_IFACE_EXPER = './test/files/runtimeenabled-interface-exper.idl';
@@ -679,6 +680,24 @@ describe('InterfaceData', () => {
       const source = loadSource(PROPERTIES_DISTINGUISH);
       const id = new InterfaceData(source);
       assert.strictEqual(id.properties.length, 1);
+    });
+    it('Confirms that array return types are returned', () => {
+      const source = loadSource(PROPERTIES_OTHER);
+      const id = new InterfaceData(source);
+      const properties = id.properties;
+      const aProperty = properties.find(p => {
+        return p.name === 'polygon';
+      });
+      assert.strictEqual(aProperty.name, 'polygon');
+    });
+    it('Confirms that variable return types are returned', () => {
+      const source = loadSource(PROPERTIES_OTHER);
+      const id = new InterfaceData(source);
+      const properties = id.properties;
+      const aProperty = properties.find(p => {
+        return p.name === 'orientation';
+      });
+      assert.strictEqual(aProperty.name, 'orientation');
     });
   });
 
