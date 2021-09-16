@@ -10,7 +10,7 @@ browser-compat: api.[[shared:interface]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPIName]]','','',' ')}} [[description]]
+The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPIName]]','','','true')}} [[description]]
 
 ## Description
 
