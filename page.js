@@ -39,8 +39,15 @@ class _Page {
     } else {
       templateType = this.type.toLowerCase();
     }
-    this.contents = utils.getTemplate(templateType)
-    // this.contents = utils.getTemplate(this.type.toLowerCase());
+    try {
+      this.contents = utils.getTemplate(templateType);
+    } catch (error) {
+      const msg = `Cannot find a template for page named ${name} with type ${type}.`
+      console.log(msg);
+      throw error;
+    }
+
+
     const reg = RegExp(TOKEN_RE, 'g');
     let matches;
     while ((matches = reg.exec(this.contents)) != null) {

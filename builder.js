@@ -319,7 +319,7 @@ class _IDLBuilder extends Builder {
 
   async _writeBCD() {
     let name = this._interfaceData.name;
-    if (bcd.api[name]) {
+    if (bcd.api[name] && this.verbose) {
       const msg = `\nA BCD file already exists for ${name}. You will need to manually\nverify it for completeness.\n`;
       console.log(msg);
       return;

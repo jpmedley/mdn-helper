@@ -1,6 +1,7 @@
 {
   "Application": {
     "bcdCommitDirectory": "$HOME/Desktop/out/",
+    "boilerplatesDirectory": "$HOME/Desktop/boilerplates/",
     "help": "VERBOSE",
     "log": false,
     "outputDirectory": "$HOME/Desktop/out/",
