@@ -256,9 +256,9 @@ function _printHelp() {
 
 function _printWelcome() {
   console.clear();
-  _sendUserOutput("=".repeat(80));
-  _sendUserOutput(" ".repeat(30) + "Welcome to mdn-helper" + " ".repeat(29));
-  _sendUserOutput("=".repeat(80));
+  console.log("=".repeat(80));
+  console.log(" ".repeat(30) + "Welcome to mdn-helper" + " ".repeat(29));
+  console.log("=".repeat(80));
 }
 
 function _resolveHome(path) {

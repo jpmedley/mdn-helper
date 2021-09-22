@@ -15,7 +15,7 @@
 'use strict';
 
 const https = require('https');
-const { utils } = require('./utils.js');
+const utils = require('./utils.js');
 
 const RECOVERABLE_ERRORS = 'ECONNRESET,EPROTO,ETIMEDOUT';
 let REQUEST_OPTIONS = {

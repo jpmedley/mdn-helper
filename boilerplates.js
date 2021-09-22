@@ -26,6 +26,8 @@ class _BoilerplateBuilder {
   }
 
   build() {
+    let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.`
+    console.log(msg);
     const interfaces = this._interfaceSet.interfaces;
     let builderOptions;
     for (let i = 0; i < interfaces.length; i++) {
@@ -36,6 +38,8 @@ class _BoilerplateBuilder {
       const builder = new IDLBuilder(builderOptions);
       builder.build();
     }
+    const outputDir = utils.getOutputDirectory();
+    msg = `\nBoilerplates written to ${outputDir}.`
   }
 }
 
