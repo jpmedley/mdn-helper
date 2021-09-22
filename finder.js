@@ -102,25 +102,6 @@ class IDLFinder {
     return matches;
   }
 
-  _isFlagged(data) {
-    let message;
-    let stub = 'and therefore should not be documented on MDN. Do you want to procede?'
-    if (data._originTrial) {
-      message = 'This interface is in an origin trial ' + stub;
-    }
-    if (data._flag) {
-      message = 'This interface is behind a flag ';
-    }
-    if (data._originTrial && data._flag) {
-      message = 'This interface is in an origin trial and behind a flag ' + stub;
-    }
-    if (message) {
-      return { flagged: true, message: message }
-    } else {
-      return { flagged: false, message: '' }
-    }
-  }
-
   _processArguments(args) {
     this._searchString = args[1];
     this._interactive = args.some(arg => {
