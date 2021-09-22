@@ -42,7 +42,8 @@ class _Page {
     try {
       this.contents = utils.getTemplate(templateType);
     } catch (error) {
-      const msg = `Cannot find a template for page named ${name} with type ${type}.`
+      const apiName = `${sharedQuestions.questions.interface.answer}.${name}`
+      const msg = `Cannot find a template for page named ${apiName} with type ${type}.`
       console.log(msg);
       throw error;
     }
