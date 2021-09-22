@@ -15,6 +15,7 @@
 'use strict';
 
 const page = require('../page.js');
+const utils = require('../utils.js');
 
 async function _run(currentPage, question) {
   if (question.answer == question.default) { return; }
@@ -30,7 +31,7 @@ async function _run(currentPage, question) {
   }
   newContents = ("<dl>\n" + newContents + "</dl>");
   question.answer = newContents;
-  console.log((`-`.repeat(23)) + '\nFinished with the list.\n');
+  utils.sendUserOutput((`-`.repeat(23)) + '\nFinished with the list.\n');
 }
 
 module.exports.run = _run;

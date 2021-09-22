@@ -54,6 +54,7 @@ function loadWireFrames() {
 const WIREFRAMES = loadWireFrames();
 
 async function _confirm(msg, initial = "true") {
+  if (global.__commandName == 'BoilerplateBuilder') { return true; }
   const prompt = new Confirm({
     name: 'confirm',
     message: msg,
@@ -236,6 +237,7 @@ function _makeFolder(dirName) {
 }
 
 async function _pause() {
+  if (global.__commandName == "BoilerplateBuilder") { return; }
   const prompt = new Input({
     message: 'Press Enter to continue.'
   });

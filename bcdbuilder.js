@@ -45,8 +45,8 @@ class _BCDBuilder {
     this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
     fs.writeFileSync(outFilePath, this._bcdString);
     if (this._verbose) {
-      const msg = `BCD boilerplate has been written to ${outFilePath}.`
-      console.log(msg);
+      const msg = `BCD boilerplate has been written to ${outFilePath}.`;
+      utils.sendUserOutput(msg);
     }
   }
 

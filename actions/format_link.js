@@ -14,8 +14,8 @@
 
 'use strict';
 
-const utils = require('../utils.js');
 const page = require('../page.js');
+const utils = require('../utils.js');
 
 async function _run(currentPage, question) {
   const answer = question.answer;
@@ -24,7 +24,7 @@ async function _run(currentPage, question) {
   if (answer.startsWith('#')) { return; }
   let pieces = answer.split('#');
   question.answer = '#' + pieces[1];
-  console.log(question.answer);
+  utils.sendUserOutput(question.answer);
 }
 
 module.exports.run = _run;

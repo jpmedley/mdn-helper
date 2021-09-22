@@ -15,6 +15,7 @@
 'use strict';
 
 const https = require('https');
+const { utils } = require('./utils.js');
 
 const RECOVERABLE_ERRORS = 'ECONNRESET,EPROTO,ETIMEDOUT';
 let REQUEST_OPTIONS = {
@@ -36,7 +37,7 @@ class Pinger {
     for (let r of this._records) {
       if (!r.mdn_url) { continue; }
       if (r.mdn_url === "No URL found in compatibility data") { continue; }
-      if (verboseOutput) { console.log(r.key); }
+      if (verboseOutput) { utils.sendUserOutput(r.key); }
       let retryCount = RETRY_COUNT;
       while (retryCount > 0) {
         let status = await this._ping(r)
