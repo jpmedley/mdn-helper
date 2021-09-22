@@ -14,6 +14,8 @@
 
 'use strict';
 
+global.__commandName = 'test';
+
 const COMMENTS = './test/files/comments.idl';
 const COMMENTS_CLEANED = './test/files/comments-cleaned.idl';
 

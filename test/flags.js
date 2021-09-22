@@ -14,6 +14,8 @@
 
 'use strict';
 
+global.__commandName = 'test';
+
 const assert = require('assert');
 const { FlagStatus, NO_FLAG } = require('../flags.js');
 global.__Flags = new FlagStatus('./test/files/exp_flags.json5');

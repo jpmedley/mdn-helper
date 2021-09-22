@@ -93,9 +93,9 @@ function _deleteUnemptyFolder(folder) {
 
 function _displayConfig() {
   let app = config.Application;
-  console.log('Application configuration values');
+  _sendUserOutput('Application configuration values');
   for (let a in app) {
-    console.log('\t' + a + '=' + app[a]);
+    _sendUserOutput('\t' + a + '=' + app[a]);
   }
   let user = config.User;
   let out = '';
@@ -103,10 +103,10 @@ function _displayConfig() {
     out += ('\t' + u + '=' + user[u] + '\n');
   }
   if (out) {
-    console.log('User configuration values');
-    console.log(out);
+    _sendUserOutput('User configuration values');
+    _sendUserOutput(out);
   }
-  console.log('');
+  _sendUserOutput('');
 }
 
 function _getAlternateKey(key) {
@@ -246,21 +246,33 @@ function _printHelp() {
   let intro = 'Basic usage:\n' +
             '\tnpm run <command> [<arguments>] -- [<flags>]\n\n' +
             'Commands:';
-  console.log(intro);
+  _sendUserOutput(intro);
   let help = fs.readFileSync(global.__basedir + '/help/HELP.txt');
   help = help.toString();
-  console.log(help);
+  _sendUserOutput(help);
 }
 
 function _printWelcome() {
   console.clear();
-  console.log("=".repeat(80));
-  console.log(" ".repeat(30) + "Welcome to mdn-helper" + " ".repeat(29));
-  console.log("=".repeat(80));
+  _sendUserOutput("=".repeat(80));
+  _sendUserOutput(" ".repeat(30) + "Welcome to mdn-helper" + " ".repeat(29));
+  _sendUserOutput("=".repeat(80));
 }
 
 function _resolveHome(path) {
   return path.replace('$HOME',homedir());
+}
+
+function _sendUserOutput(msg){
+  switch (global.__commandName) {
+    case 'BoilerplateBuilder':
+      // Do nothing.
+      break;
+    case 'test':
+    default:
+      console.log(msg);
+      break;
+  }
 }
 
 function _terminatePath(path) {
@@ -312,5 +324,6 @@ module.exports.pause = _pause;
 module.exports.printHelp = _printHelp;
 module.exports.printWelcome = _printWelcome;
 module.exports.resolveHome = _resolveHome;
+module.exports.sendUserOutput = _sendUserOutput;
 module.exports.terminatePath = _terminatePath;
 module.exports.today = _today;

@@ -65,7 +65,6 @@ function pageExists(arg, pageData) {
 
 class Builder {
   constructor(options) {
-
   }
 
   _normalizeArguments(args) {
@@ -308,12 +307,12 @@ class _IDLBuilder extends Builder {
       for (let s of skippingPages) {
         msg += `\t ${s[1]} ${s[0]}\n`;
       }
-      console.log(msg);
+      utils.sendUserOutput(msg);
       await utils.pause();
     }
     if (missingPages === 0) {
       let msg = 'No MDN pages have been created for this interface.';
-      console.log(msg);
+      utils.sendUserOutput(msg)
     }
   }
 
@@ -321,7 +320,7 @@ class _IDLBuilder extends Builder {
     let name = this._interfaceData.name;
     if (bcd.api[name] && this.verbose) {
       const msg = `\nA BCD file already exists for ${name}. You will need to manually\nverify it for completeness.\n`;
-      console.log(msg);
+      utils.sendUserOutput(msg);
       return;
     }
     let bcdm = new BCDBuilder(this._interfaceData, { verbose: this.verbose });
@@ -349,7 +348,7 @@ class _IDLBuilder extends Builder {
     let msg;
     if (this._pages.length === 0) {
       msg = '\nThere are no undocumented members for this interface.\n';
-      console.log(msg);
+      utils.sendUserOutput(msg);
       return;
     }
     for (let p of this._pages) {
@@ -359,7 +358,7 @@ class _IDLBuilder extends Builder {
       await p.write();
     }
     msg = `\nMDN drafts were written to ${utils.getOutputDirectory()}${this._interfaceData.name}.`
-    console.log(msg);
+    utils.sendUserOutput(msg);
   }
 
 }

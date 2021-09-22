@@ -14,6 +14,8 @@
 
 'use strict';
 
+global.__commandName = 'test';
+
 const assert = require('assert');
 const fs = require('fs');
 const Validator = require('jsonschema').Validator;

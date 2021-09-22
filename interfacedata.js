@@ -218,7 +218,7 @@ class IDLData {
     let pingRecords = this.getBurnRecords();
     const pinger = new Pinger(pingRecords);
     if (verboseOutput) {
-      console.log('\nChecking for existing MDN pages. This may take a few minutes.');
+      utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.');
     }
     let records = await pinger.pingRecords(verboseOutput)
     .catch(e => {

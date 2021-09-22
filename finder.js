@@ -20,6 +20,7 @@ const { DirectoryManager } = require('./directorymanager.js');
 const { FileProcessor } = require('./fileprocessor.js');
 const { IDLBuilder } = require('./builder.js');
 const utils = require('./utils.js');
+const { util } = require('config');
 
 const NOTHING_FOUND = "Could not find matching IDL files.\n"
 const TRY_RUNNING = "\nTry running this command with the -f or -o flags to search for items behind\nflags or in origin trials.\n";
@@ -51,7 +52,7 @@ function _finderFactory(args) {
 
 class CSSFinder {
   constructor(args, options) {
-    console.log("CSSFinder is not yet available.\n");
+    utils.sendUserOutput("CSSFinder is not yet available.\n");
     process.exit();
   }
 }
@@ -149,9 +150,9 @@ class IDLFinder {
   async _findForUI() {
     const matches = this._findInterfaces(this._searchString);
     if (matches.length == 0) {
-      console.log(NOTHING_FOUND);
+      utils.sendUserOutput(NOTHING_FOUND);
       if (!this._includeFlags && !this._includeOriginTrials) {
-        console.log(TRY_RUNNING);
+        utils.sendUserOutput(TRY_RUNNING);
       }
       process.exit();
     }
@@ -183,13 +184,13 @@ class IDLFinder {
 
   _show(file) {
     let idlFile = utils.getIDLFile(file.path);
-    console.log(idlFile);
-    console.log(`File located at ${file.path}.`);
+    utils.sendUserOutput(idlFile);
+    utils.sendUserOutput(`File located at ${file.path}.`);
   }
 
   _printInstructions() {
     const msg = `Use the up and down arrow to find the interface you want. Then press return.\n`
-    console.log(msg);
+    utils.sendUserOutput(msg);
   }
 
 
@@ -204,7 +205,7 @@ class IDLFinder {
       });
       let id = await this._selectMixinsToPing(ids);
       if (id) {
-        console.log('Checking for existing MDN pages. This may take a few minutes.\n');
+        utils.sendUserOutput('Checking for existing MDN pages. This may take a few minutes.\n');
         const pingRecords = await id.ping(false);
         this._showPingResults(pingRecords);
         await utils.pause();
@@ -228,12 +229,12 @@ class IDLFinder {
     });
     let ifaceHeader = "Interface".padEnd(longest + 1);
     let header = `Exists? ${ifaceHeader}URL`;
-    console.log(header);
-    console.log('-'.repeat(header.length * 2));
+    utils.sendUserOutput(header);
+    utils.sendUserOutput('-'.repeat(header.length * 2));
     lines.forEach(l => {
-      console.log(l);
+      utils.sendUserOutput(l);
     })
-    console.log();
+    utils.sendUserOutput();
   }
 
   async findAndReturn() {

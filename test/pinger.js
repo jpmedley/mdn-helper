@@ -14,6 +14,8 @@
 
 'use strict';
 
+global.__commandName = 'test';
+
 const assert = require('assert');
 
 const { EMPTY_BURN_DATA } = require('../interfacedata.js');

@@ -146,13 +146,13 @@ class _Page {
       const answer = await utils.confirm(msg);
       if (!answer) {
         // Attractive message spacing.
-        console.log();
+        utils.sendUserOutput();
         return;
       }
     }
     fs.writeFileSync(outPath, this.contents);
     msg = `\nA page has been written  to\n\t${outPath}\n`;
-    console.log(msg);
+    utils.sendUserOutput(msg);
   }
 }
 

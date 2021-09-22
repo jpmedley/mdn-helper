@@ -14,6 +14,7 @@
 
 // 'use strict';
 
+// global.__commandName = 'test';
 
 // const assert = require('assert');
 
