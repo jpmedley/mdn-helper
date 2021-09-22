@@ -31,7 +31,6 @@ class _BoilerplateBuilder {
     for (let i = 0; i < interfaces.length; i++) {
       builderOptions = {
         interfaceData: interfaces[i],
-        outPath: utils.BOILERPLATES,
         verbose: false
       }
       const builder = new IDLBuilder(builderOptions);
