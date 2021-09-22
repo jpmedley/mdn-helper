@@ -14,6 +14,8 @@
 
 'use strict';
 
+global.__commandName = 'UpdateData';
+
 const { printWelcome } = require('./utils.js');
 const updateData = require('./updateData.js');
 

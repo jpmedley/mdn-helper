@@ -26,7 +26,7 @@ class _Cleaner {
   }
 
   _getDirList() {
-    const dirContents = fs.readdirSync(utils.OUT, {withFileTypes: true});
+    const dirContents = fs.readdirSync(utils.getOutputDirectory(), {withFileTypes: true});
     let newList = [];
     for (let d of dirContents) {
       if (d.isDirectory()) { newList.push(d); }
@@ -64,7 +64,7 @@ class _Cleaner {
       console.log("\nRemoving selected directories.");
       for (let d in dirsToDelete) {
         console.log(`\tDeleting ${dirsToDelete[d]}.`);
-        utils.deleteUnemptyFolder(utils.OUT + dirsToDelete[d]);
+        utils.deleteUnemptyFolder(utils.getOutputDirectory() + dirsToDelete[d]);
       }
       console.log('\n');
     } else {

@@ -14,7 +14,7 @@
 
 'use-strict';
 
-global.__appName = 'app_Burner';
+global.__commandName = 'Burner';
 
 const { BurnerFactory } = require('./burner.js');
 const { printWelcome } = require('./utils.js');

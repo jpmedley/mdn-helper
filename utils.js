@@ -39,8 +39,8 @@ const COMMENT_MULTILINE_RE = /^\s*\/\*([\s\S](?!\*\/))*\s?\*\//gm;
 const COMMENT_SINGLELINE_RE = /\/\/.*$(\r\n|\r|\n)/gm;
 const URL_RE = /https:\/\/(.(?!\*))*/g;
 
-let OUT = config.get('Application.outputDirectory');
-OUT = _resolveHome(OUT);
+// let OUT = config.get('Application.outputDirectory');
+// OUT = _resolveHome(OUT);
 
 let AlternateKeys;
 
@@ -142,6 +142,19 @@ function _getConfigs(parameter) {
   return returns;
 }
 
+function _getOutputDirectory() {
+  let dirName = "";
+  switch (global.__commandName) {
+    case 'BoilerplateBuilder':
+      dirName = config.get('Application.boilerplatesDirectory');
+      break;
+    default:
+      dirName = config.get('Application.outputDirectory');
+      break;
+  }
+  return _resolveHome(dirName);
+}
+
 function _getOutputFile(filePath, reuse = false) {
   if (!reuse) {
     if (fs.existsSync(filePath)) {
@@ -210,8 +223,8 @@ function _getWireframes() {
 }
 
 function _makeOutputFolder(dirName) {
-  _makeFolder(OUT);
-  const folderToMake = _resolveHome(`${OUT}${dirName}/`);
+  _makeFolder(_getOutputDirectory());
+  const folderToMake = _resolveHome(`${_getOutputDirectory()}${dirName}/`);
   return _makeFolder(folderToMake);
 }
 
@@ -274,7 +287,7 @@ function _today() {
 }
 
 module.exports.APP_ROOT = APP_ROOT;
-module.exports.OUT = OUT;
+// module.exports.OUT = OUT;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
 module.exports.confirmPath = _confirmPath;
@@ -288,6 +301,7 @@ module.exports.getConfigs = _getConfigs;
 module.exports.getFile = _getFile;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getJSON = _getJSON;
+module.exports.getOutputDirectory = _getOutputDirectory;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;

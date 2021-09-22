@@ -14,6 +14,7 @@
 
 'use strict';
 
+global.__commandName = '';
 require('./log.js').initiateLogger('app_Manual');
 
 const { CLIBuilder } = require('./builder.js');

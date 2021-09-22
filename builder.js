@@ -263,7 +263,7 @@ class _IDLBuilder extends Builder {
     this._landingPageOnly = options.landingPageOnly || false;
     this._verbose = options.verbose;
     if (!options.outPath) {
-      this._outPath = utils.OUT;
+      this._outPath = utils.getOutputDirectory();
     } else {
       this._outPath = options.outPath;
     }
@@ -358,7 +358,7 @@ class _IDLBuilder extends Builder {
       }
       await p.write();
     }
-    msg = `\nMDN drafts were written to ${utils.OUT}${this._interfaceData.name}.`
+    msg = `\nMDN drafts were written to ${utils.getOutputDirectory()}${this._interfaceData.name}.`
     console.log(msg);
   }
 

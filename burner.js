@@ -127,7 +127,7 @@ class Burner {
     this._outputLines = 0;
     this._type;
     this._category;
-    this._outputPath = utils.makeOutputFolder(`${global.__appName}_${utils.today()}`);
+    this._outputPath = utils.makeOutputFolder(`${global.__commandName}_${utils.today()}`);
   }
 
   _closeOutputFile() {
@@ -208,7 +208,7 @@ class Burner {
   }
 
   _startBurnLogFile() {
-    initiateLogger(global.__appName);
+    initiateLogger(global.__commandName);
   }
 }
 

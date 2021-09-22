@@ -14,6 +14,8 @@
 
 'use-strict';
 
+global.__commandName = 'Config';
+
 const { displayConfig, printWelcome } = require('./utils.js');
 
 printWelcome();

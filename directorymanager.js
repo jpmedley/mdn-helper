@@ -22,7 +22,7 @@ const { InterfaceSet } = require('./interfaceset.js');
 
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 
-initiateLogger(global.__appName);
+initiateLogger(global.__commandName);
 
 class DirectoryManager {
   constructor(rootDirectory = 'idl/', options = { types: ['interface']} ) {

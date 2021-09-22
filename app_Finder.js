@@ -14,7 +14,8 @@
 
 'use-strict';
 
-require('./log.js').initiateLogger('app_Finder');
+global.__commandName = 'Finder';
+require('./log.js').initiateLogger(global.__commandName);
 
 const { FinderFactory } = require('./finder.js');
 const { printWelcome } = require('./utils.js');
