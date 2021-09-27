@@ -65,7 +65,7 @@ class _BCDBuilder {
 
   _loadBCD() {
     let membersBCD = [];
-    const members = this._interfaceData.getMembers();
+    const members = this._interfaceData.getMembers( { includeUnnamed: false });
     const skipMembers = ["(getter)", "(iterable)", "(setter)"];
     let constructorFound = false;
     for (let m of members) {

@@ -1045,9 +1045,21 @@ class InterfaceData extends IDLData {
     } else {
       return this.getBurnRecords(includeFlags, includeOriginTrials);
     }
-  }  
+  }
 
-  getMembers(inlcudeFlags = false, includeOriginTrials = false, includeUnamed = true) {
+  // Replacement interface
+  getMembers(arg1, arg2, arg3) {
+    if(typeof arg1 === 'boolean') {
+      return this.getMembers_(arg1, arg2, arg3);
+    } else {
+      let flags = arg1.includeFlags || false;
+      let originTrials = arg1.includeOriginTrials || false;
+      let includeUnamed = arg1.includeUnamed || false;
+      return this.getMembers(flags, originTrials, includeUnamed);
+    }
+  }
+
+  getMembers_(inlcudeFlags = false, includeOriginTrials = false, includeUnamed = true) {
     if (this._members.length > 0) { return this._members; }
 
     function _filterByFlag(member) {
