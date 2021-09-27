@@ -1,0 +1,5 @@
+interface GettersComplexName {
+  [ImplementedAs=namedGetter] getter (RadioNodeList or Element)? namedItem(DOMString name); // shadows inherited namedItem()
+
+  attribute octet notDeleter;
+};

@@ -42,7 +42,8 @@ const EXTENDED_ATTRIBUTES_REVERSED = './test/files/extended-attributes-reversed.
 const FLAGGED_INTERFACE = './test/files/interface-rte-test.idl';
 const FLAGGED_MEMBERS = './test/files/flagged-members.idl';
 const GETTERS_BOTH = './test/files/getters-both.idl';
-const GETTERS_NAMED_ONLY = './test/files/getters-named-only.idl';
+const GETTERS_SIMPLE_NAMED_ONLY = './test/files/getters-simple-named-only.idl';
+const GETTERS_COMPLEX_NAMED_ONLY = './test/files/getters-complex-named-only.idl';
 const GETTERS_RETURN_VAL = './test/files/getters-return-val.idl';
 const GETTERS_UNNAMED_ONLY = './test/files/getters-unnamed-only.idl';
 const INTERFACE_CALLBACK = './test/files/interface-callback.idl';
@@ -590,9 +591,15 @@ describe('InterfaceData', () => {
       assert.strictEqual(id.namedGetters.length, 2);
     });
     it('Confirms that named getters returns items when file contains only named getters', () => {
-      const source = loadSource(GETTERS_NAMED_ONLY);
+      const source = loadSource(GETTERS_SIMPLE_NAMED_ONLY);
       const id = new InterfaceData(source);
       assert.ok(id.namedGetters.length > 0);
+    });
+    it('Confirms that complex named getters are processed correctly', () => {
+      const source = loadSource(GETTERS_COMPLEX_NAMED_ONLY);
+      const id = new InterfaceData(source);
+      // assert.ok(id.namedGetters.length > 0);
+      assert.strictEqual(id.namedGetters[0].returnType, '(RadioNodeList or Element)?');
     });
     it('Confirms that named getters returns no items when file contains no named getters', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);
@@ -787,10 +794,15 @@ describe('InterfaceData', () => {
       const id = new InterfaceData(source);
       assert.strictEqual(id.unnamedGetter.length, 1, JSON.stringify(id.unnamedGetter));
     });
-    it('Confirms that unnamedGetters returns no object when file contains only named getters', () => {
-      const source = loadSource(GETTERS_NAMED_ONLY);
+    it('Confirms that unnamedGetters returns no object when file contains only simple named getters', () => {
+      const source = loadSource(GETTERS_SIMPLE_NAMED_ONLY);
       const id = new InterfaceData(source);
-      assert.strictEqual(id.unnamedGetter.length, 0, JSON.stringify(id.unnamedGetter))
+      assert.strictEqual(id.unnamedGetter.length, 0, JSON.stringify(id.unnamedGetter));
+    });
+    it('CConfirms that unnamedGetters returns no object when file contains only complex named getters', () => {
+      const source = loadSource(GETTERS_COMPLEX_NAMED_ONLY);
+      const id = new InterfaceData(source);
+      assert.strictEqual(id.unnamedGetter.length, 0, JSON.stringify(id.unnamedGetter));
     });
     it('Confirms that an object is returned when file contains only an unamedGetter', () => {
       const source = loadSource(GETTERS_UNNAMED_ONLY);

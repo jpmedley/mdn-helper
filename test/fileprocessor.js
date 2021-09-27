@@ -163,8 +163,8 @@ describe('FileProcessor', () => {
       });
       assert.strictEqual(iface.name, 'InterfacePartial');
     });
-    it('Confirms that named getters are processed as methods', () => {
-      const testFile = `${TEST_IDL_FILES}getters-named-only.idl`;
+    it('Confirms that simple named getters are processed as methods', () => {
+      const testFile = `${TEST_IDL_FILES}getters-simple-named-only.idl`;
       const fp = new FileProcessor(testFile);
       let found;
       fp.process(result => {
@@ -173,6 +173,9 @@ describe('FileProcessor', () => {
         });
       });
       assert.strictEqual(found.name, 'getItem');
+    });
+    it('Confirms that complex named getters are processed as methods', () => {
+
     });
   });
 });

@@ -562,7 +562,8 @@ class InterfaceData extends IDLData {
 
       // Extract arguments
       let pieces = workingString.split("(");
-      let argsString = pieces[1];
+      // Arguments are last item
+      let argsString = pieces[pieces.length - 1];
       argsString = argsString.slice(0, -1);
       let args = argsString.split(",");
       args.forEach((arg, i, args) => {
@@ -570,18 +571,26 @@ class InterfaceData extends IDLData {
         if (arg!="") { newGetterData.arguments.push(arg); }
       });
 
-      // Process getter type
-      workingString = pieces[0];
+      workingString = pieces[pieces.length - 2];
       pieces = workingString.split(" ");
-      newGetterData.returnType = pieces[1];
-      if (pieces[2]) {
-        // Named getter
-        newGetterData.name = pieces[2];
+      if (pieces[pieces.length - 1]) {
+        // Named getter is last item
+        newGetterData.name = pieces[pieces.length - 1];
         newGetterData.type = 'method';
       } else {
         // Unnamed getter
         newGetterData.name = "(getter)";
       }
+      pieces.pop();
+      workingString = pieces.join(" ");
+      if ((workingString.includes(")")) && (!workingString.includes("("))) {
+        workingString = `(${workingString}`;
+      }
+      if (workingString.startsWith("getter")) {
+        let temp = workingString.split("getter");
+        workingString = temp[temp.length - 1].trim();
+      }
+      newGetterData.returnType = workingString;
       if (!register.includes(newGetterData.name)) {
         register.push(newGetterData.name);
         this._getters.push(JSON.parse(JSON.stringify(newGetterData)));
