@@ -220,7 +220,7 @@ class IDLData {
     if (verboseOutput) {
       utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.');
     }
-    let records = await pinger.pingRecords(verboseOutput)
+    let records = await pinger.pingRecords()
     .catch(e => {
       throw e;
     });

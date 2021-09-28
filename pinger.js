@@ -22,7 +22,7 @@ let REQUEST_OPTIONS = {
   path: ''
 }
 const MDN = "https://" + REQUEST_OPTIONS.hostname;
-const RETRY_COUNT = 3;
+const RETRY_COUNT = 5;
 const STATUS_NEEDS_RETRY = 0;
 const STATUS_COMPLETE = 1;
 

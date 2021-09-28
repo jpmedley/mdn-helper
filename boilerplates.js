@@ -27,14 +27,15 @@ class _BoilerplateBuilder {
   }
 
   build() {
-    let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.`
-    // console.log(msg);
-    utils.sendUserOutput(msg);
+    let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.\n`;
+    msg += `This may take a minute or two.`;
+    console.log(msg);
     const interfaces = this._interfaceSet.interfaces;
     let builderOptions;
     for (let i = 0; i < interfaces.length; i++) {
       if (interfaces[i].flagged) { continue; }
       if (interfaces[i].originTrial) { continue; }
+      if (interfaces[i].mixin) { continue; }
       builderOptions = {
         interfaceData: interfaces[i],
         mode: 'batch',
