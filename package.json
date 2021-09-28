@@ -4,6 +4,7 @@
   "description": "Removes repetitive work of creating MDN boilerplate markup and text.",
   "main": "index.js",
   "scripts": {
+    "boilerplates": "node app_BoilerplateBuilder.js",
     "burn": "node app_Burner.js",
     "build": "node app_Builder.js",
     "clean": "node app_Cleaner.js",

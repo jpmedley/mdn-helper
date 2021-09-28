@@ -78,11 +78,12 @@ function _deleteFile(file) {
   }
 }
 
-function _deleteUnemptyFolder(folder) {
+function _deleteUnemptyFolder(folder, gitFiles) {
   if (fs.existsSync(folder)) {
     fs.readdirSync(folder).forEach(file => {
       let path = folder + '/' + file;
       if (fs.statSync(path).isDirectory()) {
+        console.log(file);
         _deleteUnemptyFolder(path);
       } else {
         fs.unlinkSync(path);
