@@ -15,8 +15,6 @@
 'use strict';
 
 const https = require('https');
-const { loggers } = require('winston');
-const utils = require('./utils.js');
 
 const RECOVERABLE_ERRORS = 'ECONNRESET,EPROTO,ETIMEDOUT';
 let REQUEST_OPTIONS = {
@@ -38,7 +36,7 @@ class Pinger {
     for (let r of this._records) {
       if (!r.mdn_url) { continue; }
       if (r.mdn_url === "No URL found in compatibility data") { continue; }
-      if (verboseOutput) { utils.sendUserOutput(r.key); }
+      if (verboseOutput) { console.log(r.key); }
       let retryCount = RETRY_COUNT;
       while (retryCount > 0) {
         let status = await this._ping(r)
@@ -58,11 +56,7 @@ class Pinger {
   _ping(record) {
     return new Promise((resolve, reject) => {
       try {
-        if (record.mdn_url.includes('/en-US')) {
-          REQUEST_OPTIONS.path = record.mdn_url.replace(MDN, '');
-        } else {
-          REQUEST_OPTIONS.path = record.mdn_url.replace(MDN, '/en-US');
-        }
+        REQUEST_OPTIONS.path = record.mdn_url.replace(MDN, '/en-US');
         https.get(REQUEST_OPTIONS, (res) => {
           const status = res.statusCode.toString();
           let code;
@@ -95,12 +89,11 @@ class Pinger {
           });
           res.on('error', (e) => {
             if (RECOVERABLE_ERRORS.includes(e.code)) {
+              // resolve(Status.needsretry);
               code = STATUS_NEEDS_RETRY;
-              // console.log(`>>>>>>>>>>${status}`)
               resolve(code);
             }
             else {
-              // console.log(`>>>>>>>>>>${status}`)
               reject(e);
             }
           });
@@ -108,7 +101,7 @@ class Pinger {
       } catch(e) {
         reject(e);
       }
-    });
+    })
   }
 }
 

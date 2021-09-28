@@ -23,16 +23,21 @@ class _BoilerplateBuilder {
     const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     this._interfaceSet = dm.interfaceSet;
+    utils.deleteUnemptyFolder(utils.getOutputDirectory());
   }
 
   build() {
     let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.`
-    console.log(msg);
+    // console.log(msg);
+    utils.sendUserOutput(msg);
     const interfaces = this._interfaceSet.interfaces;
     let builderOptions;
     for (let i = 0; i < interfaces.length; i++) {
+      if (interfaces[i].flagged) { continue; }
+      if (interfaces[i].originTrial) { continue; }
       builderOptions = {
         interfaceData: interfaces[i],
+        mode: 'batch',
         verbose: false
       }
       const builder = new IDLBuilder(builderOptions);

@@ -260,6 +260,7 @@ class _IDLBuilder extends Builder {
     this._interfaceData = options.interfaceData;
     this._jsonOnly = options.jsonOnly || false;
     this._landingPageOnly = options.landingPageOnly || false;
+    this._mode = options.mode || 'standard';
     this._verbose = options.verbose;
     if (!options.outPath) {
       this._outPath = utils.getOutputDirectory();
@@ -285,9 +286,11 @@ class _IDLBuilder extends Builder {
     this._pages = new Array();
 
     // Add an object for the landing page.
-    let aPage = new Page('landing', 'landing', sharedQuestions);
-    this._pages.push(aPage);
-    if (this._landingPageOnly) { return; }
+    if (this._mode === 'standard') {
+      let aPage = new Page('landing', 'landing', sharedQuestions);
+      this._pages.push(aPage);
+      if (this._landingPageOnly) { return; }
+    }
 
     // Process remaining arguments.
     // this._pages = new Array();
