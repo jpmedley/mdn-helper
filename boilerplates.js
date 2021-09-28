@@ -23,7 +23,8 @@ class _BoilerplateBuilder {
     const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     this._interfaceSet = dm.interfaceSet;
-    utils.deleteUnemptyFolder(utils.getOutputDirectory());
+    const gitFiles = ['.git', 'LICENSE', 'README.md'];
+    utils.deleteFolderContents(utils.getOutputDirectory(), gitFiles);
   }
 
   build() {

@@ -78,12 +78,21 @@ function _deleteFile(file) {
   }
 }
 
-function _deleteUnemptyFolder(folder, gitFiles) {
+function _deleteFolderContents(folder, exclusions) {
+  if (fs.existsSync(folder)) {
+    fs.readdirSync(folder).forEach(file => {
+      if (!exclusions.includes(file)) {
+        _deleteUnemptyFolder(file);
+      }
+    });
+  }
+}
+
+function _deleteUnemptyFolder(folder) {
   if (fs.existsSync(folder)) {
     fs.readdirSync(folder).forEach(file => {
       let path = folder + '/' + file;
       if (fs.statSync(path).isDirectory()) {
-        console.log(file);
         _deleteUnemptyFolder(path);
       } else {
         fs.unlinkSync(path);
@@ -307,6 +316,7 @@ module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
 module.exports.confirmPath = _confirmPath;
 module.exports.deleteFile = _deleteFile
+module.exports.deleteFolderContents = _deleteFolderContents;
 module.exports.deleteUnemptyFolder = _deleteUnemptyFolder;
 module.exports.displayConfig = _displayConfig;
 module.exports.getAlternateKey = _getAlternateKey;
