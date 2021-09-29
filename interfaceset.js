@@ -52,9 +52,10 @@ class InterfaceSet {
         switch (error.name) {
           case 'TypeError':
             const msg = `Problem processing ${i.sourcePath}\n${i.sourceContents}`;
-            global.__logger.error(msg);
+            global.__logger.info(msg);
             break;
           default:
+            global.__logger.error(error);
             throw error;
         }
       }
@@ -81,9 +82,10 @@ class InterfaceSet {
         switch (error.name) {
           case 'TypeError':
             const msg = `Problem processing ${i.sourcePath}\n${i.sourceContents}`;
-            global.__logger.error(msg);
+            global.__logger.info(msg);
             break;
           default:
+            global.__logger.error(msg);
             throw error;
         }
       }

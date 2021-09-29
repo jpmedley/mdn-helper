@@ -44,7 +44,7 @@ class _Page {
     } catch (error) {
       const apiName = `${sharedQuestions.questions.interface.answer}.${name}`
       const msg = `Cannot find a template for page named ${apiName} with type ${type}.`
-      console.log(msg);
+      global.__logger.error(msg);
       throw error;
     }
 

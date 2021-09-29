@@ -22,8 +22,6 @@ const utils = require('./utils.js');
 
 global.__logger = {};
 global.__loggerInitiated = false;
-global.__logger.info = () => {}
-global.__logger.error = () => {}
 
 function _initiateLogger(name = '') {
   if (!global.__loggerInitiated) {
