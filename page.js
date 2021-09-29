@@ -121,7 +121,60 @@ class _Page {
     fs.writeFileSync(outPath, this.contents);
   }
 
-  async write() {
+  async write(overwrite = 'prompt') {
+    this.render();
+    let outDir;
+    let outPath;
+    let msg;
+    switch (this.type) {
+      case 'landing':
+        outDir = this.sharedQuestions.name;
+        outDir = `${outDir}_${this.type}`.toLowerCase();
+        break;
+      case 'interface':
+        outDir = `${this.name}`.toLowerCase();
+        break;
+      default:
+        outDir = this.sharedQuestions.interface;
+        outDir = `${outDir}/${this.name}`.toLowerCase();
+        break;
+    }
+    switch (overwrite) {
+      case 'never':
+        if (fs.existsSync(outDir)) { return; }
+        outDir = utils.makeOutputFolder(outDir);
+        outPath = `${outDir}/index.md`;
+        fs.writeFileSync(outPath, this.contents);
+        msg = `\nA page has been written  to\n\t${outPath}\n`;
+        utils.sendUserOutput(msg);
+        break;
+      case 'always':
+        outDir = utils.makeOutputFolder(outDir);
+        outPath = `${outDir}/index.md`
+        fs.writeFileSync(outPath, this.contents);
+        msg = `\nA page has been written  to\n\t${outPath}\n`;
+        utils.sendUserOutput(msg);
+        break;
+      case 'prompt':
+        outPath = `${outDir}/index.md`
+        if (fs.existsSync(outPath)) {
+          msg = `\nA file already exits at:\n\t${outPath}\n\n`;
+          msg += 'Do you want to overwrite it?'
+          const answer = await utils.confirm(msg);
+          if (!answer) {
+            // Attractive message spacing.
+            utils.sendUserOutput();
+            return;
+          }
+        }
+        fs.writeFileSync(outPath, this.contents);
+        msg = `\nA page has been written to\n\t${outPath}\n`;
+        utils.sendUserOutput(msg);
+        break;
+    }
+  }
+
+  async write_() {
     this.render();
     let outFolder;
     let lcName;

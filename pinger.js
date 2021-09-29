@@ -88,6 +88,7 @@ class Pinger {
             }
           });
           res.on('error', (e) => {
+            console.log(e);
             if (RECOVERABLE_ERRORS.includes(e.code)) {
               // resolve(Status.needsretry);
               code = STATUS_NEEDS_RETRY;

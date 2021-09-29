@@ -15,16 +15,19 @@
 'use strict';
 
 const { IDLBuilder } = require('./builder.js');
+const { initiateLogger } = require('./log.js');
 const { DirectoryManager } = require('./directorymanager.js');
 const utils = require('./utils.js');
+
+initiateLogger(global.__commandName);
 
 class _BoilerplateBuilder {
   constructor() {
     const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     this._interfaceSet = dm.interfaceSet;
-    const gitFiles = ['.git', 'LICENSE', 'README.md'];
-    utils.deleteFolderContents(utils.getOutputDirectory(), gitFiles);
+    const projectFiles = ['.git', 'LICENSE', 'README.md'];
+    utils.deleteFolderContents(utils.getOutputDirectory(), projectFiles);
   }
 
   build() {
@@ -43,7 +46,7 @@ class _BoilerplateBuilder {
         verbose: false
       }
       const builder = new IDLBuilder(builderOptions);
-      builder.build();
+      builder.build('never');
     }
     const outputDir = utils.getOutputDirectory();
     msg = `\nBoilerplates written to ${outputDir}.`

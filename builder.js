@@ -344,8 +344,8 @@ class _IDLBuilder extends Builder {
     }
   }
 
-  async build() {
-    await this._writeBCD();
+  async build(overwrite = 'prompt') {
+    // await this._writeBCD();
     if (this._jsonOnly) { return; }
     await this._initPages();
     let msg;
@@ -358,7 +358,7 @@ class _IDLBuilder extends Builder {
       if (this._interactive) {
         await p.askQuestions();
       }
-      await p.write();
+      await p.write(overwrite);;
     }
     msg = `\nMDN drafts were written to ${utils.getOutputDirectory()}${this._interfaceData.name}.`
     utils.sendUserOutput(msg);

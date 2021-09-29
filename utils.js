@@ -39,9 +39,6 @@ const COMMENT_MULTILINE_RE = /^\s*\/\*([\s\S](?!\*\/))*\s?\*\//gm;
 const COMMENT_SINGLELINE_RE = /\/\/.*$(\r\n|\r|\n)/gm;
 const URL_RE = /https:\/\/(.(?!\*))*/g;
 
-// let OUT = config.get('Application.outputDirectory');
-// OUT = _resolveHome(OUT);
-
 let AlternateKeys;
 
 function loadWireFrames() {
@@ -80,6 +77,7 @@ function _deleteFile(file) {
 
 function _deleteFolderContents(folder, exclusions) {
   if (fs.existsSync(folder)) {
+    exclusions.push('.DS_Store');
     fs.readdirSync(folder).forEach(file => {
       if (!exclusions.includes(file)) {
         _deleteUnemptyFolder(file);
