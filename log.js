@@ -19,23 +19,41 @@ const winston = require('winston');
 
 const utils = require('./utils.js');
 
+
 global.__logger = {};
-global.__logger.initiated = false;
+global.__loggerInitiated = false;
 global.__logger.info = () => {}
 global.__logger.error = () => {}
 
 function _initiateLogger(name = '') {
-  if (!global.__logger.initiated) {
-    global.__logger.initiated = true;
-    if (!config.get('Application.log')) { return; }
-    let fileName = utils.makeOutputFolder(`${name}_${utils.today()}`);
-    fileName += `${name}_${utils.today()}.log`
+  if (!global.__loggerInitiated) {
+    global.__loggerInitiated = true;
 
+    const logLevel = config.get('Application.logLevel');
+    const console = new winston.transports.Console();
     global.__logger = winston.createLogger({
+      level: logLevel,
       transports: [
-        new winston.transports.File({ filename: fileName})
+        console
       ]
     });
+
+    const logDirectory = utils.resolveHome(config.get('Application.loggingDirectory'));
+    let logFileName = utils.makeFolder(logDirectory);
+    logFileName += `${name}_${utils.today()}.log`
+
+    const logOutput = config.get('Application.logOutput');
+    logOutput.forEach(lo => {
+      switch (lo) {
+        case 'file':
+          const fileTransport = new winston.transports.File({filename: logFileName});
+          global.__logger.add(fileTransport);
+          break;
+      }
+    });
+    if (!logOutput.includes('console')) {
+      global.__logger.remove(console);
+    }
   }
 }
 

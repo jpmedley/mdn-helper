@@ -1,9 +1,11 @@
 {
   "Application": {
     "bcdCommitDirectory": "$HOME/Desktop/out/",
-    "boilerplatesDirectory": "$HOME/Documents/content/mdn-boilerplates/",
+    "boilerplatesDirectory": "$HOME/Documents/content/mdn-boilerplates/stable",
     "help": "VERBOSE",
-    "log": false,
+    "logLevel": "error",
+    "logOutput": ["file"],
+    "loggingDirectory": "logs/",
     "outputDirectory": "$HOME/Desktop/out/",
     "questionsFile": "standard-questions.json",
     "test": false,
