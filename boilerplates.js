@@ -18,6 +18,7 @@ const { IDLBuilder } = require('./builder.js');
 const { initiateLogger } = require('./log.js');
 const { DirectoryManager } = require('./directorymanager.js');
 const utils = require('./utils.js');
+const config = require('config');
 
 initiateLogger(global.__commandName);
 
@@ -36,6 +37,7 @@ class _BoilerplateBuilder {
     console.log(msg);
     const interfaces = this._interfaceSet.interfaces;
     let builderOptions;
+    let outputDir = config.get('Application.boilerplatesDirectory');
     for (let i = 0; i < interfaces.length; i++) {
       if (interfaces[i].flagged) { continue; }
       if (interfaces[i].originTrial) { continue; }
@@ -43,12 +45,12 @@ class _BoilerplateBuilder {
       builderOptions = {
         interfaceData: interfaces[i],
         mode: 'batch',
+        outPath: outputDir,
         verbose: false
       }
       const builder = new IDLBuilder(builderOptions);
       builder.build('never');
     }
-    const outputDir = utils.getOutputDirectory();
     msg = `\nBoilerplates written to ${outputDir}.`
   }
 }

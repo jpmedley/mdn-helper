@@ -143,20 +143,20 @@ class _Page {
       case 'never':
         if (fs.existsSync(outDir)) { return; }
         outDir = utils.makeOutputFolder(outDir);
-        outPath = `${outDir}/index.md`;
+        outPath = `${outDir}index.md`;
         fs.writeFileSync(outPath, this.contents);
         msg = `\nA page has been written  to\n\t${outPath}\n`;
         utils.sendUserOutput(msg);
         break;
       case 'always':
         outDir = utils.makeOutputFolder(outDir);
-        outPath = `${outDir}/index.md`
+        outPath = `${outDir}index.md`
         fs.writeFileSync(outPath, this.contents);
         msg = `\nA page has been written  to\n\t${outPath}\n`;
         utils.sendUserOutput(msg);
         break;
       case 'prompt':
-        outPath = `${outDir}/index.md`
+        outPath = `${outDir}index.md`
         if (fs.existsSync(outPath)) {
           msg = `\nA file already exits at:\n\t${outPath}\n\n`;
           msg += 'Do you want to overwrite it?'
