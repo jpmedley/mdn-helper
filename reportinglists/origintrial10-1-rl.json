@@ -1,0 +1,29 @@
+{
+  "reportingList": [
+    "AppHistory",
+    "AppHistoryDestination",
+    "AppHistoryEntry",
+    "AppHistoryNavigateEvent",
+    "AppHistoryTransition",
+    "CaptureHandleChangeEvent",
+    "DigitalGoodsService",
+    "HandwritingDrawing",
+    "HandwritingRecognizer",
+    "HandwritingStroke",
+    "MediaDevices.setCaptureHandleConfig",
+    "MediaSource.canConstructInDedicatedWorker",
+    "MediaStreamTrack.getCaptureHandle",
+    "MediaStreamTrack.oncapturehandlechange",
+    "Navigator.createHandwritingRecognizer",
+    "Navigator.queryHandwritingRecognizer",
+    "PerformanceNavigationTiming.activationStart",
+    "Screen.isExtended",
+    "Screen.onchange",
+    "ScreenAdvanced",
+    "Screens",
+    "SourceBuffer.appendEncodedChunks",
+    "Window.appHistory",
+    "Window.getScreens",
+    "getDigitalGoodsService.getDigitalGoodsService"
+  ]
+}
