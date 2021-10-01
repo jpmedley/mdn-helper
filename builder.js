@@ -18,6 +18,7 @@ const { bcd } = require('./bcd.js');
 const { BCDBuilder } = require('./bcdbuilder.js');
 const { help } = require('./help/help.js');
 const { Page } = require('./page.js');
+const path = require('path');
 const { Questions } = require('./questions.js');
 const utils = require('./utils.js');
 
@@ -248,20 +249,19 @@ class _CLIBuilder extends Builder {
 }
 
 class _CSSBuilder extends Builder {
-  constructor(options = { verbose: true }) {
+  constructor(options) {
     super(options);
   }
 }
 
 class _IDLBuilder extends Builder {
-  constructor(options = { verbose: true }) {
+  constructor(options) {
     super(options);
     this._interactive = options.interactive || false;
     this._interfaceData = options.interfaceData;
     this._jsonOnly = options.jsonOnly || false;
     this._landingPageOnly = options.landingPageOnly || false;
     this._mode = options.mode || 'standard';
-    this._verbose = options.verbose;
     if (!options.outPath) {
       this._outPath = utils.getOutputDirectory();
     } else {
@@ -321,31 +321,33 @@ class _IDLBuilder extends Builder {
 
   async _writeBCD() {
     let name = this._interfaceData.name;
-    if (bcd.api[name] && this.verbose) {
+    if (bcd.api[name]) {
       const msg = `\nA BCD file already exists for ${name}. You will need to manually\nverify it for completeness.\n`;
       utils.sendUserOutput(msg);
       return;
     }
-    let bcdm = new BCDBuilder(this._interfaceData, { verbose: this.verbose });
+    let bcdBuilder = new BCDBuilder(this._interfaceData, {});
     let outFilePath = this._resolveBCDPath(name);
-    await bcdm.write(outFilePath);
+    await bcdBuilder.write(outFilePath);
   }
 
   _resolveBCDPath(name) {
     let bcdPath;
     try {
       bcdPath = utils.getBCDPath();
-      bcdPath = `${bcdPath}api/${name}.json`;
+      // bcdPath = `${bcdPath}api/${name}.json`;
+      bcdPath = path.join(bcdPath, `api/${name}.json`);
     } catch (error) {
       bcdPath = utils.makeFolder(name);
-      bcdPath = `${bcdPath}${name}.json`;
+      // bcdPath = `${bcdPath}${name}.json`;
+      bcdPath = path.join(bcdPath, `${name}.json`);
     } finally {
       return bcdPath;
     }
   }
 
   async build(overwrite = 'prompt') {
-    // await this._writeBCD();
+    await this._writeBCD();
     if (this._jsonOnly) { return; }
     await this._initPages();
     let msg;

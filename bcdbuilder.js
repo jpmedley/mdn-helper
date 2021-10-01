@@ -29,10 +29,9 @@ function getTemplate(templateName) {
 }
 
 class _BCDBuilder {
-  constructor(interfaceData, type = 'api', options = { verbose: true }) {
+  constructor(interfaceData, type = 'api', options) {
     // Later this will need to distinguish BCD categories.
     this._bcdString = '';
-    this._verbose = options.verbose;
     this._interfaceData = interfaceData;
     this._loadBCD();
   }
@@ -44,10 +43,8 @@ class _BCDBuilder {
     const temp = JSON.parse(this._bcdString);
     this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);
     fs.writeFileSync(outFilePath, this._bcdString);
-    if (this._verbose) {
-      const msg = `BCD boilerplate has been written to ${outFilePath}.`;
-      utils.sendUserOutput(msg);
-    }
+    const msg = `BCD boilerplate has been written to ${outFilePath}.`;
+    utils.sendUserOutput(msg);
   }
 
   getBCD() {

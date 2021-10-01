@@ -46,7 +46,6 @@ class _BoilerplateBuilder {
         interfaceData: interfaces[i],
         mode: 'batch',
         outPath: outputDir,
-        verbose: false
       }
       const builder = new IDLBuilder(builderOptions);
       builder.build('never');

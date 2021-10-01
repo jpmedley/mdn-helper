@@ -43,8 +43,7 @@ describe('IDLBuilder', () => {
       const idB = new IDLBuilder({
         interfaceData: id,
         jsonOnly: true,
-        outPath: tempFolder,
-        verbose: false
+        outPath: tempFolder
       });
       idB.build();
       assert.ok(fs.existsSync(tempFolder));

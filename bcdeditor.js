@@ -31,7 +31,7 @@ class _BCDEditor {
   _validateSourceMakeTree(source) {
     switch (source.constructor.name) {
       case "InterfaceData":
-        const bcdBuilder = new BCDBuilder(source, 'api', {verbose: false});
+        const bcdBuilder = new BCDBuilder(source, 'api', {});
         this._tree = bcdBuilder.getBCDObject();
         break;
       case "Object":

@@ -47,7 +47,7 @@ describe('BCDBuilder', () => {
       fp.process((result) => {
         id = result;
       }, true)
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       assert.ok(fs.existsSync(jsonPath));
@@ -60,7 +60,7 @@ describe('BCDBuilder', () => {
       fp.process((result) => {
         id = result;
       }, true)
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       // Load the schema
@@ -82,7 +82,7 @@ describe('BCDBuilder', () => {
       fp.process((result) => {
         id = result
       }, true)
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       const resultString = fs.readFileSync(jsonPath).toString();
@@ -98,7 +98,7 @@ describe('BCDBuilder', () => {
       fp.process((result) => {
         id = result;
       }, true)
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {});
       bcdManager.getBCDObject(jsonPath);
       bcdManager.write(jsonPath);
       const resultString = fs.readFileSync(jsonPath).toString();
@@ -134,7 +134,7 @@ describe('BCDBuilder', () => {
       fp.process((result) => {
         id = result;
       }, true)
-      const bcdManager = new BCDBuilder(id, 'api', {verbose: false});
+      const bcdManager = new BCDBuilder(id, 'api', {});
       const bcd = bcdManager.getBCDObject(jsonPath);
       assert.notEqual(bcd, null);
     });
