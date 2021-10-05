@@ -17,15 +17,18 @@
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Questions } = require('./questions.js');
+const Path = require('path');
 const utils = require('./utils.js');
+const path = require('path');
 
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 
 class _Page {
-  constructor(name, type, sharedQuestions) {
+  constructor(name, type, sharedQuestions, options) {
     this.name = name;
     this.type = type;
     this.sharedQuestions = sharedQuestions;
+    this._outPath = this._resolveOutPath(options.root);
 
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
@@ -108,17 +111,12 @@ class _Page {
     }
   }
 
-  async _write() {
-    this.render();
-    let outFolder = utils.makeOutputFolder(this.sharedQuestions.name);
-    let outPath = `${outFolder}/${this.sharedQuestions.name}_${this.name}_${this.type}.md`;
-    if (fs.existsSync(outPath)) {
-      let msg = `A file already exits for ${this.name} ${this.type}. `;
-      msg += 'Do you want to overwrite it?'
-      const answer = await utils.confirm(msg);
-      if (!answer) { return; }
+  _resolveOutPath(root) {
+    if (!root) {
+      // Backward compatibility
+      root = utils.makeOutputFolder(this.sharedQuestions.name);
     }
-    fs.writeFileSync(outPath, this.contents);
+    return root.toLowerCase();
   }
 
   async write(overwrite = 'prompt') {
@@ -136,27 +134,28 @@ class _Page {
         break;
       default:
         outDir = this.sharedQuestions.interface;
-        outDir = `${outDir}/${this.name}`.toLowerCase();
+        outDir = path.join(ourDir, `${this.name.toLowerCase()}`);
         break;
     }
+    outDir = path.join(this._outPath, outDir);
     switch (overwrite) {
       case 'never':
         if (fs.existsSync(outDir)) { return; }
         outDir = utils.makeOutputFolder(outDir);
-        outPath = `${outDir}index.md`;
+        outPath = path.join(`${outDir}`, 'index.md');
         fs.writeFileSync(outPath, this.contents);
         msg = `\nA page has been written  to\n\t${outPath}\n`;
         utils.sendUserOutput(msg);
         break;
       case 'always':
         outDir = utils.makeOutputFolder(outDir);
-        outPath = `${outDir}index.md`
+        outPath = path.join(`${outDir}`, 'index.md');
         fs.writeFileSync(outPath, this.contents);
         msg = `\nA page has been written  to\n\t${outPath}\n`;
         utils.sendUserOutput(msg);
         break;
       case 'prompt':
-        outPath = `${outDir}index.md`
+        outPath = path.join(`${outDir}`, 'index.md');
         if (fs.existsSync(outPath)) {
           msg = `\nA file already exits at:\n\t${outPath}\n\n`;
           msg += 'Do you want to overwrite it?'
