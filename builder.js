@@ -335,11 +335,9 @@ class _IDLBuilder extends Builder {
     let bcdPath;
     try {
       bcdPath = utils.getBCDPath();
-      // bcdPath = `${bcdPath}api/${name}.json`;
       bcdPath = path.join(bcdPath, `api/${name}.json`);
     } catch (error) {
       bcdPath = utils.makeFolder(name);
-      // bcdPath = `${bcdPath}${name}.json`;
       bcdPath = path.join(bcdPath, `${name}.json`);
     } finally {
       return bcdPath;
