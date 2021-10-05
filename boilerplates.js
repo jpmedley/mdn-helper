@@ -54,17 +54,15 @@ class _BoilerplateBuilder {
     let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.\n`;
     msg += `This may take a minute or two.`;
     console.log(msg);
-    const interfaces = this._interfaceSet.interfaces;
     let builderOptions;
-    let outputDir = config.get('Application.boilerplatesDirectory');
     for (let i = 0; i < interfaces.length; i++) {
       if (interfaces[i].flagged) { continue; }
       if (interfaces[i].originTrial) { continue; }
       if (interfaces[i].mixin) { continue; }
       builderOptions = {
-        interfaceData: interfaces[i],
+        interfaceData: this._interfaceSet.interfaces[i],
         mode: 'batch',
-        outPath: outputDir,
+        outPath: config.get('Application.boilerplatesDirectory'),
       }
       const builder = new IDLBuilder(builderOptions);
       builder.build('never');
