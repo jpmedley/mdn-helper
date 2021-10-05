@@ -31,14 +31,11 @@ const ONE_WEEK = 604800000;
 const UPDATE_FILE = `${__dirname}/.update`;
 
 function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
-  const sooner = _isSooner(args);
-  const update = _isUpdateNeeded();
-  if (update || sooner) {
+  if (_isUpdateNeeded()) {
     return _updateNow(args, source, destination);
   } else {
     return false;
   }
-
 }
 
 function _updateNow(args, source = IDL_ZIP, destination = IDL_DIR) {
@@ -83,16 +80,6 @@ function _isUpdateNeeded() {
       break;
   }
   return updateNow;
-}
-
-function _isSooner(args) {
-  let sooner = false;
-  if (args) {
-    sooner = args.some(e => {
-      return (e.includes('-s'));
-    })
-  }
-  return sooner;
 }
 
 async function _downloadIDL(source, destination) {

@@ -20,7 +20,7 @@ const { printWelcome } = require('./utils.js');
 const updateData = require('./updateData.js');
 
 printWelcome();
-const updated = updateData.update(process.argv);
+const updated = updateData.updateNow(process.argv);
 if (!updated) {
   console.log('No data update is currently needed.');
 }
