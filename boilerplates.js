@@ -23,7 +23,8 @@ const config = require('config');
 initiateLogger(global.__commandName);
 
 class _BoilerplateBuilder {
-  constructor() {
+  constructor(options = { mode: "Stable" }) {
+    this.build = this._resolveBuildAction(options.mode);
     const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     this._interfaceSet = dm.interfaceSet;
@@ -31,7 +32,25 @@ class _BoilerplateBuilder {
     utils.deleteFolderContents(utils.getOutputDirectory(), projectFiles);
   }
 
-  build() {
+  _resolveBuildAction(action) {
+    switch (action.toLowerCase()) {
+      case 'stable':
+        return this._buildStable;
+      case 'ot':
+      case 'origintrials':
+        return this._buildOriginTrials;
+      default:
+        const msg = `The action must be one of \'Stable\' or \'OriginTrials\'. The value ${action} was provided`;
+        console.log(msg);
+        process.exit();
+    }
+  }
+
+  _buildOriginTrials() {
+    
+  }
+
+  _buildStable() {
     let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.\n`;
     msg += `This may take a minute or two.`;
     console.log(msg);
