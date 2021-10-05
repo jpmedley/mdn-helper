@@ -173,41 +173,6 @@ class _Page {
         break;
     }
   }
-
-  async write_() {
-    this.render();
-    let outFolder;
-    let lcName;
-    let msg;
-    switch (this.type) {
-      case 'landing':
-        lcName = this.sharedQuestions.name.toLowerCase();
-        outFolder = utils.makeOutputFolder(`${lcName}_${this.type}`);
-        break;
-      case 'interface':
-        lcName = this.name.toLowerCase();
-        outFolder = utils.makeOutputFolder(`${lcName}`);
-        break;
-      default:
-        lcName = this.sharedQuestions.interface.toLowerCase();
-        outFolder = utils.makeOutputFolder(`${lcName}/${this.name}`);
-        break;
-    }
-    const outPath = `${outFolder}index.md`.toLowerCase();
-    if (fs.existsSync(outPath)) {
-      msg = `\nA file already exits at:\n\t${outPath}\n\n`;
-      msg += 'Do you want to overwrite it?'
-      const answer = await utils.confirm(msg);
-      if (!answer) {
-        // Attractive message spacing.
-        utils.sendUserOutput();
-        return;
-      }
-    }
-    fs.writeFileSync(outPath, this.contents);
-    msg = `\nA page has been written  to\n\t${outPath}\n`;
-    utils.sendUserOutput(msg);
-  }
 }
 
 
