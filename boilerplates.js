@@ -55,6 +55,7 @@ class _BoilerplateBuilder {
     let builderOptions = {
       interfaceOnly: true,
       mode: 'batch',
+      withholdBCD: true,
       outPath: path.join(outPath, 'origin-trial'),
     }
     console.log(builderOptions.outPath);

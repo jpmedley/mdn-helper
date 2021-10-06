@@ -261,10 +261,10 @@ class _IDLBuilder extends Builder {
     this._interactive = options.interactive || false;
     this._interfaceData = options.interfaceData;
     this._interfaceOnly = options.interfaceOnly || false;
-    this._jsonOnly = options.jsonOnly || false;
+    this._bcdOnly = options.bcdOnly || false;
     this._landingPageOnly = options.landingPageOnly || false;
     this._mode = options.mode || 'standard';
-    this._noJson = options.noJson || false;
+    this.withholdBCD = options.withholdBCD || false;
     if (!options.outPath) {
       this._outPath = utils.getOutputDirectory();
     } else {
@@ -276,7 +276,7 @@ class _IDLBuilder extends Builder {
       this._bcdPath = options.bcdPath;
     }
 
-    if (this._jsonOnly && this._noJson) {
+    if (this._bcdOnly && this.withholdBCD) {
       const msg = `The arguments options.jsonOnly and options.noJson cannot both be true.`;
       throw new BuilderError(msg, __filename, 279);
     }
@@ -346,8 +346,8 @@ class _IDLBuilder extends Builder {
   }
 
   async build(overwrite = 'prompt') {
-    if (!this._noJson) { await this._writeBCD(); }
-    if (this._jsonOnly) { return; }
+    if (!this.withholdBCD) { await this._writeBCD(); }
+    if (this._bcdOnly) { return; }
     await this._initPages();
     let msg;
     if (this._pages.length === 0) {

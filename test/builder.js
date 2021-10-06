@@ -45,7 +45,7 @@ describe('IDLBuilder', () => {
       const idB = new IDLBuilder({
         bcdPath: tempFolder,
         interfaceData: id,
-        jsonOnly: true,
+        bcdOnly: true,
         outPath: tempFolder
       });
       await idB.build('always');

@@ -113,8 +113,8 @@ class IDLFinder {
     this._includeOriginTrials = args.some(arg => {
       return (arg.includes('-o') || (arg.includes('--origin-trials')));
     });
-    this._jsonOnly = args.some(arg => {
-      return (arg.includes('-j') || (arg.includes('--jsonOnly')));
+    this.__bcdOnly = args.some(arg => {
+      return (arg.includes('-b') || (arg.includes('--bcdOnly')));
     });
     if (args[0] === 'Builder') {
       this._landingPageOnly = args.some(arg => {
@@ -245,7 +245,7 @@ class IDLFinder {
     const options = {
       interactive: this._interactive,
       interfaceData: id,
-      jsonOnly: this._jsonOnly,
+      bcdOnly: this.__bcdOnly,
       landingPageOnly: this._landingPageOnly
     }; 
     const builder = new IDLBuilder(options);
