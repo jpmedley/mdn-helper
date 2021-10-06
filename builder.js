@@ -262,7 +262,6 @@ class _IDLBuilder extends Builder {
     this._interfaceOnly = options.interfaceOnly || false;
     this._jsonOnly = options.jsonOnly || false;
     this._landingPageOnly = options.landingPageOnly || false;
-    this._mode = options.mode || 'standard';
     if (!options.outPath) {
       this._outPath = utils.getOutputDirectory();
     } else {
@@ -292,21 +291,20 @@ class _IDLBuilder extends Builder {
     this._pages = new Array();
 
     // Add an object for the landing page.
-    if (this._mode === 'standard') {
+    if (!this._interfaceOnly) {
       let aPage = new Page('landing', 'landing', sharedQuestions, { root: this._outPath });
       this._pages.push(aPage);
       if (this._landingPageOnly) { return; }
     }
 
     // Process remaining arguments.
-    // this._pages = new Array();
     let skippingPages = new Array();
     const missingPages = await this._interfaceData.ping();
     missingPages.forEach((page, index, pages) => {
+      if (this._interfaceOnly && (page.type !== 'interface')) { return; }
       if (page.mdn_exists) {
         skippingPages.push([page.type, page.key]);
       } else {
-        // if (NOT_NEEDED.includes(page.type.toLowerCase())) { return; }
         const newPage = new Page(page.name, page.type, sharedQuestions, { root: this._outPath });
         this._pages.push(newPage);
       }
