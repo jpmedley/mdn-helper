@@ -232,7 +232,7 @@ class _CLIBuilder extends Builder {
     args.forEach((arg, index, args) => {
       if ((arg.trim() === 'w') || arg.trim() === 'writeOnly') { return; }
       let members = arg.split(',');
-      let aPage = new Page(members[1], members[0], sharedQuestions);
+      let aPage = new Page(members[1], members[0], sharedQuestions, { root: this._outPath });
       this._pages.push(aPage);
     });
   }
@@ -259,6 +259,7 @@ class _IDLBuilder extends Builder {
     super(options);
     this._interactive = options.interactive || false;
     this._interfaceData = options.interfaceData;
+    this._interfaceOnly = options.interfaceOnly || false;
     this._jsonOnly = options.jsonOnly || false;
     this._landingPageOnly = options.landingPageOnly || false;
     this._mode = options.mode || 'standard';
@@ -266,6 +267,11 @@ class _IDLBuilder extends Builder {
       this._outPath = utils.getOutputDirectory();
     } else {
       this._outPath = options.outPath;
+    }
+    if (!options.bcdPath) {
+      this._bcdPath = utils.getBCDPath();
+    } else {
+      this._bcdPath = options.bcdPath;
     }
   }
 
@@ -287,7 +293,7 @@ class _IDLBuilder extends Builder {
 
     // Add an object for the landing page.
     if (this._mode === 'standard') {
-      let aPage = new Page('landing', 'landing', sharedQuestions);
+      let aPage = new Page('landing', 'landing', sharedQuestions, { root: this._outPath });
       this._pages.push(aPage);
       if (this._landingPageOnly) { return; }
     }
@@ -301,7 +307,7 @@ class _IDLBuilder extends Builder {
         skippingPages.push([page.type, page.key]);
       } else {
         // if (NOT_NEEDED.includes(page.type.toLowerCase())) { return; }
-        const newPage = new Page(page.name, page.type, sharedQuestions);
+        const newPage = new Page(page.name, page.type, sharedQuestions, { root: this._outPath });
         this._pages.push(newPage);
       }
     });
@@ -327,21 +333,10 @@ class _IDLBuilder extends Builder {
       return;
     }
     let bcdBuilder = new BCDBuilder(this._interfaceData, {});
-    let outFilePath = this._resolveBCDPath(name);
+    // let outFilePath = this._resolveBCDPath(name);
+    // await bcdBuilder.write(outFilePath);
+    let outFilePath = path.join(this._bcdPath, `${name}.json`);
     await bcdBuilder.write(outFilePath);
-  }
-
-  _resolveBCDPath(name) {
-    let bcdPath;
-    try {
-      bcdPath = utils.getBCDPath();
-      bcdPath = path.join(bcdPath, `api/${name}.json`);
-    } catch (error) {
-      bcdPath = utils.makeFolder(name);
-      bcdPath = path.join(bcdPath, `${name}.json`);
-    } finally {
-      return bcdPath;
-    }
   }
 
   async build(overwrite = 'prompt') {
@@ -360,7 +355,8 @@ class _IDLBuilder extends Builder {
       }
       await p.write(overwrite);;
     }
-    msg = `\nMDN drafts were written to ${utils.getOutputDirectory()}${this._interfaceData.name}.`
+    // msg = `\nMDN drafts were written to ${utils.getOutputDirectory()}${this._interfaceData.name}.`
+    msg = `\nMDN drafts were written to ${this._outPath}${this._interfaceData.name}.`
     utils.sendUserOutput(msg);
   }
 

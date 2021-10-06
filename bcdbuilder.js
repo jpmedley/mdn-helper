@@ -38,7 +38,6 @@ class _BCDBuilder {
 
   async write(outFilePath) {
     if (fs.existsSync(outFilePath)) { return; }
-    utils.confirmPath(outFilePath);
     // Poor man's way of fixing the nesting.
     const temp = JSON.parse(this._bcdString);
     this._bcdString = JSON.stringify(temp, null, NEST_LEVEL);

@@ -17,7 +17,6 @@
 const fs = require('fs');
 const { help } = require('./help/help.js');
 const { Questions } = require('./questions.js');
-const Path = require('path');
 const utils = require('./utils.js');
 const path = require('path');
 
@@ -134,21 +133,21 @@ class _Page {
         break;
       default:
         outDir = this.sharedQuestions.interface;
-        outDir = path.join(ourDir, `${this.name.toLowerCase()}`);
+        outDir = path.join(outDir, `${this.name.toLowerCase()}`);
         break;
     }
     outDir = path.join(this._outPath, outDir);
     switch (overwrite) {
       case 'never':
         if (fs.existsSync(outDir)) { return; }
-        outDir = utils.makeOutputFolder(outDir);
+        outDir = utils.makeFolder(outDir);
         outPath = path.join(`${outDir}`, 'index.md');
         fs.writeFileSync(outPath, this.contents);
         msg = `\nA page has been written  to\n\t${outPath}\n`;
         utils.sendUserOutput(msg);
         break;
       case 'always':
-        outDir = utils.makeOutputFolder(outDir);
+        outDir = utils.makeFolder(outDir);
         outPath = path.join(`${outDir}`, 'index.md');
         fs.writeFileSync(outPath, this.contents);
         msg = `\nA page has been written  to\n\t${outPath}\n`;
@@ -166,8 +165,10 @@ class _Page {
             return;
           }
         }
+        outDir = utils.makeFolder(outDir);
+        outPath = path.join(`${outDir}`, 'index.md');
         fs.writeFileSync(outPath, this.contents);
-        msg = `\nA page has been written to\n\t${outPath}\n`;
+        msg = `\nA page has been written  to\n\t${outPath}\n`;
         utils.sendUserOutput(msg);
         break;
     }

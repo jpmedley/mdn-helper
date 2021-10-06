@@ -276,9 +276,9 @@ function _resolveHome(path) {
 function _sendUserOutput(msg){
   switch (global.__commandName) {
     case 'BoilerplateBuilder':
+    case 'test':
       // Do nothing.
       break;
-    case 'test':
     default:
       console.log(msg);
       break;
