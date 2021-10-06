@@ -17,6 +17,7 @@
 const { IDLBuilder } = require('./builder.js');
 const { initiateLogger } = require('./log.js');
 const { DirectoryManager } = require('./directorymanager.js');
+const path = require('path');
 const utils = require('./utils.js');
 const config = require('config');
 
@@ -24,15 +25,15 @@ initiateLogger(global.__commandName);
 
 class _BoilerplateBuilder {
   constructor(options = { mode: "Stable" }) {
-    this.build = this._resolveBuildAction(options.mode);
+    this.build = this._resolveBuildMode(options.mode);
     const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
-    this._interfaceSet = dm.interfaceSet;
+    this._interfaces = dm.interfaceSet.interfaces;
     const projectFiles = ['.git', 'LICENSE', 'README.md'];
     utils.deleteFolderContents(utils.getOutputDirectory(), projectFiles);
   }
 
-  _resolveBuildAction(action) {
+  _resolveBuildMode(action) {
     switch (action.toLowerCase()) {
       case 'stable':
         return this._buildStable;
@@ -47,27 +48,44 @@ class _BoilerplateBuilder {
   }
 
   _buildOriginTrials() {
-    
+    let msg = `Now building interface boilerplates for all found Chrome origin trials.\n`;
+    msg += `This may take a minute or two.`;
+    let outPath = utils.resolveHome(config.get('Application.boilerplatesDirectory'));
+    console.log(msg);
+    let builderOptions = {
+      interfaceOnly: true,
+      mode: 'batch',
+      outPath: path.join(outPath, 'origin-trial'),
+    }
+    console.log(builderOptions.outPath);
+    for (let i = 0; i < this._interfaces.length; i++) {
+      if (!this._interfaces[i].originTrial) { continue; }
+      builderOptions.interfaceData = this._interfaces[i];
+      const builder = new IDLBuilder(builderOptions);
+      builder.build('never');
+    }
+    msg = `\nBoilerplates written to ${builderOptions.outPath}.`
+    console.log(msg);
   }
 
   _buildStable() {
     let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.\n`;
     msg += `This may take a minute or two.`;
     console.log(msg);
-    let builderOptions;
-    for (let i = 0; i < interfaces.length; i++) {
-      if (interfaces[i].flagged) { continue; }
-      if (interfaces[i].originTrial) { continue; }
-      if (interfaces[i].mixin) { continue; }
-      builderOptions = {
-        interfaceData: this._interfaceSet.interfaces[i],
-        mode: 'batch',
-        outPath: config.get('Application.boilerplatesDirectory'),
-      }
+    let builderOptions = {
+      mode: 'batch',
+      outPath: path.join(config.get('Application.boilerplatesDirectory'), 'origin-trial'),
+    }
+    for (let i = 0; i < this._interfaces.length; i++) {
+      if (this._interfaces[i].flagged) { continue; }
+      if (this._interfaces[i].originTrial) { continue; }
+      if (this._interfaces[i].mixin) { continue; }
+      builderOptions.interfaceData = this._interfaces[i];
       const builder = new IDLBuilder(builderOptions);
       builder.build('never');
     }
-    msg = `\nBoilerplates written to ${outputDir}.`
+    msg = `\nBoilerplates written to ${builderOptions.outPath}.`
+    console.log(msg);
   }
 }
 

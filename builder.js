@@ -16,6 +16,7 @@
 
 const { bcd } = require('./bcd.js');
 const { BCDBuilder } = require('./bcdbuilder.js');
+const { BuilderError } = require('./errors.js');
 const { help } = require('./help/help.js');
 const { Page } = require('./page.js');
 const path = require('path');
@@ -262,6 +263,8 @@ class _IDLBuilder extends Builder {
     this._interfaceOnly = options.interfaceOnly || false;
     this._jsonOnly = options.jsonOnly || false;
     this._landingPageOnly = options.landingPageOnly || false;
+    this._mode = options.mode || 'standard';
+    this._noJson = options.noJson || false;
     if (!options.outPath) {
       this._outPath = utils.getOutputDirectory();
     } else {
@@ -271,6 +274,11 @@ class _IDLBuilder extends Builder {
       this._bcdPath = utils.getBCDPath();
     } else {
       this._bcdPath = options.bcdPath;
+    }
+
+    if (this._jsonOnly && this._noJson) {
+      const msg = `The arguments options.jsonOnly and options.noJson cannot both be true.`;
+      throw new BuilderError(msg, __filename, 279);
     }
   }
 
@@ -291,7 +299,7 @@ class _IDLBuilder extends Builder {
     this._pages = new Array();
 
     // Add an object for the landing page.
-    if (!this._interfaceOnly) {
+    if (!this._interfaceOnly || (this._mode === 'standard')) {
       let aPage = new Page('landing', 'landing', sharedQuestions, { root: this._outPath });
       this._pages.push(aPage);
       if (this._landingPageOnly) { return; }
@@ -338,7 +346,7 @@ class _IDLBuilder extends Builder {
   }
 
   async build(overwrite = 'prompt') {
-    await this._writeBCD();
+    if (!this._noJson) { await this._writeBCD(); }
     if (this._jsonOnly) { return; }
     await this._initPages();
     let msg;
