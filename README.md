@@ -27,7 +27,7 @@ From within the mdn-helper direcory:
 
 Searches for APIs with filenames matching the provided string, prompts you to select a specific interface, builds a JSON file for the [Browser compatibility Database](https://github.com/mdn/browser-compat-data), and boilerplate pages formatted for publishing on MDN. 
 
-**Syntax:** `build idl _searchString_ -- [(-i | --interactive)] [(-j | --jsonOnly)]`
+**Syntax:** `build idl _searchString_ -- [(-i | --interactive)] [(-b | --bcdOnly)]`
 
 For detailed instructions, see [Building MDN Pages](/help/BUILDING-PAGES.md).
 

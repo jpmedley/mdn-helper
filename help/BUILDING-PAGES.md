@@ -46,9 +46,9 @@ As described above, the `build` command creates browser compatibility data (BCD)
 
 Because compatibility data is required for every web platform feature, documenting new features on MDN often requires submitting to the [Browser compatibility Database](https://github.com/mdn/browser-compat-data). The `build` commmand can create just a BCD file. 
 
-Do this with either the `-j` or `--jsonOnly` flag. For example:
+Do this with either the `-b` or `--bcdOnly` flag. For example:
 
-`npm run build idl clipboard -- -j`
+`npm run build idl clipboard -- -b`
 
 ## Documenting New Features
 
