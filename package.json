@@ -11,6 +11,7 @@
     "config": "node app_Config.js",
     "css": "node app_Manual.js css",
     "find": "node app_Finder.js",
+    "fi": "node app_Finder.js idl",
     "header": "node app_Manual.js header",
     "help": "node app_Help.js",
     "interface": "node app_Manual.js interface",

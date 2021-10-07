@@ -38,7 +38,7 @@ function downloadPopularities() {
 
 function isUpdateNeeded() {
   const now = new Date();
-  const lastUpdate = this._getLastUpdate();
+  const lastUpdate = _getLastUpdate();
   const actualInterval = now - lastUpdate;
   const updateInterval = config.get('Application.update');
   let updateNow = false;
