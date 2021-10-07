@@ -15,8 +15,11 @@
     "help": "node app_Help.js",
     "interface": "node app_Manual.js interface",
     "report": "node app_Burner.js",
+    "show-versions": "node app_UpdateData.js show",
+    "sv": "node app_UpdateData.js show",
     "update": "node app_updateData.js",
     "update-data": "node app_UpdateData.js",
+    "ud": "node app_UpdateData.js",
     "reportinglists": "node app_Burner.js chrome -w",
     "show-reportinglists": "ls reportinglists"
   },

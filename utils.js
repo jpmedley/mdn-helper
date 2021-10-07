@@ -192,9 +192,9 @@ function _getIDLFile(filePath, options = { "clean": false }) {
   return fileContents;
 }
 
-function _getFile(filePath) {
-  filePath = path.join(__dirname, filePath);
-  const buffer = fs.readFileSync(filePath);
+function _getFile(fileName) {
+  fileName = path.join(__dirname, fileName);
+  const buffer = fs.readFileSync(fileName);
   return buffer.toString();
 }
 

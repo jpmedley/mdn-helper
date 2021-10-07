@@ -20,7 +20,8 @@ const { printWelcome } = require('./utils.js');
 const updateData = require('./updateData.js');
 
 printWelcome();
-const updated = updateData.updateNow(process.argv);
-if (!updated) {
-  console.log('No data update is currently needed.');
+if (process.argv[2] == 'show') {
+  updateData.showVersions();
+} else {
+  updateData.updateNow(process.argv);
 }

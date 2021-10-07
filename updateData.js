@@ -22,6 +22,7 @@ const tar = require('tar');
 const config = require('config');
 const utils = require('./utils.js');
 
+const DEFAULT_UPDATE = "Tue Jan 22 1019 15:36:25 GMT-0500 (Eastern Standard Time)";
 const IDL_ZIP_NANE = 'renderer.tar.gz';
 const IDL_ZIP = `https://chromium.googlesource.com/chromium/src/+archive/HEAD/third_party/blink/${IDL_ZIP_NANE}`;
 const IDL_DIR = `${__dirname}/idl/`;
@@ -37,15 +38,7 @@ function downloadPopularities() {
 
 function isUpdateNeeded() {
   const now = new Date();
-  const lastUpdate = (() => {
-    let lu;
-    if (fs.existsSync(UPDATE_FILE)) {
-      lu = fs.readFileSync(UPDATE_FILE).toString();
-    } else {
-      lu = "Tue Jan 22 1019 15:36:25 GMT-0500 (Eastern Standard Time)";
-    }
-    return new Date(lu);
-  })();
+  const lastUpdate = this._getLastUpdate();
   const actualInterval = now - lastUpdate;
   const updateInterval = config.get('Application.update');
   let updateNow = false;
@@ -61,6 +54,33 @@ function isUpdateNeeded() {
       break;
   }
   return updateNow;
+}
+
+function showVersions() {
+  const idlDate = _getLastUpdate();
+  let msg;
+  if (idlDate !== DEFAULT_UPDATE) {
+    msg = `\nIDL updated on:`;
+    msg += `\n\t${idlDate}`;
+  } else {
+    msg = `\nThere's no record of a recent IDL update. Please run:`;
+    msg += `\n\tnpm run updatedata`;
+  }
+  utils.sendUserOutput(msg);
+
+  const packageJson = utils.getFile('package.json');
+  const fileLines = packageJson.split('\n');
+  const bcdLine = fileLines.find((l) => {
+    return l.includes("@mdn/browser-compat-data");
+  });
+  if (bcdLine) {
+    msg = `\nBrowser Compatibility Data version:`;
+    msg += `\n${bcdLine}`;
+  } else {
+    msg = `BCD version number not found.`
+  }
+  utils.sendUserOutput(msg);
+  utils.sendUserOutput(' ');
 }
 
 function update(args, source = IDL_ZIP, destination = IDL_DIR) {
@@ -84,6 +104,7 @@ function updateNow(args, source = IDL_ZIP, destination = IDL_DIR) {
     fs.writeFileSync(UPDATE_FILE, (new Date().toString()));
     console.log('Data update complete.\n');
   });
+  showVersions();
   return true;
 }
 
@@ -122,8 +143,19 @@ async function _downloadIDL(source, destination) {
   utils.deleteFile(`${destination}${IDL_ZIP_NANE}`);
 }
 
+function _getLastUpdate() {
+  let lu;
+  if (fs.existsSync(UPDATE_FILE)) {
+    lu = fs.readFileSync(UPDATE_FILE).toString();
+  } else {
+    lu = DEFAULT_UPDATE;
+  }
+  return new Date(lu);
+}
+
 module.exports.downloadPopularities = downloadPopularities;
 module.exports.isUpdateNeeded = isUpdateNeeded;
+module.exports.showVersions = showVersions;
 module.exports.update = update;
 module.exports.updateForAdmin = updateForAdmin;
 module.exports.updateNow = updateNow;
