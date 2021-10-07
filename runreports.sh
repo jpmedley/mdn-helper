@@ -23,7 +23,7 @@ npm run burn bcd -- -c javascript -b all
 npm run burn bcd -- -c mathml -b all
 npm run burn bcd -- -c webextensions -b all
 
-npm run burn chrome -- -f -o
+npm run burn chrome -- -a -f -o
 npm run burn chrome -- -i
 npm run burn chrome -- -i -f -o
 npm run burn chrome -- -c
