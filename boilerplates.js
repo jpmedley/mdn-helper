@@ -50,13 +50,13 @@ class _BoilerplateBuilder {
   _buildOriginTrials() {
     let msg = `Now building interface boilerplates for all found Chrome origin trials.\n`;
     msg += `This may take a minute or two.`;
-    let outPath = utils.resolveHome(config.get('Application.boilerplatesDirectory'));
+    let outPath = utils.resolveHome(config.get('Application.otDraftsDirectory'));
     console.log(msg);
     let builderOptions = {
       interfaceOnly: true,
       mode: 'batch',
       withholdBCD: true,
-      outPath: path.join(outPath, 'origin-trial'),
+      outPath: outPath,
     }
     console.log(builderOptions.outPath);
     for (let i = 0; i < this._interfaces.length; i++) {

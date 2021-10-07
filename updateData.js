@@ -30,31 +30,12 @@ const ONE_DAY = 86400000;
 const ONE_WEEK = 604800000;
 const UPDATE_FILE = `${__dirname}/.update`;
 
-function _update(args, source = IDL_ZIP, destination = IDL_DIR) {
-  if (_isUpdateNeeded()) {
-    return _updateNow(args, source, destination);
-  } else {
-    return false;
-  }
+function downloadPopularities() {
+  console.log('\nDownloading latest popularities.json.\n');
+  shell.exec('curl https://raw.githubusercontent.com/mdn/content/main/files/popularities.json > popularities.json');
 }
 
-function _updateNow(args, source = IDL_ZIP, destination = IDL_DIR) {
-  utils.deleteUnemptyFolder(destination);
-  _downloadBCD();
-  _downloadIDL(source, destination)
-  .then(() => {
-    fs.writeFileSync(UPDATE_FILE, (new Date().toString()));
-    console.log('Data update complete.\n');
-  });
-  return true;
-}
-
-function _updateForAdmin(args, source = IDL_ZIP, destination = IDL_DIR) {
-  _updateNow(args, source, destination);
-  _downloadPopularities();
-}
-
-function _isUpdateNeeded() {
+function isUpdateNeeded() {
   const now = new Date();
   const lastUpdate = (() => {
     let lu;
@@ -80,6 +61,37 @@ function _isUpdateNeeded() {
       break;
   }
   return updateNow;
+}
+
+function update(args, source = IDL_ZIP, destination = IDL_DIR) {
+  if (isUpdateNeeded()) {
+    return updateNow(args, source, destination);
+  } else {
+    return false;
+  }
+}
+
+function updateForAdmin(args, source = IDL_ZIP, destination = IDL_DIR) {
+  updateNow(args, source, destination);
+  downloadPopularities();
+}
+
+function updateNow(args, source = IDL_ZIP, destination = IDL_DIR) {
+  utils.deleteUnemptyFolder(destination);
+  _downloadBCD();
+  _downloadIDL(source, destination)
+  .then(() => {
+    fs.writeFileSync(UPDATE_FILE, (new Date().toString()));
+    console.log('Data update complete.\n');
+  });
+  return true;
+}
+
+function _downloadBCD() {
+  console.log('\nInstalling latest browser compatibility data.\n');
+  shell.exec('npm install @mdn/browser-compat-data@latest');
+  const bcdDownload = `curl https://raw.githubusercontent.com/mdn/browser-compat-data/main/schemas/compat-data.schema.json > ${__dirname}/test/files/compat-data.schema.json`;
+  shell.exec(bcdDownload);
 }
 
 async function _downloadIDL(source, destination) {
@@ -110,20 +122,8 @@ async function _downloadIDL(source, destination) {
   utils.deleteFile(`${destination}${IDL_ZIP_NANE}`);
 }
 
-function _downloadBCD() {
-  console.log('\nInstalling latest browser compatibility data.\n');
-  shell.exec('npm install @mdn/browser-compat-data@latest');
-  const bcdDownload = `curl https://raw.githubusercontent.com/mdn/browser-compat-data/main/schemas/compat-data.schema.json > ${__dirname}/test/files/compat-data.schema.json`;
-  shell.exec(bcdDownload);
-}
-
-function _downloadPopularities() {
-  console.log('\nDownloading latest popularities.json.\n');
-  shell.exec('curl https://raw.githubusercontent.com/mdn/content/main/files/popularities.json > popularities.json');
-}
-
-module.exports.downloadPopularities = _downloadPopularities;
-module.exports.isUpdateNeeded = _isUpdateNeeded;
-module.exports.update = _update;
-module.exports.updateForAdmin = _updateForAdmin;
-module.exports.updateNow = _updateNow;
+module.exports.downloadPopularities = downloadPopularities;
+module.exports.isUpdateNeeded = isUpdateNeeded;
+module.exports.update = update;
+module.exports.updateForAdmin = updateForAdmin;
+module.exports.updateNow = updateNow;

@@ -6,6 +6,7 @@
     "logLevel": "error",
     "logOutput": ["file"],
     "loggingDirectory": "logs/",
+    "otDraftsDirectory": "$HOME/Documents/content/ot-drafts/drafts",
     "outputDirectory": "$HOME/Desktop/out/",
     "questionsFile": "standard-questions.json",
     "test": false,
