@@ -123,7 +123,6 @@ class _Page {
     let outDir;
     let outPath;
     let msg;
-    console.log(this.type);
     switch (this.type) {
       case 'landing':
         outDir = this.sharedQuestions.name.toLowerCase();
@@ -134,7 +133,6 @@ class _Page {
         break;
       default:
         outDir = this.sharedQuestions.interface.toLowerCase();
-        console.log(outDir);
         outDir = path.join(outDir, `${this.name.toLowerCase()}`);
         break;
     }
