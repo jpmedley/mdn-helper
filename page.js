@@ -115,7 +115,7 @@ class _Page {
       // Backward compatibility
       root = utils.makeOutputFolder(this.sharedQuestions.name);
     }
-    return root.toLowerCase();
+    return root;
   }
 
   async write(overwrite = 'prompt') {
@@ -123,16 +123,18 @@ class _Page {
     let outDir;
     let outPath;
     let msg;
+    console.log(this.type);
     switch (this.type) {
       case 'landing':
-        outDir = this.sharedQuestions.name;
-        outDir = `${outDir}_${this.type}`.toLowerCase();
+        outDir = this.sharedQuestions.name.toLowerCase();
+        outDir = `${outDir}_${this.type}`;
         break;
       case 'interface':
         outDir = `${this.name}`.toLowerCase();
         break;
       default:
-        outDir = this.sharedQuestions.interface;
+        outDir = this.sharedQuestions.interface.toLowerCase();
+        console.log(outDir);
         outDir = path.join(outDir, `${this.name.toLowerCase()}`);
         break;
     }
