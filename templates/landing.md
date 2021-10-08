@@ -12,13 +12,11 @@ browser-compat: api.[[shared:interface]]
 
 [[abstract]]
 
-## [[shared:formalAPIName]] Concepts and Usage
+## Concepts and Usage
 
 In this section, describe the API's purpose and usage cases in a bit more detail — why was a need recognized for it? What problems does it solve? What concepts does it involve? How do you use it, from a high level perspective?
 
-Don't go into a lot of detail in this section, and don't include code examples. If there are a lot of concepts to explain to explain around this API, you should explain them in a separate "Concepts..." article (e.g. [WebVR concepts](/en-US/docs/Web/API/WebVR_API/Concepts)). For a practical usage guide with code examples, you should include a "Usage..." article in your API docs (e.g. [Using the WebVR API](/en-US/docs/Web/API/WebVR_API/Using_the_WebVR_API)).
-
-To help improve content discoverability and {{Glossary("SEO")}}, keep the following tips in mind:
+Don't go into a lot of detail in this section, and don't include code examples. If there are a lot of concepts to explain round this API, you should explain them in a separate "Concepts..." article (e.g. [WebVR concepts](https://developer.mozilla.org/en-US/docs/Web/API/WebVR_API/Concepts)). For a practical usage guide with code examples, you should include a "Usage..." article in your API docs (e.g. [Using the WebVR API](/en-US/docs/Web/API/WebVR_API/Using_the_WebVR_API)).
 
 ## [[shared:formalAPIName]] Interfaces
 
@@ -41,13 +39,5 @@ And/or include a list of links to useful code samples that live elsewhere:
 *   x
 *   y
 *   z
-
-## Specifications
-
-{{Specifications}}
-
-## Browser compatibility
-
-{{Compat}}
 
 [[see-also]]
