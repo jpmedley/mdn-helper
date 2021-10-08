@@ -178,6 +178,7 @@ class IDLFinder {
   async findAndShow() {
     this._printInstructions();
     let metaFile = await this._findForUI();
+    let show = true;
     if (this._ping) {
       let ids = [];
       const fp = new FileProcessor(metaFile.path);
@@ -189,12 +190,15 @@ class IDLFinder {
         utils.sendUserOutput('Checking for existing MDN pages. This may take a few minutes.\n');
         const pingRecords = await id.ping(false);
         this._showPingResults(pingRecords);
-        await utils.pause();
+        const msg = 'Display IDL file?';
+        show = await utils.confirm(msg);
       }
     }
-    this._show(metaFile);
+    if (show) {
+      utils.sendUserOutput();
+      this._show(metaFile);
+    }
   }
-
 
   _showPingResults(pingRecords) {
     let lines = [];

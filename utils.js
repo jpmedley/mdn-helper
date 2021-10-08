@@ -273,7 +273,7 @@ function _resolveHome(path) {
   return path.replace('$HOME',homedir());
 }
 
-function _sendUserOutput(msg){
+function _sendUserOutput(msg = ''){
   switch (global.__commandName) {
     case 'BoilerplateBuilder':
     case 'test':
