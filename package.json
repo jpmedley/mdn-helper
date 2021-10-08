@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "boilerplates": "node app_BoilerplateBuilder.js",
+    "bp": "node app_BoilerplateBuilder.js",
     "burn": "node app_Burner.js",
+    "bi": "node app_Builder.js",
     "build": "node app_Builder.js",
     "clean": "node app_Cleaner.js",
     "config": "node app_Config.js",
