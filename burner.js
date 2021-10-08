@@ -145,23 +145,27 @@ class Burner {
   }
 
   _getOutFileName() {
-    this._outFileName = `${this._outputPath}${this._type}`;
-    if (this._category) {
-      this._outFileName += `-${this._category}`;
+    if (this._reportName) {
+      this._outFileName = `${this._outputPath}${this._reportName}`;
+    } else {
+      this._outFileName = `${this._outputPath}${this._type}`;
+      if (this._category) {
+        this._outFileName += `-${this._category}`;
+      }
+      if (this._reportingList) {
+        this._outFileName += `-${this._reportingListName}`;
+      }
+      if (this._interfacesOnly) {
+        this._outFileName += `-interfaces`;
+      }
+      if (this._includeFlags && this._includeOriginTrials) {
+        this._outFileName += `-with-flags`;
+      }
+      if (this._childrenOnly) {
+        this._outFileName += `-children`;
+      }
     }
-    if (this._reportingList) {
-      this._outFileName += `-${this._reportingListName}`;
-    }
-    if (this._interfacesOnly) {
-      this._outFileName += `-interfaces`;
-    }
-    if (this._includeFlags && this._includeOriginTrials) {
-      this._outFileName += `-with-flags`;
-    }
-    if (this._childrenOnly) {
-      this._outFileName += `-children`;
-    }
-    this._outFileName += `-burnlist-${utils.today()}.csv`;
+    this._outFileName += `-report-${utils.today()}.csv`;
   }
 
   _loadReportingList() {
@@ -430,6 +434,7 @@ class ChromeBurner extends Burner {
     this._includeTestFlags = false;
     this._interfacesOnly = options._interfacesOnly ? options._interfacesOnly : false;
     this._childrenOnly = options._childrenOnly ? options._childrenOnly : false;
+    this._reportName;
     this._type = 'chrome';
   }
 
@@ -589,6 +594,12 @@ class ChromeBurner extends Burner {
     this._includeAll = args.some(arg => {
       return (arg.includes('-a') || arg.includes('--all'));
     });
+    this._reportName = args.find((arg, i, args) => {
+      if (i == 0) { return; }
+      if (args[i-1].includes('-n') || args[i-1].includes('--name')) {
+        return arg;
+      }
+    })
     if (this._childrenOnly && this._interfacesOnly) {
       const msg = 'The --children-only (-c) and --interfaces-only (-i) flags cannot be used together.';
       throw new Error(msg);
