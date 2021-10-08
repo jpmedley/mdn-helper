@@ -47,7 +47,7 @@ class _BoilerplateBuilder {
     }
   }
 
-  _buildOriginTrials() {
+  async _buildOriginTrials() {
     let msg = `Now building interface boilerplates for all found Chrome origin trials.\n`;
     msg += `This may take a minute or two.`;
     let outPath = utils.resolveHome(config.get('Application.otDraftsDirectory'));
@@ -58,20 +58,19 @@ class _BoilerplateBuilder {
       withholdBCD: true,
       outPath: outPath,
     }
-    console.log(builderOptions.outPath);
     for (let i = 0; i < this._interfaces.length; i++) {
       if (!this._interfaces[i].originTrial) { continue; }
       builderOptions.interfaceData = this._interfaces[i];
       const builder = new IDLBuilder(builderOptions);
-      builder.build('never');
+      await builder.build('never');
     }
     msg = `\nBoilerplates written to ${builderOptions.outPath}.`
     console.log(msg);
   }
 
-  _buildStable() {
+  async _buildStable() {
     let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.\n`;
-    msg += `This may take a minute or two.`;
+    msg += `This may take a few minutes.`;
     console.log(msg);
     let builderOptions = {
       mode: 'batch',
@@ -83,7 +82,7 @@ class _BoilerplateBuilder {
       if (this._interfaces[i].mixin) { continue; }
       builderOptions.interfaceData = this._interfaces[i];
       const builder = new IDLBuilder(builderOptions);
-      builder.build('never');
+      await builder.build('never');
     }
     msg = `\nBoilerplates written to ${builderOptions.outPath}.`
     console.log(msg);
