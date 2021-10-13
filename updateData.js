@@ -104,6 +104,7 @@ function updateNow(args, source = IDL_ZIP, destination = IDL_DIR) {
     fs.writeFileSync(UPDATE_FILE, (new Date().toString()));
     console.log('Data update complete.\n');
   });
+  console.log("-".repeat(80));
   showVersions();
   return true;
 }
