@@ -14,5 +14,5 @@
 
 #!/bin/sh
 
-npm run buildboilerplates stable
-npm run buildboilerplates origintrials
+npm run boilerplates stable
+npm run boilerplates origintrials
