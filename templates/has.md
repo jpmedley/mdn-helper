@@ -17,7 +17,7 @@ The **`[[shared:interface]].has()`** method returns a boolean indicating whether
 ## Syntax
 
 ```js
-[[shared:interface]].has(key);
+has(key);
 ```
 
 ### Parameters

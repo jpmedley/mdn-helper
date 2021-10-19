@@ -17,8 +17,8 @@ The **`[[shared:interface]].forEach()`** method executes a provided function onc
 ## Syntax
 
 ```js
-[[shared:interface]].forEach(callback);
-[[shared:interface]].forEach(callback, thisArg);
+forEach(callback);
+forEach(callback, thisArg);
 ```
 
 ### Parameters

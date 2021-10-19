@@ -17,7 +17,7 @@ The **`[[shared:interface]].clear()`** method removes all elements of the [[shar
 ## Syntax
 
 ```js
-[[shared:interface]].clear();
+clear();
 ```
 
 ### Parameters

@@ -16,7 +16,7 @@ The **`[[shared:interface]].set()`** method adds the provided key/value pair to 
 
 ## Syntax
 
-<pre class="brush: js">[[shared:interface]].set(key, value);</pre>
+set(key, value);
 
 ### Parameters
 

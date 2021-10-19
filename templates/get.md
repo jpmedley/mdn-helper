@@ -17,7 +17,7 @@ The **`[[shared:interface]].get()`** method returns the element with the given k
 ## Syntax
 
 ```js
-[[shared:interface]].get(key);
+get(key);
 ```
 
 ### Parameters

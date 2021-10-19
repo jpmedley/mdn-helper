@@ -17,7 +17,7 @@ The **`[[shared:interface]].keys()`** method returns a new `**Array Iterator**` 
 ## Syntax
 
 ```js
-[[shared:interface]].keys();
+keys();
 ```
 
 ### Parameters

@@ -17,7 +17,7 @@ The **`[[shared:interface]].delete()`** method removes the element with the give
 ## Syntax
 
 ```js
-[[shared:interface]].delete(key);
+delete(key);
 ```
 
 ### Parameters

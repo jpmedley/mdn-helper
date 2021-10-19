@@ -17,7 +17,7 @@ The **`[[shared:interface]].size()`** method returns the number of elements in t
 ## Syntax
 
 ```js
-[[shared:interface]].size();
+size();
 ```
 
 ### Parameters
