@@ -25,8 +25,10 @@ const { homedir } = require('os');
 const JSON5 = require('json5');
 const path = require('path');
 
+let OT_FALSENEGATIVES = config.get('Application.origintrial');
 let EXCLUSIONS = config.get('Application.deprecated');
 EXCLUSIONS.push(...config.get('Application.muted'));
+EXCLUSIONS.push(...OT_FALSENEGATIVES);
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
 const TEMPLATES = `${__dirname}/templates/`;
@@ -226,6 +228,13 @@ function _isExcluded(apiName) {
   return false;
 }
 
+function _isOTFalseNegative(apiName){
+  if (OT_FALSENEGATIVES) {
+    return OT_FALSENEGATIVES.includes(apiName)
+  }
+  return null;
+}
+
 function _getWireframes() {
   const json = this._getJSON(TEMPLATES + QUESTIONS_FILE);
   return json.templates;
@@ -309,7 +318,6 @@ function _today() {
 }
 
 module.exports.APP_ROOT = APP_ROOT;
-// module.exports.OUT = OUT;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
 module.exports.confirmPath = _confirmPath;
@@ -329,6 +337,7 @@ module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
 module.exports.isExcluded = _isExcluded;
+module.exports.isOTFalseNegative = _isOTFalseNegative;
 module.exports.makeFolder = _makeFolder;
 module.exports.makeOutputFolder = _makeOutputFolder;
 module.exports.pause = _pause;

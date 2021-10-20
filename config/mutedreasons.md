@@ -4,7 +4,7 @@ This file explains the resons for items included in the `muted` list in `config.
 
 ## CSSContainerRule
 
-The feature has not shipped, but it's status vis a vis source files is not resolvable. (19/10/21)
+The feature has not shipped, but it's status vis a vis source files is not resolvable. It's status in Chromium is currently 'Proposed'. (20/10/21)
 
 ## FileSystemFileHandle.createSyncAccessHandle
 

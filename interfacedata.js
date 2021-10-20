@@ -177,8 +177,13 @@ class IDLData {
 
   get originTrial() {
     if (this._originTrial) { return this._originTrial}
-    this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
-    return this._originTrial;
+    // Sometimes OT status is not represented correctly in the source files, so 
+    //   check the curated list.
+    this._originTrial = utils.isOTFalseNegative(this.name);
+    if (!this._originTrial) {
+      this._originTrial = this._getRuntimeEnabledValue("origintrial", this._getInterfaceExtendedAttributes());
+      return this._originTrial;
+    }
   }
 
   set originTrial(originTrial) {
@@ -367,6 +372,7 @@ class InterfaceData extends IDLData {
   }
 
   _getRuntimeEnabledValue(expectedStatus, fromAttributes) {
+
     if (!fromAttributes) { return false; }
     const flagName = fromAttributes.find(ea => {
       return ea.includes("RuntimeEnabled");

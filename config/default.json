@@ -23,7 +23,9 @@
       "FileSystemFileHandle.createSyncAccessHandle",
       "FontManager",
       "FontMetadata",
-      "FontTableMap",
+      "FontTableMap"
+    ],
+    "origintrial": [
       "GPU",
       "GPUAdapter",
       "GPUBindGroup",
