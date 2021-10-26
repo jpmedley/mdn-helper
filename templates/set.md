@@ -2,12 +2,9 @@
 title: [[shared:interface]].set()
 slug: Web/API/[[shared:interface]]/set
 tags:
-  - API
   - set
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].set
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

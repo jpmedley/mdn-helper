@@ -2,12 +2,9 @@
 title: [[shared:interface]].clear()
 slug: Web/API/[[shared:interface]]/clear
 tags:
-  - API
   - clear
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].clear
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

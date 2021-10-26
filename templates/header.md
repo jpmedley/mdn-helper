@@ -2,7 +2,6 @@
 title: [[shared:header]]
 slug: Web/HTTP/Headers/[[shared:header]]
 tags:
-  - [[shared:header]]
   - HTTP
   - Reference
 browser-compat: http.headers.[[shared:header]]

@@ -2,11 +2,8 @@
 title: [[shared:interface]].[[method]]()
 slug: Web/API/[[shared:interface]]/[[method]]
 tags:
-  - API
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].[[method]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

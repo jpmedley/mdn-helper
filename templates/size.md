@@ -2,12 +2,9 @@
 title: [[shared:interface]].size()
 slug: Web/API/[[shared:interface]]/size
 tags:
-  - API
   - size
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].size
 ---
 {{draft}}[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

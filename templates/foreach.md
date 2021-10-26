@@ -2,12 +2,9 @@
 title: [[shared:interface]].forEach()
 slug: Web/API/[[shared:interface]]/forEach
 tags:
-  - API
   - forEach
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].forEach
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

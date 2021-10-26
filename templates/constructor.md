@@ -2,10 +2,8 @@
 title: [[shared:interface]].[[shared:interface]]()
 slug: Web/API/[[shared:interface]]/[[shared:interface]]
 tags:
-  - API
   - Constructor
   - Reference
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].[[shared:interface]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

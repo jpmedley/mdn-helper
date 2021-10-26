@@ -2,11 +2,8 @@
 title: [[shared:interface]].[[EventHandler]]
 slug: Web/API/[[shared:interface]]/[[EventHandler]]
 tags:
-  - API
   - Property
   - Reference
-  - [[EventHandler]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].[[EventHandler]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

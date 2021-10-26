@@ -2,11 +2,8 @@
 title: [[shared:interface]].[[property]]
 slug: Web/API/[[shared:interface]]/[[property]]
 tags:
-  - API
   - Property
   - Reference
-  - [[property]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].[[property]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

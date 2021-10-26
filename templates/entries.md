@@ -2,12 +2,8 @@
 title: [[shared:interface]].entries()
 slug: Web/API/[[shared:interface]]/entries
 tags:
-  - API
-  - entries
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].entries
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

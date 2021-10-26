@@ -2,10 +2,8 @@
 title: [[shared:formalAPIName]]
 slug: Web/API/[[slug]]
 tags:
-  - API
-  - [[shared:formalAPIName]]
   - Overview
-  - Reference[[shared:experimental]]
+  - Reference
 browser-compat: api.[[shared:interface]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

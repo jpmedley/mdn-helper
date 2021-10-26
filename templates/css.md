@@ -4,8 +4,6 @@ slug: Web/CSS/[[selector]]
 tags:
   - CSS
   - Reference
-  - [[selector]]
-  - 'recipe:css-property'
 browser-compat: css.selectors.[[selector]]
 ---
 {{CSSRef}}

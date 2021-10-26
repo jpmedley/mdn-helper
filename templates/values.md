@@ -2,12 +2,9 @@
 title: [[shared:interface]].values()
 slug: Web/API/[[shared:interface]]/values
 tags:
-  - API
   - values
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: [[shared:interface]].values
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

@@ -2,12 +2,9 @@
 title: [[shared:interface]].keys()
 slug: Web/API/[[shared:interface]]/keys
 tags:
-  - API
   - keys
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].keys
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

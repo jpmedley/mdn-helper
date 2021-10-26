@@ -2,12 +2,9 @@
 title: [[shared:interface]].get()
 slug: Web/API/[[shared:interface]]/get
 tags:
-  - API
   - get
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].get
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}

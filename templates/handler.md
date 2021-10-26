@@ -2,12 +2,9 @@
 title: [[shared:interface]].[[handler]]()
 slug: Web/API/[[shared:interface]]/[[handler]]
 tags:
-  - API
   - [[handler]]
   - Method
   - Reference
-  - [[method]]
-  - [[shared:interface]][[shared:experimental]]
 browser-compat: api.[[shared:interface]].[[handler]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
