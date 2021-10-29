@@ -23,7 +23,8 @@
       "FileSystemFileHandle.createSyncAccessHandle",
       "FontManager",
       "FontMetadata",
-      "FontTableMap"
+      "FontTableMap",
+      "LaunchQueue"
     ],
     "origintrial": [
       "GPU",

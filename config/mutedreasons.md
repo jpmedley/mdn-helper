@@ -26,6 +26,10 @@ The feature has not shipped, but it's status vis a vis source files is not resol
 
 Refers to any interface beginning with GPU. The feature has not shipped, but it's status vis a vis source files is not resolvable. (19/10/21)
 
+## LaunchQueue
+
+The feature has not shipped, but it's status vis a vis source files is not resolvable. (29/10/21)
+
 ## NativeIOFileManager
 
 The feature has not shipped, but it's status vis a vis source files is not resolvable. (19/10/21)
