@@ -13,7 +13,7 @@ The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interfa
 ## Syntax
 
 ```js
-[[method]]()
+[[method]]();
 ```
 
 ### Parameters
