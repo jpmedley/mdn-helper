@@ -125,7 +125,33 @@ class IDLFinder {
       this._ping = args.some(arg => {
         return (arg.includes('-p') || (arg.includes('--ping')));
       });
+      this._dump = args.some(arg => {
+        return (arg.includes('-d') || (arg.includes('--dump-names')));
+      });
     }
+  }
+
+  async _findForListing() {
+    const matches = this._findInterfaces(this._searchString);
+    if (matches.length == 0) {
+      utils.sendUserOutput(NOTHING_FOUND);
+      if (!this._includeFlags && !this._includeOriginTrials) {
+        utils.sendUserOutput(TRY_RUNNING);
+      }
+      process.exit();
+    }
+    let names = [];
+    for (let m of matches) {
+      let steps = m.path.split('/');
+      const type = ((m) => {
+        if (m.type === 'includes') { return 'mixin'; }
+        return m.type;
+      })(m);
+      names.push(`"${m.keys[0]}",`);
+    }
+    names = names.sort();
+    let nameList = names.join('\n');
+    utils.sendUserOutput(nameList);
   }
 
   async _findForUI() {
@@ -176,6 +202,14 @@ class IDLFinder {
 
 
   async findAndShow() {
+    if (this._dump) {
+      this._findForListing();
+    } else {
+      await this._select();
+    }
+  }
+
+  async _select() {
     this._printInstructions();
     let metaFile = await this._findForUI();
     let show = true;
