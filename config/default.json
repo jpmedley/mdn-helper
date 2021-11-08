@@ -106,6 +106,7 @@
       "MojoInterfaceRequestEVent",
       "MojoWatcher",
       "MouseEvent.region",
+      "MouseWheelEvent",
       "Plugin",
       "VoidCallback",
       "WebGL2ComputeRenderingContextBase",

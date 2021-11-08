@@ -13,7 +13,7 @@ The current version only handles JavaScript APIs.
 
 1. Change to the `mdn-helper` directory and run `npm install`.
 
-1. Enter `npm run update-data` to download data files needed for the `build`, `find`, and `report` commands. This script will run automatically at startup approximately every twenty-four hours.
+1. Enter `npm run update-data` to download data files needed for the `build`, `find`, and `report` commands. This script will run automatically on first use if it has been more than twenty-four hours since its last run.
 
 ## Usage
 
