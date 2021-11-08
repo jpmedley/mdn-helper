@@ -285,6 +285,7 @@ class InterfaceData extends IDLData {
     this._constructors = [];
     this._deleters = [];
     this._eventHandlers = [];
+    this._events = [];
     this._exposed = null;
     this._extendedAttributes = null;
     this._getters = [];
@@ -513,6 +514,8 @@ class InterfaceData extends IDLData {
       let pieces = workingString.split(" ");
       newEventHandler.name = pieces[2].trim();
       this._eventHandlers.push(JSON.parse(JSON.stringify(newEventHandler)));
+      const event = newEventHandler.name.split('on')[1];
+      this._events.push(event);
     });
   }
 
