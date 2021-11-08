@@ -1,7 +1,7 @@
 {
   "Application": {
     "bcdCommitDirectory": "$HOME/Desktop/out/",
-    "boilerplatesDirectory": "$HOME/Documents/content/mdn-boilerplates/",
+    "boilerplatesDirectory": "$HOME/Documents/content/mdn-boilerplates/api",
     "help": "VERBOSE",
     "logLevel": "error",
     "logOutput": ["file"],

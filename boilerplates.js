@@ -74,7 +74,7 @@ class _BoilerplateBuilder {
     console.log(msg);
     let builderOptions = {
       mode: 'batch',
-      outPath: path.join(config.get('Application.boilerplatesDirectory'), 'origin-trial'),
+      outPath: utils.resolveHome(config.get('Application.boilerplatesDirectory'))
     }
     for (let i = 0; i < this._interfaces.length; i++) {
       if (this._interfaces[i].flagged) { continue; }
