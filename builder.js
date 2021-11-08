@@ -18,7 +18,7 @@ const { bcd } = require('./bcd.js');
 const { BCDBuilder } = require('./bcdbuilder.js');
 const { BuilderError } = require('./errors.js');
 const { help } = require('./help/help.js');
-const { Page } = require('./page.js');
+const { pageFactory } = require('./page.js');
 const path = require('path');
 const { Questions } = require('./questions.js');
 const utils = require('./utils.js');
@@ -233,7 +233,11 @@ class _CLIBuilder extends Builder {
     args.forEach((arg, index, args) => {
       if ((arg.trim() === 'w') || arg.trim() === 'writeOnly') { return; }
       let members = arg.split(',');
-      let aPage = new Page(members[1], members[0], sharedQuestions, { root: this._outPath });
+      const pageOptions = {
+        interfaceData: this._interfaceData,
+        root: this._outPath
+      }
+      const aPage = pageFactory(members[1], members[0], sharedQuestions, pageOptions);
       this._pages.push(aPage);
     });
   }
@@ -282,6 +286,12 @@ class _IDLBuilder extends Builder {
     }
   }
 
+  _includeLandingPage() {
+    if (this._mode === 'batch') { return false; }
+    if (this._mode === 'standard') { return true; } 
+    return !this._interfaceOnly;
+  }
+
   async _initPages() {
     // Add space for interface or header name to sharedQuestions.
     const introMessage = help.intro + (`-`.repeat(80)) + `\nSHARED QUESTIONS\n` + (`-`.repeat(80)) + `\n` + help.shared;
@@ -299,8 +309,12 @@ class _IDLBuilder extends Builder {
     this._pages = new Array();
 
     // Add an object for the landing page.
-    if (!this._interfaceOnly || (this._mode === 'standard')) {
-      let aPage = new Page('landing', 'landing', sharedQuestions, { root: this._outPath });
+    if (this._includeLandingPage()) {
+      const pageOptions = {
+        interfaceData: this._interfaceData,
+        root: this._outPath
+      }
+      const aPage = pageFactory('landing', 'landing', sharedQuestions, pageOptions);
       this._pages.push(aPage);
       if (this._landingPageOnly) { return; }
     }
@@ -313,7 +327,11 @@ class _IDLBuilder extends Builder {
       if (page.mdn_exists) {
         skippingPages.push([page.type, page.key]);
       } else {
-        const newPage = new Page(page.name, page.type, sharedQuestions, { root: this._outPath });
+        const pageOptions = {
+          interfaceData: this._interfaceData,
+          root: this._outPath
+        }
+        const newPage = pageFactory(page.name, page.type, sharedQuestions, pageOptions);
         this._pages.push(newPage);
       }
     });
@@ -361,7 +379,6 @@ class _IDLBuilder extends Builder {
       }
       await p.write(overwrite);;
     }
-    // msg = `\nMDN drafts were written to ${utils.getOutputDirectory()}${this._interfaceData.name}.`
     msg = `\nMDN drafts were written to ${this._outPath}${this._interfaceData.name}.`
     utils.sendUserOutput(msg);
   }

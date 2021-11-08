@@ -1,0 +1,2 @@
+- {{domxref('[[shared:interface]].[[property]]')}}
+  - : Returns // Replace with description of what this property returns.

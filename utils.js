@@ -221,6 +221,12 @@ function _getTemplate(name) {
   return buffer.toString();
 }
 
+function _haveTemplate(name) {
+  if (!name.endsWith(".md")) { name += ".md"; }
+  let templatePath = TEMPLATES + name;
+  return fs.existsSync(templatePath);
+}
+
 function _isExcluded(apiName) {
   if (USE_EXCLUSIONS) {
     return EXCLUSIONS.includes(apiName);
@@ -336,6 +342,7 @@ module.exports.getOutputDirectory = _getOutputDirectory;
 module.exports.getOutputFile = _getOutputFile;
 module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
+module.exports.haveTemplate = _haveTemplate;
 module.exports.isExcluded = _isExcluded;
 module.exports.isOTFalseNegative = _isOTFalseNegative;
 module.exports.makeFolder = _makeFolder;

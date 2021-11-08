@@ -14,15 +14,9 @@ The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPINam
 
 [[child-interfaces]] [[constructor]]
 
-## Properties
-
 [[properties]]
 
-### Event handlers
-
 [[eventHandlers]]
-
-## Methods
 
 [[methods]]
 

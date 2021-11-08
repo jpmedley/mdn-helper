@@ -22,34 +22,36 @@ const path = require('path');
 
 const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 
-class _Page {
+function pageFactory(name, type, sharedQuestions, options) {
+  if (type === 'includes') { type = 'interface'; }
+  if (!utils.haveTemplate(type)) {
+    const apiName = `${sharedQuestions.questions.interface.answer}.${name}`;
+    const msg = `Cannot find a template for page named ${apiName} with type ${type}.`;
+    throw new Error(msg, __filename, 26);
+  }
+  switch (type) {
+    case 'interface':
+      return new _InterfacePage(name, type, sharedQuestions, options);
+    default:
+      return new _Page(name, type, sharedQuestions, options);
+  }
+}
+
+class _PageBase {
   constructor(name, type, sharedQuestions, options) {
     this.name = name;
-    this.type = type;
+    this._type = type;
     this.sharedQuestions = sharedQuestions;
+    this._interfaceData = options.interfaceData
     this._outPath = this._resolveOutPath(options.root);
-
+    
     // The type and name if the interface are also a question.
     this.sharedQuestions.add(type, name);
-    let introMessage = `\nQuestions for the ${this.name} ${this.type} page\n` + (`-`.repeat(80)) + help[this.type] + '\n';
+    let introMessage = `\nQuestions for the ${this.name} ${this._type} page\n` + (`-`.repeat(80)) + help[this._type] + '\n';
     this.questions = new Questions(introMessage);
     this.questions.add(type, name);
-    const interfaceTypes = ['interface', 'includes'];
-    let templateType;
-    if (interfaceTypes.includes(this.type)) {
-      templateType = 'interface';
-    } else {
-      templateType = this.type.toLowerCase();
-    }
-    try {
-      this.contents = utils.getTemplate(templateType);
-    } catch (error) {
-      const apiName = `${sharedQuestions.questions.interface.answer}.${name}`
-      const msg = `Cannot find a template for page named ${apiName} with type ${type}.`
-      global.__logger.error(msg);
-      throw error;
-    }
 
+    this.contents = utils.getTemplate(type);
 
     const reg = RegExp(TOKEN_RE, 'g');
     let matches;
@@ -60,6 +62,18 @@ class _Page {
         this.questions.add(matches[1]);
       }
     }
+  }
+
+  _resolveOutPath(root) {
+    if (!root) {
+      // Backward compatibility
+      root = utils.makeOutputFolder(this.sharedQuestions.name);
+    }
+    return root;
+  }
+
+  get type() {
+    return this._type;
   }
 
   async askQuestions(extraMessage) {
@@ -110,23 +124,15 @@ class _Page {
     }
   }
 
-  _resolveOutPath(root) {
-    if (!root) {
-      // Backward compatibility
-      root = utils.makeOutputFolder(this.sharedQuestions.name);
-    }
-    return root;
-  }
-
   async write(overwrite = 'prompt') {
     this.render();
     let outDir;
     let outPath;
     let msg;
-    switch (this.type) {
+    switch (this._type) {
       case 'landing':
         outDir = this.sharedQuestions.name.toLowerCase();
-        outDir = `${outDir}_${this.type}`;
+        outDir = `${outDir}_${this._type}`;
         break;
       case 'interface':
         outDir = `${this.name}`.toLowerCase();
@@ -175,6 +181,59 @@ class _Page {
   }
 }
 
+class _InterfacePage extends _PageBase {
+  constructor(name, type, sharedQuestions, options) {
+    super(name, type, sharedQuestions, options);
+    this._addMembers();
+  }
 
+  _addMembers() {
 
+    let template = utils.getFile(`templates/_frag_events.md`);
+    const eventHandlers = this._interfaceData.eventHandlers;
+    if (eventHandlers.length) {
+      let handlersString = '### Event handlers\n\n';
+      eventHandlers.forEach(eh => {
+        let templateCopy = (' ' + template).slice(1);
+        templateCopy = templateCopy.replace('[[event]]', eh.name);
+        handlersString += `${templateCopy}\n`;
+      });
+      this.questions.answer('eventHandlers', handlersString.trim());
+    }
+
+    template = utils.getFile(`templates/_frag_methods.md`);
+    const methods = this._interfaceData.methods;
+    if (methods.length) {
+      let methodString = '## Methods\n\n';
+      methods.forEach(m => {
+        let templateCopy = (' ' + template).slice(1);
+        templateCopy = templateCopy.replace('[[method]]', m.name);
+        methodString += `${templateCopy}\n`;
+      });
+      this.questions.answer('methods', methodString.trim());
+    }
+
+    template = utils.getFile(`templates/_frag_properties.md`);
+    const properties = this._interfaceData.properties;
+    if (properties.length) {
+      let propertyString = '## Properties\n\n';
+      properties.forEach(p => {
+        let templateCopy = (' ' + template).slice(1);
+        templateCopy = templateCopy.replace('[[property]]', p.name);
+        propertyString += `${templateCopy}\n`;
+      });
+      this.questions.answer('properties', propertyString.trim());
+    }
+  }
+
+}
+
+class _Page extends _PageBase {
+  constructor(name, type, sharedQuestions, options) {
+    super(name, type, sharedQuestions, options);
+  }
+}
+
+module.exports.pageFactory = pageFactory;
+module.exports.InterfacePage = _InterfacePage;
 module.exports.Page = _Page;
