@@ -195,7 +195,8 @@ class _InterfacePage extends _PageBase {
       let handlersString = '### Event handlers\n\n';
       eventHandlers.forEach(eh => {
         let templateCopy = (' ' + template).slice(1);
-        templateCopy = templateCopy.replace('[[event]]', eh.name);
+        const eventPage = eh.name.slice(2) + '_event';
+        templateCopy = templateCopy.replace('[[event]]', eventPage);
         handlersString += `${templateCopy}\n`;
       });
       this.questions.answer('eventHandlers', handlersString.trim());

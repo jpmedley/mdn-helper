@@ -48,7 +48,7 @@
     "url": "https://github.com/jpmedley/mdn-helper/issues"
   },
   "dependencies": {
-    "@mdn/browser-compat-data": "^4.0.9",
+    "@mdn/browser-compat-data": "^4.0.10",
     "config": "^1.31.0",
     "download": "^8.0.0",
     "enquirer": "2.3.5",

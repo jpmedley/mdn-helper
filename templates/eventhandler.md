@@ -8,15 +8,18 @@ browser-compat: api.[[shared:interface]].[[EventHandler]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[EventHandler]]`** EventHandler of the {{domxref("[[shared:interface]]")}} interface processes [[eventName]] events.
+The **`[[eventNameShort]]`** of the {{domxref("[[shared:interface]]")}} interface processes [[eventName]] events.
 
 The [[eventName]] event fires when [[eventOccurs]].
 
 ## Syntax
 
+Use the event name in methods like {{domxref("EventTarget.addEventListener", "addEventListener()")}}, or set an event handler property.
+
 ```js
-[[shared:interface]].[[EventHandler]] = function;
-[[shared:interface]].addEventListener('_Please replace this text_', function);
+addEventListener('[[eventNameShort]]', (event) => { });
+
+[[eventName]] = (event) => { });
 ```
 
 ## Example

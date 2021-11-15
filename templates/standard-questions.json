@@ -166,10 +166,22 @@
       "default": "No",
       "required": false,
       "before": "",
-      "action": {"name": "add_definitionList", "args": ["_frag_members.md"]}
+      "action": {"name": "add_definitionList", "args": ["_frag_events.md"]}
     },
     "eventName": {
-      "question": "What is the name of the event passed to this handler?",
+      "question": "What is the name of the event callback (the name beginning with 'on').?",
+      "type": "Input",
+      "pattern": "",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": "",
+      "action": null
+    },
+    "eventNameShort": {
+      "question": "What is the event name as it would be passed to addEventListener()?",
       "type": "Input",
       "pattern": "",
       "message": "",

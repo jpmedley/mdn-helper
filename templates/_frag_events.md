@@ -1,2 +1,2 @@
-- {{domxref('[[event]]')}}
+- {{domxref('[[shared:interface]].[[event]]')}}
   - : Fired when // Replace with description of when this event is fired.
