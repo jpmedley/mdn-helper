@@ -23,7 +23,8 @@ npm run burn bcd -- -c javascript -b all
 npm run burn bcd -- -c mathml -b all
 npm run burn bcd -- -c webextensions -b all
 
-npm run burn chrome -- -a -f -o -n needed-docs
+npm run burn chrome -- -a -f -o -n needed-docs-Google
+npm run burn chrome -- -n needed-docs
 npm run burn chrome -- -i -f -o -n puppy-planning
 npm run burn chrome -- -c -n missing-members
 npm run burn chrome -- -r fugu-rl.json -n fugu
