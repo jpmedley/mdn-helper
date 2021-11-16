@@ -216,6 +216,10 @@ class IDLData {
     record.name = this.key;
     record.origin_trial = this._originTrial;
     record.type = this.type;
+    const engines = bcd.getEngines(this.key, 'api');
+    record.engineCount = (engines? engines.length: 0);
+    const browsers = bcd.getEngines(this.key, 'api');
+    record.browserCount = (browsers? browsers.length: 0);
     return new Array(record);
   }
 
@@ -1029,11 +1033,16 @@ class InterfaceData extends IDLData {
   }
 
   _buildRecord(member) {
-    let record = bcd.getRecordByKey(`${this.key}.${member.name}`, 'api');
+    let compoundKey = `${this.key}.${member.name}`
+    let record = bcd.getRecordByKey(compoundKey, 'api');
     record.flag = member.flagged;
     record.name = member.name;
     record.origin_trial = member.originTrial;
     record.type = member.type;
+    const engines = bcd.getEngines(compoundKey, 'api');
+    record.engineCount = (engines? engines.length: 0);
+    const browsers = bcd.getEngines(compoundKey, 'api');
+    record.browserCount = (browsers? browsers.length: 0);
     return record;
   }
 
