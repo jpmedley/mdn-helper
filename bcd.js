@@ -19,6 +19,65 @@ const bcd = require('@mdn/browser-compat-data');
 const SKIPABLE = ['__compat','__name','__parent','browsers','description','mathml','mdn_url','getPossibleKeys','webdriver','webextensions','xpath','xslt'];
 const URL_ROOT = 'https://developer.mozilla.org/en-US/docs/Web/';
 
+const ENGINES = [
+  {
+    "name": "chrome",
+    "engine": "Chromium"
+  },
+  {
+    "name": "chrome_android",
+    "engine": "Chromium"
+  },
+  {
+    "name": "deno",
+    "engine": "IGNORE"
+  },
+  {
+    "name": "edge",
+    "engine": "Chromium"
+  },
+  {
+    "name": "ie",
+    "engine": "IGNORE"
+  },
+  {
+    "name": "firefox",
+    "engine": "Gecko"
+  },
+  {
+    "name": "firefox_android",
+    "engine": "Gecko"
+  },
+  {
+    "name": "nodejs",
+    "engine": "Chromium"
+  },
+  {
+    "name": "opera",
+    "engine": "Chromium"
+  },
+  {
+    "name": "opera_android",
+    "engine": "Chromium"
+  },
+  {
+    "name": "safari",
+    "engine": "WebKit"
+  },
+  {
+    "name": "safari_ios",
+    "engine": "WebKit"
+  },
+  {
+    "name": "samsunginternet_android",
+    "engine": "Chromium"
+  },
+  {
+    "name": "webview_android",
+    "engine": "Chromium"
+  },
+]
+
 const EMPTY_BURN_RECORD = Object.freeze({
   key: null,
   bcd: null,
@@ -58,6 +117,10 @@ class BCD {
     this.getByKey.bind(bcd);
     bcd.getRecordByKey = this.getRecordByKey;
     this.getRecordByKey.bind(bcd);
+    bcd.getEngines = this.getEngines;
+    this.getEngines.bind(bcd);
+    bcd.getBrowsers = this.getBrowsers;
+    this.getBrowsers.bind(bcd);
   }
 
   _decorate(data) {
@@ -74,6 +137,18 @@ class BCD {
     }
   }
 
+  getBrowsers(key, trunk = 'api') {
+    const branch = this.getByKey(key, trunk);
+    const support = branch[key].__compat.support;
+    let browsers = [];
+    for (const s in support) {
+      if (s === '__parent') { continue; }
+      if (s === '__name') { continue; }
+      browsers.push(s);
+    }
+    return browsers;
+  }
+
   getByKey(key, trunk = "api") {
     let branch = this[trunk];
     if (key === trunk) { return branch; }
@@ -85,6 +160,24 @@ class BCD {
       chain.pop();
     }
     return branch;
+  }
+
+  getEngines(key, trunk = 'api') {
+    const branch = this.getByKey(key, trunk);
+    const support = branch[key].__compat.support;
+    let engines = [];
+    ENGINES.forEach(e => {
+      if (e.engine === 'IGNORE') { return; }
+      const browser = support[e.name];
+      if (!browser) { return; }
+      if (browser.version_added === 'false') { return; }
+      if (browser.version_added === 'null') { return; }
+      const engine = e.engine;
+      if (!engines.includes(engine)) {
+        engines.push(engine);
+      }
+    });
+    return engines;
   }
 
   getPossibleKeys(withString) {

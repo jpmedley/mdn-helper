@@ -32,6 +32,20 @@ describe('BCD', () => {
     });
   });
 
+  describe('getBrowsers()', () => {
+    it('Confirms that the key \'Event\' returns x browsers', () => {
+      const browsers = bcd.getBrowsers('Event');
+      assert.strictEqual(browsers.length, 14);
+    });
+  });
+
+  describe('getEngines()', () => {
+    it('Confirms that the key \'Event\' returns three engines', () => {
+      const engines = bcd.getEngines('Event');
+      assert.strictEqual(engines.length, 3);
+    });
+  });
+
   describe('getRecordByKey()', () => {
     it('Confirms that a constructed URL is returned when one is missing from BCD', () => {
       let found = bcd.getRecordByKey('Medley');
@@ -42,4 +56,5 @@ describe('BCD', () => {
       assert.strictEqual(found.mdn_url, 'https://developer.mozilla.org/en-US/docs/Web/API/Medley/joe');
     });
   });
+
 });
