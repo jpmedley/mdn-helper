@@ -139,6 +139,7 @@ class BCD {
 
   getBrowsers(key, trunk = 'api') {
     const branch = this.getByKey(key, trunk);
+    if (!branch) { return null; }
     const support = branch[key].__compat.support;
     let browsers = [];
     for (const s in support) {
@@ -164,6 +165,7 @@ class BCD {
 
   getEngines(key, trunk = 'api') {
     const branch = this.getByKey(key, trunk);
+    if (!branch) { return null; }
     const support = branch[key].__compat.support;
     let engines = [];
     ENGINES.forEach(e => {

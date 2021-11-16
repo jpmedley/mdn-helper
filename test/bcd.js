@@ -33,10 +33,14 @@ describe('BCD', () => {
   });
 
   describe('getBrowsers()', () => {
-    it('Confirms that the key \'Event\' returns x browsers', () => {
+    it('Confirms that the key \'Event\' returns 14 browsers', () => {
       const browsers = bcd.getBrowsers('Event');
       assert.strictEqual(browsers.length, 14);
     });
+    it('Confirms that the key \'Burnable\' returns null', () => {
+      const browsers = bcd.getBrowsers('Burnable');
+      assert.strictEqual(browsers, null);
+    })
   });
 
   describe('getEngines()', () => {
@@ -44,6 +48,10 @@ describe('BCD', () => {
       const engines = bcd.getEngines('Event');
       assert.strictEqual(engines.length, 3);
     });
+    it('Confirms that the key \'Burnable\' returns null', () => {
+      const engines = bcd.getEngines('Burnable');
+      assert.strictEqual(engines, null);
+    })
   });
 
   describe('getRecordByKey()', () => {
