@@ -19,6 +19,7 @@ const { DirectoryManager } = require('./directorymanager.js');
 const fs = require('fs');
 const { initiateLogger } = require('./log.js');
 const { MultiSelect } = require('enquirer');
+const path = require('path');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
 const {
@@ -178,6 +179,12 @@ class Burner {
       const name = wl.match(/(\S+)\.js/);
       return `${name[1]}`;
     })();
+  }
+
+  _loadReportTemplate() {
+    const templateLocation = utils.getConfig('reportingTemplates');
+    const templatePath = path.join(templateLocation, this._reportTemplateName);
+    this._reportTemplate = utils.getFile(templatePath);
   }
 
   async _resolveArguments(args) {
@@ -435,6 +442,8 @@ class ChromeBurner extends Burner {
     this._interfacesOnly = options._interfacesOnly ? options._interfacesOnly : false;
     this._childrenOnly = options._childrenOnly ? options._childrenOnly : false;
     this._reportName;
+    this._reportTemplate;
+    this._reportTemplateName;
     this._type = 'chrome';
   }
 
@@ -454,6 +463,7 @@ class ChromeBurner extends Burner {
     this._loadReportingList();
     this._startBurnLogFile();
     this._openResultsFile();
+    this._loadReportTemplate();
     const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     const interfaceSet = dm.interfaceSet;
@@ -599,7 +609,13 @@ class ChromeBurner extends Burner {
       if (args[i-1].includes('-n') || args[i-1].includes('--name')) {
         return arg;
       }
-    })
+    });
+    this._reportTemplateName = args.find((arg, i, args) => {
+      if (i = 0) { return; }
+      if (args[i-1].includes('-t') || args[i-1].includes('--template')) {
+        return arg;
+      }
+    });
     if (this._childrenOnly && this._interfacesOnly) {
       const msg = 'The --children-only (-c) and --interfaces-only (-i) flags cannot be used together.';
       throw new Error(msg);

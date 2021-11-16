@@ -13,6 +13,7 @@
     "update": "daily",
     "useExclusions": "true",
     "reportingListDirectory": "reportinglists/",
+    "reportingTemplates": "reportingtemplates/",
     "questionHiding": {
       "use": "NEW_WRITER",
       "ENG": ["iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"],
