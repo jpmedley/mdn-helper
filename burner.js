@@ -184,7 +184,9 @@ class Burner {
   _loadReportTemplate() {
     const templateLocation = utils.getConfig('reportingTemplates');
     const templatePath = path.join(templateLocation, this._reportTemplateName);
-    this._reportTemplate = utils.getFile(templatePath);
+    const reportTemplate = utils.getFile(templatePath).split('\n');
+    this._reportHeader = reportTemplate[0].replaceAll('|',',') + '\n';
+    this._reportTemplate = reportTemplate[1].split('|');
   }
 
   async _resolveArguments(args) {
@@ -281,8 +283,12 @@ class URLBurner extends Burner {
   _openResultsFile(listID) {
     this._getOutFileName();
     this._outFileHandle = utils.getOutputFile(this._outFileName);
-    const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
-    fs.write(this._outFileHandle, header, ()=>{});
+    if (this._reportHeader) {
+      fs.write(this._outFileHandle, this._reportHeader, ()=>{});
+    } else {
+      const header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL,Redirect\n';
+      fs.write(this._outFileHandle, header, ()=>{});
+    }
   }
 }
 
@@ -442,6 +448,7 @@ class ChromeBurner extends Burner {
     this._interfacesOnly = options._interfacesOnly ? options._interfacesOnly : false;
     this._childrenOnly = options._childrenOnly ? options._childrenOnly : false;
     this._reportName;
+    this._reportHeader;
     this._reportTemplate;
     this._reportTemplateName;
     this._type = 'chrome';
@@ -462,8 +469,8 @@ class ChromeBurner extends Burner {
 
     this._loadReportingList();
     this._startBurnLogFile();
-    this._openResultsFile();
     this._loadReportTemplate();
+    this._openResultsFile();
     const burnTypes = ["interface", "includes"];
     const dm = new DirectoryManager('idl/', { types: burnTypes });
     const interfaceSet = dm.interfaceSet;
@@ -549,11 +556,15 @@ class ChromeBurner extends Burner {
   _openResultsFile() {
     this._getOutFileName();
     this._outFileHandle = utils.getOutputFile(this._outFileName);
-    let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL';
-    if (this._includeFlags) { header += ',Behind a Flag'; }
-    if (this._includeOriginTrials) { header += ',In Origin Trial'; }
-    header += '\n';
-    fs.write(this._outFileHandle, header, ()=>{});
+    if (this._reportHeader) {
+      fs.write(this._outFileHandle, this._reportHeader, ()=>{});
+    } else {
+      let header = 'Interface,MDN Has Compabibility Data,MDN Page Exists,Expected URL';
+      if (this._includeFlags) { header += ',Behind a Flag'; }
+      if (this._includeOriginTrials) { header += ',In Origin Trial'; }
+      header += '\n';
+      fs.write(this._outFileHandle, header, ()=>{});
+    }
   }
 
   _record(records) {
@@ -568,9 +579,18 @@ class ChromeBurner extends Burner {
           r.mdn_exists = "Unknown";
           r.mdn_url = "No URL found in compatibility data";
         }
-        let line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url}`;
-        if (this._includeFlags) { line += `,${r.flag}`; }
-        if (this._includeOriginTrials) { line += `,${r.origin_trial}`; }
+        let line = '';
+        if (this._reportTemplate) {
+          let template = (' ' + this._reportTemplate).slice(1);
+          let members = template.split(',')
+          for (const m of members) {
+            line += r[m] + ',';
+          }
+        } else {
+          line = `${r.key},${r.bcd},${r.mdn_exists},${r.mdn_url}`;
+          if (this._includeFlags) { line += `,${r.flag}`; }
+          if (this._includeOriginTrials) { line += `,${r.origin_trial}`; }
+        }
         line += '\n';
         fs.write(this._outFileHandle, line, ()=>{});
         this._outputLines++;
@@ -611,7 +631,7 @@ class ChromeBurner extends Burner {
       }
     });
     this._reportTemplateName = args.find((arg, i, args) => {
-      if (i = 0) { return; }
+      if (i == 0) { return; }
       if (args[i-1].includes('-t') || args[i-1].includes('--template')) {
         return arg;
       }

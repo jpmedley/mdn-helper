@@ -1040,9 +1040,9 @@ class InterfaceData extends IDLData {
     record.origin_trial = member.originTrial;
     record.type = member.type;
     const engines = bcd.getEngines(compoundKey, 'api');
-    record.engineCount = (engines? engines.length: 0);
+    record.engineCount = (engines? engines.length: 1);
     const browsers = bcd.getEngines(compoundKey, 'api');
-    record.browserCount = (browsers? browsers.length: 0);
+    record.browserCount = (browsers? browsers.length: 6);
     return record;
   }
 

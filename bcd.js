@@ -166,7 +166,8 @@ class BCD {
   getEngines(key, trunk = 'api') {
     const branch = this.getByKey(key, trunk);
     if (!branch) { return null; }
-    const support = branch[key].__compat.support;
+    const support = branch?.__compat?.support;
+    if (!support) { return null; }
     let engines = [];
     ENGINES.forEach(e => {
       if (e.engine === 'IGNORE') { return; }
