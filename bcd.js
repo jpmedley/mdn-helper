@@ -140,7 +140,7 @@ class BCD {
   getBrowsers(key, trunk = 'api') {
     const branch = this.getByKey(key, trunk);
     if (!branch) { return null; }
-    const support = branch[key].__compat.support;
+    const support = branch?.__compat?.support;
     let browsers = [];
     for (const s in support) {
       if (s === '__parent') { continue; }

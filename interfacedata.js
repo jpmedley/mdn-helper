@@ -217,9 +217,9 @@ class IDLData {
     record.origin_trial = this._originTrial;
     record.type = this.type;
     const engines = bcd.getEngines(this.key, 'api');
-    record.engineCount = (engines? engines.length: 0);
-    const browsers = bcd.getEngines(this.key, 'api');
-    record.browserCount = (browsers? browsers.length: 0);
+    record.engineCount = (engines? engines.length: 1);
+    const browsers = bcd.getBrowsers(this.key, 'api');
+    record.browserCount = (browsers? browsers.length: 6);
     return new Array(record);
   }
 
@@ -1041,7 +1041,7 @@ class InterfaceData extends IDLData {
     record.type = member.type;
     const engines = bcd.getEngines(compoundKey, 'api');
     record.engineCount = (engines? engines.length: 1);
-    const browsers = bcd.getEngines(compoundKey, 'api');
+    const browsers = bcd.getBrowsers(compoundKey, 'api');
     record.browserCount = (browsers? browsers.length: 6);
     return record;
   }

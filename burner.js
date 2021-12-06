@@ -182,6 +182,7 @@ class Burner {
   }
 
   _loadReportTemplate() {
+    if (!this._reportTemplateName) { return; }
     const templateLocation = utils.getConfig('reportingTemplates');
     const templatePath = path.join(templateLocation, this._reportTemplateName);
     const reportTemplate = utils.getFile(templatePath).split('\n');
