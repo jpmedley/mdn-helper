@@ -6,7 +6,7 @@ tags:
   - Event
   - Reference
   - [[shared:interface]]
-browser-compat: api.[[shared:interface]].[[eventNameShort]]_event
+browser-compat: api.[[shared:interface]].[[eventNameShort]]
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 

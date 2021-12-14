@@ -52,10 +52,13 @@ class _PageBase {
     this.questions.add(type, name);
 
     this.contents = utils.getTemplate(type);
+    this._processQuestions(this.contents);
+  }
 
+  _processQuestions(inText) {
     const reg = RegExp(TOKEN_RE, 'g');
     let matches;
-    while ((matches = reg.exec(this.contents)) != null) {
+    while ((matches = reg.exec(inText)) != null) {
       if (matches[0].startsWith('[[shared:')) {
         this.sharedQuestions.add(matches[1]);
       } else {
@@ -190,6 +193,7 @@ class _InterfacePage extends _PageBase {
   _addMembers() {
 
     let template = utils.getFile(`templates/_frag_events.md`);
+    this._processQuestions(template);
     const eventHandlers = this._interfaceData.eventHandlers;
     if (eventHandlers.length) {
       let handlersString = '### Event handlers\n\n';
@@ -199,10 +203,11 @@ class _InterfacePage extends _PageBase {
         templateCopy = templateCopy.replace('[[event]]', eventPage);
         handlersString += `${templateCopy}\n`;
       });
-      this.questions.answer('eventHandlers', handlersString.trim());
+      this.questions.answer('events', handlersString.trim());
     }
 
     template = utils.getFile(`templates/_frag_methods.md`);
+    this._processQuestions(template);
     const methods = this._interfaceData.methods;
     if (methods.length) {
       let methodString = '## Methods\n\n';
@@ -215,6 +220,7 @@ class _InterfacePage extends _PageBase {
     }
 
     template = utils.getFile(`templates/_frag_properties.md`);
+    this._processQuestions(template);
     const properties = this._interfaceData.properties;
     if (properties.length) {
       let propertyString = '## Properties\n\n';
