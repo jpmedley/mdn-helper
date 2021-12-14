@@ -16,9 +16,9 @@ The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPINam
 
 [[properties]]
 
-[[eventHandlers]]
-
 [[methods]]
+
+[[events]]
 
 ## Examples
 

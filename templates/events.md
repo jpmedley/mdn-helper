@@ -2,13 +2,15 @@
 title: [[shared:interface]].[[EventHandler]]
 slug: Web/API/[[shared:interface]]/[[EventHandler]]
 tags:
-  - Property
+  - API
+  - Event
   - Reference
-browser-compat: api.[[shared:interface]].[[EventHandler]]
+  - [[shared:interface]]
+browser-compat: api.[[shared:interface]].[[eventNameShort]]_event
 ---
 [[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[eventNameShort]]`** of the {{domxref("[[shared:interface]]")}} interface processes [[eventName]] events.
+The **`[[eventNameShort]]`** of the {{domxref("[[shared:interface]]")}} is fired when //describe when it is fired.
 
 The [[eventName]] event fires when [[eventOccurs]].
 
@@ -21,6 +23,18 @@ addEventListener('[[eventNameShort]]', (event) => { });
 
 [[eventName]] = (event) => { });
 ```
+
+## Event type
+
+A {{domxref("[[EventType]]")}}. Inherits from {{domxref("[[ParentEventType]]")}}.
+
+{{InheritanceDiagram(500, 70, 50, "[[EventType]]")}}
+
+## Event properties
+
+_In addition to the properties listed below, properties from the parent interface, {{domxref("[[ParentEventType]]")}}, are available._
+
+[[properties]]
 
 ## Example
 
