@@ -2,6 +2,10 @@
 
 This file explains the resons for items included in the `muted` list in `config.json`. (19/10/21)
 
+## AbortController.reason
+
+False positive. There is no such property. IDL processing is mistaking an abort() argument as a reason.
+
 ## CSSContainerRule
 
 The feature has not shipped, but it's status vis a vis source files is not resolvable. It's status in Chromium is currently 'Proposed'. (20/10/21)

@@ -20,6 +20,7 @@
       "NEW_WRITER": ["child-interfaces", "iterableMemberLink", "iterableMemberLink", "mdnAPIRef", "mdnSpecName", "syntax", "syntax-explanation"]
     },
     "muted": [
+      "AbortController.reason",
       "CSSContainerRule",
       "FileSystemFileHandle.createSyncAccessHandle",
       "FontManager",
