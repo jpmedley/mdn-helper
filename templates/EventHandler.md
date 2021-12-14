@@ -12,8 +12,6 @@ browser-compat: api.[[shared:interface]].[[eventNameShort]]
 
 The **`[[eventNameShort]]`** of the {{domxref("[[shared:interface]]")}} is fired when //describe when it is fired.
 
-The [[eventName]] event fires when [[eventOccurs]].
-
 ## Syntax
 
 Use the event name in methods like {{domxref("EventTarget.addEventListener", "addEventListener()")}}, or set an event handler property.
