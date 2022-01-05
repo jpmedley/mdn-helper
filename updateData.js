@@ -14,7 +14,6 @@
 
 'use-strict';
 
-const download = require('download');
 const fs = require('fs');
 const Path = require('path');
 const shell = require('shelljs');
@@ -24,7 +23,8 @@ const utils = require('./utils.js');
 
 const DEFAULT_UPDATE = "Tue Jan 22 1019 15:36:25 GMT-0500 (Eastern Standard Time)";
 const IDL_ZIP_NANE = 'renderer.tar.gz';
-const IDL_ZIP = `https://chromium.googlesource.com/chromium/src/+archive/HEAD/third_party/blink/${IDL_ZIP_NANE}`;
+
+const IDL_ZIP = `https://chromium.googlesource.com/chromium/src/+archive/refs/heads/main/third_party/blink/${IDL_ZIP_NANE}`;
 const IDL_DIR = `${__dirname}/idl/`;
 const ONE_HOUR = 3600000;
 const ONE_DAY = 86400000;
