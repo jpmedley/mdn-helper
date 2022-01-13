@@ -1,0 +1,9 @@
+{
+  "reportingList": [
+    "Gamepad",
+    "GamepadButton",
+    "GamepadEvent",
+    "GamepadHapticActuator",
+    "Navigator.getGamepads"
+  ]
+}
