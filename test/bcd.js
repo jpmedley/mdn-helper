@@ -65,4 +65,12 @@ describe('BCD', () => {
     });
   });
 
+  describe('getVersions()', () => {
+    it('Confirms that a support triplet is returned in the form of an 3 element array', () => {
+      const browsers = ['chrome', 'chrome_android', 'webview_android'];
+      const engines = bcd.getVersions('Event', browsers);
+      assert.strictEqual(engines.length, 3);
+    });
+  });
+
 });

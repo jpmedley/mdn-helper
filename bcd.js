@@ -121,6 +121,8 @@ class BCD {
     this.getEngines.bind(bcd);
     bcd.getBrowsers = this.getBrowsers;
     this.getBrowsers.bind(bcd);
+    bcd.getVersions = this.getVersions;
+    this.getVersions.bind(bcd);
   }
 
   _decorate(data) {
@@ -135,6 +137,23 @@ class BCD {
         this._decorate(data[k]);
       }
     }
+  }
+
+  getVersions(key, browsers =  ['chrome'], trunk = 'api') {
+    const branch = this.getByKey(key, trunk);
+    const support = branch?.__compat?.support;
+    if (!branch) { return null; }
+    let versions = [];
+    let temp;
+    for (let b of browsers) {
+      temp = support[b]
+      if (temp.version_added) {
+        versions.push(temp);
+      } else {
+        versions.push('Not supported');
+      }
+    }
+    return versions;
   }
 
   getBrowsers(key, trunk = 'api') {
