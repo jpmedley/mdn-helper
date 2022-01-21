@@ -1,2 +1,2 @@
-Interface|MDN Has Compabibility Data|MDN Page Exists|Expected URL|User Agent Count|Engine Count
-key|bcd|mdn_exists|mdn_url|browserCount|engineCount
+Interface|User Agent Count|Engine Count|MDN Has Compabibility Data|MDN Page Exists|Expected URL
+key|browserCount|engineCount|bcd|mdn_exists|mdn_url

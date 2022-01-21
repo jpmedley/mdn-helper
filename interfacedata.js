@@ -218,8 +218,11 @@ class IDLData {
     record.type = this.type;
     const engines = bcd.getEngines(this.key, 'api');
     record.engineCount = (engines? engines.length: 1);
-    const browsers = bcd.getBrowsers(this.key, 'api');
-    record.browserCount = (browsers? browsers.length: 6);
+    const browserCount = bcd.getBrowsers(this.key, 'api');
+    record.browserCount = (browserCount? browserCount.length: 6);
+    const browsers = ['chrome', 'chrome_android', 'webview_android'];
+    const versions = bcd.getVersions(this.key, browsers, 'api');
+    record.versions = versions;
     return new Array(record);
   }
 
@@ -1041,8 +1044,11 @@ class InterfaceData extends IDLData {
     record.type = member.type;
     const engines = bcd.getEngines(compoundKey, 'api');
     record.engineCount = (engines? engines.length: 1);
-    const browsers = bcd.getBrowsers(compoundKey, 'api');
-    record.browserCount = (browsers? browsers.length: 6);
+    const browserCount = bcd.getBrowsers(compoundKey, 'api');
+    record.browserCount = (browserCount? browserCount.length: 6);
+    const browsers = ['chrome', 'chrome_android', 'webview_android'];
+    const versions = bcd.getVersions(compoundKey, browsers, 'api');
+    record.versions = versions;
     return record;
   }
 

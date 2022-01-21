@@ -141,19 +141,21 @@ class BCD {
 
   getVersions(key, browsers =  ['chrome'], trunk = 'api') {
     const branch = this.getByKey(key, trunk);
-    const support = branch?.__compat?.support;
     if (!branch) { return null; }
+    const support = branch?.__compat?.support;
+    if (!support) { return ''; }
     let versions = [];
     let temp;
     for (let b of browsers) {
+      if (!support[b]) { continue; }
       temp = support[b]
       if (temp.version_added) {
-        versions.push(temp);
+        versions.push(temp.version_added);
       } else {
         versions.push('Not supported');
       }
     }
-    return versions;
+    return versions.join(', ');
   }
 
   getBrowsers(key, trunk = 'api') {

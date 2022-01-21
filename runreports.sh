@@ -23,8 +23,8 @@ npm run burn bcd -- -c javascript -b all
 npm run burn bcd -- -c mathml -b all
 npm run burn bcd -- -c webextensions -b all
 
-npm run burn chrome -- -a -f -o -n needed-docs-Google
-npm run burn chrome -- -a -t mdnreports.txt -n unimplemented-counts
+npm run burn chrome -- -a -f -o -n needed-chrome-docs-Google
+npm run burn chrome -- -a -t mdnreports.txt -n implementation-counts
 npm run burn chrome -- -n needed-docs
 # npm run burn chrome -- -i -f -o -n puppy-planning
 npm run burn chrome -- -i -n interfaces-only
