@@ -4,11 +4,5 @@
 
 // See https://webaudio.github.io/web-audio-api/#BaseAudioContext
 
-dictionary USBDeviceFilter {
-    unsigned short vendorId;
-    unsigned short productId;
-    octet classCode;
-    octet subclassCode;
-    octet protocolCode;
-    DOMString serialNumber;
-};
+callback DecodeErrorCallback = void (DOMException error);
+callback EncodeErrorCallback = void (DOMException error);

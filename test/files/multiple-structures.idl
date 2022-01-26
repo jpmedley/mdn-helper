@@ -10,9 +10,25 @@ enum AudioContextState {
     "closed"
 };
 
+enum AnotherEnum {
+    "suspended",
+    "running",
+    "closed"
+};
+
 callback DecodeErrorCallback = void (DOMException error);
+callback AnotherCallback = void (DOMException error);
 
 dictionary USBDeviceFilter {
+    unsigned short vendorId;
+    unsigned short productId;
+    octet classCode;
+    octet subclassCode;
+    octet protocolCode;
+    DOMString serialNumber;
+};
+
+dictionary AnotherDictionary {
     unsigned short vendorId;
     unsigned short productId;
     octet classCode;

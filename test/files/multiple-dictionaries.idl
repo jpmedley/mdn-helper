@@ -4,7 +4,16 @@
 
 // See https://webaudio.github.io/web-audio-api/#BaseAudioContext
 
-dictionary USBDeviceFilter {
+dictionary DictionaryOne {
+    unsigned short vendorId;
+    unsigned short productId;
+    octet classCode;
+    octet subclassCode;
+    octet protocolCode;
+    DOMString serialNumber;
+};
+
+dictionary DictionaryTwo {
     unsigned short vendorId;
     unsigned short productId;
     octet classCode;
