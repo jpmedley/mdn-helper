@@ -27,11 +27,15 @@ class SourceRecord {
   constructor(source, options) {
     this.#sources.set(options.path, source);
     this.#name = options.name;
-    this.type = options.type;
+    this.#type = options.type;
   }
 
   get sources() {
     return this.#sources;
+  }
+
+  get type() {
+    return this.#type;
   }
 
   push(source, path) {
