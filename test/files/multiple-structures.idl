@@ -90,3 +90,5 @@ dictionary AnotherDictionary {
 
     attribute EventHandler onstatechange;
 };
+
+Destination includes MultipleStructures;

@@ -26,13 +26,18 @@ const { raw } = require('config/raw');
 
 initiateLogger(global.__commandName);
 
-const CALLBACK_RE = /callback\s+(\w*)\s+=\s+(\w*)\s+(\([^)]*\));/g;
-const DICTIONARY_RE = /dictionary\s(\w+)[^{]({[^}]*\});/gm;
+// const CALLBACK_RE = /callback\s*(\w*)[^;]*;/g;
+const CALLBACK_RE = /(?:\[[^\]]*\])*\s*callback\s*(\w*)[^;]*;/g;
+const DICTIONARY_RE = /(\[[^\]]*\])*\s*dictionary\s(\w+)\s*(?::\s*(\w+))?[^\{]*\{[^\}]*\};/gm;
 const ENUM_RE = /enum[^\w]+(\w*)[^{]({[^}]*});/gm;
 const EXTENDED_ATTRIBS_RE = /(\[[^\]]*\])\s*interface/m;
 const INCLUDES_RE = /(\w*)\s+includes\s+(\w*);/gm;
-const INTERFACE_SIGNITURE_RE = /(callback|partial)?\s*interface\s+(mixin)?\s*(\w+)\s+(?::\s+(\w+))?/m;
+const INTERFACE_SIGNITURE_RE = /(callback|partial)?\s*interface\s*(mixin)?\s*(\w+)\s*(?::\s+(\w+))?[^\{]*\{/m;
 const INTERFACE_BODY_RE = /interface[^\{]*\{[^\}]*(?:.(?!\}));/gm;
+const NAMESPACE = /(\[[^\]]*\])\s*(partial)?\s*namespace\s*(\w*)[^\{]*\{([^\}])*\};/gm;
+const TYPEDEF_SIMPLE = /typedef\s*(\w*\s*)*;/gm;
+const TYPEDEF_COMPOUND = /typedef[^\(]*(\([^\)]*\))\s*(\w*);/gm;
+const TYPEDEF_LINE = /typedef[^;]*;/g
 
 class _SourceProcessor_Base {
   #EXCLUSIONS = [];
@@ -43,7 +48,6 @@ class _SourceProcessor_Base {
   }
 
   _processSource(sourceLocation) {
-    // fs.lstatSync(path_string).isDirectory() 
     if (fs.lstatSync(sourceLocation).isDirectory()) {
       this._getSourceList(sourceLocation);
     } else {
@@ -72,14 +76,18 @@ class _SourceProcessor_Base {
         global.__logger.info(`Cannot process ${root}${contents[c].name}.`);
       }
       // Extract what's not an interface. Interface will be left
-      rawData = this._processCallback(rawData, p);
-      rawData = this._processDictionary(rawData, p);
-      rawData = this._processEnum(rawData, p);
+      rawData = this._processCallbacks(rawData, p);
+      rawData = this._processDictionaries(rawData, p);
+      rawData = this._processEnums(rawData, p);
       rawData = this._processIncludes(rawData, p);
+      rawData = this._processNamespaces(rawData, p);
+      rawData = this._processTypeDefs(rawData, p);
+      // Interface should always be last.
       rawData = this._processInterface(rawData, p);
       if (rawData.trim() !== '') {
-        const msg = `File ${path} contains an unknown or malformed structure.`;
-        throw new IDLError(msg, path);
+        const msg = `File ${p} contains an unknown or malformed structure.`;
+        console.log(rawData);
+        throw new IDLError(msg, p);
       }
     }
     return this.#sourceRecords;
@@ -88,6 +96,10 @@ class _SourceProcessor_Base {
   _processInterface(rawData, path) {
     if (!rawData.includes('interface')) { return rawData; }
     const interfaceSigniture = rawData.match(INTERFACE_SIGNITURE_RE);
+    if (!interfaceSigniture) {
+      const msg = `File ${path} contains a malformed interface.`;
+      throw new IDLError(msg, path);
+    }
     if (interfaceSigniture) {
       let type;
       if (interfaceSigniture[1]) { type = interfaceSigniture[1]; }
@@ -98,22 +110,22 @@ class _SourceProcessor_Base {
     return rawData.trim();
   }
 
-  _processCallback(rawData, path) {
+  _processCallbacks(rawData, path) {
     if (!rawData.includes('callback')) { return rawData; }
     const foundCallbacks = rawData.matchAll(CALLBACK_RE);
     if (!foundCallbacks) {
-      if (rawData?.includes('callback interface')) { return; }
       const msg = `File ${path} contains a malformed callback.`;
       throw new IDLError(msg, path);
     }
     for (let f of foundCallbacks) {
+      if (f[0].includes('callback interface')) { continue; }
       this._recordRecord(f[1], f, path, 'callback');
       rawData = rawData.replace(f[0], '');
     }
     return rawData.trim();
   }
 
-  _processDictionary(rawData, path) {
+  _processDictionaries(rawData, path) {
     if (!rawData?.includes('dictionary')) { return rawData; }
     const foundDictionaries = rawData.matchAll(DICTIONARY_RE);
     if (!foundDictionaries) {
@@ -121,13 +133,13 @@ class _SourceProcessor_Base {
       throw new IDLError(msg, path);
     }
     for (let f of foundDictionaries) {
-      this._recordRecord(f[1], f, path, 'dictionary');
+      this._recordRecord(f[2], f, path, 'dictionary');
       rawData = rawData.replace(f[0], '');
     }
     return rawData.trim();
   }
 
-  _processEnum(rawData, path) {
+  _processEnums(rawData, path) {
     if (!rawData?.includes('enum')) { return rawData; }
     const foundEnums = rawData.matchAll(ENUM_RE);
     if (!foundEnums) {
@@ -150,6 +162,39 @@ class _SourceProcessor_Base {
     }
     for (let f of foundIncludes) {
       this._recordRecord(f[1], f, path, 'includes');
+      rawData = rawData.replace(f[0], '');
+    }
+    return rawData.trim();
+  }
+
+  _processNamespaces(rawData, path) {
+    if (!rawData.includes('namespace')) { return rawData; }
+    const foundNamespaces = rawData.matchAll(NAMESPACE);
+    if (!foundNamespaces) {
+      const msg = `File ${path} contains a malformed namespace.`;
+      throw new IDLError(msg, path);
+    }
+    for (let f of foundNamespaces) {
+      this._recordRecord(f[3], f, path, 'namespace');
+      rawData = rawData.replace(f[0], '');
+    }
+    return rawData.trim();
+  }
+
+  _processTypeDefs(rawData, path) {
+    if (!rawData.includes('typedef')) { return rawData; }
+    const foundTypedefs = rawData.matchAll(TYPEDEF_LINE);
+    if  (!foundTypedefs) {
+      const msg = `File ${path} contains a malformed typedef.`;
+      throw new IDLError(msg, path);
+    }
+    for (let f of foundTypedefs) {
+      let pieces = f[0].split(' ');
+      let name = pieces[pieces.length -1 ];
+      if (name.endsWith(';')) {
+        name = name.slice(0, -1);
+      }
+      this._recordRecord(name, f, path, 'typedef');
       rawData = rawData.replace(f[0], '');
     }
     return rawData.trim();
