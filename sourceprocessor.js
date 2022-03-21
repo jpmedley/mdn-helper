@@ -26,18 +26,18 @@ const { raw } = require('config/raw');
 
 initiateLogger(global.__commandName);
 
-// const CALLBACK_RE = /callback\s*(\w*)[^;]*;/g;
-const CALLBACK_RE = /(?:\[[^\]]*\])*\s*callback\s*(\w*)[^;]*;/g;
-const DICTIONARY_RE = /(\[[^\]]*\])*\s*dictionary\s(\w+)\s*(?::\s*(\w+))?[^\{]*\{[^\}]*\};/gm;
-const ENUM_RE = /enum[^\w]+(\w*)[^{]({[^}]*});/gm;
-const EXTENDED_ATTRIBS_RE = /(\[[^\]]*\])\s*interface/m;
-const INCLUDES_RE = /(\w*)\s+includes\s+(\w*);/gm;
-const INTERFACE_SIGNITURE_RE = /(callback|partial)?\s*interface\s*(mixin)?\s*(\w+)\s*(?::\s+(\w+))?[^\{]*\{/m;
-const INTERFACE_BODY_RE = /interface[^\{]*\{[^\}]*(?:.(?!\}));/gm;
-const NAMESPACE = /(\[[^\]]*\])\s*(partial)?\s*namespace\s*(\w*)[^\{]*\{([^\}])*\};/gm;
-const TYPEDEF_SIMPLE = /typedef\s*(\w*\s*)*;/gm;
-const TYPEDEF_COMPOUND = /typedef[^\(]*(\([^\)]*\))\s*(\w*);/gm;
-const TYPEDEF_LINE = /typedef[^;]*;/g
+const CALLBACK_NAME = /callback\s*(\w*)[^;]*;/;
+const CALLBACK_INTERFACE_NAME = /callback\s*interface\s*(\w*)\s*\{/;
+const DICTIONARY_NAME = /dictionary\s*(\w*)[^\{]*\{/;
+const ENUM_NAME = /enum\s*(\w*)\s*\{/;
+const INCLUDES_NAME = /(\w*)\sincludes\s[^;]*;/;
+const INTERFACE_NAME = /\]?\s*interface\s*(\w*)[^\{]*\{/;
+const MIXIN_NAME = /\]?\s*interface\s*mixin\s*(\w*)\s*\{/;
+const NAMESPACE_NAME = /\]?\s*namespace\s*(\w*)[^\{]*\{/;
+const PARTIAL_NAME = /\]?\s*partial\s*interface\s*(\w*)\s[^\{]*\{/;
+const TYPEDEF_NAME = /typedef\s*[^\s]*\s*(\w*);/;
+
+const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mixin', 'namespace', 'typedef'];
 
 class _SourceProcessor_Base {
   #EXCLUSIONS = [];
@@ -75,138 +75,100 @@ class _SourceProcessor_Base {
       if (!rawData) {
         global.__logger.info(`Cannot process ${root}${contents[c].name}.`);
       }
-      // Extract what's not an interface. Interface will be left
-      rawData = this._processCallbacks(rawData, p);
-      rawData = this._processDictionaries(rawData, p);
-      rawData = this._processEnums(rawData, p);
-      rawData = this._processIncludes(rawData, p);
-      rawData = this._processNamespaces(rawData, p);
-      rawData = this._processTypeDefs(rawData, p);
-      // Interface should always be last.
-      rawData = this._processInterface(rawData, p);
-      if (rawData.trim() !== '') {
-        const msg = `File ${p} contains an unknown or malformed structure.`;
-        console.log(rawData);
-        throw new IDLError(msg, p);
+      const lines = rawData.split('\n');
+      let currentStructure = '';
+      let name = '';
+      let type = '';
+      for (const l of lines) {
+        let headerLine = (() => {
+          if (l.trim().startsWith('[') && (!l.trim().endsWith(';'))) {
+            return true;
+          }
+          let found = KEYWORDS.some((e) => {
+            // Spaces are needed to prvent false positives.
+            // (Enums may contain these keywords in quotes.)
+            return l.includes(`${e} `);
+          });
+          if (found && (!l.trim().startsWith(']'))) { return true; }
+          return false;
+        })();
+
+        if (headerLine) {
+          if (name) {
+            this._recordRecord(name, type, currentStructure, p);
+          }
+          currentStructure = '';
+          type = '';
+          name = '';
+        }
+        if (!type) {
+          type = (() => {
+            if (l.includes('callback interface')) { return 'callback-interface'; }
+            if (l.includes('interface mixin')) { return 'mixin'; }
+            if (l.includes('partial interface')) { return 'partial'; }
+            return KEYWORDS.find((e) => {
+              return l.includes(e);
+            });
+          })();
+          if (type) {
+            name = this._getName(l, type);
+          }
+        }
+        currentStructure += `${l}\n`;
       }
+      this._recordRecord(name, type, currentStructure, p);
     }
     return this.#sourceRecords;
   }
 
-  _processInterface(rawData, path) {
-    if (!rawData.includes('interface')) { return rawData; }
-    const interfaceSigniture = rawData.match(INTERFACE_SIGNITURE_RE);
-    if (!interfaceSigniture) {
-      const msg = `File ${path} contains a malformed interface.`;
-      throw new IDLError(msg, path);
+   _getName(fromLine, ofType) {
+    let matches;
+    switch (ofType) {
+      case 'callback':
+        matches = fromLine.match(CALLBACK_NAME);
+        break;
+      case 'callback-interface':
+        matches = fromLine.match(CALLBACK_INTERFACE_NAME);
+        break;
+      case 'dictionary':
+        matches = fromLine.match(DICTIONARY_NAME);
+        break;
+      case 'enum':
+        matches = fromLine.match(ENUM_NAME);
+        break;
+      case 'includes':
+        matches = fromLine.match(INCLUDES_NAME);
+        break;
+      case 'interface':
+        matches = fromLine.match(INTERFACE_NAME);
+        break;
+      case 'mixin':
+        matches = fromLine.match(MIXIN_NAME);
+        break;
+      case 'namespace':
+        matches = fromLine.match(NAMESPACE_NAME);
+        break;
+      case 'partial':
+        matches = fromLine.match(PARTIAL_NAME);
+        break;
+      case 'typedef':
+        matches = fromLine.match(TYPEDEF_NAME);
     }
-    if (interfaceSigniture) {
-      let type;
-      if (interfaceSigniture[1]) { type = interfaceSigniture[1]; }
-      if (interfaceSigniture[2]) { type = interfaceSigniture[2]; }
-      this._recordRecord(interfaceSigniture[3], rawData, path, type);
-      rawData = rawData.replace(rawData, '');
+    let name;
+    if (matches) {
+      name = matches[1].trim();
     }
-    return rawData.trim();
+    return name;
   }
 
-  _processCallbacks(rawData, path) {
-    if (!rawData.includes('callback')) { return rawData; }
-    const foundCallbacks = rawData.matchAll(CALLBACK_RE);
-    if (!foundCallbacks) {
-      const msg = `File ${path} contains a malformed callback.`;
-      throw new IDLError(msg, path);
-    }
-    for (let f of foundCallbacks) {
-      if (f[0].includes('callback interface')) { continue; }
-      this._recordRecord(f[1], f, path, 'callback');
-      rawData = rawData.replace(f[0], '');
-    }
-    return rawData.trim();
-  }
-
-  _processDictionaries(rawData, path) {
-    if (!rawData?.includes('dictionary')) { return rawData; }
-    const foundDictionaries = rawData.matchAll(DICTIONARY_RE);
-    if (!foundDictionaries) {
-      const msg = `File ${path} contains a malformed dictionary.`;
-      throw new IDLError(msg, path);
-    }
-    for (let f of foundDictionaries) {
-      this._recordRecord(f[2], f, path, 'dictionary');
-      rawData = rawData.replace(f[0], '');
-    }
-    return rawData.trim();
-  }
-
-  _processEnums(rawData, path) {
-    if (!rawData?.includes('enum')) { return rawData; }
-    const foundEnums = rawData.matchAll(ENUM_RE);
-    if (!foundEnums) {
-      const msg = `File ${path} contains a malformed enum.`;
-      throw new IDLError(msg, path);
-    }
-    for (let f of foundEnums) {
-      this._recordRecord(f[1], f, path, 'enum');
-      rawData = rawData.replace(f[0], '');
-    }
-    return rawData.trim();
-  }
-
-  _processIncludes(rawData, path) {
-    if (!rawData.includes('includes')) { return rawData; }
-    const foundIncludes = rawData.matchAll(INCLUDES_RE);
-    if (!foundIncludes) {
-      const msg = `File ${path} contains a malformed include.`;
-      throw new IDLError(msg, path);
-    }
-    for (let f of foundIncludes) {
-      this._recordRecord(f[1], f, path, 'includes');
-      rawData = rawData.replace(f[0], '');
-    }
-    return rawData.trim();
-  }
-
-  _processNamespaces(rawData, path) {
-    if (!rawData.includes('namespace')) { return rawData; }
-    const foundNamespaces = rawData.matchAll(NAMESPACE);
-    if (!foundNamespaces) {
-      const msg = `File ${path} contains a malformed namespace.`;
-      throw new IDLError(msg, path);
-    }
-    for (let f of foundNamespaces) {
-      this._recordRecord(f[3], f, path, 'namespace');
-      rawData = rawData.replace(f[0], '');
-    }
-    return rawData.trim();
-  }
-
-  _processTypeDefs(rawData, path) {
-    if (!rawData.includes('typedef')) { return rawData; }
-    const foundTypedefs = rawData.matchAll(TYPEDEF_LINE);
-    if  (!foundTypedefs) {
-      const msg = `File ${path} contains a malformed typedef.`;
-      throw new IDLError(msg, path);
-    }
-    for (let f of foundTypedefs) {
-      let pieces = f[0].split(' ');
-      let name = pieces[pieces.length -1 ];
-      if (name.endsWith(';')) {
-        name = name.slice(0, -1);
-      }
-      this._recordRecord(name, f, path, 'typedef');
-      rawData = rawData.replace(f[0], '');
-    }
-    return rawData.trim();
-  }
-
-  _recordRecord(name, data, path, type) {
-    let sourceRecord = this.#sourceRecords.get(name);
+  _recordRecord(name, type, data, path) {
+    let key = `${name}-${type}`;
+    let sourceRecord = this.#sourceRecords.get(key);
     if (sourceRecord) {
-      sourceRecord.push(data, path);
+      sourceRecord.add(path, data);
     } else {
-      sourceRecord = new SourceRecord(data[0], { path: path, name: name, type: type});
-      this.#sourceRecords.set(name, sourceRecord);
+      sourceRecord = new SourceRecord(name, type, { path: path, content: data });
+      this.#sourceRecords.set(key, sourceRecord)
     }
   }
 }

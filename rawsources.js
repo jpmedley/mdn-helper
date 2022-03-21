@@ -22,12 +22,25 @@ initiateLogger(global.__commandName);
 
 class SourceRecord {
   #name
-  #sources = new Map();
   #type
-  constructor(source, options) {
-    this.#sources.set(options.path, source);
-    this.#name = options.name;
-    this.#type = options.type;
+  #sources = new Array();
+
+  constructor(name, type, options) {
+    this.#name = name;
+    this.#type = type;
+    this.add(options.path, options.content);
+  }
+
+  add(path, content) {
+    let source = {
+      path: path,
+      content: content
+    }
+    this.#sources.push(source);
+  }
+
+  get name() {
+    return this.#name;
   }
 
   get sources() {
@@ -36,11 +49,6 @@ class SourceRecord {
 
   get type() {
     return this.#type;
-  }
-
-  push(source, path) {
-    if(this.#sources.has(path)) { return; }
-    this.#sources.set(path, source);
   }
 }
 
