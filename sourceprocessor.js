@@ -116,7 +116,9 @@ class _SourceProcessor_Base {
         }
         currentStructure += `${l}\n`;
       }
-      this._recordRecord(name, type, currentStructure, p);
+      if (name) {
+        this._recordRecord(name, type, currentStructure, p);
+      }
     }
     return this.#sourceRecords;
   }
