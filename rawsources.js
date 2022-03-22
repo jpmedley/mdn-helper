@@ -16,14 +16,18 @@
 
 const fs = require('fs');
 
+const { FlagStatus } = require('./flags.js');
 const { initiateLogger } = require('./log.js');
 
 initiateLogger(global.__commandName);
 
+const FLAGS= new FlagStatus('./idl/platform/runtime_enabled_features.json5');
+
 class SourceRecord {
   #name
-  #type
+  #runtimeFlag
   #sources = new Array();
+  #type
 
   constructor(name, type, options) {
     this.#name = name;
@@ -37,6 +41,15 @@ class SourceRecord {
       content: content
     }
     this.#sources.push(source);
+  }
+
+  get flagStatus() {
+    if (!this.#runtimeFlag) {
+      const RUNTIME_ENABLED_RE = /RuntimeEnabled\s*=\s*(\w*)/;
+      const matches = this.#sources[0].content.match(RUNTIME_ENABLED_RE);
+      this.#runtimeFlag = FLAGS.getHighestResolvedStatus(matches[1].trim());
+    }
+    return this.#runtimeFlag;
   }
 
   get name() {
