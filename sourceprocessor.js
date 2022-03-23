@@ -73,7 +73,7 @@ class _SourceProcessor_Base {
 
   getFeatureSources() {
     for (let p of this.#sourcePaths) {
-      let rawData = utils.getIDLFile(`${this.#sourceLocation}${p}`, {clean: true});
+      let rawData = utils.getIDLFile(p, {clean: true});
       if (!rawData) {
         global.__logger.info(`Cannot process ${this.#sourceLocation}${contents[c].name}.`);
       }
