@@ -42,9 +42,27 @@ class FinderInterface {
       }
       process.exit();
     }
-    possibleMatches.forEach((p) => {
-      console.log(`${p.name} (${p.type} from ${p.sources[0].path})`);
-    });
+    if (possibleMatches.stable) {
+      console.log("-".repeat(80));
+      console.log(" ".repeat(37) + "Stable" + " ".repeat(37));
+      possibleMatches.stable.forEach((p) => {
+        console.log(`${p.name} (${p.type} from ${p.sources[0].path})`)
+      });
+    }
+    if (possibleMatches.originTrials) {
+      console.log("-".repeat(80));
+      console.log(" ".repeat(33) + "In Origin Trial" + " ".repeat(32));
+      possibleMatches.stable.forEach((p) => {
+        console.log(`${p.name} (${p.type} from ${p.sources[0].path})`)
+      });
+    }
+    if (possibleMatches.devTrials) {
+      console.log("-".repeat(80));
+      console.log(" ".repeat(31) + "In Developer Trial" + " ".repeat(31));
+      possibleMatches.stable.forEach((p) => {
+        console.log(`${p.name} (${p.type} from ${p.sources[0].path})`)
+      });
+    }
   }
 
   _printInstructions() {
