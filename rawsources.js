@@ -43,11 +43,20 @@ class SourceRecord {
     this.#sources.push(source);
   }
 
+  get flag() {
+    const RUNTIME_ENABLED_RE = /RuntimeEnabled\s*=\s*(\w*)/;
+    const matches = this.#sources[0].content.match(RUNTIME_ENABLED_RE);
+    if (matches) {
+      return matches[1].trim();
+    }
+  }
+
   get flagStatus() {
     if (!this.#runtimeFlag) {
-      const RUNTIME_ENABLED_RE = /RuntimeEnabled\s*=\s*(\w*)/;
-      const matches = this.#sources[0].content.match(RUNTIME_ENABLED_RE);
-      this.#runtimeFlag = FLAGS.getHighestResolvedStatus(matches[1].trim());
+      const flag = this.flag;
+      if (flag) {
+        this.#runtimeFlag = FLAGS.getHighestResolvedStatus(flag);
+      }
     }
     return this.#runtimeFlag;
   }

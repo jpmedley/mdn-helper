@@ -41,9 +41,11 @@ const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mi
 
 class _SourceProcessor_Base {
   #EXCLUSIONS = [];
+  #sourceLocation = '';
   #sourcePaths = [];
   #sourceRecords = new Map();
   constructor(sourceLocation, options = {}) {
+    this.#sourceLocation = sourceLocation;
     this._processSource(sourceLocation);
   }
 
@@ -55,25 +57,25 @@ class _SourceProcessor_Base {
     }
   }
 
-  _getSourceList(root) {
-    const contents = fs.readdirSync(root, {withFileTypes: true});
+  _getSourceList(root, stem='') {
+    const contents = fs.readdirSync(`${root}${stem}`, {withFileTypes: true});
     for (let c in contents) {
       if (contents[c].isDirectory()) {
         if (this.#EXCLUSIONS.includes(contents[c].name)) { continue; }
-        this._getSourceList(`${root}${contents[c].name}/`);
+        this._getSourceList(`${root}`, `${stem}${contents[c].name}/`);
       } else if (contents[c].isFile()) {
         if (!contents[c].name.endsWith('.idl')) { continue; }
         if (contents[c].name.startsWith('test_')) { continue; }
-        this.#sourcePaths.push(`${root}${contents[c].name}`);
+        this.#sourcePaths.push(`${stem}${contents[c].name}`);
       }
     }
   }
 
   getFeatureSources() {
     for (let p of this.#sourcePaths) {
-      let rawData = utils.getIDLFile(p, {clean: true});
+      let rawData = utils.getIDLFile(`${this.#sourceLocation}${p}`, {clean: true});
       if (!rawData) {
-        global.__logger.info(`Cannot process ${root}${contents[c].name}.`);
+        global.__logger.info(`Cannot process ${this.#sourceLocation}${contents[c].name}.`);
       }
       const lines = rawData.split('\n');
       let currentStructure = '';

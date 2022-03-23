@@ -38,6 +38,7 @@ class _FlagStatus {
 
   getStableAsBoolean(key) {
     const flagData = this[key];
+    if (!flagData) { return true; }
     if (flagData.status === 'stable') {
       return true;
     } else {
