@@ -2,6 +2,7 @@
   "Application": {
     "bcdCommitDirectory": "$HOME/Desktop/out/",
     "boilerplatesDirectory": "$HOME/Documents/content/mdn-boilerplates/api",
+    "flagPath": "./idl/platform/runtime_enabled_features.json5",
     "help": "VERBOSE",
     "logLevel": "error",
     "logOutput": ["file"],

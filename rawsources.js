@@ -21,7 +21,7 @@ const { initiateLogger } = require('./log.js');
 
 initiateLogger(global.__commandName);
 
-const FLAGS= new FlagStatus('./idl/platform/runtime_enabled_features.json5');
+global.__Flags = FlagStatus();
 
 class SourceRecord {
   #name
@@ -55,7 +55,7 @@ class SourceRecord {
     if (!this.#runtimeFlag) {
       const flag = this.flag;
       if (flag) {
-        this.#runtimeFlag = FLAGS.getHighestResolvedStatus(flag);
+        this.#runtimeFlag = global.__Flags.getHighestResolvedStatus(flag);
       }
     }
     return this.#runtimeFlag;

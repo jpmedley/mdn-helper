@@ -68,8 +68,8 @@ describe('FlagStatus', () => {
     it('Confirms that a key returns "experimental" on flag object', () => {
       assert.strictEqual(global.__Flags.getHighestResolvedStatus('RTEComplex'), 'stable');
     });
-    it ('Confirms that a key returns "experimental" on a simple flag', () => {
-      assert.strictEqual(global.__Flags.getHighestResolvedStatus('RTEExperimental'), 'experimental');
+    it ('Confirms that a key returns "devtrial" on a simple flag', () => {
+      assert.strictEqual(global.__Flags.getHighestResolvedStatus('RTEExperimental'), 'devtrial');
     });
     it ('Confirms that a key returns "origintrial" on an origin trial flag', () => {
       assert.strictEqual(global.__Flags.getHighestResolvedStatus('OTEExperimental'), 'origintrial');

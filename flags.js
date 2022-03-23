@@ -14,6 +14,7 @@
 
 'use strict';
 
+const config = require('config');
 const fs = require('fs');
 const { fileURLToPath } = require('url');
 const utils = require('./utils.js');
@@ -81,7 +82,7 @@ class _FlagStatus {
         if (Object.values(actualStatus).includes('origin_trial_feature_name')) {
           return 'origintrial'
         } else {
-          return 'experimental';
+          return 'devtrial';
         }
       }
 
@@ -100,12 +101,15 @@ class _FlagStatus {
           return this[key].status;
         }
       }
+      if (actualStatus === 'experimental') { return 'devtrial'; }
       return actualStatus;
     }
   }
 }
 
-function getFlagObject(flagPath) {
+function getFlagObject(flagPath = '') {
+  if (!flagPath) { flagPath = config.get('Application.flagPath') }
+  if (global.__commandName == 'test') { return new _FlagStatus(flagPath); }
   if (!flags) {
     flags = new _FlagStatus(flagPath);
   }
