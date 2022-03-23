@@ -66,16 +66,16 @@ class _SourceProcessor_Base {
       } else if (contents[c].isFile()) {
         if (!contents[c].name.endsWith('.idl')) { continue; }
         if (contents[c].name.startsWith('test_')) { continue; }
-        this.#sourcePaths.push(`${root}${stem}${contents[c].name}`);
+        this.#sourcePaths.push(`${stem}${contents[c].name}`);
       }
     }
   }
 
   getFeatureSources() {
     for (let p of this.#sourcePaths) {
-      let rawData = utils.getIDLFile(p, {clean: true});
+      let rawData = utils.getIDLFile(`${this.#sourceLocation}${p}`, {clean: true});
       if (!rawData) {
-        global.__logger.info(`Cannot process ${this.#sourceLocation}${contents[c].name}.`);
+        global.__logger.info(`Cannot process ${p}.`);
       }
       const lines = rawData.split('\n');
       let currentStructure = '';

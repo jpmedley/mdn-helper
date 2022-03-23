@@ -1,0 +1,8 @@
+[
+    Exposed=Window,
+    ActiveScriptWrappable,
+    RuntimeEnabled=InOriginTrial
+] interface InOriginTrial {
+    constructor();
+readonly attribute FontFaceSetLoadStatus status;
+};

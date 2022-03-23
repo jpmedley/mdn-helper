@@ -90,6 +90,15 @@
 
   data: [
     {
+      name: "InDevTrial",
+      status: "experimental"
+    },
+    {
+      name: "InOriginTrial",
+      origin_trial_feature_name: "InOriginTrial",
+      status: "experimental"
+    },
+    {
       name: "RTEComplex",
       status:  {"Android": "stable", "default": "experimental"},
     },

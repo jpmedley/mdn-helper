@@ -25,7 +25,7 @@ const utils = require('./utils.js');
 const fs = require('fs');
 const { util } = require('config');
 
-const FLAGS = FlagStatus('./idl/platform/runtime_enabled_features.json5');
+global.__Flags = FlagStatus();
 
 function _finderFactory(args) {
   //First few args are no longer needed.
@@ -259,18 +259,47 @@ class IDLFinder {
   // }
 
   async find(types = ['interface']) {
-    let returns = new Array();
+    let stableItems = new Array();
+    let otItems = new Array();
+    let dtItems = new Array();
     this._sources.forEach((s) => {
       if (s.name.toLowerCase().includes(this._searchString) && types.includes(s.type)) {
-        const isStable = FLAGS.getStableAsBoolean(s.flag)
-        if (false || (typeof isStable === "undefined")) {
-          const keepFlags = this._includeFlags || this._includeOriginTrials;
-          if (isStable && !keepFlags) { return; }
+        const flagStatus = global.__Flags.getHighestResolvedStatus(s.flag);
+        switch (flagStatus) {
+          // Could cover status 'test' which is earlier than DevTrial,
+          //  but 'test' items should never be documented.
+          case 'devtrial':
+            if (this._includeFlags) { dtItems.push(s); }
+            break;
+          case 'origintrial':
+            if (this._includeOriginTrials) { otItems.push(s); }
+            break;
+          case 'stable':
+            stableItems.push(s);
+            break;
         }
-        returns.push(s);
       }
     });
-    return returns;
+    stableItems.sort((a, b) => {
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
+      return 0
+    });
+    otItems.sort((a, b) => {
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
+      return 0
+    });
+    dtItems.sort((a, b) => {
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
+      return 0
+    });
+    return {
+      stable: stableItems,
+      originTrials: otItems,
+      devTrials: dtItems
+    }
   }
 
   async findAndReturn() {
