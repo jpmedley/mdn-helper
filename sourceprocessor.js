@@ -66,7 +66,7 @@ class _SourceProcessor_Base {
       } else if (contents[c].isFile()) {
         if (!contents[c].name.endsWith('.idl')) { continue; }
         if (contents[c].name.startsWith('test_')) { continue; }
-        this.#sourcePaths.push(`${stem}${contents[c].name}`);
+        this.#sourcePaths.push(`${root}${stem}${contents[c].name}`);
       }
     }
   }
