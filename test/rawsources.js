@@ -17,8 +17,11 @@
 global.__commandName = 'test';
 
 const assert = require('assert');
+const { FlagStatus, NO_FLAG } = require('../flags.js');
 const { initiateLogger } = require('../log.js');
 const { SourceRecord } = require('../rawsources.js');
+
+global.__Flags = FlagStatus('./test/files/exp_flags.json5');
 
 initiateLogger();
 
@@ -32,7 +35,7 @@ describe('SourceRecord', () => {
         content: IDL
       });
       const flagStatus = sr.flagStatus;
-      assert.strictEqual(flagStatus, 'experimental');
+      assert.strictEqual(flagStatus, 'devtrial');
     });
   });
 });
