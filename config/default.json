@@ -4,6 +4,7 @@
     "boilerplatesDirectory": "$HOME/Documents/content/mdn-boilerplates/api",
     "flagPath": "./idl/platform/runtime_enabled_features.json5",
     "help": "VERBOSE",
+    "idlDirectory": "/idl",
     "logLevel": "error",
     "logOutput": ["file"],
     "loggingDirectory": "logs/",

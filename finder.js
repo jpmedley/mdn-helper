@@ -29,38 +29,42 @@ global.__Flags = FlagStatus();
 
 function _finderFactory(args) {
   //First few args are no longer needed.
-  args.shift();
-  const matches = args[0].match(/app_([^\.]+)\.js/);
-  const revisedArgs = [];
-  revisedArgs.push(matches[1]);
-  args.shift();
-  const searchDomain = args[0].toLowerCase();
-  if (!args[0]) {
-    searchDomain = 'idl';
-  }
-  args.shift();
-  revisedArgs.push(...args);
-  switch (searchDomain) {
-    case 'css':
-      return new CSSFinder(revisedArgs);
-    case 'idl':
-      return new IDLFinder(revisedArgs);
-    default:
-      throw new Error(msg);
-  }
+  // args.shift();
+  // const matches = args[0].match(/app_([^\.]+)\.js/);
+  // const revisedArgs = [];
+  // revisedArgs.push(matches[1]);
+  // args.shift();
+  // const searchDomain = args[0].toLowerCase();
+  // if (!args[0]) {
+  //   searchDomain = 'idl';
+  // }
+  // args.shift();
+  // revisedArgs.push(...args);
+  // switch (searchDomain) {
+  //   case 'css':
+  //     return new CSSFinder(revisedArgs);
+  //   case 'idl':
+  //     return new IDLFinder(revisedArgs);
+  //   default:
+  //     throw new Error(msg);
+  // }
+  if (args.includes('css')) { return CSSFinder }
+  if (args.includes('idl')) { return IDLFinder }
+  const msg = 'Search must be either css or idl.';
+  throw new Error(msg);
 }
 
 class CSSFinder {
-  constructor(args, options) {
+  constructor(options) {
     utils.sendUserOutput("CSSFinder is not yet available.\n");
     process.exit();
   }
 }
 
 class IDLFinder {
-  constructor(args, options = { iDLDirectory: `${utils.APP_ROOT}/idl/` }) {
-    this._processArguments(args)
-    let cis = new ChromeIDLSource(options.iDLDirectory);
+  constructor(iDLDirectory) {
+    // this._processArguments(args)
+    let cis = new ChromeIDLSource(iDLDirectory);
     this._sources = cis.getFeatureSources();
   }
 
@@ -101,42 +105,22 @@ class IDLFinder {
   //   return matches;
   // }
 
-  _processArguments(args) {
-    this._searchString = args[1].toLowerCase();
-    this._interactive = args.some(arg => {
-      return (arg.includes('-i') || (arg.includes('--interactive')));
-    });
-    this._includeFlags = args.some(arg => {
-      return (arg.includes('-f') || (arg.includes('--flags')));
-    });
-    this._includeOriginTrials = args.some(arg => {
-      return (arg.includes('-o') || (arg.includes('--origin-trials')));
-    });
-    this.__bcdOnly = args.some(arg => {
-      return (arg.includes('-b') || (arg.includes('--bcdOnly')));
-    });
-    if (args[0] === 'Builder') {
-      this._landingPageOnly = args.some(arg => {
-        return (arg.includes('-l') || (arg.includes('--landing-page')));
-      });
-    }
-    if (args[0] === 'Finder') {
-      this._ping = args.some(arg => {
-        return (arg.includes('-p') || (arg.includes('--ping')));
-      });
-      this._dump = args.some(arg => {
-        return (arg.includes('-d') || (arg.includes('--dump-names')));
-      });
-    }
-  }
+  // _processArguments(args) {
+  //   this._includeFlags = args.some(arg => {
+  //     return (arg.includes('-f') || (arg.includes('--flags')));
+  //   });
+  //   this._includeOriginTrials = args.some(arg => {
+  //     return (arg.includes('-o') || (arg.includes('--origin-trials')));
+  //   });
+  // }
 
-  get includeFlags() {
-    return this._includeFlags;
-  }
+  // get includeFlags() {
+  //   return this._includeFlags;
+  // }
 
-  get includeOriginTrials() {
-    return this._includeOriginTrials;
-  }
+  // get includeOriginTrials() {
+  //   return this._includeOriginTrials;
+  // }
 
   // async _findForListing() {
   //   const matches = this._findInterfaces(this._searchString);
@@ -258,19 +242,19 @@ class IDLFinder {
   //   utils.sendUserOutput();
   // }
 
-  async find(types = ['interface']) {
+  async find(searchString, types = ['interface'], options) {
     let matches = new Array();
     this._sources.forEach((s) => {
-      if (s.name.toLowerCase().includes(this._searchString) && types.includes(s.type)) {
+      if (s.name.toLowerCase().includes(searchString.toLowerCase()) && types.includes(s.type)) {
         const flagStatus = global.__Flags.getHighestResolvedStatus(s.flag);
         switch (flagStatus) {
           // Could cover status 'test' which is earlier than DevTrial,
           //  but 'test' items should never be documented.
           case 'devtrial':
-            if (this._includeFlags) { matches.push(s); }
+            if (options.includeFlags) { matches.push(s); }
             break;
           case 'origintrial':
-            if (this._includeOriginTrials) { matches.push(s); }
+            if (options.includeOriginTrials) { matches.push(s); }
             break;
           case 'stable':
             matches.push(s);

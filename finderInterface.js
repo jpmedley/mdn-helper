@@ -25,7 +25,10 @@ const CANCEL = '(none)';
 
 class FinderInterface {
   constructor(args) {
-    this._finder = FinderFactory(args);
+    this._processArguments(args);
+    let Finder = FinderFactory(this._searchDomain);
+    const idlDirectory = utils.getConfig('idlDirectory')
+    this._finder = new Finder(`${utils.APP_ROOT}${idlDirectory}/`)
   }
 
   async find() {
@@ -34,17 +37,23 @@ class FinderInterface {
   }
 
   _show(answer) {
-    let idlFile = utils.getIDLFile(`./idl/${answer.sources[0].path}`);
+    let idlFile = utils.getIDLFile(answer.sources[0].path);
     utils.sendUserOutput();
     utils.sendUserOutput(idlFile);
-    utils.sendUserOutput(`File located at ${answer.sources[0].path}`);
+    let shortPath = answer.sources[0].path.split(utils.APP_ROOT);
+    utils.sendUserOutput(`File located at ${shortPath[1]}`);
   }
 
   async _select() {
-    const possibleMatches = await this._finder.find();
+    const types = ['interface'];
+    const options = {
+      includeFlags: this._includeFlags,
+      includeOriginTrials: this._includeOriginTrials
+    }
+    const possibleMatches = await this._finder.find(this._searchString, types, options);
     if (possibleMatches.length === 0) {
       utils.sendUserOutput(NOTHING_FOUND);
-      if (this._finder.includeFlags && this._finder.includeOriginTrials) {
+      if (!this._finder.includeFlags && !this._finder.includeOriginTrials) {
         utils.sendUserOutput(TRY_RUNNING);
       }
       process.exit();
@@ -52,12 +61,13 @@ class FinderInterface {
     this._printInstructions();
     let choices = new Array();
     possibleMatches.forEach((p) => {
-      choices.push(`${p.name} (${p.type} from ${p.sources[0].path})`);
+      let shortPath = p.sources[0].path.split(utils.APP_ROOT);
+      choices.push(`${p.name} (${p.type} from ${shortPath[1]})`);
     });
     choices.push(CANCEL);
     const prompt = new Select({
       name: 'idlFile',
-      message: 'Which interface do you want to work qwith?',
+      message: 'Which interface do you want to work with?',
       choices: choices
     });
     let answer = await prompt.run();
@@ -73,6 +83,36 @@ class FinderInterface {
   _printInstructions() {
     const msg = `Use the up and down arrow to find the interface you want. Then press return.\n`
     utils.sendUserOutput(msg);
+  }
+
+  _processArguments(args) {
+    this._searchDomain = args[2].toLowerCase()
+    this._searchString = args[3].toLowerCase();
+    this._interactive = args.some(arg => {
+      return (arg.includes('-i') || (arg.includes('--interactive')));
+    });
+    this._includeFlags = args.some(arg => {
+      return (arg.includes('-f') || (arg.includes('--flags')));
+    });
+    this._includeOriginTrials = args.some(arg => {
+      return (arg.includes('-o') || (arg.includes('--origin-trials')));
+    });
+    this.__bcdOnly = args.some(arg => {
+      return (arg.includes('-b') || (arg.includes('--bcdOnly')));
+    });
+    if (args[0] === 'Builder') {
+      this._landingPageOnly = args.some(arg => {
+        return (arg.includes('-l') || (arg.includes('--landing-page')));
+      });
+    }
+    if (args[0] === 'Finder') {
+      this._ping = args.some(arg => {
+        return (arg.includes('-p') || (arg.includes('--ping')));
+      });
+      this._dump = args.some(arg => {
+        return (arg.includes('-d') || (arg.includes('--dump-names')));
+      });
+    }
   }
 }
 

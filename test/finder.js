@@ -28,62 +28,91 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 describe('IDLFinder', () => {
   describe('find()', () => {
     it('Confirms that an interface is returned', async () => {
-      const args = ['Finder', 'InterfaceNoParent'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find();
-      assert.strictEqual(found.stable[0].name, 'InterfaceNoParent');
+      const idf = new IDLFinder(TEST_IDL_FILES);
+      const types = ['interface'];
+      const options = {
+        includeFlags: false,
+        includeOriginTrials: false
+      }
+      const found = await idf.find('InterfaceNoParent', types, options);
+      assert.strictEqual(found[0].name, 'InterfaceNoParent');
     });
 
     it('Confirms that multiple, same-named items are returned', async () => {
-      const args = ['Finder', 'SameName'];
+      const idf = new IDLFinder(TEST_IDL_FILES);
       const types = ['callback', 'dictionary', 'enum', 'interface'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find(types);
-      assert.strictEqual(found.stable.length, 4);
+      const options = {
+        includeFlags: false,
+        includeOriginTrials: false
+      }
+      const found = await idf.find('SameName', types, options);
+      assert.strictEqual(found.length, 4);
     });
 
     it('Confirms that dev trial items are omitted when not requested', async () => {
-      const args = ['Finder', 'RTEExperimental'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find();
-      assert.strictEqual(found.devTrials.length, 0);
+      const idf = new IDLFinder(TEST_IDL_FILES);
+      const types = ['interface'];
+      const options = {
+        includeFlags: false,
+        includeOriginTrials: false
+      }
+      const found = await idf.find('RTEExperimental', types, options);
+      assert.strictEqual(found.length, 0);
     });
 
     it('Confirms that origin trial items are omitted when not requested', async () => {
-      const args = ['Finder', 'OTEExperimental'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find();
-      assert.strictEqual(found.originTrials.length, 0);
+      const idf = new IDLFinder(TEST_IDL_FILES);
+      const types = ['interface'];
+      const options = {
+        includeFlags: false,
+        includeOriginTrials: false
+      }
+      const found = await idf.find('OTEExperimental', types, options);
+      assert.strictEqual(found.length, 0);
     });
 
     it('Confirms that dev trial items are included when requested', async () => {
-      const args = ['Finder', 'InDevTrial', '-f'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find();
-      console.log(`${found.stable.length} ${found.originTrials.length} ${found.devTrials.length}`);
-      assert.strictEqual(found.devTrials.length, 1)
+      const idf = new IDLFinder(TEST_IDL_FILES);
+      const types = ['interface'];
+      const options = {
+        includeFlags: true,
+        includeOriginTrials: false
+      }
+      const found = await idf.find('InDevTrial', types, options);
+      assert.strictEqual(found.length, 1)
     });
 
     it('Confirms that origin trial items are included when requested', async () => {
-      const args = ['Finder', 'InOriginTrial', '-o'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find();
-      console.log(`${found.stable.length} ${found.originTrials.length} ${found.devTrials.length}`);
-      assert.strictEqual(found.originTrials.length, 1)
+      const idf = new IDLFinder(TEST_IDL_FILES);
+      const types = ['interface'];
+      const options = {
+        includeFlags: false,
+        includeOriginTrials: true
+      }
+      const found = await idf.find('InOriginTrial', types, options);
+      assert.strictEqual(found.length, 1)
     });
 
     it('Confirms that items are found for partial strings', async () => {
-      const args = ['Finder', 'All'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find();
-      assert.strictEqual(found.stable.length, 3);
+      const idf = new IDLFinder(TEST_IDL_FILES);
+      const types = ['interface'];
+      const options = {
+        includeFlags: false,
+        includeOriginTrials: false
+      }
+      const found = await idf.find('All', types, options);
+      assert.strictEqual(found.length, 3);
     });
 
     it('Confirms that is case insensitive', async () => {
-      const args = ['Finder', 'all'];
-      const idf = new IDLFinder(args, { iDLDirectory: TEST_IDL_FILES });
-      const found = await idf.find();
-      assert.strictEqual(found.stable.length, 3);
+      const idf = new IDLFinder(TEST_IDL_FILES);
+      const types = ['interface'];
+      const options = {
+        includeFlags: false,
+        includeOriginTrials: false
+      }
+      const found = await idf.find('all', types, options);
+      assert.strictEqual(found.length, 3);
     });
   });
 });
