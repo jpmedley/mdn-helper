@@ -28,12 +28,19 @@ class FinderInterface {
     this._finder = FinderFactory(args);
   }
 
-  find() {
-    this._select();
+  async find() {
+    const answer = await this._select();
+    this._show(answer);
+  }
+
+  _show(answer) {
+    let idlFile = utils.getIDLFile(`./idl/${answer.sources[0].path}`);
+    utils.sendUserOutput();
+    utils.sendUserOutput(idlFile);
+    utils.sendUserOutput(`File located at ${answer.sources[0].path}`);
   }
 
   async _select() {
-    this._printInstructions();
     const possibleMatches = await this._finder.find();
     if (possibleMatches.length === 0) {
       utils.sendUserOutput(NOTHING_FOUND);
@@ -42,27 +49,25 @@ class FinderInterface {
       }
       process.exit();
     }
-    if (possibleMatches.stable) {
-      console.log("-".repeat(80));
-      console.log(" ".repeat(37) + "Stable" + " ".repeat(37));
-      possibleMatches.stable.forEach((p) => {
-        console.log(`${p.name} (${p.type} from ${p.sources[0].path})`)
-      });
-    }
-    if (possibleMatches.originTrials) {
-      console.log("-".repeat(80));
-      console.log(" ".repeat(33) + "In Origin Trial" + " ".repeat(32));
-      possibleMatches.stable.forEach((p) => {
-        console.log(`${p.name} (${p.type} from ${p.sources[0].path})`)
-      });
-    }
-    if (possibleMatches.devTrials) {
-      console.log("-".repeat(80));
-      console.log(" ".repeat(31) + "In Developer Trial" + " ".repeat(31));
-      possibleMatches.stable.forEach((p) => {
-        console.log(`${p.name} (${p.type} from ${p.sources[0].path})`)
-      });
-    }
+    this._printInstructions();
+    let choices = new Array();
+    possibleMatches.forEach((p) => {
+      choices.push(`${p.name} (${p.type} from ${p.sources[0].path})`);
+    });
+    choices.push(CANCEL);
+    const prompt = new Select({
+      name: 'idlFile',
+      message: 'Which interface do you want to work qwith?',
+      choices: choices
+    });
+    let answer = await prompt.run();
+    if (answer === CANCEL) { process.exit(); }
+    const pieces = answer.split(' ');
+    const key = pieces[3].slice(0, -1).trim();
+    const answerData = possibleMatches.find((p) => {
+      return p.sources[0].path.includes(`${key}`);
+    });
+    return answerData;
   }
 
   _printInstructions() {

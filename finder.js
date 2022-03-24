@@ -259,9 +259,7 @@ class IDLFinder {
   // }
 
   async find(types = ['interface']) {
-    let stableItems = new Array();
-    let otItems = new Array();
-    let dtItems = new Array();
+    let matches = new Array();
     this._sources.forEach((s) => {
       if (s.name.toLowerCase().includes(this._searchString) && types.includes(s.type)) {
         const flagStatus = global.__Flags.getHighestResolvedStatus(s.flag);
@@ -269,37 +267,23 @@ class IDLFinder {
           // Could cover status 'test' which is earlier than DevTrial,
           //  but 'test' items should never be documented.
           case 'devtrial':
-            if (this._includeFlags) { dtItems.push(s); }
+            if (this._includeFlags) { matches.push(s); }
             break;
           case 'origintrial':
-            if (this._includeOriginTrials) { otItems.push(s); }
+            if (this._includeOriginTrials) { matches.push(s); }
             break;
           case 'stable':
-            stableItems.push(s);
+            matches.push(s);
             break;
         }
       }
     });
-    stableItems.sort((a, b) => {
+    matches.sort((a, b) => {
       if (a.name > b.name) { return 1; }
       if (a.name < b.name) { return -1; }
       return 0
     });
-    otItems.sort((a, b) => {
-      if (a.name > b.name) { return 1; }
-      if (a.name < b.name) { return -1; }
-      return 0
-    });
-    dtItems.sort((a, b) => {
-      if (a.name > b.name) { return 1; }
-      if (a.name < b.name) { return -1; }
-      return 0
-    });
-    return {
-      stable: stableItems,
-      originTrials: otItems,
-      devTrials: dtItems
-    }
+    return matches;
   }
 
   async findAndReturn() {
