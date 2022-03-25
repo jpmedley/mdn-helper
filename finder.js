@@ -25,6 +25,8 @@ const utils = require('./utils.js');
 const fs = require('fs');
 const { util } = require('config');
 
+const DEFAULT_TYPES = ['interface', 'mixin', 'partial'];
+
 global.__Flags = FlagStatus();
 
 function _finderFactory(args) {
@@ -242,7 +244,7 @@ class IDLFinder {
   //   utils.sendUserOutput();
   // }
 
-  async find(searchString, types = ['interface'], options) {
+  async find(searchString, types = DEFAULT_TYPES, options) {
     let matches = new Array();
     this._sources.forEach((s) => {
       if (s.name.toLowerCase().includes(searchString.toLowerCase()) && types.includes(s.type)) {

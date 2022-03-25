@@ -15,6 +15,7 @@
 'use strict';
 
 const { FinderFactory, IDLFinder } = require('./finder.js');
+const { SourceRecord } = require('./rawsources.js');
 const utils = require('./utils.js');
 
 const { Select } = require('enquirer');
@@ -45,7 +46,7 @@ class FinderInterface {
   }
 
   async _select() {
-    const types = ['interface'];
+    const types = ['interface', 'mixin', 'partial'];
     const options = {
       includeFlags: this._includeFlags,
       includeOriginTrials: this._includeOriginTrials
@@ -61,8 +62,10 @@ class FinderInterface {
     this._printInstructions();
     let choices = new Array();
     possibleMatches.forEach((p) => {
-      let shortPath = p.sources[0].path.split(utils.APP_ROOT);
-      choices.push(`${p.name} (${p.type} from ${shortPath[1]})`);
+      for (let s of p.sources) {
+        let shortPath = s.path.split(utils.APP_ROOT);
+        choices.push(`${p.name} (${p.type} from ${shortPath[1]})`);
+      }
     });
     choices.push(CANCEL);
     const prompt = new Select({
@@ -74,9 +77,17 @@ class FinderInterface {
     if (answer === CANCEL) { process.exit(); }
     const pieces = answer.split(' ');
     const key = pieces[3].slice(0, -1).trim();
-    const answerData = possibleMatches.find((p) => {
-      return p.sources[0].path.includes(`${key}`);
+
+    
+    const match = possibleMatches.find((p) => {
+      return p.sources.some((s) => {
+        return s.path.includes(key);
+      });
     });
+    const source = match.sources.find((s) => {
+      return s.path.includes(key);
+    })
+    const answerData = new SourceRecord(match.name, match.type, source);
     return answerData;
   }
 
