@@ -21,10 +21,14 @@ const { initiateLogger } = require('./log.js');
 
 initiateLogger(global.__commandName);
 
+// For use with string.matchAll();
+const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g
+
 global.__Flags = FlagStatus();
 
 class SourceRecord {
   #name
+  #properties
   #runtimeFlag
   #sources = new Array();
   #type
@@ -65,12 +69,38 @@ class SourceRecord {
     return this.#name;
   }
 
+  get properties() {
+    if (this.#properties) { return this.#properties; }
+    this.#properties = new Map()
+    for (let s of this.#sources) {
+      if (!s.properties) {
+        let matches = s.content.matchAll(PROPERTIES_RE);
+        if (matches) {
+          s.properties = new Array();
+          for (let m of matches) {
+            if (m[1] === 'EventHandler') { continue; }
+            let signiture = { name: m[2], returnType: m[1] }
+            s.properties.push(signiture);
+          }
+        }
+      }
+      if (s.properties) {
+        this.#properties.set(s.path, s.properties);
+      }
+    }
+    if (this.#properties.size) { return this.#properties; }
+    else { return undefined; }
+  }
+
   get sources() {
     return this.#sources;
   }
 
   get type() {
     return this.#type;
+  }
+
+  get urls() {
   }
 }
 
