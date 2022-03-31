@@ -36,6 +36,7 @@ const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.id
 const PROPERTIES_OTHER = './test/files/properties-other.idl';
 const PROPERTIES_SETLIKE = './test/files/properties-setlike.idl';
 const PROPERTIES_SETLIKE_READONLY = './test/files/properties-setlike-readonly.idl';
+const URL_SOURCE = './test/files/url-source.idl';
 
 function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
@@ -46,7 +47,7 @@ describe('SourceRecord', () => {
     it('Confirms that a flag\'s status correctly returned', () => {
       const sr = new SourceRecord('interfaceFlagOT', 'interface', {
         path: 'some/fake/path.idl',
-        content: FLAG_IDL
+        sourceIdl: FLAG_IDL
       });
       const flagStatus = sr.flagStatus;
       assert.strictEqual(flagStatus, 'devtrial');
@@ -56,38 +57,33 @@ describe('SourceRecord', () => {
   describe('properties', () => {
     it('Confirms that all basic properties are counted', () => {
       const source = loadSource(PROPERTIES_BASIC);
-      const sr = new SourceRecord('properties-basic', 'interface', { path: PROPERTIES_BASIC, content: source });
-      const propertyMap = sr.properties;
-      const properties = propertyMap.get(PROPERTIES_BASIC);
+      const sr = new SourceRecord('properties-basic', 'interface', { path: PROPERTIES_BASIC, sourceIdl: source });
+      const properties = sr.getProperties();
       assert.strictEqual(properties.length, 2);
     });
     it('Confirms that eventHandler is excluded', () => {
       const source = loadSource(PROPERTIES_EVENTHANDLER);
-      const sr = new SourceRecord('properties-eh-excluded', 'interface', { path: PROPERTIES_EVENTHANDLER, content: source });
-      const propertyMap = sr.properties;
-      const properties = propertyMap.get(PROPERTIES_EVENTHANDLER);
+      const sr = new SourceRecord('properties-eh-excluded', 'interface', { path: PROPERTIES_EVENTHANDLER, sourceIdl: source });
+      const properties = sr.getProperties();
       assert.strictEqual(properties.length, 2);
     });
     it('Confirms that return type is recorded', () => {
       const source = loadSource(PROPERTIES_BASIC);
-      const sr = new SourceRecord('properties-returnType', 'interface', { path: PROPERTIES_BASIC, content: source});
-      const propertyMap = sr.properties;
-      const properties = propertyMap.get(PROPERTIES_BASIC);
+      const sr = new SourceRecord('properties-returnType', 'interface', { path: PROPERTIES_BASIC, sourceIdl: source});
+      const properties = sr.getProperties();
       assert.strictEqual(properties[0].returnType, 'FontFaceLoadStatus');
     });
     it('Confirms that a false positive is avoided', () => {
       // A false positive is a method that contians the word 'attribute' within
       const source = loadSource(PROPERTIES_DISTINGUISH);
-      const sr = new SourceRecord('properties-falsePlus', 'interface', { path: PROPERTIES_DISTINGUISH, content: source});
-      const propertyMap = sr.properties;
-      const properties = propertyMap.get(PROPERTIES_DISTINGUISH);
+      const sr = new SourceRecord('properties-falsePlus', 'interface', { path: PROPERTIES_DISTINGUISH, sourceIdl: source});
+      const properties = sr.getProperties();
       assert.strictEqual(properties.length, 1);
     });
     it('Confirms that array return types are returned', () => {
       const source = loadSource(PROPERTIES_OTHER);
-      const sr = new SourceRecord('properties-array-return', 'interface', { path: PROPERTIES_OTHER, content: source });
-      const propertyMap = sr.properties;
-      const properties = propertyMap.get(PROPERTIES_OTHER);
+      const sr = new SourceRecord('properties-array-return', 'interface', { path: PROPERTIES_OTHER, sourceIdl: source });
+      const properties = sr.getProperties();
       const aProperty = properties.find((p) => {
         return p.returnType === 'FrozenArray<DOMPointReadOnly>';
       });
@@ -95,13 +91,31 @@ describe('SourceRecord', () => {
     });
     it('Confirms that variable return types are returned', () => {
       const source = loadSource(PROPERTIES_OTHER);
-      const sr = new SourceRecord('properties-array-return', 'interface', { path: PROPERTIES_OTHER, content: source });
-      const propertyMap = sr.properties;
-      const properties = propertyMap.get(PROPERTIES_OTHER);
+      const sr = new SourceRecord('properties-array-return', 'interface', { path: PROPERTIES_OTHER, sourceIdl: source });
+      const properties = sr.getProperties();
       const aProperty = properties.find((p) => {
         return p.returnType === 'XRPlaneOrientation?';
       });
       assert.strictEqual(aProperty.name, 'orientation');
     });
   });
+
+  // describe('urls', () => {
+  //   it('Confirms that urls can be constructed', () => {
+  //     const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
+  //     const URLS = [
+  //       `${URL_BASE}PropertiesBasic/`,
+  //       `${URL_BASE}PropertiesBasic/status`,
+  //       `${URL_BASE}PropertiesBasic/raw`
+  //     ];
+
+  //     const source = loadSource(URL_SOURCE);
+  //     const sr = new SourceRecord('urls', 'interface', { path: URL_SOURCE, sourceIdl: source });
+  //     const urls = sr.urls;
+  //     const isComplete = URLS.every((u) => {
+  //       return urls.includes(u);
+  //     });
+  //     assert.ok(isComplete);
+  //   });
+  // });
 });

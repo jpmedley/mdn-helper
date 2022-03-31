@@ -23,8 +23,16 @@ initiateLogger(global.__commandName);
 
 // For use with string.matchAll();
 const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g
+const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
 
 global.__Flags = FlagStatus();
+
+// #sources is an array of objects with this structure:
+// {
+//    path,
+//    sourceIdl, 
+//    properties[]: { name, returnType }
+// }
 
 class SourceRecord {
   #name
@@ -32,24 +40,25 @@ class SourceRecord {
   #runtimeFlag
   #sources = new Array();
   #type
+  #urls
 
   constructor(name, type, options) {
     this.#name = name;
     this.#type = type;
-    this.add(options.path, options.content);
+    this.add(options.path, options.sourceIdl);
   }
 
-  add(path, content) {
+  add(path, sourceIdl) {
     let source = {
       path: path,
-      content: content
+      sourceIdl: sourceIdl
     }
     this.#sources.push(source);
   }
 
   get flag() {
     const RUNTIME_ENABLED_RE = /RuntimeEnabled\s*=\s*(\w*)/;
-    const matches = this.#sources[0].content.match(RUNTIME_ENABLED_RE);
+    const matches = this.#sources[0].sourceIdl.match(RUNTIME_ENABLED_RE);
     if (matches) {
       return matches[1].trim();
     }
@@ -69,27 +78,28 @@ class SourceRecord {
     return this.#name;
   }
 
-  get properties() {
-    if (this.#properties) { return this.#properties; }
-    this.#properties = new Map()
-    for (let s of this.#sources) {
-      if (!s.properties) {
-        let matches = s.content.matchAll(PROPERTIES_RE);
-        if (matches) {
-          s.properties = new Array();
-          for (let m of matches) {
-            if (m[1] === 'EventHandler') { continue; }
-            let signiture = { name: m[2], returnType: m[1] }
-            s.properties.push(signiture);
-          }
+  getProperties(forIdlFile = 'allFiles') {
+    let searchSet = new Array();
+    let returns;
+    if (forIdlFile === 'allFiles') {
+      searchSet.push(...this.#sources);
+    } else {
+      let found = this.#sources.find((s) => {
+        return s.path === forIdlFile;
+      });
+      searchSet.push(found);
+    }
+    if (searchSet) { returns = new Array(); }
+    for (let s of searchSet) {
+      let matches = s.sourceIdl.matchAll(PROPERTIES_RE);
+      if (matches) {
+        for (let m of matches) {
+          if (m[1] === 'EventHandler') { continue; }
+          returns.push( { name: m[2], returnType: m[1]});
         }
       }
-      if (s.properties) {
-        this.#properties.set(s.path, s.properties);
-      }
     }
-    if (this.#properties.size) { return this.#properties; }
-    else { return undefined; }
+    return returns;
   }
 
   get sources() {
@@ -101,6 +111,14 @@ class SourceRecord {
   }
 
   get urls() {
+    if (this.#urls) { return this.#urls; }
+    this.#urls = new Array();
+    this.#urls.push(`${URL_BASE}${this.name}`)
+    let properties = this.properties;
+    for (let p of properties) {
+      this.#urls.push(`${URL_BASE}${this.name}/${p.name}`);
+    }
+    return this.#urls;
   }
 }
 
