@@ -36,7 +36,7 @@ const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.id
 const PROPERTIES_OTHER = './test/files/properties-other.idl';
 const PROPERTIES_SETLIKE = './test/files/properties-setlike.idl';
 const PROPERTIES_SETLIKE_READONLY = './test/files/properties-setlike-readonly.idl';
-const URL_SOURCE = './test/files/url-source.idl';
+const SIMPLE_SOURCE = './test/files/url-source.idl';
 
 function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
@@ -54,7 +54,16 @@ describe('SourceRecord', () => {
     });
   });
 
-  describe('properties', () => {
+  describe('getAllIds()', () => {
+    it('Confirms that all ids for a source IDL are returned', () => {
+      const source = loadSource(SIMPLE_SOURCE);
+      const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const ids = sr.getAllIds();
+      assert.strictEqual(ids.length, 2);
+    })
+  });
+
+  describe('getProperties()', () => {
     it('Confirms that all basic properties are counted', () => {
       const source = loadSource(PROPERTIES_BASIC);
       const sr = new SourceRecord('properties-basic', 'interface', { path: PROPERTIES_BASIC, sourceIdl: source });
@@ -100,22 +109,28 @@ describe('SourceRecord', () => {
     });
   });
 
-  // describe('urls', () => {
-  //   it('Confirms that urls can be constructed', () => {
-  //     const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
-  //     const URLS = [
-  //       `${URL_BASE}PropertiesBasic/`,
-  //       `${URL_BASE}PropertiesBasic/status`,
-  //       `${URL_BASE}PropertiesBasic/raw`
-  //     ];
+  describe('getUrls()', () => {
+    it('Confirms that urls can be constructed', () => {
+      const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
+      const URLS = [
+        `${URL_BASE}PropertiesBasic`,
+        `${URL_BASE}PropertiesBasic/status`,
+        `${URL_BASE}PropertiesBasic/raw`
+      ];
 
-  //     const source = loadSource(URL_SOURCE);
-  //     const sr = new SourceRecord('urls', 'interface', { path: URL_SOURCE, sourceIdl: source });
-  //     const urls = sr.urls;
-  //     const isComplete = URLS.every((u) => {
-  //       return urls.includes(u);
-  //     });
-  //     assert.ok(isComplete);
-  //   });
-  // });
+      const source = loadSource(SIMPLE_SOURCE);
+      const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const urls = sr.getUrls();
+      const isComplete = URLS.every((u) => {
+        return urls.includes(u);
+      });
+      assert.ok(isComplete);
+    });
+  });
+
+  describe('interfaceName', () => {
+    const source = loadSource(SIMPLE_SOURCE);
+    const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+    assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
+  });
 });

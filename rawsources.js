@@ -17,9 +17,13 @@
 const fs = require('fs');
 
 const { FlagStatus } = require('./flags.js');
+const { IDLError } = require('./errors.js');
 const { initiateLogger } = require('./log.js');
 
 initiateLogger(global.__commandName);
+
+// For ue with string.match();
+const INTERFACE_NAME_RE = /interface\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
 const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g
@@ -35,12 +39,12 @@ global.__Flags = FlagStatus();
 // }
 
 class SourceRecord {
-  #name
-  #properties
-  #runtimeFlag
+  #interfaceName;
+  #name;
+  #runtimeFlag;
   #sources = new Array();
-  #type
-  #urls
+  #type;
+
 
   constructor(name, type, options) {
     this.#name = name;
@@ -72,6 +76,18 @@ class SourceRecord {
       }
     }
     return this.#runtimeFlag;
+  }
+
+  get interfaceName() {
+    if (this.#interfaceName) { return this.#interfaceName; }
+    let match = this.#sources[0].sourceIdl.match(INTERFACE_NAME_RE);
+    if (match) {
+      this.#interfaceName = match[1];
+    } else {
+      const msg = `Malformed or missing IDL in ${this.sources[0].path}.\n\n${this.sources[0].sourceIdl}`
+      throw new IDLError(msg, this.sources[0].path);
+    }
+    return this.#interfaceName;
   }
 
   get name() {
@@ -110,15 +126,22 @@ class SourceRecord {
     return this.#type;
   }
 
-  get urls() {
-    if (this.#urls) { return this.#urls; }
-    this.#urls = new Array();
-    this.#urls.push(`${URL_BASE}${this.name}`)
-    let properties = this.properties;
-    for (let p of properties) {
-      this.#urls.push(`${URL_BASE}${this.name}/${p.name}`);
+  getAllIds(forIdlFile = 'allFiles') {
+    let nextSet;
+    let ids = new Array();
+    nextSet = this.getProperties(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
+    return ids;
+  }
+
+  getUrls(forIdlFile = 'allFiles') {
+    let ids = this.getAllIds(forIdlFile);
+    let urls = new Array()
+    urls.push(`${URL_BASE}${this.interfaceName}`);
+    for (let i of ids) {
+      urls.push(`${URL_BASE}${this.interfaceName}/${i.name}`);
     }
-    return this.#urls;
+    return urls;
   }
 }
 

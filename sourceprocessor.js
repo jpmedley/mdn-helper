@@ -171,7 +171,7 @@ class _SourceProcessor_Base {
     if (sourceRecord) {
       sourceRecord.add(path, data);
     } else {
-      sourceRecord = new SourceRecord(name, type, { path: path, content: data });
+      sourceRecord = new SourceRecord(name, type, { path: path, sourceIdl: data });
       this.#sourceRecords.set(key, sourceRecord)
     }
   }
