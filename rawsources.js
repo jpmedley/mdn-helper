@@ -16,6 +16,7 @@
 
 const fs = require('fs');
 
+const { bcd } = require('./bcd.js');
 const { FlagStatus } = require('./flags.js');
 const { IDLError } = require('./errors.js');
 const { initiateLogger } = require('./log.js');
@@ -134,12 +135,29 @@ class SourceRecord {
     return ids;
   }
 
+  getKeys(forIdlFile = 'allFiles') {
+    let propertySet;
+    let keys = new Array();
+    propertySet = this.getProperties(forIdlFile);
+    if (propertySet) {
+      keys.push(this.interfaceName);
+      for (let p of propertySet) {
+        keys.push(`${this.interfaceName}.${p.name}`);
+      }
+    }
+    return keys;
+  }
+
+  getBurnRecords(forIdlFile = 'allFiles') {
+
+  }
+
   getUrls(forIdlFile = 'allFiles') {
-    let ids = this.getAllIds(forIdlFile);
-    let urls = new Array()
-    urls.push(`${URL_BASE}${this.interfaceName}`);
-    for (let i of ids) {
-      urls.push(`${URL_BASE}${this.interfaceName}/${i.name}`);
+    let keys = this.getKeys(forIdlFile);
+    let urls = new Array();
+    for (let k of keys) {
+      let newK = k.replace('.', '/');
+      urls.push(`${URL_BASE}${newK}`);
     }
     return urls;
   }
