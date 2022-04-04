@@ -123,6 +123,8 @@ class BCD {
     this.getBrowsers.bind(bcd);
     bcd.getVersions = this.getVersions;
     this.getVersions.bind(bcd);
+    bcd.getURLByKey = this.getURLByKey;
+    this.getURLByKey.bind(bcd);
   }
 
   _decorate(data) {
@@ -237,10 +239,16 @@ class BCD {
       burnRecord.mdn_exists = false;
     }
     if (!burnRecord.mdn_url) {
-      let path = key.replace(".", "/");
-      burnRecord.mdn_url = `${URL_ROOT}${trunk.toUpperCase()}/${path}`;
+      burnRecord.mdn_url = this.getURLByKey(key, trunk);
+      // let path = key.replace(".", "/");
+      // burnRecord.mdn_url = `${URL_ROOT}${trunk.toUpperCase()}/${path}`;
     }
     return burnRecord;
+  }
+
+  getURLByKey(key, trunk = 'api') {
+    let path = key.replace(".", "/");
+    return `${URL_ROOT}${trunk.toUpperCase()}/${path}`;
   }
 
 }
