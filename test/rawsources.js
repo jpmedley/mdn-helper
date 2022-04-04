@@ -28,6 +28,7 @@ initiateLogger();
 
 const FLAG_IDL = '[\n  RuntimeEnabled=RTEExperimental\n] interface InterfaceFlagOT {\n  readonly attribute FontFaceSetLoadStatus status;\n};';
 
+const INTERFACE_PARENT_RE = './test/files/interface-parent.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_DISTINGUISH = './test/files/properties-distinguish.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
@@ -129,8 +130,15 @@ describe('SourceRecord', () => {
   });
 
   describe('interfaceName', () => {
-    const source = loadSource(SIMPLE_SOURCE);
-    const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
-    assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
+    it('Confirms that the interface name is returned from a simple IDL file', () => {
+      const source = loadSource(SIMPLE_SOURCE);
+      const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
+    });
+    it('Confirms that the name of a child interface is returned', () => {
+      const source = loadSource(INTERFACE_PARENT_RE);
+      const sr = new SourceRecord('parent-interface', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      assert.strictEqual(sr.interfaceName, 'InterfaceParent');
+    })
   });
 });

@@ -19,6 +19,8 @@ const { SourceRecord } = require('./rawsources.js');
 const utils = require('./utils.js');
 
 const { Select } = require('enquirer');
+const { Pinger } = require('./pinger.js');
+const { pageFactory } = require('./page.js');
 
 const NOTHING_FOUND = "Could not find matching IDL files.\n"
 const TRY_RUNNING = "\nTry running this command with the -f or -o flags to search for items behind\nflags or in origin trials.\n";
@@ -34,7 +36,51 @@ class FinderInterface {
 
   async find() {
     const answer = await this._select();
-    this._show(answer);
+    if (this._ping) {
+      const pingResults = await this._ping(answer);
+      this._showPingResults(pingResults);
+    }
+    const msg = 'Display IDL file?';
+    const show = await utils.confirm(msg);
+    if (show) {
+      this._show(answer);
+    }
+  }
+
+  _showPingResults(pingResults) {
+    let lines = [];
+    let longest = 0;
+    pingResults.forEach((r) => {
+      if (r.key.length > longest) { longest = r.key.length; }
+    });
+    pingResults.forEach((r) => {
+      let exists = r.mdn_exists.toString().padEnd(8);
+      let key = r.key.toString().padEnd(longest + 1);
+      let url = r.mdn_url.toString();
+      lines.push(`${exists}${key}${url}`);
+    });
+    let ifaceHeader = "Interface".padEnd(longest + 1);
+    let header = `Exists? ${ifaceHeader}URL`;
+    utils.sendUserOutput(header);
+      utils.sendUserOutput('-'.repeat(header.length * 2));
+      lines.forEach(l => {
+        utils.sendUserOutput(l);
+      })
+      utils.sendUserOutput();
+  }
+
+  async _ping(answer, verboseOutput = true) {
+    utils.sendUserOutput('Checking for existing MDN pages. This may take a few minutes.\n');
+    const pingRecords = answer.getBurnRecords();
+    const pinger = new Pinger(pingRecords);
+    if (verboseOutput) {
+      utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.');
+    }
+    const pingResults = await pinger.pingRecords()
+    .catch((e) => {
+      throw e;
+    });
+    return pingResults;
   }
 
   _show(answer) {
