@@ -73,7 +73,6 @@ class SourceRecord {
   }
 
   get interfaceName() {
-    // START HERE: Regex is not working for /idl/modules/webusb/usb.idl
     if (this.#interfaceName) { return this.#interfaceName; }
     let match = this.#sources[0].sourceIdl.match(INTERFACE_NAME_RE);
     if (match) {
@@ -143,19 +142,30 @@ class SourceRecord {
   }
 
   getBurnRecords(forIdlFile = 'allFiles') {
-    let record = bcd.getRecordByKey(this.interfaceName, 'api');
+    let records = new Array();
+    let keys = this.getKeys(forIdlFile);
+    for (let k of keys) {
+      const newRecord = this._buildRecord(k);
+      records.push(newRecord);
+    }
+    return records;
+  }
+
+  _buildRecord(keyName) {
+    // let keyName = (memberName? `${this.interfaceName}.${memberName}`: memberName);
+    let record = bcd.getRecordByKey(keyName, 'api');
     record.flag = this.flagStatus;
-    record.name = this.interfaceName;
+    record.name = keyName;
     // record.origin_trial = this.origin_trial;
     record.type = this.#type;
-    const engines = bcd.getEngines(this.interfaceName, 'api');
+    const engines = bcd.getEngines(keyName, 'api');
     record.engineCount = (engines? engines.length: 1);
-    const browserCount = bcd.getBrowsers(this.interfaceName, 'api');
+    const browserCount = bcd.getBrowsers(keyName, 'api');
     record.browserCount = (browserCount? browserCount.length: 6);
     const browsers = ['chrome', 'chrome_android', 'webview_android'];
-    const versions = bcd.getVersions(this.interfaceName, browsers, 'api');
+    const versions = bcd.getVersions(keyName, browsers, 'api');
     record.versions = versions;
-    return new Array(record);
+    return record;
   }
 
   getUrls(forIdlFile = 'allFiles') {

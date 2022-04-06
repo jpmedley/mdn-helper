@@ -64,6 +64,15 @@ describe('SourceRecord', () => {
     })
   });
 
+  describe('getKeys()', () => {
+    it('Confirms that all keys for a source IDL are returned', () => {
+      const source = loadSource(SIMPLE_SOURCE);
+      const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const ids = sr.getKeys();
+      assert.strictEqual(ids.length, 3);
+    });
+  });
+
   describe('getProperties()', () => {
     it('Confirms that all basic properties are counted', () => {
       const source = loadSource(PROPERTIES_BASIC);
