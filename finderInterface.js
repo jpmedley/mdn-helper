@@ -70,11 +70,10 @@ class FinderInterface {
   }
 
   async _ping(answer, verboseOutput = true) {
-    utils.sendUserOutput('Checking for existing MDN pages. This may take a few minutes.\n');
     const pingRecords = answer.getBurnRecords();
     const pinger = new Pinger(pingRecords);
     if (verboseOutput) {
-      utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.');
+      utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.\n');
     }
     const pingResults = await pinger.pingRecords()
     .catch((e) => {

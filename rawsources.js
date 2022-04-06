@@ -35,6 +35,7 @@ global.__Flags = FlagStatus();
 class SourceRecord {
   #interfaceName;
   #name;
+  #properties;
   #runtimeFlag;
   #sources = new Array();
   #type;
@@ -88,9 +89,9 @@ class SourceRecord {
     return this.#name;
   }
 
-  getProperties(forIdlFile = 'allFiles') {
+  getMembers(forIdlFile = 'allFiles') {
     let searchSet = new Array();
-    let returns;
+
     if (forIdlFile === 'allFiles') {
       searchSet.push(...this.#sources);
     } else {
@@ -99,17 +100,25 @@ class SourceRecord {
       });
       searchSet.push(found);
     }
-    if (searchSet) { returns = new Array(); }
+
     for (let s of searchSet) {
+      // Get properties
       let matches = s.sourceIdl.matchAll(PROPERTIES_RE);
       if (matches) {
         for (let m of matches) {
           if (m[1] === 'EventHandler') { continue; }
-          returns.push( { name: m[2], returnType: m[1]});
+          this.#properties.push( { name: m[2], returnType: m[1] } );
         }
       }
     }
-    return returns;
+  }
+
+  getProperties(forIdlFile = 'allFiles') {
+    if (!this.#properties) {
+      this.#properties = new Array();
+      this.getMembers(forIdlFile);
+    }
+    return this.#properties;
   }
 
   get sources() {
