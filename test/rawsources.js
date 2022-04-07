@@ -28,7 +28,8 @@ initiateLogger();
 
 const FLAG_IDL = '[\n  RuntimeEnabled=RTEExperimental\n] interface InterfaceFlagOT {\n  readonly attribute FontFaceSetLoadStatus status;\n};';
 
-const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl'
+const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
+const CONSTRUCTOR_ARGS = './test/files/constructor-arguments.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
 const METHODS_BASIC  = './test/files/methods-basic.idl';
 const METHODS_SYNC_ARGUMENTS = './test/files/methods-synchronous.idl';
@@ -59,20 +60,39 @@ describe('SourceRecord', () => {
   });
 
   describe('getAllIds()', () => {
-    it('Confirms that all ids for a source IDL are returned', () => {
+    it('Confirms that all records for a source IDL are returned', () => {
       const source = loadSource(SIMPLE_SOURCE);
       const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
-      const ids = sr.getAllIds();
-      assert.strictEqual(ids.length, 2);
+      const record = sr.getAllIds();
+      assert.strictEqual(record.length, 2);
     })
   });
+
+  describe('getBurnRecords', () => {
+    it('Confirms that burn records contain proper constructor keys', () => {
+      const source = loadSource(CONSTRUCTOR_NO_ARGS);
+      const sr = new SourceRecord('constructor', 'interface', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
+      const records = sr.getBurnRecords();
+      const found = records.find((r) => {
+        return r.name === 'ConstructorNoArgs.ConstructorNoArgs';
+      });
+      console.log(found);
+      assert.ok(found);
+    });
+  })
 
   describe('getConstructors', () => {
     it('Confirms that a constructor without arguments can be found', () => {
       const source = loadSource(CONSTRUCTOR_NO_ARGS);
       const sr = new SourceRecord('constructor', 'interface', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
-      const ids = sr.getConstructors();
-      assert.strictEqual(ids.length, 1);
+      const record = sr.getConstructors();
+      assert.strictEqual(record.length, 1);
+    });
+    it('Confirms that constructors with multiple arguments are processed', () => {
+      const source = loadSource(CONSTRUCTOR_ARGS);
+      const sr = new SourceRecord('constructor', 'interface', { path: CONSTRUCTOR_ARGS, sourceIdl: source });
+      const record = sr.getConstructors();
+      assert.strictEqual(record[0].arguments.length, 3);
     });
   })
 
@@ -80,8 +100,8 @@ describe('SourceRecord', () => {
     it('Confirms that all keys for a source IDL are returned', () => {
       const source = loadSource(SIMPLE_SOURCE);
       const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
-      const ids = sr.getKeys();
-      assert.strictEqual(ids.length, 3);
+      const record = sr.getKeys();
+      assert.strictEqual(record.length, 3);
     });
   });
 

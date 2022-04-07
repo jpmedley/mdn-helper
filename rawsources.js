@@ -27,7 +27,7 @@ initiateLogger(global.__commandName);
 const INTERFACE_NAME_RE = /interface\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
-const CONSTRUCTORS_RE = /constructor\(\);/g
+const CONSTRUCTORS_RE = /constructor\(([^;]*)\);/g;
 const METHODS_RE = /(?:\[[^\]]*\])?\s*(\w*)\s*(\w*)\(([^\)]*)\);/g;
 const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g;
 const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
@@ -102,7 +102,6 @@ class SourceRecord {
 
   getMembers(forIdlFile = 'allFiles') {
     let searchSet = new Array();
-    let method;
 
     if (forIdlFile === 'allFiles') {
       searchSet.push(...this.#sources);
@@ -122,13 +121,13 @@ class SourceRecord {
         this.#constructors = new Array();
         let conststructor;
         for (let m of matches) {
-          method = {
-            name: m[2],
-            returnType: m[1],
+          conststructor = {
+            name: this.interfaceName,
+            returnType: this.interfaceName,
             arguments: undefined
           }
-          if (m[3]) { method.arguments = m[3].split(',')}
-          this.#constructors.push(method);
+          if (m[1]) { conststructor.arguments = m[1].split(',')}
+          this.#constructors.push(conststructor);
         }
       }
 
@@ -186,15 +185,25 @@ class SourceRecord {
   getAllIds(forIdlFile = 'allFiles') {
     let nextSet;
     let ids = new Array();
+    nextSet = this.getConstructors(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
+    nextSet = this.getMethods(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
     nextSet = this.getProperties(forIdlFile);
     if (nextSet) { ids.push(...nextSet); }
     return ids;
   }
 
   getKeys(forIdlFile = 'allFiles') {
-    let propertySet;
+    let propertySet = new Array();
+    let nextSet;
     let keys = new Array();
-    propertySet = this.getProperties(forIdlFile);
+    nextSet = this.getConstructors(forIdlFile);
+    propertySet.push(...nextSet);
+    nextSet = this.getMethods(forIdlFile);
+    propertySet.push(...nextSet);
+    nextSet = this.getProperties(forIdlFile);
+    propertySet.push(...nextSet);
     if (propertySet) {
       keys.push(this.interfaceName);
       for (let p of propertySet) {
