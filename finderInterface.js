@@ -27,16 +27,26 @@ const TRY_RUNNING = "\nTry running this command with the -f or -o flags to searc
 const CANCEL = '(none)';
 
 class FinderInterface {
+  #bcdOnly;
+  #dump;
+  #includeFlags;
+  #includeOriginTrials;
+  #interactive;
+  #landingPageOnly;
+  #ping;
+  #searchDomain;
+  #searchString;
+
   constructor(args) {
     this._processArguments(args);
-    let Finder = FinderFactory(this._searchDomain);
+    let Finder = FinderFactory(this.#searchDomain);
     const idlDirectory = utils.getConfig('idlDirectory')
     this._finder = new Finder(`${utils.APP_ROOT}${idlDirectory}/`)
   }
 
   async find() {
     const answer = await this._select();
-    if (this._ping) {
+    if (this.#ping) {
       const pingResults = await this._ping(answer);
       this._showPingResults(pingResults);
     }
@@ -93,10 +103,10 @@ class FinderInterface {
   async _select() {
     const types = ['interface', 'mixin', 'partial'];
     const options = {
-      includeFlags: this._includeFlags,
-      includeOriginTrials: this._includeOriginTrials
+      includeFlags: this.#includeFlags,
+      includeOriginTrials: this.#includeOriginTrials
     }
-    const possibleMatches = await this._finder.find(this._searchString, types, options);
+    const possibleMatches = await this._finder.find(this.#searchString, types, options);
     if (possibleMatches.length === 0) {
       utils.sendUserOutput(NOTHING_FOUND);
       if (!this._finder.includeFlags && !this._finder.includeOriginTrials) {
@@ -142,30 +152,30 @@ class FinderInterface {
   }
 
   _processArguments(args) {
-    this._searchDomain = args[2].toLowerCase()
-    this._searchString = args[3].toLowerCase();
-    this._interactive = args.some(arg => {
+    this.#searchDomain = args[2].toLowerCase()
+    this.#searchString = args[3].toLowerCase();
+    this.#interactive = args.some(arg => {
       return (arg.includes('-i') || (arg.includes('--interactive')));
     });
-    this._includeFlags = args.some(arg => {
+    this.#includeFlags = args.some(arg => {
       return (arg.includes('-f') || (arg.includes('--flags')));
     });
-    this._includeOriginTrials = args.some(arg => {
+    this.#includeOriginTrials = args.some(arg => {
       return (arg.includes('-o') || (arg.includes('--origin-trials')));
     });
-    this.__bcdOnly = args.some(arg => {
+    this.#bcdOnly = args.some(arg => {
       return (arg.includes('-b') || (arg.includes('--bcdOnly')));
     });
-    if (args[0] === 'Builder') {
-      this._landingPageOnly = args.some(arg => {
+    if (global.__commandName === 'Builder') {
+      this.#landingPageOnly = args.some(arg => {
         return (arg.includes('-l') || (arg.includes('--landing-page')));
       });
     }
-    if (args[0] === 'Finder') {
-      this._ping = args.some(arg => {
+    if (global.__commandName === 'Finder') {
+      this.#ping = args.some(arg => {
         return (arg.includes('-p') || (arg.includes('--ping')));
       });
-      this._dump = args.some(arg => {
+      this.#dump = args.some(arg => {
         return (arg.includes('-d') || (arg.includes('--dump-names')));
       });
     }
