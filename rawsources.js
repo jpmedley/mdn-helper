@@ -28,8 +28,8 @@ const INTERFACE_NAME_RE = /interface\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
 const CONSTRUCTORS_RE = /constructor\(([^;]*)\);/g;
-const METHODS_RE = /(?:\[[^\]]*\])?\s*(\w*)\s*(\w*)\(([^\)]*)\);/g;
-const METHODS_WITHPROMISE_RE = /Promise<([^>]*)>{1,2}\s*([^\(]*)\(([^\)]*)\);/g
+const METHODS_RE = /(?:\[[^\]]*\])?\s*([^\s]*)\s*(\w*)\(([^\)]*)\);/g
+// const METHODS_WITHPROMISE_RE = /Promise<([^>]*)>{1,2}\s*([^\(]*)\(([^\)]*)\);/g
 const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g;
 const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
 
@@ -42,23 +42,16 @@ class SourceRecord {
   #methods;
   #name;
   #properties;
+  #propertySearch = false;
   #runtimeFlag;
+  #searchSet;
   #sources = new Array();
   #type;
-
 
   constructor(name, type, options) {
     this.#name = name;
     this.#type = type;
     this.add(options.path, options.sourceIdl);
-  }
-
-  add(path, sourceIdl) {
-    let source = {
-      path: path,
-      sourceIdl: sourceIdl
-    }
-    this.#sources.push(source);
   }
 
   get flag() {
@@ -95,97 +88,157 @@ class SourceRecord {
     return this.#name;
   }
 
+  get sources() {
+    return this.#sources;
+  }
+
+  get type() {
+    return this.#type;
+  }
+
+  add(path, sourceIdl) {
+    let source = {
+      path: path,
+      sourceIdl: sourceIdl
+    }
+    this.#sources.push(source);
+  }
+
+  getAllIds(forIdlFile = 'allFiles') {
+    let nextSet;
+    let ids = new Array();
+
+    nextSet = this.getConstructors(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
+    nextSet = this.getEvents(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
+    nextSet = this.getMethods(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
+    nextSet = this.getProperties(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
+
+    return ids;
+  }
+
+  getBurnRecords(forIdlFile = 'allFiles') {
+    let records = new Array();
+    let keys = this.getKeys(forIdlFile);
+    for (let k of keys) {
+      const newRecord = this._buildRecord(k);
+      records.push(newRecord);
+    }
+    return records;
+  }
+
   getConstructors(forIdlFile = 'allFiles') {
     if (!this.#constructors) {
-      this.getMembers(forIdlFile);
+      const searchSet = this._getSearchSet(forIdlFile);
+      let matches;
+      for (let s of searchSet) {
+        matches = s.sourceIdl.matchAll(CONSTRUCTORS_RE);
+        if (matches) {
+          this.#constructors = new Array();
+          let conststructor;
+          for (let m of matches) {
+            conststructor = {
+              key: `${this.interfaceName}.${this.interfaceName}`,
+              name: this.interfaceName,
+              returnType: this.interfaceName,
+              arguments: this._getArguments(m[1])
+            }
+            this.#constructors.push(conststructor);
+          }
+        }
+      }
     }
     return this.#constructors;
   }
 
   getEvents(forIdlFile = 'allFiles') {
     if (!this.#events) {
-      this.getMembers(forIdlFile);
+      this._processProperties(forIdlFile);
     }
     return this.#events;
   }
 
-  getMembers(forIdlFile = 'allFiles') {
-    let searchSet = new Array();
+  getKeys(forIdlFile = 'allFiles') {
+    let propertySet = new Array();
+    let nextSet;
+    let keys = new Array();
 
-    if (forIdlFile === 'allFiles') {
-      searchSet.push(...this.#sources);
-    } else {
-      let found = this.#sources.find((s) => {
-        return s.path === forIdlFile;
-      });
-      searchSet.push(found);
+    nextSet = this.getConstructors(forIdlFile);
+    if (nextSet) { propertySet.push(...nextSet); }
+    nextSet = this.getEvents(forIdlFile);
+    if (nextSet) { propertySet.push(...nextSet); }
+    nextSet = this.getMethods(forIdlFile);
+    if (nextSet) { propertySet.push(...nextSet); }
+    nextSet = this.getProperties(forIdlFile);
+    if (nextSet) { propertySet.push(...nextSet); }
+
+    keys.push(this.interfaceName);
+    if (propertySet) {
+      for (let p of propertySet) {
+        keys.push(p.key);
+      }
     }
+    return keys;
+  }
 
-    for (let s of searchSet) {
+  getMethods(forIdlFile = 'allFiles') {
+    if (!this.#methods) {
+      const searchSet = this._getSearchSet(forIdlFile);
       let matches;
-
-      // Get Constructors
-      matches = s.sourceIdl.matchAll(CONSTRUCTORS_RE);
-      if (matches) {
-        this.#constructors = new Array();
-        let conststructor;
-        for (let m of matches) {
-          conststructor = {
-            name: this.interfaceName,
-            returnType: this.interfaceName,
-            arguments: this._getArguments(m[1])
-          }
-          this.#constructors.push(conststructor);
-        }
-      }
-
-      // Get simple methods
-      matches = s.sourceIdl.matchAll(METHODS_RE);
-      if (matches) {
-        this.#methods = new Array();
-        let method;
-        for (let m of matches) {
-          method = {
-            name: m[2],
-            returnType: m[1],
-            arguments: this._getArguments(m[3])
-          }
-          this.#methods.push(method);
-        }
-      }
-
-      // Get methods returning promises
-      matches = s.sourceIdl.matchAll(METHODS_WITHPROMISE_RE);
-      if (matches) {
-        if (!this.#methods) { this.#methods = new Array(); }
-        let method;
-        for (let m of matches) {
-          method = {
-            name: m[2],
-            returnType: `Promise<${m[1]}>`,
-            arguments: this._getArguments(m[3])
-          }
-          this.#methods.push(method);
-        }
-      }
-
-      // Get properties
-      matches = s.sourceIdl.matchAll(PROPERTIES_RE);
-      if (matches) {
-        this.#properties = new Array();
-        for (let m of matches) {
-          if (m[1] === 'EventHandler') {
-            if (!this.#events) { this.#events = new Array(); }
-            let newName = m[2].trim().slice(2);
-            newName += '_event';
-            this.#events.push({ name: newName, returnType: m[1] });
-          } else {
-            this.#properties.push({ name: m[2], returnType: m[1] });
+      for (let s of searchSet) {
+        matches = s.sourceIdl.matchAll(METHODS_RE);
+        if (matches) {
+          this.#methods = new Array();
+          let method;
+          for (let m of matches) {
+            method = {
+              key: `${this.interfaceName}.${m[2]}`,
+              name: m[2],
+              returnType: m[1],
+              arguments: this._getArguments(m[3])
+            }
+            this.#methods.push(method);
           }
         }
       }
-
     }
+    return this.#methods
+  }
+
+  getProperties(forIdlFile = 'allFiles') {
+    if (!this.#properties) {
+      this._processProperties(forIdlFile);
+    }
+    return this.#properties;
+  }
+
+  getUrls(forIdlFile = 'allFiles') {
+    let keys = this.getKeys(forIdlFile);
+    let urls = new Array();
+    for (let k of keys) {
+      let newK = k.replace('.', '/');
+      urls.push(`${URL_BASE}${newK}`);
+    }
+    return urls;
+  }
+
+  _buildRecord(keyName) {
+    let record = bcd.getRecordByKey(keyName, 'api');
+    record.flag = this.flagStatus;
+    record.name = keyName;
+    // record.origin_trial = this.origin_trial;
+    record.type = this.#type;
+    const engines = bcd.getEngines(keyName, 'api');
+    record.engineCount = (engines? engines.length: 1);
+    const browserCount = bcd.getBrowsers(keyName, 'api');
+    record.browserCount = (browserCount? browserCount.length: 6);
+    const browsers = ['chrome', 'chrome_android', 'webview_android'];
+    const versions = bcd.getVersions(keyName, browsers, 'api');
+    record.versions = versions;
+    return record;
   }
 
   _getArguments(argumentString) {
@@ -205,101 +258,52 @@ class SourceRecord {
     return returns;
   }
 
-  getMethods(forIdlFile = 'allFiles') {
-    if (!this.#methods) {
-      this.getMembers(forIdlFile);
-    }
-    return this.#methods
-  }
-
-  getProperties(forIdlFile = 'allFiles') {
-    if (!this.#properties) {
-      this.getMembers(forIdlFile);
-    }
-    return this.#properties;
-  }
-
-  get sources() {
-    return this.#sources;
-  }
-
-  get type() {
-    return this.#type;
-  }
-
-  getAllIds(forIdlFile = 'allFiles') {
-    let nextSet;
-    let ids = new Array();
-
-    nextSet = this.getConstructors(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
-    nextSet = this.getEvents(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
-    nextSet = this.getMethods(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
-    nextSet = this.getProperties(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
-
-    return ids;
-  }
-
-  getKeys(forIdlFile = 'allFiles') {
-    let propertySet = new Array();
-    let nextSet;
-    let keys = new Array();
-
-    nextSet = this.getConstructors(forIdlFile);
-    propertySet.push(...nextSet);
-    nextSet = this.getEvents(forIdlFile);
-    propertySet.push(...nextSet);
-    nextSet = this.getMethods(forIdlFile);
-    propertySet.push(...nextSet);
-    nextSet = this.getProperties(forIdlFile);
-    propertySet.push(...nextSet);
-
-    if (propertySet) {
-      keys.push(this.interfaceName);
-      for (let p of propertySet) {
-        keys.push(`${this.interfaceName}.${p.name}`);
+  _getSearchSet(forIdlFile = 'allFiles') {
+    if (!this.#searchSet) {
+      this.#searchSet = new Array();
+  
+      if (forIdlFile === 'allFiles') {
+        this.#searchSet.push(...this.#sources);
+      } else {
+        let found = this.#sources.find((s) => {
+          return s.path === forIdlFile;
+        });
+        this.#searchSet.push(found);
       }
     }
-    return keys;
+    return this.#searchSet;
   }
 
-  getBurnRecords(forIdlFile = 'allFiles') {
-    let records = new Array();
-    let keys = this.getKeys(forIdlFile);
-    for (let k of keys) {
-      const newRecord = this._buildRecord(k);
-      records.push(newRecord);
+  _processProperties(forIdlFile = 'allFiles') {
+    if (this.#propertySearch) { return; }
+    const searchSet = this._getSearchSet(forIdlFile);
+    let matches;
+    for (let s of searchSet) {
+      let matches = s.sourceIdl.matchAll(PROPERTIES_RE);
+      if (matches) {
+        let property;
+        for (let m of matches) {
+          if (m[1] === 'EventHandler') {
+            if (!this.#events) { this.#events = new Array(); }
+            property = {
+              key: `${this.interfaceName}.${m[2].trim().slice(2)}_event`,
+              name: m[2],
+              returnType: m[1]
+            }
+            this.#events.push(property);
+          } else {
+            if (!this.#properties) { this.#properties = new Array(); }
+            property = {
+              key: `${this.interfaceName}.${m[2]}`,
+              name: m[2],
+              returnType: m[1]
+            }
+            this.#properties.push(property);
+          }
+        }
+      }
     }
-    return records;
-  }
-
-  _buildRecord(keyName) {
-    let record = bcd.getRecordByKey(keyName, 'api');
-    record.flag = this.flagStatus;
-    record.name = keyName;
-    // record.origin_trial = this.origin_trial;
-    record.type = this.#type;
-    const engines = bcd.getEngines(keyName, 'api');
-    record.engineCount = (engines? engines.length: 1);
-    const browserCount = bcd.getBrowsers(keyName, 'api');
-    record.browserCount = (browserCount? browserCount.length: 6);
-    const browsers = ['chrome', 'chrome_android', 'webview_android'];
-    const versions = bcd.getVersions(keyName, browsers, 'api');
-    record.versions = versions;
-    return record;
-  }
-
-  getUrls(forIdlFile = 'allFiles') {
-    let keys = this.getKeys(forIdlFile);
-    let urls = new Array();
-    for (let k of keys) {
-      let newK = k.replace('.', '/');
-      urls.push(`${URL_BASE}${newK}`);
-    }
-    return urls;
+    this.#propertySearch = true;
   }
 }
 
