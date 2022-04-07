@@ -29,6 +29,7 @@ const INTERFACE_NAME_RE = /interface\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 // For use with string.matchAll();
 const CONSTRUCTORS_RE = /constructor\(([^;]*)\);/g;
 const METHODS_RE = /(?:\[[^\]]*\])?\s*(\w*)\s*(\w*)\(([^\)]*)\);/g;
+const METHODS_WITHPROMISE_RE = /Promise<([^>]*)>{1,2}\s*([^\(]*)\(([^\)]*)\);/g
 const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g;
 const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
 
@@ -124,14 +125,13 @@ class SourceRecord {
           conststructor = {
             name: this.interfaceName,
             returnType: this.interfaceName,
-            arguments: undefined
+            arguments: this._getArguments(m[1])
           }
-          if (m[1]) { conststructor.arguments = m[1].split(',')}
           this.#constructors.push(conststructor);
         }
       }
 
-      // Get methods
+      // Get simple methods
       matches = s.sourceIdl.matchAll(METHODS_RE);
       if (matches) {
         this.#methods = new Array();
@@ -140,9 +140,23 @@ class SourceRecord {
           method = {
             name: m[2],
             returnType: m[1],
-            arguments: undefined
+            arguments: this._getArguments(m[3])
           }
-          if (m[3]) { method.arguments = m[3].split(',')}
+          this.#methods.push(method);
+        }
+      }
+
+      // Get methods returning promises
+      matches = s.sourceIdl.matchAll(METHODS_WITHPROMISE_RE);
+      if (matches) {
+        if (!this.#methods) { this.#methods = new Array(); }
+        let method;
+        for (let m of matches) {
+          method = {
+            name: m[2],
+            returnType: `Promise<${m[1]}>`,
+            arguments: this._getArguments(m[3])
+          }
           this.#methods.push(method);
         }
       }
@@ -158,6 +172,23 @@ class SourceRecord {
       }
 
     }
+  }
+
+  _getArguments(argumentString) {
+    if (!argumentString) { return undefined; }
+    if (argumentString.includes('<')) {
+      const COMPOUND_ARG_RE = /<[^>]*>/g;
+      const matches = argumentString.matchAll(COMPOUND_ARG_RE)
+      for (let m of matches) {
+        let tempArg = m[1].replace(',', '%%');
+        argumentString = argumentString.replace(m[1], tempArg);
+      }
+    }
+    let returns = argumentString.split(',');
+    for (let r of returns) {
+      r = r.replace('%%', ',');
+    }
+    return returns;
   }
 
   getMethods(forIdlFile = 'allFiles') {
