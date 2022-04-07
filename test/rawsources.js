@@ -28,7 +28,10 @@ initiateLogger();
 
 const FLAG_IDL = '[\n  RuntimeEnabled=RTEExperimental\n] interface InterfaceFlagOT {\n  readonly attribute FontFaceSetLoadStatus status;\n};';
 
-const INTERFACE_PARENT_RE = './test/files/interface-parent.idl';
+const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl'
+const INTERFACE_PARENT = './test/files/interface-parent.idl';
+const METHODS_BASIC  = './test/files/methods-basic.idl';
+const METHODS_SYNC_ARGUMENTS = './test/files/methods-synchronous.idl';
 const PROPERTIES_BASIC = './test/files/properties-basic.idl';
 const PROPERTIES_DISTINGUISH = './test/files/properties-distinguish.idl';
 const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
@@ -64,6 +67,15 @@ describe('SourceRecord', () => {
     })
   });
 
+  describe('getConstructors', () => {
+    it('Confirms that a constructor without arguments can be found', () => {
+      const source = loadSource(CONSTRUCTOR_NO_ARGS);
+      const sr = new SourceRecord('constructor', 'interface', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
+      const ids = sr.getConstructors();
+      assert.strictEqual(ids.length, 1);
+    });
+  })
+
   describe('getKeys()', () => {
     it('Confirms that all keys for a source IDL are returned', () => {
       const source = loadSource(SIMPLE_SOURCE);
@@ -71,6 +83,89 @@ describe('SourceRecord', () => {
       const ids = sr.getKeys();
       assert.strictEqual(ids.length, 3);
     });
+  });
+
+  describe('getMethods()', () => {
+    it('Confirms that all basic members are counted', () => {
+      const source = loadSource(METHODS_BASIC);
+      const sr = new SourceRecord('methods-basic', 'interface', { path: METHODS_BASIC, sourceIdl: source });
+      const methods = sr.getMethods();
+      assert.strictEqual(methods.length, 2);
+    });
+    it('Confirms that methods with synchronous arguments are processed', () => {
+      const source = loadSource(METHODS_SYNC_ARGUMENTS);
+      const sr = new SourceRecord('methods-sync', 'interface', { path: METHODS_SYNC_ARGUMENTS, sourceIdl: source });
+      const methods = sr.getMethods();
+      let methodsWithArguments = 0;
+      methods.forEach(method => {
+        if (method.arguments && method.arguments.length > 0) { methodsWithArguments++; }
+      });
+      assert.strictEqual(methodsWithArguments, 1);
+    });
+    //     it('Confirms that the correct number of promise-based methods are returned', () => {
+    //       const source = loadSource(METHOD_PROMISES);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods.length, 4);
+    //     });
+    //     it('Confirms that the correct number of synchronous methods are returned', () => {
+    //       const source = loadSource(METHOD_SYNCHRONOUS);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods.length, 2);
+    //     });
+    //     it('Confirms that methods with multiple return types are processed', () => {
+    //       const source = loadSource(METHOD_MULTI_RETURNS);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods[0].arguments.length, 1);
+    //     });
+    //     it('Confirms that method.args returns the correct number of args, when present', () => {
+    //       const source = loadSource(METHOD_ARGUMENTS_COUNT);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods[0].arguments.length, 2);
+    //     });
+    //     it('Confirms that method.args equals 0 when there are no args present', () => {
+    //       const source = loadSource(METHOD_NO_ARGUMENTS);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods[0].arguments.length, 0);
+    //     });
+    //     it('Confirms that method.resolutions returns a value', () => {
+    //       const source = loadSource(METHOD_PROMISE_RESOLUTION);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods[0].resolution, "DOMString");
+    //     });
+    //     it('Confirms that method.resolutions returns "void"', () => {
+    //       const source = loadSource(METHOD_PROMISE_VOID);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods[0].resolution, "void");
+    //     });
+    //     it('Confirms that stringifier keywords are processed', () => {
+    //       const source = loadSource(STRINGIFIER);
+    //       const id = new InterfaceData(source);
+    //       assert.strictEqual(id.methods[0].name, "toString");
+    //     });
+    //     it('Confirms that processing iterables doesn\'t add a false positive', () => {
+    //       const source = loadSource(ITERABLE_SEQUENCE_ARG);
+    //       const id = new InterfaceData(source);
+    //       const found = id.methods.find(e => {
+    //         return (e.name === "");
+    //       });
+    //       assert.ok(typeof found === "undefined");
+    //     });
+    //     it('Confirms that mutli-line comments donn\'t add false methods', () => {
+    //       const source = loadSource(COMMENTS_MULTI_LINE);
+    //       const id = new InterfaceData(source);
+    //       const found = id.methods.find(e => {
+    //         return (e.name === "");
+    //       });
+    //       assert.ok(typeof found === "undefined");
+    //     });
+    //     it('Confirms that return value with "?" is processed', () => {
+    //       const source = loadSource(METHOD_OPTIONAL_RETURN);
+    //       const id = new InterfaceData(source);
+    //       const found = id.methods.find(e => {
+    //         return (e.name === 'getContext');
+    //       });
+    //       assert.ok(found.returnType === 'OffscreenRenderingContext?');
+    //     });
   });
 
   describe('getProperties()', () => {
@@ -145,7 +240,7 @@ describe('SourceRecord', () => {
       assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
     });
     it('Confirms that the name of a child interface is returned', () => {
-      const source = loadSource(INTERFACE_PARENT_RE);
+      const source = loadSource(INTERFACE_PARENT);
       const sr = new SourceRecord('parent-interface', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'InterfaceParent');
     })

@@ -1,3 +1,0 @@
-interface MethodNoArgs : EventTarget {
-    [RaisesException] boolean check();
-};

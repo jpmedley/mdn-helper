@@ -27,13 +27,17 @@ initiateLogger(global.__commandName);
 const INTERFACE_NAME_RE = /interface\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
-const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g
+const CONSTRUCTORS_RE = /constructor\(\);/g
+const METHODS_RE = /(?:\[[^\]]*\])?\s*(\w*)\s*(\w*)\(([^\)]*)\);/g;
+const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g;
 const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
 
 global.__Flags = FlagStatus();
 
 class SourceRecord {
+  #constructors;
   #interfaceName;
+  #methods;
   #name;
   #properties;
   #runtimeFlag;
@@ -89,8 +93,16 @@ class SourceRecord {
     return this.#name;
   }
 
+  getConstructors(forIdlFile = 'allFiles') {
+    if (!this.#constructors) {
+      this.getMembers(forIdlFile);
+    }
+    return this.#constructors;
+  }
+
   getMembers(forIdlFile = 'allFiles') {
     let searchSet = new Array();
+    let method;
 
     if (forIdlFile === 'allFiles') {
       searchSet.push(...this.#sources);
@@ -102,20 +114,62 @@ class SourceRecord {
     }
 
     for (let s of searchSet) {
-      // Get properties
-      let matches = s.sourceIdl.matchAll(PROPERTIES_RE);
+      let matches;
+
+      // Get Constructors
+      matches = s.sourceIdl.matchAll(CONSTRUCTORS_RE);
       if (matches) {
+        this.#constructors = new Array();
+        let conststructor;
         for (let m of matches) {
-          if (m[1] === 'EventHandler') { continue; }
-          this.#properties.push( { name: m[2], returnType: m[1] } );
+          method = {
+            name: m[2],
+            returnType: m[1],
+            arguments: undefined
+          }
+          if (m[3]) { method.arguments = m[3].split(',')}
+          this.#constructors.push(method);
         }
       }
+
+      // Get methods
+      matches = s.sourceIdl.matchAll(METHODS_RE);
+      if (matches) {
+        this.#methods = new Array();
+        let method;
+        for (let m of matches) {
+          method = {
+            name: m[2],
+            returnType: m[1],
+            arguments: undefined
+          }
+          if (m[3]) { method.arguments = m[3].split(',')}
+          this.#methods.push(method);
+        }
+      }
+
+      // Get properties
+      matches = s.sourceIdl.matchAll(PROPERTIES_RE);
+      if (matches) {
+        this.#properties = new Array();
+        for (let m of matches) {
+          if (m[1] === 'EventHandler') { continue; }
+          this.#properties.push({ name: m[2], returnType: m[1] });
+        }
+      }
+
     }
+  }
+
+  getMethods(forIdlFile = 'allFiles') {
+    if (!this.#methods) {
+      this.getMembers(forIdlFile);
+    }
+    return this.#methods
   }
 
   getProperties(forIdlFile = 'allFiles') {
     if (!this.#properties) {
-      this.#properties = new Array();
       this.getMembers(forIdlFile);
     }
     return this.#properties;

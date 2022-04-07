@@ -1,0 +1,4 @@
+interface MethodsBasic : EventTarget {
+    [RaisesException] boolean check();
+    [RaisesException] boolean pass();
+};
