@@ -37,6 +37,7 @@ global.__Flags = FlagStatus();
 
 class SourceRecord {
   #constructors;
+  #events;
   #interfaceName;
   #methods;
   #name;
@@ -99,6 +100,13 @@ class SourceRecord {
       this.getMembers(forIdlFile);
     }
     return this.#constructors;
+  }
+
+  getEvents(forIdlFile = 'allFiles') {
+    if (!this.#events) {
+      this.getMembers(forIdlFile);
+    }
+    return this.#events;
   }
 
   getMembers(forIdlFile = 'allFiles') {
@@ -166,8 +174,14 @@ class SourceRecord {
       if (matches) {
         this.#properties = new Array();
         for (let m of matches) {
-          if (m[1] === 'EventHandler') { continue; }
-          this.#properties.push({ name: m[2], returnType: m[1] });
+          if (m[1] === 'EventHandler') {
+            if (!this.#events) { this.#events = new Array(); }
+            let newName = m[2].trim().slice(2);
+            newName += '_event';
+            this.#events.push({ name: newName, returnType: m[1] });
+          } else {
+            this.#properties.push({ name: m[2], returnType: m[1] });
+          }
         }
       }
 
@@ -216,12 +230,16 @@ class SourceRecord {
   getAllIds(forIdlFile = 'allFiles') {
     let nextSet;
     let ids = new Array();
+
     nextSet = this.getConstructors(forIdlFile);
+    if (nextSet) { ids.push(...nextSet); }
+    nextSet = this.getEvents(forIdlFile);
     if (nextSet) { ids.push(...nextSet); }
     nextSet = this.getMethods(forIdlFile);
     if (nextSet) { ids.push(...nextSet); }
     nextSet = this.getProperties(forIdlFile);
     if (nextSet) { ids.push(...nextSet); }
+
     return ids;
   }
 
@@ -229,12 +247,16 @@ class SourceRecord {
     let propertySet = new Array();
     let nextSet;
     let keys = new Array();
+
     nextSet = this.getConstructors(forIdlFile);
+    propertySet.push(...nextSet);
+    nextSet = this.getEvents(forIdlFile);
     propertySet.push(...nextSet);
     nextSet = this.getMethods(forIdlFile);
     propertySet.push(...nextSet);
     nextSet = this.getProperties(forIdlFile);
     propertySet.push(...nextSet);
+
     if (propertySet) {
       keys.push(this.interfaceName);
       for (let p of propertySet) {
@@ -255,7 +277,6 @@ class SourceRecord {
   }
 
   _buildRecord(keyName) {
-    // let keyName = (memberName? `${this.interfaceName}.${memberName}`: memberName);
     let record = bcd.getRecordByKey(keyName, 'api');
     record.flag = this.flagStatus;
     record.name = keyName;

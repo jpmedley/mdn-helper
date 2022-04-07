@@ -30,6 +30,7 @@ const FLAG_IDL = '[\n  RuntimeEnabled=RTEExperimental\n] interface InterfaceFlag
 
 const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
 const CONSTRUCTOR_ARGS = './test/files/constructor-arguments.idl';
+const EVENT_HANDLERS = './test/files/event-handlers.idl';
 const INTERFACE_PARENT = './test/files/interface-parent.idl';
 const METHODS_BASIC  = './test/files/methods-basic.idl';
 const METHODS_SYNC_ARGUMENTS = './test/files/methods-synchronous.idl';
@@ -93,6 +94,15 @@ describe('SourceRecord', () => {
       const sr = new SourceRecord('constructor', 'interface', { path: CONSTRUCTOR_ARGS, sourceIdl: source });
       const record = sr.getConstructors();
       assert.strictEqual(record[0].arguments.length, 3);
+    });
+  })
+
+  describe('getEvents', () => {
+    it('Confirms that event callbacks are processed', () => {
+      const source = loadSource(EVENT_HANDLERS);
+      const sr = new SourceRecord('events', 'interface', { path: EVENT_HANDLERS, sourceIdl: source });
+      const record = sr.getEvents();
+      assert.strictEqual(record.length, 3);
     });
   })
 
