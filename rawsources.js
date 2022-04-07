@@ -104,27 +104,30 @@ class SourceRecord {
     this.#sources.push(source);
   }
 
-  getAllIds(forIdlFile = 'allFiles') {
+  getAllMembers(forIdlFile = 'allFiles') {
     let nextSet;
-    let ids = new Array();
+    let members = new Array();
 
     nextSet = this.getConstructors(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
+    if (nextSet) { members.push(...nextSet); }
     nextSet = this.getEvents(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
+    if (nextSet) { members.push(...nextSet); }
     nextSet = this.getMethods(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
+    if (nextSet) { members.push(...nextSet); }
     nextSet = this.getProperties(forIdlFile);
-    if (nextSet) { ids.push(...nextSet); }
+    if (nextSet) { members.push(...nextSet); }
 
-    return ids;
+    return members;
   }
 
   getBurnRecords(forIdlFile = 'allFiles') {
     let records = new Array();
-    let keys = this.getKeys(forIdlFile);
-    for (let k of keys) {
-      const newRecord = this._buildRecord(k);
+    let iface = { name: this.name, key: this.name }
+    let newRecord = this._buildRecord(iface);
+    records.push(newRecord)
+    let members = this.getAllMembers(forIdlFile);
+    for (let m of members) {
+      newRecord = this._buildRecord(m);
       records.push(newRecord);
     }
     return records;
@@ -225,18 +228,18 @@ class SourceRecord {
     return urls;
   }
 
-  _buildRecord(keyName) {
-    let record = bcd.getRecordByKey(keyName, 'api');
+  _buildRecord(member) {
+    let record = bcd.getRecordByKey(member.key, 'api');
     record.flag = this.flagStatus;
-    record.name = keyName;
+    record.name = member.name;
     // record.origin_trial = this.origin_trial;
-    record.type = this.#type;
-    const engines = bcd.getEngines(keyName, 'api');
+    record.type = member.type;
+    const engines = bcd.getEngines(member.key, 'api');
     record.engineCount = (engines? engines.length: 1);
-    const browserCount = bcd.getBrowsers(keyName, 'api');
+    const browserCount = bcd.getBrowsers(member.key, 'api');
     record.browserCount = (browserCount? browserCount.length: 6);
     const browsers = ['chrome', 'chrome_android', 'webview_android'];
-    const versions = bcd.getVersions(keyName, browsers, 'api');
+    const versions = bcd.getVersions(member.key, browsers, 'api');
     record.versions = versions;
     return record;
   }

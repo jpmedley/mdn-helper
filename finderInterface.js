@@ -45,15 +45,15 @@ class FinderInterface {
   }
 
   async find() {
-    const answer = await this._select();
+    const sourceRecord = await this._select();
     if (this.#ping) {
-      const pingResults = await this._ping(answer);
+      const pingResults = await this._ping(sourceRecord);
       this._showPingResults(pingResults);
     }
     const msg = 'Display IDL file?';
     const show = await utils.confirm(msg);
     if (show) {
-      this._show(answer);
+      this._show(sourceRecord);
     }
   }
 
@@ -65,9 +65,11 @@ class FinderInterface {
     });
     pingResults.forEach((r) => {
       let exists = r.mdn_exists.toString().padEnd(8);
-      let key = r.key.toString().padEnd(longest + 1);
+      // let key = r.key.toString().padEnd(longest + 1);
+      let name = r.name.toString().padEnd(longest + 1);
       let url = r.mdn_url.toString();
-      lines.push(`${exists}${key}${url}`);
+      // lines.push(`${exists}${key}${url}`);
+      lines.push(`${exists}${name}${url}`);
     });
     let ifaceHeader = "Interface".padEnd(longest + 1);
     let header = `Exists? ${ifaceHeader}URL`;
@@ -79,8 +81,8 @@ class FinderInterface {
       utils.sendUserOutput();
   }
 
-  async _ping(answer, verboseOutput = true) {
-    const pingRecords = answer.getBurnRecords();
+  async _ping(sourceRecord, verboseOutput = true) {
+    const pingRecords = sourceRecord.getBurnRecords();
     const pinger = new Pinger(pingRecords);
     if (verboseOutput) {
       utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.\n');

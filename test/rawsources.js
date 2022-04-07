@@ -60,11 +60,11 @@ describe('SourceRecord', () => {
     });
   });
 
-  describe('getAllIds()', () => {
+  describe('getAllMembers()', () => {
     it('Confirms that all records for a source IDL are returned', () => {
       const source = loadSource(SIMPLE_SOURCE);
       const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
-      const record = sr.getAllIds();
+      const record = sr.getAllMembers();
       assert.strictEqual(record.length, 2);
     })
   });
