@@ -75,9 +75,8 @@ describe('SourceRecord', () => {
       const sr = new SourceRecord('constructor', 'interface', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
       const records = sr.getBurnRecords();
       const found = records.find((r) => {
-        return r.name === 'ConstructorNoArgs.ConstructorNoArgs';
+        return r.name === 'ConstructorNoArgs';
       });
-      console.log(found);
       assert.ok(found);
     });
   })

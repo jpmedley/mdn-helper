@@ -75,7 +75,9 @@ class _SourceProcessor_Base {
     for (let p of this.#sourcePaths) {
       let rawData = utils.getIDLFile(p, {clean: true});
       if (!rawData) {
+        const msg = `Cannot process ${p}.`;
         global.__logger.info(`Cannot process ${p}.`);
+        throw new IDLError(msg);
       }
       const lines = rawData.split('\n');
       let currentStructure = '';
