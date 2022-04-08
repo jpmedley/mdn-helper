@@ -22,27 +22,30 @@ const { initiateLogger } = require('../log.js');
 const { SourceRecord } = require('../rawsources.js');
 const utils = require('../utils.js');
 
-global.__Flags = FlagStatus('./test/files/exp_flags.json5');
+
+const TEST_IDL_FILES = './test/files/';
+global.__Flags = FlagStatus(`${TEST_IDL_FILES}exp_flags.json5`);
 
 initiateLogger();
 
-const FLAG_IDL = '[\n  RuntimeEnabled=RTEExperimental\n] interface InterfaceFlagOT {\n  readonly attribute FontFaceSetLoadStatus status;\n};';
-
-const CONSTRUCTOR_NO_ARGS = './test/files/constructor-noarguments.idl';
-const CONSTRUCTOR_ARGS = './test/files/constructor-arguments.idl';
-const EVENT_HANDLERS = './test/files/event-handlers.idl';
-const INTERFACE_PARENT = './test/files/interface-parent.idl';
-const METHODS_BASIC  = './test/files/methods-basic.idl';
-const METHODS_SYNC_ARGUMENTS = './test/files/methods-synchronous.idl';
-const PROPERTIES_BASIC = './test/files/properties-basic.idl';
-const PROPERTIES_DISTINGUISH = './test/files/properties-distinguish.idl';
-const PROPERTIES_EVENTHANDLER = './test/files/properties-eventhandler.idl';
-const PROPERTIES_MAPLIKE = './test/files/properties-maplike.idl';
-const PROPERTIES_MAPLIKE_READONLY = './test/files/properties-maplike-readonly.idl';
-const PROPERTIES_OTHER = './test/files/properties-other.idl';
-const PROPERTIES_SETLIKE = './test/files/properties-setlike.idl';
-const PROPERTIES_SETLIKE_READONLY = './test/files/properties-setlike-readonly.idl';
-const SIMPLE_SOURCE = './test/files/url-source.idl';
+const CONSTRUCTOR_NO_ARGS = `${TEST_IDL_FILES}constructor-noarguments.idl`;
+const CONSTRUCTOR_ARGS = `${TEST_IDL_FILES}constructor-arguments.idl`;
+const EVENT_HANDLERS = `${TEST_IDL_FILES}event-handlers.idl`;
+const FLAG_INTERFACE_OT = `${TEST_IDL_FILES}flag-interface-ot.idl`;
+const FLAG_INTERFACE_DT = `${TEST_IDL_FILES}flag-interface-dt.idl`;
+const FLAG_STATUS_SHARED = `${TEST_IDL_FILES}flag-status-shared.idl`;
+const INTERFACE_PARENT = `${TEST_IDL_FILES}interface-parent.idl`;
+const METHODS_BASIC  = `${TEST_IDL_FILES}methods-basic.idl`;
+const METHODS_SYNC_ARGUMENTS = `${TEST_IDL_FILES}methods-synchronous.idl`;
+const PROPERTIES_BASIC = `${TEST_IDL_FILES}properties-basic.idl`;
+const PROPERTIES_DISTINGUISH = `${TEST_IDL_FILES}properties-distinguish.idl`;
+const PROPERTIES_EVENTHANDLER = `${TEST_IDL_FILES}properties-eventhandler.idl`;
+const PROPERTIES_MAPLIKE = `${TEST_IDL_FILES}properties-maplike.idl`;
+const PROPERTIES_MAPLIKE_READONLY = `${TEST_IDL_FILES}properties-maplike-readonly.idl`;
+const PROPERTIES_OTHER = `${TEST_IDL_FILES}properties-other.idl`;
+const PROPERTIES_SETLIKE = `${TEST_IDL_FILES}properties-setlike.idl`;
+const PROPERTIES_SETLIKE_READONLY = `${TEST_IDL_FILES}properties-setlike-readonly.idl`;
+const SIMPLE_SOURCE = `${TEST_IDL_FILES}url-source.idl`;
 
 function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
@@ -50,14 +53,18 @@ function loadSource(sourcePath) {
 
 describe('SourceRecord', () => {
   describe('flagStatus', () => {
-    it('Confirms that a flag\'s status correctly returned', () => {
-      const sr = new SourceRecord('interfaceFlagOT', 'interface', {
-        path: 'some/fake/path.idl',
-        sourceIdl: FLAG_IDL
-      });
+    it('Confirms origin trial for simple flag', () => {
+      let source = loadSource(FLAG_INTERFACE_OT);
+      const sr = new SourceRecord('otFlag', 'interface', { path: FLAG_INTERFACE_OT, sourceIdl: source });
+      const flagStatus = sr.flagStatus;
+      assert.strictEqual(flagStatus, 'origintrial');
+    });
+    it('Confirms dev trial for simple flag', () => {
+      let source =loadSource(FLAG_INTERFACE_DT);
+      const sr = new SourceRecord('dtFlag', 'interface', { path: FLAG_INTERFACE_DT, sourceIdl: source });
       const flagStatus = sr.flagStatus;
       assert.strictEqual(flagStatus, 'devtrial');
-    });
+    })
   });
 
   describe('getAllMembers()', () => {

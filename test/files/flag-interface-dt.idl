@@ -1,0 +1,5 @@
+[
+    RuntimeEnabled=InDevTrial
+] interface FlagTest {
+    readonly attribute FontFaceSetLoadStatus status;
+};
