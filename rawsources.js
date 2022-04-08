@@ -29,7 +29,6 @@ const INTERFACE_NAME_RE = /interface\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 // For use with string.matchAll();
 const CONSTRUCTORS_RE = /constructor\(([^;]*)\);/g;
 const METHODS_RE = /(?:\[[^\]]*\])?\s*([^\s]*)\s*(\w*)\(([^\)]*)\);/g
-// const METHODS_WITHPROMISE_RE = /Promise<([^>]*)>{1,2}\s*([^\(]*)\(([^\)]*)\);/g
 const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g;
 const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
 

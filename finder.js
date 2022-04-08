@@ -30,26 +30,6 @@ const DEFAULT_TYPES = ['interface', 'mixin', 'partial'];
 global.__Flags = FlagStatus();
 
 function _finderFactory(args) {
-  //First few args are no longer needed.
-  // args.shift();
-  // const matches = args[0].match(/app_([^\.]+)\.js/);
-  // const revisedArgs = [];
-  // revisedArgs.push(matches[1]);
-  // args.shift();
-  // const searchDomain = args[0].toLowerCase();
-  // if (!args[0]) {
-  //   searchDomain = 'idl';
-  // }
-  // args.shift();
-  // revisedArgs.push(...args);
-  // switch (searchDomain) {
-  //   case 'css':
-  //     return new CSSFinder(revisedArgs);
-  //   case 'idl':
-  //     return new IDLFinder(revisedArgs);
-  //   default:
-  //     throw new Error(msg);
-  // }
   if (args.includes('css')) { return CSSFinder }
   if (args.includes('idl')) { return IDLFinder }
   const msg = 'Search must be either css or idl.';

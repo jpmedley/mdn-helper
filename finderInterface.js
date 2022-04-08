@@ -65,10 +65,8 @@ class FinderInterface {
     });
     pingResults.forEach((r) => {
       let exists = r.mdn_exists.toString().padEnd(8);
-      // let key = r.key.toString().padEnd(longest + 1);
       let name = r.name.toString().padEnd(longest + 1);
       let url = r.mdn_url.toString();
-      // lines.push(`${exists}${key}${url}`);
       lines.push(`${exists}${name}${url}`);
     });
     let ifaceHeader = "Interface".padEnd(longest + 1);
