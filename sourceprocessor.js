@@ -35,7 +35,8 @@ const INTERFACE_NAME = /\]?\s*interface\s*(\w*)[^\{]*\{/;
 const MIXIN_NAME = /\]?\s*interface\s*mixin\s*(\w*)\s*\{/;
 const NAMESPACE_NAME = /\]?\s*namespace\s*(\w*)[^\{]*\{/;
 const PARTIAL_NAME = /\]?\s*partial\s*interface\s*(\w*)\s[^\{]*\{/;
-const TYPEDEF_NAME = /typedef\s*[^\s]*\s*(\w*);/;
+const TYPEDEF_NAME_SIMPLE = /typedef\s*[^\s]*\s*(\w*);/;
+const TYPEDEF_NAME_COMPLEX = /typedef\s*\([^\)]*\)\s*(\w*);/;
 
 const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mixin', 'namespace', 'typedef'];
 
@@ -166,7 +167,10 @@ class _SourceProcessor_Base {
         matches = fromLine.match(PARTIAL_NAME);
         break;
       case 'typedef':
-        matches = fromLine.match(TYPEDEF_NAME);
+        matches = fromLine.match(TYPEDEF_NAME_SIMPLE);
+        if (!matches) {
+          matches = fromLine.match(TYPEDEF_NAME_COMPLEX);
+        }
         break;
       default:
         throw new IDLError();
@@ -174,6 +178,8 @@ class _SourceProcessor_Base {
     let name;
     if (matches) {
       name = matches[1].trim();
+    } else {
+      throw new IDLError();
     }
     return name;
   }

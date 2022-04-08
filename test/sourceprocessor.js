@@ -42,7 +42,7 @@ const MULTIPLE_STRUCTURES = `${TEST_IDL_FILES}multiple-structures.idl`;
 const MULTIPLE_TYPEDEFS = `${TEST_IDL_FILES}multiple-typedefs.idl`;
 const NAMESPACE = `${TEST_IDL_FILES}namespace.idl`;
 const NAMESPACE_PARTIAL = `${TEST_IDL_FILES}namespace-partial.idl`;
-const TYPEDEF = `${TEST_IDL_FILES}typedef.idl`;
+const TYPEDEF_SIMPLE = `${TEST_IDL_FILES}typedef-simple.idl`;
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
@@ -183,7 +183,7 @@ describe('ChromeIDLSource', () => {
     });
 
     it('Confirms that typedef names are recorded correctly', () => {
-      const cis = new ChromeIDLSource(TYPEDEF);
+      const cis = new ChromeIDLSource(TYPEDEF_SIMPLE);
       const sources = cis.getFeatureSources();
       const source = sources.get('TypeDefName-typedef');
       assert.strictEqual(source.name, 'TypeDefName');
