@@ -115,7 +115,15 @@ class _SourceProcessor_Base {
             });
           })();
           if (type) {
-            name = this._getName(l, type);
+            try {
+              name = this._getName(l, type);
+            } catch (error) {
+              if (error instanceof IDLError) {
+                const msg = `Could not extract name for ${type} from ${p} in line:\n\n${l}`;
+                error.message = msg;
+              }
+              throw error;
+            }
           }
         }
         currentStructure += `${l}\n`;
@@ -159,6 +167,9 @@ class _SourceProcessor_Base {
         break;
       case 'typedef':
         matches = fromLine.match(TYPEDEF_NAME);
+        break;
+      default:
+        throw new IDLError();
     }
     let name;
     if (matches) {
