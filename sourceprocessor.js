@@ -36,7 +36,8 @@ const MIXIN_NAME = /\]?\s*interface\s*mixin\s*(\w*)\s*\{/;
 const NAMESPACE_NAME = /\]?\s*namespace\s*(\w*)[^\{]*\{/;
 const PARTIAL_NAME = /\]?\s*partial\s*interface\s*(\w*)\s[^\{]*\{/;
 const TYPEDEF_NAME_SIMPLE = /typedef\s*[^\s]*\s*(\w*);/;
-const TYPEDEF_NAME_COMPLEX = /typedef\s*\([^\)]*\)\s*(\w*);/;
+const TYPEDEF_NAME_COMPOUND = /typedef\s*\([^\)]*\)\s*(\w*);/;
+const TYPEDEF_NAME_COMPLEX = /typedef\s*(?:\w*\s*){3}(\w*);/;
 
 const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mixin', 'namespace', 'typedef'];
 
@@ -112,7 +113,9 @@ class _SourceProcessor_Base {
             if (l.includes('interface mixin')) { return 'mixin'; }
             if (l.includes('partial interface')) { return 'partial'; }
             return KEYWORDS.find((e) => {
-              return l.includes(e);
+             var rx = new RegExp(`\\b${e}`);
+             let index = l.search(rx);
+             if (index >= 0) { return true } else { return false; }
             });
           })();
           if (type) {
@@ -168,6 +171,9 @@ class _SourceProcessor_Base {
         break;
       case 'typedef':
         matches = fromLine.match(TYPEDEF_NAME_SIMPLE);
+        if (!matches) {
+          matches = fromLine.match(TYPEDEF_NAME_COMPOUND);
+        }
         if (!matches) {
           matches = fromLine.match(TYPEDEF_NAME_COMPLEX);
         }

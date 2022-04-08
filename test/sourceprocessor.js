@@ -30,7 +30,8 @@ const ENUM = `${TEST_IDL_FILES}enum.idl`;
 const INTERFACE_CALLBACK = `${TEST_IDL_FILES}interface-callback.idl`;
 const INTERFACE_COMPLETE = `${TEST_IDL_FILES}interface-complete.idl`;
 const INTERFACE_EXTENDED_ATTRIBS = `${TEST_IDL_FILES}interface-flag-and-ot.idl`;
-const INTERFACE_MIXIN = `${TEST_IDL_FILES}interface-mixin.idl`
+const INTERFACE_MIXIN = `${TEST_IDL_FILES}interface-mixin.idl`;
+const INTERFACE_MULTISTRUCTURE = `${TEST_IDL_FILES}multiple-structures-same.idl`
 const INTERFACE_PARTIAL = `${TEST_IDL_FILES}interface-partial.idl`;
 const INTERFACE_VESTIGIAL = `${TEST_IDL_FILES}interface-vestigial.idl`;
 const MIXIN_INCLUDES = `${TEST_IDL_FILES}mixin-includes.idl`;
@@ -100,19 +101,6 @@ describe('ChromeIDLSource', () => {
       assert.ok(sources.has('ChildDictionary-dictionary'));
     });
 
-    it('Confirms that all enums are counted', () => {
-      const cis = new ChromeIDLSource(MULTIPLE_ENUMS);
-      const sources = cis.getFeatureSources();
-      assert.strictEqual(sources?.size, 2);
-    });
-
-    it('Confirms that enum names are recorded correctly', () => {
-      const cis = new ChromeIDLSource(ENUM);
-      const sources = cis.getFeatureSources();
-      const source = sources.get('AudioContextState-enum');
-      assert.strictEqual(source.name, 'AudioContextState');
-    });
-
     it('Confirms that an interface name is recorded correctly', () => {
       const cis = new ChromeIDLSource(INTERFACE_COMPLETE);
       const sources = cis.getFeatureSources();
@@ -138,6 +126,12 @@ describe('ChromeIDLSource', () => {
       const sources = cis.getFeatureSources();
       assert.ok(sources.has('InterfaceMixin-mixin'));
     });
+
+    it('Confirms retrieval of interface from multi-structure file', () => {
+      const cis = new ChromeIDLSource(INTERFACE_MULTISTRUCTURE);
+      const sources = cis.getFeatureSources();
+      assert.ok(sources.has('SameName-interface'));
+    })
 
     it('Confirms that partial interfaces are processed', () => {
       const cis = new ChromeIDLSource(INTERFACE_PARTIAL);
@@ -187,6 +181,21 @@ describe('ChromeIDLSource', () => {
       const sources = cis.getFeatureSources();
       const source = sources.get('TypeDefName-typedef');
       assert.strictEqual(source.name, 'TypeDefName');
+    });
+  });
+
+  describe('getFeatureSources() enum tests', () => {
+    it('Confirms that all enums are counted', () => {
+      const cis = new ChromeIDLSource(MULTIPLE_ENUMS);
+      const sources = cis.getFeatureSources();
+      assert.strictEqual(sources?.size, 2);
+    });
+
+    it('Confirms that enum names are recorded correctly', () => {
+      const cis = new ChromeIDLSource(ENUM);
+      const sources = cis.getFeatureSources();
+      const source = sources.get('AudioContextState-enum');
+      assert.strictEqual(source.name, 'AudioContextState');
     });
   });
 });
