@@ -18,6 +18,7 @@ global.__commandName = 'test';
 
 const COMMENTS = './test/files/comments.idl';
 const COMMENTS_CLEANED = './test/files/comments-cleaned.idl';
+const TYPEDEF_MULTILINE = './test/files/typedef-multiline.idl';
 
 const assert = require('assert');
 const fs = require('fs');
@@ -41,6 +42,12 @@ describe('Utils', () => {
       const options = { "clean": true }
       const cleanedFile = utils.getIDLFile(COMMENTS, options);
       assert.strictEqual(cleanedFile, comparisonFile);
+    });
+    it('Verifies multi-line typedef structures are flattened', () => {
+      const ExpectedResult = 'typedef (CSSImageValue or HTMLImageElement or SVGImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap or OffscreenCanvas or VideoFrame) CanvasImageSource;';
+      const options = { clean: true };
+      const cleanedFile = utils.getIDLFile(TYPEDEF_MULTILINE, options);
+      assert.strictEqual(cleanedFile, ExpectedResult);
     });
   });
 });

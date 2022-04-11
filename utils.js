@@ -39,6 +39,7 @@ const KEY_FILE_PATH = 'config/alternate-keys.json';
 const BLANK_LINE_RE = /^\s*$(\r\n|\r|\n)/gm;
 const COMMENT_MULTILINE_RE = /^\s*\/\*([\s\S](?!\*\/))*\s?\*\//gm;
 const COMMENT_SINGLELINE_RE = /\/\/.*$(\r\n|\r|\n)/gm;
+const TYPEDEF_MULTILINE_RE = /typedef\s*\([^\)]*\)[^;]*;/mg
 const URL_RE = /https:\/\/(.(?!\*))*/g;
 
 let AlternateKeys;
@@ -175,7 +176,7 @@ function _getOutputFile(filePath, reuse = false) {
   return fs.openSync(filePath, 'w');
 }
 
-function _getIDLFile(filePath, options = { "clean": false }) {
+function _getIDLFile(filePath, options = { clean: false }) {
 
   if (!filePath.endsWith(".idl")) { filePath += ".idl"; }
   const buffer = fs.readFileSync(filePath);
@@ -187,6 +188,13 @@ function _getIDLFile(filePath, options = { "clean": false }) {
     fileContents = fileContents.replace(URL_RE, "");
     fileContents = fileContents.replace(COMMENT_MULTILINE_RE, "");
     fileContents = fileContents.replace(COMMENT_SINGLELINE_RE, "");
+    fileContents = fileContents.replace(TYPEDEF_MULTILINE_RE, (match) => {
+      const lines = match.split('\n');
+      lines.forEach((l, i, lines) => {
+        lines[i] = l.trim();
+      });
+      return lines.join(' ');
+    });
     fileContents = fileContents.replace(BLANK_LINE_RE, "");
     fileContents = fileContents.replaceAll("[EnforceRange]", "");
     fileContents = fileContents.replaceAll("[TreatNullAs=EmptyString] ", "");
