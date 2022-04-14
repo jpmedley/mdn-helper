@@ -34,6 +34,7 @@ const INTERFACE_MIXIN = `${TEST_IDL_FILES}interface-mixin.idl`;
 const INTERFACE_MULTISTRUCTURE = `${TEST_IDL_FILES}multiple-structures-same.idl`
 const INTERFACE_PARTIAL = `${TEST_IDL_FILES}interface-partial.idl`;
 const INTERFACE_VESTIGIAL = `${TEST_IDL_FILES}interface-vestigial.idl`;
+const INTERFACE_ODD_BRACKET_POS = `${TEST_IDL_FILES}interface-odd-bracket-pos.idl`;
 const MIXIN_INCLUDES = `${TEST_IDL_FILES}mixin-includes.idl`;
 const MIXIN_INCLUDES_MULTIPLE = `${TEST_IDL_FILES}mixin-includes-multiple.idl`;
 const MULTIPLE_CALLBACKS = `${TEST_IDL_FILES}multiple-callbacks.idl`;
@@ -145,6 +146,12 @@ describe('ChromeIDLSource', () => {
       assert.ok(sources.has('Vestigial-interface'));
     });
 
+    it('Confirms that an interface with a misplaced bracket is processed', () => {
+      const cis = new ChromeIDLSource(INTERFACE_ODD_BRACKET_POS);
+      const sources = cis.getFeatureSources();
+      assert.ok(sources.has('OddBracketPos-partial'));
+    })
+
     it('Confirms that all includes are counted', () => {
       const cis = new ChromeIDLSource(MIXIN_INCLUDES_MULTIPLE);
       const sources = cis.getFeatureSources();
@@ -175,13 +182,6 @@ describe('ChromeIDLSource', () => {
       const source = sources.get('PartialNamespaceName-namespace');
       assert.strictEqual(source.name, 'PartialNamespaceName');
     });
-
-    it('Confirms that typedef names are recorded correctly', () => {
-      const cis = new ChromeIDLSource(TYPEDEF_SIMPLE);
-      const sources = cis.getFeatureSources();
-      const source = sources.get('TypeDefName-typedef');
-      assert.strictEqual(source.name, 'TypeDefName');
-    });
   });
 
   describe('getFeatureSources() enum tests', () => {
@@ -198,4 +198,13 @@ describe('ChromeIDLSource', () => {
       assert.strictEqual(source.name, 'AudioContextState');
     });
   });
+
+  describe('getFeatureSources() typedef tests', () => {
+    it('Confirms that typedef names are recorded correctly', () => {
+      const cis = new ChromeIDLSource(TYPEDEF_SIMPLE);
+      const sources = cis.getFeatureSources();
+      const source = sources.get('TypeDefName-typedef');
+      assert.strictEqual(source.name, 'TypeDefName');
+    });
+  })
 });

@@ -26,23 +26,25 @@ const { raw } = require('config/raw');
 
 initiateLogger(global.__commandName);
 
-const CALLBACK_NAME = /callback\s*(\w*)[^;]*;/;
+const CALLBACK_NAME = /callback\s*(\w*)[^=]*/;
 const CALLBACK_INTERFACE_NAME = /callback\s*interface\s*(\w*)\s*\{/;
 const DICTIONARY_NAME = /dictionary\s*(\w*)[^\{]*\{/;
 const ENUM_NAME = /enum\s*(\w*)\s*\{/;
 const INCLUDES_NAME = /(\w*)\sincludes\s[^;]*;/;
-const INTERFACE_NAME = /\]?\s*interface\s*(\w*)[^\{]*\{/;
+const INTERFACE_NAME = /\]?\s*interface\s*(\w*)[^:]*/;
 const MIXIN_NAME = /\]?\s*interface\s*mixin\s*(\w*)\s*\{/;
 const NAMESPACE_NAME = /\]?\s*namespace\s*(\w*)[^\{]*\{/;
-const PARTIAL_NAME = /\]?\s*partial\s*interface\s*(\w*)\s[^\{]*\{/;
+const PARTIAL_NAME = /\]?\s*partial\s*interface\s*(\w*)/;
+const TYPEDEF_EXT_ATTRIBS = /typedef\s[^\]]*\]\s*[^\s]*\s*(\w*);/;
 const TYPEDEF_NAME_SIMPLE = /typedef\s*[^\s]*\s*(\w*);/;
 const TYPEDEF_NAME_COMPOUND = /typedef\s*\([^\)]*\)\s*(\w*);/;
+const TYPEDEF_NAME_COMPOUND_RETURN = /typedef\s*[^>>]*>>\s*(\w*);/;
 const TYPEDEF_NAME_COMPLEX = /typedef\s*(?:\w*\s*){3}(\w*);/;
 
 const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mixin', 'namespace', 'typedef'];
 
 class _SourceProcessor_Base {
-  #EXCLUSIONS = [];
+  #EXCLUSIONS = ['inspector','testing','typed_arrays'];
   #sourceLocation = '';
   #sourcePaths = [];
   #sourceRecords = new Map();
@@ -126,7 +128,10 @@ class _SourceProcessor_Base {
                 const msg = `Could not extract name for ${type} from ${p} in line:\n\n${l}`;
                 error.message = msg;
               }
-              throw error;
+              // Punting because of multiline typedef
+              if (!type==='typedef') {
+                throw error;
+              }
             }
           }
         }
@@ -177,6 +182,12 @@ class _SourceProcessor_Base {
         if (!matches) {
           matches = fromLine.match(TYPEDEF_NAME_COMPLEX);
         }
+        if (!matches) {
+          matches = fromLine.match(TYPEDEF_EXT_ATTRIBS);
+        }
+        if (!matches) {
+          matches = fromLine.match(TYPEDEF_NAME_COMPOUND_RETURN);
+        }
         break;
       default:
         throw new IDLError();
@@ -213,7 +224,6 @@ class ChromeIDLSource extends IDLSource {
     super(sourceLocation, options);
 
   }
-  #EXCLUSIONS = ['inspector','testing','typed_arrays'];
 }
 
 class CSSSource extends _SourceProcessor_Base {

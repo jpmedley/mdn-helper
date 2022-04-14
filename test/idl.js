@@ -25,7 +25,7 @@ const { IDLError } = require('../errors.js');
 
 const IDL_ROOT = './idl/';
 const GLOB_PATTERN = 'idl/**/**/**/*.idl';
-const STRUCTURE_NAMES = ['callback ', 'dictionary ', 'enum ', 'includes', 'interface ', 'namespace ', 'typedef ']
+const STRUCTURE_NAMES = ['callback ', 'dictionary ', 'enum ', 'includes ', 'interface ', 'namespace ', 'typedef '];
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 // Second value of args must be an interface name, not a flag name
@@ -34,9 +34,6 @@ function countStructures(inText) {
   let count = 0;
   let lines = inText.split('\n');
   for (let l of lines) {
-    if (l.startsWith('/*')) { continue; }
-    if (l.startsWith('*')) { continue; }
-    if (l.startsWith('//')) { continue; }
     let found = STRUCTURE_NAMES.some((s) => {
       return l.includes(s);
     });
@@ -63,15 +60,26 @@ describe('IDL Tests', () => {
   describe('Count comparisons', () => {
     it('Confirms that all IDL structures from Chrome are processed', () => {
       const idlFiles = glob.sync(GLOB_PATTERN);
-      let structureCount = 0;
+      const EXCLUSIONS = ['inspector','testing','typed_arrays'];
       let foundErr;
       for (let i of idlFiles) {
-        let fileContents = utils.getIDLFile(i);
-        let actualCount = countStructures(fileContents);
+        let found = EXCLUSIONS.find((e) => {
+          return i.includes(e);
+        });
+        if (found) { continue; }
+        let fileContents = utils.getIDLFile(i, { clean: true });
+        let expectedCount = countStructures(fileContents);
         const cis = new ChromeIDLSource(i);
         const sources = cis.getFeatureSources();
-        if (sources.size !== actualCount) {
-          const msg = `Expected ${actualCount} structures. Found ${sources.size} in:\n\n${i}\n`;
+        const foundCount = (() => {
+          let fc = 0;
+          for (let s of sources) {
+            fc += s[1].sources.length;
+          }
+          return fc;
+        })();
+        if (foundCount !== expectedCount) {
+          const msg = `Expected ${expectedCount} structures. Found ${sources.size} in:\n\n${i}\n`;
           foundErr = new IDLError(msg);
           throw foundErr;
         }

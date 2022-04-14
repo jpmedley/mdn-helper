@@ -1,0 +1,9 @@
+[
+    ImplementedAs=HTMLCanvasElementModule
+] partial interface OddBracketPos
+{
+    [HighEntropy, MeasureAs=HTMLCanvasGetContext, RaisesException] RenderingContext? getContext(DOMString contextId, [PermissiveDictionaryConversion] optional CanvasContextCreationAttributesModule attributes = {});
+
+    [CallWith=ExecutionContext,
+     RaisesException, MeasureAs=OffscreenCanvas] OffscreenCanvas transferControlToOffscreen();
+};
