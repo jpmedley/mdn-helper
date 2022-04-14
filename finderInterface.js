@@ -45,13 +45,14 @@ class FinderInterface {
   }
 
   async find() {
+    let show = true;
     const sourceRecord = await this._select();
     if (this.#ping) {
       const pingResults = await this._ping(sourceRecord);
       this._showPingResults(pingResults);
+      const msg = 'Display IDL file?';
+      show = await utils.confirm(msg);
     }
-    const msg = 'Display IDL file?';
-    const show = await utils.confirm(msg);
     if (show) {
       this._show(sourceRecord);
     }

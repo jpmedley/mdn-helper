@@ -83,9 +83,20 @@ class SourceRecord {
     return this.#interfaceName;
   }
 
+  get key() {
+    // For the interface, the name and the key are identical.
+    return this.#name;
+  }
+
   get name() {
     return this.#name;
   }
+
+  get secureContext() {
+    return this.#sources.some((s) => {
+      return s.sourceIdl.includes('SecureContext');
+    });
+  };
 
   get sources() {
     return this.#sources;

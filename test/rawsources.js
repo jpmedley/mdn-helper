@@ -35,6 +35,7 @@ const FLAG_INTERFACE_OT = `${TEST_IDL_FILES}flag-interface-ot.idl`;
 const FLAG_INTERFACE_DT = `${TEST_IDL_FILES}flag-interface-dt.idl`;
 const FLAG_STATUS_SHARED = `${TEST_IDL_FILES}flag-status-shared.idl`;
 const INTERFACE_PARENT = `${TEST_IDL_FILES}interface-parent.idl`;
+const INTERFACE_SECURE_CONTEXT = `${TEST_IDL_FILES}interface-securecontext.idl`;
 const METHODS_BASIC  = `${TEST_IDL_FILES}methods-basic.idl`;
 const METHODS_SYNC_ARGUMENTS = `${TEST_IDL_FILES}methods-synchronous.idl`;
 const PROPERTIES_BASIC = `${TEST_IDL_FILES}properties-basic.idl`;
@@ -280,5 +281,21 @@ describe('SourceRecord', () => {
       const sr = new SourceRecord('parent-interface', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'InterfaceParent');
     })
+  });
+
+  describe('key', () => {
+    it('Confirms that the key property returns a correct value', () => {
+      const source = loadSource(SIMPLE_SOURCE);
+      const sr = new SourceRecord('key', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
+    });
+  });
+
+  describe('secureContext', () => {
+    it('Confirms that secure context status is extracted from IDL', () => {
+      const source = loadSource(INTERFACE_SECURE_CONTEXT);
+      const sr = new SourceRecord('secure-context', 'interface', { path: INTERFACE_SECURE_CONTEXT, sourceIdl: source });
+      assert.ok(sr.secureContext);
+    });
   });
 });
