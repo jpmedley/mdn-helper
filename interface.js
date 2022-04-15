@@ -15,6 +15,7 @@
 'use strict';
 
 const { FinderFactory, IDLFinder } = require('./finder.js');
+const { BuilderFactory, IDLBuilder } = require('./builder.js');
 const { SourceRecord } = require('./rawsources.js');
 const utils = require('./utils.js');
 
@@ -42,10 +43,7 @@ class _InterfaceBase {
     this._searchString;
     this._bcdOnly;
     this._dump;
-    this._interactive;
     this._landingPageOnly;
-    this._processArguments(args);
-
   }
 
   async _pingInterfaces(sourceRecord, verboseOutput = true) {
@@ -64,9 +62,6 @@ class _InterfaceBase {
   _processArguments(args) {
     this._searchDomain = args[2].toLowerCase()
     this._searchString = args[3].toLowerCase();
-    this._interactive = args.some(arg => {
-      return (arg.includes('-i') || (arg.includes('--interactive')));
-    });
     this._includeFlags = args.some(arg => {
       return (arg.includes('-f') || (arg.includes('--flags')));
     });
@@ -141,13 +136,39 @@ class _InterfaceBase {
 class BuilderInterface extends _InterfaceBase {
   constructor(args) {
     super(args);
-    
+    this._interactive;
+    this._processArguments(args);
+    let Finder = FinderFactory(this._searchDomain);
+    const idlDirectory = utils.getConfig('idlDirectory')
+    this._finder = new Finder(`${utils.APP_ROOT}${idlDirectory}/`)
+  }
+
+  async build() {
+    const sourceRecord = await this._select();
+    let Builder = BuilderFactory(this._searchDomain);
+    const idlDirectory = utils.getConfig('idlDirectory');
+    const options = {
+      interactive: this._interactive,
+      interfaceData: sourceRecord,
+      bcdOnly: this._bcdOnly,
+      landingPageOnly: this._landingPageOnly
+    }
+    const builder = new Builder(options);
+    builder.build();
+  }
+  
+  _processArguments(args) {
+    super._processArguments(args);
+    this._interactive = args.some(arg => {
+      return (arg.includes('-i') || (arg.includes('--interactive')));
+    });
   }
 }
 
 class FinderInterface extends _InterfaceBase {
   constructor(args) {
     super(args);
+    this._processArguments(args);
     let Finder = FinderFactory(this._searchDomain);
     const idlDirectory = utils.getConfig('idlDirectory')
     this._finder = new Finder(`${utils.APP_ROOT}${idlDirectory}/`)
@@ -199,4 +220,5 @@ class FinderInterface extends _InterfaceBase {
 
 }
 
+module.exports.BuilderInterface = BuilderInterface;
 module.exports.FinderInterface = FinderInterface;

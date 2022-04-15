@@ -17,12 +17,15 @@
 global.__commandName = 'Builder';
 require('./log.js').initiateLogger(global.__commandName);
 
-const { FinderFactory } = require('./finder.js');
+// const { FinderFactory } = require('./finder.js');
+const { BuilderInterface } = require('./interface.js');
 const { printWelcome } = require('./utils.js');
 const { update } = require('./updateData.js');
 
 printWelcome();
-update(process.argv);
+// update(process.argv);
 
-const finder = new FinderFactory(process.argv);
-finder.findAndBuild();
+// const finder = new FinderFactory(process.argv);
+// finder.findAndBuild();
+const builder = new BuilderInterface(process.argv);
+builder.build();

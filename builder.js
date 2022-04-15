@@ -48,6 +48,19 @@ const FLAGS = {
 
 // const NOT_NEEDED = [ "deleter", "getter", "iterable", "setter", "stringifier" ];
 
+
+function _builderFactory(searchDomain) {
+  switch (searchDomain) {
+    case 'css':
+      return _CSSBuilder;
+    case 'idl':
+      return _IDLBuilder;
+    default:
+      const msg = 'Search domain must be either css or idl.';
+      throw new Error(msg);
+  }
+}
+
 function getNamedArg(arg) {
   if (arg in FLAGS) {
     return FLAGS[arg];
@@ -385,6 +398,7 @@ class _IDLBuilder extends Builder {
 
 }
 
+module.exports.BuilderFactory = _builderFactory;
 module.exports.pageExists = pageExists;
 module.exports.CLIBuilder = _CLIBuilder;
 module.exports.CSSBuilder = _CSSBuilder;
