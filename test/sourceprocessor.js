@@ -50,6 +50,12 @@ global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5
 
 describe('ChromeIDLSource', () => {
   describe('getFeatureSources()', () => {
+    it('Confirms that a complete directory can be processed', () => {
+      const cis = new ChromeIDLSource('./idl/');
+      const sources = cis.getFeatureSources();
+      assert.ok(sources.size > 0);
+    });
+
     it ('Confirms that files with multiple structures are processed', () => {
       const cis = new ChromeIDLSource(MULTIPLE_STRUCTURES);
       const sources = cis.getFeatureSources();
