@@ -291,11 +291,11 @@ describe('SourceRecord', () => {
     });
   });
 
-  describe('secureContext', () => {
+  describe('getSecureContext()', () => {
     it('Confirms that secure context status is extracted from IDL', () => {
       const source = loadSource(INTERFACE_SECURE_CONTEXT);
       const sr = new SourceRecord('secure-context', 'interface', { path: INTERFACE_SECURE_CONTEXT, sourceIdl: source });
-      assert.ok(sr.secureContext);
+      assert.ok(sr.getSecureContext());
     });
   });
 });

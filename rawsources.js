@@ -92,12 +92,6 @@ class SourceRecord {
     return this.#name;
   }
 
-  get secureContext() {
-    return this.#sources.some((s) => {
-      return s.sourceIdl.includes('SecureContext');
-    });
-  };
-
   get sources() {
     return this.#sources;
   }
@@ -227,6 +221,12 @@ class SourceRecord {
     }
     return this.#properties;
   }
+
+  getSecureContext() {
+    return this.#sources.some((s) => {
+      return s.sourceIdl.includes('SecureContext');
+    });
+  };
 
   getUrls(forIdlFile = 'allFiles') {
     let keys = this.getKeys(forIdlFile);
