@@ -41,15 +41,13 @@ const TYPEDEF_NAME_COMPOUND = /typedef\s*\([^\)]*\)\s*(\w*);/;
 const TYPEDEF_NAME_COMPOUND_RETURN = /typedef\s*[^>>]*>>\s*(\w*);/;
 const TYPEDEF_NAME_COMPLEX = /typedef\s*(?:\w*\s*){3}(\w*);/;
 
+const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mixin', 'namespace', 'typedef'];
 
 class _SourceProcessor_Base {
-  #EXCLUSIONS = ['inspector','testing','typed_arrays'];
-  #sourceLocation = '';
-  #sourcePaths = [];
-  #sourceRecords = new Map();
   constructor(sourceLocation, options = {}) {
-    this.#sourceLocation = sourceLocation;
+    this._sourcePaths = new Array();
+    this._sourceRecords = new Map();
     this._processSource(sourceLocation);
   }
 
@@ -57,7 +55,7 @@ class _SourceProcessor_Base {
     if (fs.lstatSync(sourceLocation).isDirectory()) {
       this._getSourceList(sourceLocation);
     } else {
-      this.#sourcePaths.push(sourceLocation);
+      this._sourcePaths.push(sourceLocation);
     }
   }
 
@@ -65,18 +63,18 @@ class _SourceProcessor_Base {
     const contents = fs.readdirSync(`${root}`, {withFileTypes: true});
     for (let c in contents) {
       if (contents[c].isDirectory()) {
-        if (this.#EXCLUSIONS.includes(contents[c].name)) { continue; }
+        if (EXCLUSIONS.includes(contents[c].name)) { continue; }
         this._getSourceList(`${root}${contents[c].name}/`);
       } else if (contents[c].isFile()) {
         if (!contents[c].name.endsWith('.idl')) { continue; }
         if (contents[c].name.startsWith('test_')) { continue; }
-        this.#sourcePaths.push(`${root}${contents[c].name}`);
+        this._sourcePaths.push(`${root}${contents[c].name}`);
       }
     }
   }
 
   getFeatureSources() {
-    for (let p of this.#sourcePaths) {
+    for (let p of this._sourcePaths) {
       let rawData = utils.getIDLFile(p, {clean: true});
       if (!rawData) {
         const msg = `Cannot process ${p}.`;
@@ -141,7 +139,7 @@ class _SourceProcessor_Base {
         this._recordRecord(name, type, currentStructure, p);
       }
     }
-    return this.#sourceRecords;
+    return this._sourceRecords;
   }
 
    _getName(fromLine, ofType) {
@@ -203,12 +201,12 @@ class _SourceProcessor_Base {
 
   _recordRecord(name, type, data, path) {
     let key = `${name}-${type}`;
-    let sourceRecord = this.#sourceRecords.get(key);
+    let sourceRecord = this._sourceRecords.get(key);
     if (sourceRecord) {
       sourceRecord.add(path, data);
     } else {
       sourceRecord = new SourceRecord(name, type, { path: path, sourceIdl: data });
-      this.#sourceRecords.set(key, sourceRecord)
+      this._sourceRecords.set(key, sourceRecord)
     }
   }
 }
