@@ -29,16 +29,21 @@ const DEFAULT_TYPES = ['interface', 'mixin', 'partial'];
 
 global.__Flags = FlagStatus();
 
-function _finderFactory(args) {
-  if (args.includes('css')) { return CSSFinder }
-  if (args.includes('idl')) { return IDLFinder }
-  const msg = 'Search must be either css or idl.';
-  throw new Error(msg);
+function _finderFactory(searchDomain) {
+  switch (searchDomain) {
+    case 'css':
+      return CSSFinder;
+    case 'idl':
+      return IDLFinder;
+    default:
+      const msg = 'Search domain must be either css or idl.';
+      throw new Error(msg);
+  }
 }
 
 class CSSFinder {
   constructor(options) {
-    utils.sendUserOutput("CSSFinder is not yet available.\n");
+    utils.sendUserOutput("CSS search is not yet available.\n");
     process.exit();
   }
 }

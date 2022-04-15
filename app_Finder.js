@@ -18,12 +18,12 @@ global.__commandName = 'Finder';
 require('./log.js').initiateLogger(global.__commandName);
 
 // const { FinderFactory } = require('./finder.js');
-const { FinderInterface } = require('./finderInterface.js');
+const { FinderInterface } = require('./interface.js');
 const { printWelcome } = require('./utils.js');
 const { update } = require('./updateData.js');
 
 printWelcome();
-update(process.argv);
+// update(process.argv);
 
 // const finder = FinderFactory(process.argv);
 // finder.findAndShow();
