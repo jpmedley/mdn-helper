@@ -85,6 +85,16 @@ class SourceRecord {
     return this.#interfaceName;
   }
 
+  get inOriginTrial() {
+    if (this.flagStatus === 'origintrial') { return true; }
+    return false;
+  }
+
+  get inDevTrial() {
+    if (this.flagStatus === 'devtrial') { return true; }
+    return false;
+  }
+
   get key() {
     // For the interface, the name and the key are identical.
     return this.#name;

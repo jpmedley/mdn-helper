@@ -34,10 +34,14 @@ const EVENT_HANDLERS = `${TEST_IDL_FILES}event-handlers.idl`;
 const FLAG_INTERFACE_OT = `${TEST_IDL_FILES}flag-interface-ot.idl`;
 const FLAG_INTERFACE_DT = `${TEST_IDL_FILES}flag-interface-dt.idl`;
 const FLAG_STATUS_SHARED = `${TEST_IDL_FILES}flag-status-shared.idl`;
+const IN_DEV_TRIAL = `${TEST_IDL_FILES}in-dev-trial.idl`;
+const IN_ORIGIN_TRIAL = `${TEST_IDL_FILES}in-origin-trial.idl`;
 const INTERFACE_PARENT = `${TEST_IDL_FILES}interface-parent.idl`;
 const INTERFACE_SECURE_CONTEXT = `${TEST_IDL_FILES}interface-securecontext.idl`;
+const INTERFACE_STABLE = `${TEST_IDL_FILES}interface-rte-stable.idl`;
 const METHODS_BASIC  = `${TEST_IDL_FILES}methods-basic.idl`;
 const METHODS_SYNC_ARGUMENTS = `${TEST_IDL_FILES}methods-synchronous.idl`;
+const INTERFACE_MIXIN_INCLUDES = './test/files/mixin-includes.idl';
 const PROPERTIES_BASIC = `${TEST_IDL_FILES}properties-basic.idl`;
 const PROPERTIES_DISTINGUISH = `${TEST_IDL_FILES}properties-distinguish.idl`;
 const PROPERTIES_EVENTHANDLER = `${TEST_IDL_FILES}properties-eventhandler.idl`;
@@ -270,6 +274,24 @@ describe('SourceRecord', () => {
     });
   });
 
+  describe('inDevTrial', () => {
+    it('Confirms true is returned for interface in a dev trial', () => {
+      const source = loadSource(IN_DEV_TRIAL);
+      const sr = new SourceRecord('originTrial', 'interface', { path: IN_DEV_TRIAL, sourceIdl: source });
+      assert.ok(sr.inDevTrial);
+    });
+    it('Confirms false is returned for a stable interface', () => {
+      const source = loadSource(INTERFACE_STABLE);
+      const sr = new SourceRecord('originTrial', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      assert.ok(!sr.inDevTrial);
+    });
+    it('Confirms false is returned for interface in an origin trial', () => {
+      const source = loadSource(IN_ORIGIN_TRIAL);
+      const sr = new SourceRecord('originTrial', 'interface', { path: IN_ORIGIN_TRIAL, sourceIdl: source });
+      assert.ok(!sr.inDevTrial);
+    });
+  });
+
   describe('interfaceName', () => {
     it('Confirms that the interface name is returned from a simple IDL file', () => {
       const source = loadSource(SIMPLE_SOURCE);
@@ -280,7 +302,25 @@ describe('SourceRecord', () => {
       const source = loadSource(INTERFACE_PARENT);
       const sr = new SourceRecord('parent-interface', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'InterfaceParent');
-    })
+    });
+  });
+
+  describe('inOriginTrial', () => {
+    it('Confirms true is returned for interface in an origin trial', () => {
+      const source = loadSource(IN_ORIGIN_TRIAL);
+      const sr = new SourceRecord('originTrial', 'interface', { path: IN_ORIGIN_TRIAL, sourceIdl: source });
+      assert.ok(sr.inOriginTrial);
+    });
+    it('Confirms false is returned for a stable interface', () => {
+      const source = loadSource(INTERFACE_STABLE);
+      const sr = new SourceRecord('originTrial', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      assert.ok(!sr.inOriginTrial);
+    });
+    it('Confirms false is returned for interface in a dev trial', () => {
+      const source = loadSource(IN_DEV_TRIAL);
+      const sr = new SourceRecord('originTrial', 'interface', { path: IN_DEV_TRIAL, sourceIdl: source });
+      assert.ok(!sr.inOriginTrial);
+    });
   });
 
   describe('key', () => {
