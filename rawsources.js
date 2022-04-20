@@ -26,7 +26,7 @@ const utils = require('./utils.js');
 initiateLogger(global.__commandName);
 
 // For ue with string.match();
-const INTERFACE_NAME_RE = /interface\s*(\w*)\s*:?\s*(\w*)\s*\{/;
+const INTERFACE_NAME_RE = /(?:interface|namespace)\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
 const CONSTRUCTORS_RE = /constructor\(([^;]*)\);/g;
@@ -282,7 +282,7 @@ class SourceRecord {
   _getArguments(argumentString) {
     if (!argumentString) { return undefined; }
     if (argumentString.includes('<')) {
-      const COMPOUND_ARG_RE = /<[^>]*>/g;
+      const COMPOUND_ARG_RE = /<([^>]*)>/g;
       const matches = argumentString.matchAll(COMPOUND_ARG_RE)
       for (let m of matches) {
         let tempArg = m[1].replace(',', '%%');

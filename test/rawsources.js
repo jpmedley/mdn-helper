@@ -28,8 +28,9 @@ global.__Flags = FlagStatus(`${TEST_IDL_FILES}exp_flags.json5`);
 
 initiateLogger();
 
-const CONSTRUCTOR_NO_ARGS = `${TEST_IDL_FILES}constructor-noarguments.idl`;
 const CONSTRUCTOR_ARGS = `${TEST_IDL_FILES}constructor-arguments.idl`;
+const CONSTRUCTOR_COMPLEX_ARG = `${TEST_IDL_FILES}constructor-complex-argument.idl`;
+const CONSTRUCTOR_NO_ARGS = `${TEST_IDL_FILES}constructor-noarguments.idl`;
 const EVENT_HANDLERS = `${TEST_IDL_FILES}event-handlers.idl`;
 const FLAG_INTERFACE_OT = `${TEST_IDL_FILES}flag-interface-ot.idl`;
 const FLAG_INTERFACE_DT = `${TEST_IDL_FILES}flag-interface-dt.idl`;
@@ -41,6 +42,8 @@ const INTERFACE_SECURE_CONTEXT = `${TEST_IDL_FILES}interface-securecontext.idl`;
 const INTERFACE_STABLE = `${TEST_IDL_FILES}interface-rte-stable.idl`;
 const METHODS_BASIC  = `${TEST_IDL_FILES}methods-basic.idl`;
 const METHODS_SYNC_ARGUMENTS = `${TEST_IDL_FILES}methods-synchronous.idl`;
+const NAMESPACE_SIMPLE = `${TEST_IDL_FILES}namespace.idl`;
+const NAMESPACE_PARTIAL = `${TEST_IDL_FILES}namespace-partial.idl`;
 const INTERFACE_MIXIN_INCLUDES = './test/files/mixin-includes.idl';
 const PROPERTIES_BASIC = `${TEST_IDL_FILES}properties-basic.idl`;
 const PROPERTIES_DISTINGUISH = `${TEST_IDL_FILES}properties-distinguish.idl`;
@@ -106,7 +109,20 @@ describe('SourceRecord', () => {
       const record = sr.getConstructors();
       assert.strictEqual(record[0].arguments.length, 3);
     });
-  })
+    it('Confirms that constructors with complex arguemnts are returned', () => {
+      const source = loadSource(CONSTRUCTOR_COMPLEX_ARG);
+      const sr = new SourceRecord('constructor', 'interface', { path: CONSTRUCTOR_COMPLEX_ARG, sourceIdl: source });
+      const record = sr.getConstructors();
+      const found = record.find((r) => {
+        // return arg === 'sequence<CSSTransformComponent>';
+        const arg = r.arguments.find((a) => {
+          return a === 'sequence<CSSTransformComponent> transforms';
+        });
+        return arg;
+      });
+      assert.strictEqual(found.arguments[0], 'sequence<CSSTransformComponent> transforms');
+    });
+  });
 
   describe('getEvents', () => {
     it('Confirms that event callbacks are processed', () => {
@@ -293,7 +309,7 @@ describe('SourceRecord', () => {
   });
 
   describe('interfaceName', () => {
-    it('Confirms that the interface name is returned from a simple IDL file', () => {
+    it('Confirms that the structure name is returned from a simple IDL file', () => {
       const source = loadSource(SIMPLE_SOURCE);
       const sr = new SourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
@@ -302,6 +318,16 @@ describe('SourceRecord', () => {
       const source = loadSource(INTERFACE_PARENT);
       const sr = new SourceRecord('parent-interface', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'InterfaceParent');
+    });
+    it('Confirms that structure name is returned from a simple namespace file', () => {
+      const source = loadSource(NAMESPACE_SIMPLE);
+      const sr = new SourceRecord('namespace', 'namespace', { path: NAMESPACE_SIMPLE, sourceIdl: source });
+      assert.strictEqual(sr.interfaceName, 'NamespaceName');
+    });
+    it('Confirms that structure name is returned from a simple namespace file', () => {
+      const source = loadSource(NAMESPACE_PARTIAL);
+      const sr = new SourceRecord('namespace', 'namespace', { path: NAMESPACE_PARTIAL, sourceIdl: source });
+      assert.strictEqual(sr.interfaceName, 'PartialNamespaceName');
     });
   });
 

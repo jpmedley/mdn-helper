@@ -1,0 +1,12 @@
+[
+    Exposed=(Window,LayoutWorklet,PaintWorklet)
+] interface CSSTransformValue : CSSStyleValue {
+    [RaisesException] constructor(sequence<CSSTransformComponent> transforms);
+    iterable<CSSTransformComponent>;
+    readonly attribute unsigned long length;
+    getter CSSTransformComponent (unsigned long index);
+    [RaisesException] setter CSSTransformComponent (unsigned long index, CSSTransformComponent val);
+
+    readonly attribute boolean is2D;
+    [RaisesException] DOMMatrix toMatrix();
+};
