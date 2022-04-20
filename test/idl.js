@@ -51,7 +51,7 @@ describe('IDL Tests', () => {
         const sources = cis.getFeatureSources();
       } catch (error) {
         foundErr = error;
-        console.log(error.message);
+        console.log(error);
       }
       assert.ok(!(foundErr instanceof IDLError));
     });

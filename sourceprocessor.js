@@ -38,8 +38,10 @@ const PARTIAL_NAME = /\]?\s*partial\s*interface\s*(\w*)/;
 const TYPEDEF_EXT_ATTRIBS = /typedef\s[^\]]*\]\s*[^\s]*\s*(\w*);/;
 const TYPEDEF_NAME_SIMPLE = /typedef\s*[^\s]*\s*(\w*);/;
 const TYPEDEF_NAME_COMPOUND = /typedef\s*\([^\)]*\)\s*(\w*);/;
+const TYPEDEF_COMPOUND_COMPLEX = /typedef\s\((?:[^\)]*\))*\s(\w*);/;
 const TYPEDEF_NAME_COMPOUND_RETURN = /typedef\s*[^>>]*>>\s*(\w*);/;
 const TYPEDEF_NAME_COMPLEX = /typedef\s*(?:\w*\s*){3}(\w*);/;
+const TYPEDEF_SEQUENCE = /typedef\ssequence[^>]*>\s(\w*);/;
 
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mixin', 'namespace', 'typedef'];
@@ -185,7 +187,13 @@ class _SourceProcessor_Base {
           matches = fromLine.match(TYPEDEF_EXT_ATTRIBS);
         }
         if (!matches) {
+          matches = fromLine.match(TYPEDEF_COMPOUND_COMPLEX);
+        }
+        if (!matches) {
           matches = fromLine.match(TYPEDEF_NAME_COMPOUND_RETURN);
+        }
+        if (!matches) {
+          matches = fromLine.match(TYPEDEF_SEQUENCE);
         }
         break;
       default:

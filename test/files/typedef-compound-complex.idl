@@ -1,0 +1,1 @@
+typedef (sequence<(EncodedAudioChunk or EncodedVideoChunk)> or EncodedAudioChunk or EncodedVideoChunk) EncodedChunks;

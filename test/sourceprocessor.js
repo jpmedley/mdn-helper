@@ -177,6 +177,18 @@ describe('ChromeIDLSource', () => {
       assert.strictEqual(source.name, 'Including');
     });
 
+    it('Confirms that a false positive \'includes\' is not returned', () => {
+      const cis = new ChromeIDLSource(INCLUDES_FLASE_POSITIVE);
+      let foundErr;
+      try {
+        const sources = cis.getFeatureSources();
+      } catch (error) {
+        foundErr = error;
+        console.log(error);
+      }
+      assert.ok(!(foundErr instanceof IDLError));
+    });
+
     it('Confirms that namespace names are recorded correctly', () => {
       const cis = new ChromeIDLSource(NAMESPACE_SIMPLE);
       const sources = cis.getFeatureSources();
