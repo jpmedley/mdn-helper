@@ -17,6 +17,7 @@
 global.__commandName = 'test';
 
 const assert = require('assert');
+const { IDLError } = require('../errors.js');
 
 const { ChromeIDLSource } = require('../sourceprocessor.js');
 
@@ -27,6 +28,7 @@ const DICTIONARY = `${TEST_IDL_FILES}dictionary.idl`;
 const DICTIONARY_ANCESTOR = `${TEST_IDL_FILES}dictionary-ancestor.idl`;
 const DICTIONARY_EXTENDED_ATTRIBS = `${TEST_IDL_FILES}dictionary-extended-attribs.idl`;
 const ENUM = `${TEST_IDL_FILES}enum.idl`;
+const INCLUDES_FLASE_POSITIVE = `${TEST_IDL_FILES}includes-false-positive.idl`;
 const INTERFACE_CALLBACK = `${TEST_IDL_FILES}interface-callback.idl`;
 const INTERFACE_COMPLETE = `${TEST_IDL_FILES}interface-complete.idl`;
 const INTERFACE_EXTENDED_ATTRIBS = `${TEST_IDL_FILES}interface-flag-and-ot.idl`;
@@ -42,7 +44,7 @@ const MULTIPLE_DICTIONARIES = `${TEST_IDL_FILES}multiple-dictionaries.idl`;
 const MULTIPLE_ENUMS = `${TEST_IDL_FILES}multiple-enums.idl`;
 const MULTIPLE_STRUCTURES = `${TEST_IDL_FILES}multiple-structures.idl`;
 const MULTIPLE_TYPEDEFS = `${TEST_IDL_FILES}multiple-typedefs.idl`;
-const NAMESPACE = `${TEST_IDL_FILES}namespace.idl`;
+const NAMESPACE_SIMPLE = `${TEST_IDL_FILES}namespace.idl`;
 const NAMESPACE_PARTIAL = `${TEST_IDL_FILES}namespace-partial.idl`;
 const TYPEDEF_SIMPLE = `${TEST_IDL_FILES}typedef-simple.idl`;
 
@@ -176,7 +178,7 @@ describe('ChromeIDLSource', () => {
     });
 
     it('Confirms that namespace names are recorded correctly', () => {
-      const cis = new ChromeIDLSource(NAMESPACE);
+      const cis = new ChromeIDLSource(NAMESPACE_SIMPLE);
       const sources = cis.getFeatureSources();
       const source = sources.get('NamespaceName-namespace');
       assert.strictEqual(source.name, 'NamespaceName');
@@ -212,5 +214,14 @@ describe('ChromeIDLSource', () => {
       const source = sources.get('TypeDefName-typedef');
       assert.strictEqual(source.name, 'TypeDefName');
     });
-  })
+  });
+
+  describe('type', () => {
+    it('Confirms that a namespace input produces a SourceRecord with correct type', () => {
+      const cis = new ChromeIDLSource(NAMESPACE_SIMPLE);
+      const sources = cis.getFeatureSources();
+      const source = sources.get('NamespaceName-namespace');
+      assert.strictEqual(source.type, 'namespace');
+    });
+  });
 });

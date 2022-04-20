@@ -113,7 +113,7 @@ class _SourceProcessor_Base {
             if (l.includes('interface mixin')) { return 'mixin'; }
             if (l.includes('partial interface')) { return 'partial'; }
             return KEYWORDS.find((e) => {
-             var rx = new RegExp(`\\b${e}`);
+             var rx = new RegExp(`\\b${e} `);
              let index = l.search(rx);
              if (index >= 0) { return true } else { return false; }
             });
@@ -125,6 +125,7 @@ class _SourceProcessor_Base {
               if (error instanceof IDLError) {
                 const msg = `Could not extract name for ${type} from ${p} in line:\n\n${l}`;
                 error.message = msg;
+                throw error;
               }
               // Punting because of multiline typedef
               if (!type==='typedef') {
@@ -214,6 +215,35 @@ class _SourceProcessor_Base {
 class IDLSource extends _SourceProcessor_Base {
   constructor(sourceLocation, options) {
     super(sourceLocation, options);
+  }
+
+  findExact(searchValOrArray, includeFlags=false, includeOriginTrials=false) {
+    if (!this._sourceRecords.size) { this.getFeatureSources(); }
+    let matches = new Map();
+    if (searchValOrArray === '*') {
+      for (let s of this._sourceRecords) {
+        if (!includeFlags && s[1].inDevTrial) { continue; }
+        if (!includeOriginTrials && s[1].inOriginTrial) { continue; }
+        matches.set(s[0], s[1]);
+      }
+    } else if (Array.isArray(searchValOrArray)) {
+      for (let s of this._sourceRecords) {
+        const possibleMatch = searchValOrArray.includes(s.name);
+        if (possibleMatch) {
+          if (!includeFlags && s[1].inDevTrial) { continue; }
+          if (!includeOriginTrials && s[1].inOriginTrial) { continue; }
+          matches.set(s[0], s[1]);
+        }
+      }
+    } else {
+      for (let s of this._sourceRecords) {
+        if (!s.name.includes(searchValOrArray)) { continue; }
+        if (!includeFlags && s.inDevTrial) { continue; }
+        if (!includeOriginTrials && s.inOriginTrial) { continue; }
+        matches.set(s[0], s[1]);
+      }
+    }
+    return matches;
   }
 }
 
