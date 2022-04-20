@@ -26,6 +26,7 @@ const {
   EMPTY_BURN_DATA,
   InterfaceData
 } = require('./interfacedata.js');
+const { ChromeIDLSource } = require('./sourceprocessor.js');
 
 const ALL_STRING = '(all)';
 const BURNABLE_TYPES = ['interface'];
@@ -472,57 +473,48 @@ class ChromeBurner extends Burner {
     this._startBurnLogFile();
     this._loadReportTemplate();
     this._openResultsFile();
-    const burnTypes = ["interface", "includes"];
-    const dm = new DirectoryManager('idl/', { types: burnTypes });
-    const interfaceSet = dm.interfaceSet;
+    // const burnTypes = ["interface", "includes"];
+    // const dm = new DirectoryManager('idl/', { types: burnTypes });
+    // const interfaceSet = dm.interfaceSet;
+    const idlLocation = utils.getConfig('idlDirectory');
+    const cis = new ChromeIDLSource(`.${idlLocation}/`);
+    // const interfaceSet = cis.getFeatureSources();
     let interfaces;
     if (this._reportingList) {
-      interfaces = interfaceSet.findExact(this._reportingList, this._includeFlags, this._includeOriginTrials);
+      interfaces = cis.findExact(this._reportingList, this._includeFlags, this._includeOriginTrials);
       for (let w of this._reportingList) {
         let key = w.split(".")[0];
         let interface_ = interfaces.get(key);
         if (!interface_) { continue; }
-        if (!this._isBurnable(interface_)) { continue; }
         if (!BURNABLE_TYPES.includes(interface_.type)) { continue; }
         let burnRecords = interface_.getMembersBurnRecords(w, this._includeFlags, this._includeOriginTrials);
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
       }
     } else if (this._interfacesOnly) {
-      interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
+      interfaces = cis.findExact("*", this._includeFlags, this._includeOriginTrials);
       for (const [key, val] of interfaces) {
-        if (!this._isBurnable(val)) { continue; }
         let burnRecords = val.getInterfaceBurnRecords();
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
       }
     } else if (this._childrenOnly) {
-      interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
+      interfaces = cis.findExact("*", this._includeFlags, this._includeOriginTrials);
       for (const [key, val] of interfaces) {
-        if (!this._isBurnable(val)) { continue; }
-        let burnRecords = val.getBurnRecords(this._includeFlags, this._includeOriginTrials);
+        let burnRecords = val.getBurnRecords();
         burnRecords = await this._ping(burnRecords);
         this._recordChildren(burnRecords);
       }
     } else {
-      interfaces = interfaceSet.findExact("*", this._includeFlags, this._includeOriginTrials);
+      interfaces = cis.findExact("*", this._includeFlags, this._includeOriginTrials);
+      // START HERE: See if pinging pages and burning records actually works.
       for (const [key, val] of interfaces) {
-        if (!this._isBurnable(val)) { continue; }
-        let burnRecords = val.getBurnRecords(this._includeFlags, this._includeOriginTrials);
+        let burnRecords = val.getBurnRecords();
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
       }
     }
     this._closeOutputFile();
-  }
-
-  _isBurnable(interfaceData) {
-    if (interfaceData.mixin) { return false; }
-    if (utils.isExcluded(interfaceData.name)) {
-      if (!utils.isOTFalseNegative(interfaceData.name)) { return false; }
-    }
-    if (BURNABLE_TYPES.includes(interfaceData.type)) { return true; }
-    return true;
   }
 
   _getIDLFile(fileObject) {
