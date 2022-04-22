@@ -34,10 +34,23 @@ function countStructures(inText) {
   let count = 0;
   let lines = inText.split('\n');
   for (let l of lines) {
-    let found = STRUCTURE_NAMES.some((s) => {
-      return l.includes(s);
+    let possibleStructure = STRUCTURE_NAMES.find((s) => {
+      let matches;
+      switch (s) {
+        case 'includes ':
+          matches = l.match(` ${s}`)
+          break;
+        default:
+          matches = l.match(`\]*\s*\b*${s}`);
+          break;
+      }
+      if (!matches) { }
+      return (matches? true: false);
     });
-    if (found) { count++; }
+    if (possibleStructure && (possibleStructure.trim() === 'callback')) {
+      if (!l.trim().startsWith('callback')) { possibleStructure = false; }
+    }
+    if (possibleStructure) { count++; }
   }
   return count;
 }
@@ -63,10 +76,10 @@ describe('IDL Tests', () => {
       const EXCLUSIONS = ['inspector','testing','typed_arrays'];
       let foundErr;
       for (let i of idlFiles) {
-        let found = EXCLUSIONS.find((e) => {
+        let exclude = EXCLUSIONS.find((e) => {
           return i.includes(e);
         });
-        if (found) { continue; }
+        if (exclude) { continue; }
         let fileContents = utils.getIDLFile(i, { clean: true });
         let expectedCount = countStructures(fileContents);
         const cis = new ChromeIDLSource(i);
