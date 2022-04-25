@@ -28,29 +28,38 @@ const GLOB_PATTERN = 'idl/**/**/**/*.idl';
 const STRUCTURE_NAMES = ['callback ', 'dictionary ', 'enum ', 'includes ', 'interface ', 'namespace ', 'typedef '];
 
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
-// Second value of args must be an interface name, not a flag name
 
 function countStructures(inText) {
   let count = 0;
   let lines = inText.split('\n');
   for (let l of lines) {
+    if (l.trim().startsWith('const')) { continue; }
+    if (l.trim().startsWith('/*')) { continue; }
     let possibleStructure = STRUCTURE_NAMES.find((s) => {
+      let re;
       let matches;
       switch (s) {
         case 'includes ':
-          matches = l.match(` ${s}`)
+          re = new RegExp(` ${s}`);
+          matches = l.match(re);
           break;
         default:
-          matches = l.match(`\]*\s*\b*${s}`);
+          re = new RegExp(`(?:\\]\\s*\\b)?${s}`);
+          matches = l.match(re);
           break;
       }
-      if (!matches) { }
       return (matches? true: false);
     });
-    if (possibleStructure && (possibleStructure.trim() === 'callback')) {
-      if (!l.trim().startsWith('callback')) { possibleStructure = false; }
+    if (possibleStructure && (possibleStructure.trim() === 'enum')) {
+      if (l.includes('GLenum')) { possibleStructure = false; }
     }
-    if (possibleStructure) { count++; }
+    if (possibleStructure && (possibleStructure.trim() === 'callback')) {
+      if (!l.trim().startsWith('callback') && !l.trim().startsWith('] callback')) { possibleStructure = false; }
+    }
+    if (possibleStructure) {
+      console.log(l);
+      count++;
+    }
   }
   return count;
 }
