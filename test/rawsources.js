@@ -54,6 +54,7 @@ const PROPERTIES_OTHER = `${TEST_IDL_FILES}properties-other.idl`;
 const PROPERTIES_SETLIKE = `${TEST_IDL_FILES}properties-setlike.idl`;
 const PROPERTIES_SETLIKE_READONLY = `${TEST_IDL_FILES}properties-setlike-readonly.idl`;
 const SIMPLE_SOURCE = `${TEST_IDL_FILES}url-source.idl`;
+const STRINGIFIER = './test/files/stringifier.idl';
 
 function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
@@ -194,11 +195,12 @@ describe('SourceRecord', () => {
     //       const id = new InterfaceData(source);
     //       assert.strictEqual(id.methods[0].resolution, "void");
     //     });
-    //     it('Confirms that stringifier keywords are processed', () => {
-    //       const source = loadSource(STRINGIFIER);
-    //       const id = new InterfaceData(source);
-    //       assert.strictEqual(id.methods[0].name, "toString");
-    //     });
+        it('Confirms that stringifier keywords are processed', () => {
+          const source = loadSource(STRINGIFIER);
+          const sr = new SourceRecord('stringifier', 'interface', { path: STRINGIFIER, sourceIdl: source });
+          const record = sr.getMethods();
+          assert.strictEqual(record[0].name, 'toString');
+        });
     //     it('Confirms that processing iterables doesn\'t add a false positive', () => {
     //       const source = loadSource(ITERABLE_SEQUENCE_ARG);
     //       const id = new InterfaceData(source);

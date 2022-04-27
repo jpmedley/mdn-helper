@@ -207,11 +207,23 @@ class SourceRecord {
     if (!this.#methods) {
       const searchSet = this._getSearchSet(forIdlFile);
       let matches;
+      let method;
       for (let s of searchSet) {
+        if (s?.sourceIdl.includes('stringifier')) {
+          method = {
+            key: `${this.interfaceName}.toString`,
+            name: 'toString',
+            returnType: 'string',
+            arguments: ''
+          }
+          this.#methods = new Array();
+          this.#methods.push(method);
+          continue;
+        }
+
         matches = s.sourceIdl.matchAll(METHODS_RE);
         if (matches) {
-          this.#methods = new Array();
-          let method;
+          if(!this.#methods) { this.#methods = new Array(); }
           for (let m of matches) {
             method = {
               key: `${this.interfaceName}.${m[2]}`,
