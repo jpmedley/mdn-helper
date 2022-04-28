@@ -1,4 +1,4 @@
-interface IterablesMultiArg{
+interface IterMultiArg{
   iterable<CSSOMString, sequence<CSSStyleValue>>;
 
   attribute octet notDeleter;

@@ -1,4 +1,4 @@
-interface IterableInterface {
+interface IterInterface {
     iterable<CSSUnparsedSegment>;
     [RuntimeEnabled=RTEExperimental] iterable<CSSParsedSegment>;
 };
