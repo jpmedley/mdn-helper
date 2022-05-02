@@ -57,7 +57,6 @@ function countStructures(inText) {
       if (!l.trim().startsWith('callback') && !l.trim().startsWith('] callback')) { possibleStructure = false; }
     }
     if (possibleStructure) {
-      console.log(l);
       count++;
     }
   }
