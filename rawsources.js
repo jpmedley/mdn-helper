@@ -82,7 +82,7 @@ class SourceRecord {
     if (match) {
       this.#interfaceName = match[1];
     } else {
-      const msg = `Malformed or missing IDL in ${this.sources[0].path}.\n\n${this.sources[0].sourceIdl}`
+      const msg = `Malformed or unrecognized IDL in ${this.sources[0].path}.\n\n${this.sources[0].sourceIdl}`
       throw new IDLError(msg, this.sources[0].path);
     }
     return this.#interfaceName;
