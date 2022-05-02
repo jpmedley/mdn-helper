@@ -17,6 +17,7 @@
 global.__commandName = 'test';
 
 const assert = require('assert');
+const { IDLError } = require('../errors.js');
 const { FlagStatus, NO_FLAG } = require('../flags.js');
 const { initiateLogger } = require('../log.js');
 const { SourceRecord } = require('../rawsources.js');
@@ -31,20 +32,37 @@ initiateLogger();
 const CONSTRUCTOR_ARGS = `${TEST_IDL_FILES}constructor-arguments.idl`;
 const CONSTRUCTOR_COMPLEX_ARG = `${TEST_IDL_FILES}constructor-complex-argument.idl`;
 const CONSTRUCTOR_NO_ARGS = `${TEST_IDL_FILES}constructor-noarguments.idl`;
+const DELETERS = `${TEST_IDL_FILES}all-deleters.idl`;
 const EVENT_HANDLERS = `${TEST_IDL_FILES}event-handlers.idl`;
 const FLAG_INTERFACE_OT = `${TEST_IDL_FILES}flag-interface-ot.idl`;
 const FLAG_INTERFACE_DT = `${TEST_IDL_FILES}flag-interface-dt.idl`;
 const FLAG_STATUS_SHARED = `${TEST_IDL_FILES}flag-status-shared.idl`;
+const GETTERS_BOTH = `${TEST_IDL_FILES}getters-both.idl`;
+const GETTERS_SIMPLE_NAMED_ONLY = `${TEST_IDL_FILES}getters-simple-named-only.idl`;
+const GETTERS_COMPLEX_NAMED_ONLY = `${TEST_IDL_FILES}getters-complex-named-only.idl`;
+const GETTERS_RETURN_VAL = `${TEST_IDL_FILES}getters-return-val.idl`;
+const GETTERS_UNNAMED_ONLY = `${TEST_IDL_FILES}getters-unnamed-only.idl`;
 const IN_DEV_TRIAL = `${TEST_IDL_FILES}in-dev-trial.idl`;
 const IN_ORIGIN_TRIAL = `${TEST_IDL_FILES}in-origin-trial.idl`;
+const INTERFACE_CALLBACK = `${TEST_IDL_FILES}interface-callback.idl`;
+const INTERFACE_MIXIN = `${TEST_IDL_FILES}mixin.idl`;
 const INTERFACE_PARENT = `${TEST_IDL_FILES}interface-parent.idl`;
+const INTERFACE_PARTIAL = `${TEST_IDL_FILES}interface-partial.idl`;
 const INTERFACE_SECURE_CONTEXT = `${TEST_IDL_FILES}interface-securecontext.idl`;
 const INTERFACE_STABLE = `${TEST_IDL_FILES}interface-rte-stable.idl`;
+const INTERFACE_STANDARD = `${TEST_IDL_FILES}burnable.idl`;
+const ITERABLE_MULTI_ARG_SEQ = `${TEST_IDL_FILES}iterable-multi-arg-sequence.idl`;
+const ITERABLE_MULTI_ARG = `${TEST_IDL_FILES}iterable-multi-arg.idl`;
+const ITERABLE_ONE_ARG = `${TEST_IDL_FILES}iterable-one-arg.idl`;
+const ITERABLE_SEQUENCE_ARG = `${TEST_IDL_FILES}iterable-sequence-arg.idl`;
 const METHODS_BASIC  = `${TEST_IDL_FILES}methods-basic.idl`;
 const METHODS_SYNC_ARGUMENTS = `${TEST_IDL_FILES}methods-synchronous.idl`;
 const NAMESPACE_SIMPLE = `${TEST_IDL_FILES}namespace.idl`;
 const NAMESPACE_PARTIAL = `${TEST_IDL_FILES}namespace-partial.idl`;
-const INTERFACE_MIXIN_INCLUDES = './test/files/mixin-includes.idl';
+const NO_DELETERS = `${TEST_IDL_FILES}no-deleters.idl`;
+const NO_EVENTHANDLERS = `${TEST_IDL_FILES}no-event-handlers.idl`;
+const NO_ITERABLE = `${TEST_IDL_FILES}no-iterable.idl`;
+const INTERFACE_MIXIN_INCLUDES = `${TEST_IDL_FILES}mixin-includes.idl`;
 const PROPERTIES_BASIC = `${TEST_IDL_FILES}properties-basic.idl`;
 const PROPERTIES_DISTINGUISH = `${TEST_IDL_FILES}properties-distinguish.idl`;
 const PROPERTIES_EVENTHANDLER = `${TEST_IDL_FILES}properties-eventhandler.idl`;
@@ -54,13 +72,67 @@ const PROPERTIES_OTHER = `${TEST_IDL_FILES}properties-other.idl`;
 const PROPERTIES_SETLIKE = `${TEST_IDL_FILES}properties-setlike.idl`;
 const PROPERTIES_SETLIKE_READONLY = `${TEST_IDL_FILES}properties-setlike-readonly.idl`;
 const SIMPLE_SOURCE = `${TEST_IDL_FILES}url-source.idl`;
-const STRINGIFIER = './test/files/stringifier.idl';
+const SETTERS_BOTH = `${TEST_IDL_FILES}setters-both.idl`;
+const SETTERS_NAMED_ONLY = `${TEST_IDL_FILES}setters-named-only.idl`;
+const SETTERS_UNNAMED_ONLY = `${TEST_IDL_FILES}setters-unnamed-only.idl`;
+const STRINGIFIER = `${TEST_IDL_FILES}stringifier.idl`;
 
 function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
 }
 
+function countIterableMethods(methods) {
+  let methCount = 0;
+  const ITERABLE_METHODS = ['entries', 'forEach', 'keys', 'values'];
+  ITERABLE_METHODS.forEach((i) => {
+    let found = methods.some((m) => {
+      return m.name === i;
+    });
+    if (found) { methCount++ }
+  });
+  return methCount;
+}
+
 describe('SourceRecord', () => {
+
+  describe('Callback interfaces', () => {
+    it('Confirms that callback interface IDL is processed without errors', () => {
+      const source = loadSource(INTERFACE_CALLBACK);
+      let foundErr;
+      try {
+        const sr = new SourceRecord('callback', 'interface', { path: INTERFACE_CALLBACK, sourceIdl: source });
+      } catch (error) {
+        foundErr = error
+        console.log(error);
+      }
+      assert.ok(!(foundErr instanceof IDLError));
+    });
+  });
+
+  describe('deleters', () => {
+    it('Confirms that only named deleters are counted', () => {
+      const source = loadSource(DELETERS);
+      const sr = new SourceRecord('deleters', 'interface', { path: DELETERS, sourceIdl: source });
+      const deleters = sr.getDeleters();
+      assert.strictEqual(deleters.length, 3);
+    });
+  });
+
+  describe('eventHandlers', () => {
+    it('Confirms that all known variations of EventHandler IDL are counted', () => {
+      const source = loadSource(EVENT_HANDLERS);
+      const sr = new SourceRecord('otFlag', 'interface', { path: EVENT_HANDLERS, sourceIdl: source });
+      const handlers = sr.getEvents();
+      assert.strictEqual(handlers.length, 3);
+    });
+    it('Confirms that null is returned when there are no event handlers', () => {
+      const source = loadSource(NO_EVENTHANDLERS);
+      const sr = new SourceRecord('otFlag', 'interface', { path: NO_EVENTHANDLERS, sourceIdl: source });
+      const handlers = sr.getEvents();
+      assert.strictEqual(handlers, undefined);
+    });
+  });
+
   describe('flagStatus', () => {
     it('Confirms origin trial for simple flag', () => {
       let source = loadSource(FLAG_INTERFACE_OT);
@@ -351,6 +423,52 @@ describe('SourceRecord', () => {
     });
   });
 
+
+  describe('iterable IDL keyword', () => {
+    it('confirms that keyword \'iterable\' adds four standard methods', () => {
+      const source = loadSource(ITERABLE_ONE_ARG);
+      const sr = new SourceRecord('iterable', 'interface', { path: ITERABLE_ONE_ARG, sourceIdl: source });
+      const methods = sr.getMethods();
+      const methodCount = countIterableMethods(methods);
+      assert.strictEqual(methodCount, 4);
+    });
+    it('Confirms that an iterable with a sequence as one of several args is recognized', () => {
+      const source = loadSource(ITERABLE_MULTI_ARG_SEQ);
+      const sr = new SourceRecord('iterable', 'interface', { path: ITERABLE_MULTI_ARG_SEQ, sourceIdl: source });
+      const methods = sr.getMethods();
+      const methodCount = countIterableMethods(methods);
+      assert.strictEqual(methodCount, 4);
+    });
+    it('Confirms that an iterable with one arg is recognized', () => {
+      const source = loadSource(ITERABLE_ONE_ARG);
+      const sr = new SourceRecord('iterable', 'interface', { path: ITERABLE_ONE_ARG, sourceIdl: source });
+      const methods = sr.getMethods();
+      const methodCount = countIterableMethods(methods);
+      assert.strictEqual(methodCount, 4);
+    });
+    it('Confirms that an iterable with several args is recognized', () => {
+      const source = loadSource(ITERABLE_MULTI_ARG);
+      const sr = new SourceRecord('iterable', 'interface', { path: ITERABLE_MULTI_ARG, sourceIdl: source });
+      const methods = sr.getMethods();
+      const methodCount = countIterableMethods(methods);
+      assert.strictEqual(methodCount, 4);
+    });
+    it('Confirms that an iterable with a sequence as its one arg is recognized', () => {
+      const source = loadSource(ITERABLE_SEQUENCE_ARG);
+      const sr = new SourceRecord('iterable', 'interface', { path: ITERABLE_SEQUENCE_ARG, sourceIdl: source });
+      const methods = sr.getMethods();
+      const methodCount = countIterableMethods(methods);
+      assert.strictEqual(methodCount, 4);
+    });
+    it('Confirms that iterable returns an empty array when the IDL contains no iterable', () => {
+      const source = loadSource(NO_ITERABLE);
+      const sr = new SourceRecord('iterable', 'interface', { path: NO_ITERABLE, sourceIdl: source });
+      const methods = sr.getMethods();
+      const methodCount = countIterableMethods(methods);
+      assert.strictEqual(methodCount, 0);
+    });
+  });
+
   describe('key', () => {
     it('Confirms that the key property returns a correct value', () => {
       const source = loadSource(SIMPLE_SOURCE);
@@ -364,6 +482,78 @@ describe('SourceRecord', () => {
       const source = loadSource(INTERFACE_SECURE_CONTEXT);
       const sr = new SourceRecord('secure-context', 'interface', { path: INTERFACE_SECURE_CONTEXT, sourceIdl: source });
       assert.ok(sr.getSecureContext());
+    });
+  });
+
+  describe('maplikeMethods', () => {
+    it('Confirms that only readonly properties are returned', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE_READONLY);
+      const sr = new SourceRecord('maplike', 'interface', { path: PROPERTIES_MAPLIKE_READONLY, sourceIdl: source });
+      const methods = sr.getMethods();
+      assert.strictEqual(methods.length, 7);
+    });
+    it('Confirms that all methods are returned', () => {
+      const source = loadSource(PROPERTIES_MAPLIKE);
+      const sr = new SourceRecord('maplike', 'interface', { path: PROPERTIES_MAPLIKE, sourceIdl: source });
+      const methods = sr.getMethods();
+      assert.strictEqual(methods.length, 10);
+    });
+  });
+
+  describe('namedGetters', () => {
+    it('Confirms that named getters returns items when file contains named and unnamed getters', () => {
+      const source = loadSource(GETTERS_BOTH);
+      const sr = new SourceRecord('namedGetters', 'interface', { path: GETTERS_BOTH, sourceIdl: source });
+      const getters = sr.getNamedGetters();
+      assert.strictEqual(getters.length, 2);
+    });
+    it('Confirms that named getters returns items when file contains only named getters', () => {
+      const source = loadSource(GETTERS_SIMPLE_NAMED_ONLY);
+      const sr = new SourceRecord('namedGetters', 'interface', { path: GETTERS_SIMPLE_NAMED_ONLY, sourceIdl: source });
+      const getters = sr.getNamedGetters();
+      assert.ok(getters.length > 0);
+    });
+    it('Confirms that complex named getters are processed correctly', () => {
+      const source = loadSource(GETTERS_COMPLEX_NAMED_ONLY);
+      const sr = new SourceRecord('namedGetters', 'interface', { path: GETTERS_SIMPLE_NAMED_ONLY, sourceIdl: source });
+      const getters = sr.getNamedGetters();
+      assert.strictEqual(getters[0].returnType, 'RadioNodeList or Element');
+    });
+    it('Confirms that named getters returns no items when file contains no named getters', () => {
+      const source = loadSource(GETTERS_UNNAMED_ONLY);
+      const sr = new SourceRecord('namedGetters', 'interface', { path: GETTERS_UNNAMED_ONLY, sourceIdl: source });
+      const getters = sr.getNamedGetters();
+      assert.strictEqual(getters.length, 0);
+    });
+    it('Confirms that a named getter\'s return value is processed', () => {
+      const source = loadSource(GETTERS_RETURN_VAL);
+      const sr = new SourceRecord('namedGetters', 'interface', { path: GETTERS_RETURN_VAL, sourceIdl: source });
+      const getters = sr.getNamedGetters();
+      assert.strictEqual(getters[0].returnType, 'SVGPoint');
+    });
+  });
+
+  describe('namedSetters', () => {
+    it('Confirms that namedSetters returns items when file contains named and unnamed getters', () => {
+      const source = loadSource(SETTERS_BOTH);
+      const sr = new SourceRecord('namedSetters', 'interface', { path: SETTERS_BOTH, sourceIdl: source });
+      const setters = sr.getNamedSetters();
+      assert.strictEqual(setters.length, 1);
+    });
+  });
+
+  describe('setlikeMethods', () => {
+    it('Confirms that only readonly properties are returned', () => {
+      const source = loadSource(PROPERTIES_SETLIKE_READONLY);
+      const sr = new SourceRecord('setlike', 'interface', { path: PROPERTIES_SETLIKE_READONLY, sourceIdl: source });
+      const methods = sr.getMethods();
+      assert.strictEqual(methods.length, 6);
+    });
+    it('Confirms that all methods are returned', () => {
+      const source = loadSource(PROPERTIES_SETLIKE);
+      const sr = new SourceRecord('setlike', 'interface', { path: PROPERTIES_SETLIKE, sourceIdl: source });
+      const methods = sr.getMethods();
+      assert.strictEqual(methods.length, 9);
     });
   });
 });

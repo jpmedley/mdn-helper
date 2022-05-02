@@ -38,10 +38,13 @@ global.__Flags = FlagStatus();
 
 class SourceRecord {
   #constructors;
+  #deleters;
   #events;
   #interfaceName;
   #methods;
   #name;
+  #namedGetters;
+  #namedSetters;
   #properties;
   #propertySearch = false;
   #runtimeFlag;
@@ -173,6 +176,30 @@ class SourceRecord {
     return this.#constructors;
   }
 
+  getDeleters(forIdlFile = 'allFiles') {
+    if (!this.#deleters) {
+      const searchSet = this._getSearchSet(forIdlFile);
+      for (let s of searchSet) {
+        let matches = s.sourceIdl.matchAll(/deleter\s*void\s*(\w*)\(([^\)]*)\);/g);
+        if (matches) {
+          if (!this.#deleters) { this.#deleters = new Array(); }
+          let deleter;
+          for (let m of matches) {
+            if (!m[1]) { continue; }
+            deleter = {
+              key: `${this.interfaceName}.${m[1]}`,
+              name: m[1],
+              returnType: 'void',
+              arguments: m[2].split(',')
+            }
+            this.#deleters.push(deleter);
+          }
+        }
+      }
+    }
+    return this.#deleters
+  }
+
   getEvents(forIdlFile = 'allFiles') {
     if (!this.#events) {
       this._processProperties(forIdlFile);
@@ -187,11 +214,17 @@ class SourceRecord {
 
     nextSet = this.getConstructors(forIdlFile);
     if (nextSet) { propertySet.push(...nextSet); }
+    nextSet = this.getDeleters(forIdlFile);
+    if (nextSet) { propertySet.push(...nextSet); }
     nextSet = this.getEvents(forIdlFile);
     if (nextSet) { propertySet.push(...nextSet); }
     nextSet = this.getMethods(forIdlFile);
     if (nextSet) { propertySet.push(...nextSet); }
     nextSet = this.getProperties(forIdlFile);
+    if (nextSet) { propertySet.push(...nextSet); }
+    nextSet = this.getNamedGetters();
+    if (nextSet) { propertySet.push(...nextSet); }
+    nextSet = this.getNamedSetters();
     if (nextSet) { propertySet.push(...nextSet); }
 
     keys.push(this.interfaceName);
@@ -203,13 +236,74 @@ class SourceRecord {
     return keys;
   }
 
+  _getIterableMethods(sourceIdl) {
+    let methods = new Array();
+    const ITERABLE_METHODS = ['entries', 'forEach', 'keys', 'values'];
+    const ITERABLE_RETURN_TYPES = ['array', 'undefined', 'array', 'array'];
+    let method;
+    for (let im in ITERABLE_METHODS) {
+      method = {
+        key: `${this.interfaceName}${ITERABLE_METHODS[im]}`,
+        name: ITERABLE_METHODS[im],
+        returnType: ITERABLE_RETURN_TYPES[im],
+        arguments: ''
+      }
+      methods.push(method);
+    }
+    return methods;
+  }
+
+  _getMaplikeMethods(sourceIdl) {
+    let methods = new Array();
+    let match = sourceIdl.match(/(readonly\s)?maplike/);
+    let MAPLIKE_METHODS = ["entries", "forEach", "get", "has", "keys", "size", "values"];
+    let MAPLIKE_METHOD_RETURNS = ["sequence", "void", "", "boolean", "sequence", "long long", "sequence"];
+    if (match[1]?.trim() != 'readonly') {
+      MAPLIKE_METHODS.push(...["clear", "delete", "set"]);
+      MAPLIKE_METHOD_RETURNS.push(...["void", "void", "void"]);
+    }
+    let method;
+    for (let mm in MAPLIKE_METHODS) { 
+      method = {
+        key: `${this.interfaceName}.${MAPLIKE_METHODS[mm]}`,
+        name: MAPLIKE_METHODS[mm],
+        returnType: MAPLIKE_METHOD_RETURNS[mm],
+        arguments: ''
+      }
+      methods.push(method);
+    }
+    return methods;
+  }
+
+  _getSetlikeMethods(sourceIdl) {
+    let methods = new Array();
+    let match = sourceIdl.match(/(readonly\s)?setlike/)
+    let SETLIKE_METHODS = ["entries", "forEach", "has", "keys", "size", "values"];
+    let SETLIKE_METHOD_RETURNS = ["sequence", "void", "boolean", "sequence", "long long", "sequence"];
+    if (match[1]?.trim() != 'readonly') {
+      SETLIKE_METHODS.push(...["add", "clear", "delete"]);
+      SETLIKE_METHOD_RETURNS.push(...["void", "void", "void"]);
+    }
+    let method;
+    for (let sm in SETLIKE_METHODS) {
+      method = {
+        key: `${this.interfaceName}.${SETLIKE_METHODS[sm]}`,
+        name: SETLIKE_METHODS[sm],
+        returnType: SETLIKE_METHOD_RETURNS[sm],
+        arguments: ''
+      }
+      methods.push(method);
+    }
+    return methods;
+  }
+
   getMethods(forIdlFile = 'allFiles') {
     if (!this.#methods) {
       const searchSet = this._getSearchSet(forIdlFile);
       let matches;
       let method;
       for (let s of searchSet) {
-        if (s?.sourceIdl.includes('stringifier')) {
+        if (s.sourceIdl.includes('stringifier')) {
           method = {
             key: `${this.interfaceName}.toString`,
             name: 'toString',
@@ -218,7 +312,31 @@ class SourceRecord {
           }
           this.#methods = new Array();
           this.#methods.push(method);
-          continue;
+        }
+
+        let newMethods;
+        if (s.sourceIdl.includes('iterable')) {
+          if (!this.#methods) { this.#methods = new Array(); }
+          newMethods = this._getIterableMethods(s.sourceIdl);
+          if (newMethods.length > 0) {
+            this.#methods.push(...newMethods);
+          }
+        }
+
+        if (s.sourceIdl.includes('maplike')) {
+          if (!this.#methods) { this.#methods = new Array(); }
+          newMethods = this._getMaplikeMethods(s.sourceIdl);
+          if (newMethods.length > 0) {
+            this.#methods.push(...newMethods);
+          }
+        }
+
+        if (s.sourceIdl.includes('setlike')) {
+          if (!this.#methods) { this.#methods = new Array(); }
+          newMethods = this._getSetlikeMethods(s.sourceIdl);
+          if (newMethods.length > 0) {
+            this.#methods.push(...newMethods);
+          }
         }
 
         matches = s.sourceIdl.matchAll(METHODS_RE);
@@ -237,6 +355,60 @@ class SourceRecord {
       }
     }
     return this.#methods
+  }
+
+  getNamedGetters(forIdlFile = 'allFiles') {
+    if (!this.#namedGetters) {
+      const searchSet = this._getSearchSet(forIdlFile);
+      for (let s of searchSet) {
+        let matches = s.sourceIdl.matchAll(/getter\s*(\w*)\s*(\w*)/g);
+        if (!this.#namedGetters) { this.#namedGetters = new Array(); }
+        for (let m of matches) {
+          if (!m[2]) { continue; }
+          let namedGetter = {
+            key: `${this.interfaceName}.${m[2]}`,
+            name: m[2],
+            returnType: m[1],
+            arguments: ''
+          }
+          this.#namedGetters.push(namedGetter);
+        }
+        matches = s.sourceIdl.matchAll(/getter\s*\(([^\)]*)\)(\?)?\s*(\w*)/g);
+        if (!matches) { continue; }
+        for (let m of matches) {
+          if (!m[3]) { continue; }
+          let namedGetter = {
+            key: `${this.interfaceName}.${m[3]}`,
+            name: m[3],
+            returnType: m[1],
+            arguments: ''
+          }
+          this.#namedGetters.push(namedGetter);
+        }
+      }
+    }
+    return this.#namedGetters
+  }
+
+  getNamedSetters(forIdlFile = 'allFiles') {
+    if (!this.#namedSetters) {
+      const searchSet = this._getSearchSet(forIdlFile);
+      for (let s of searchSet) {
+        let matches = s.sourceIdl.matchAll(/setter\s*void\s*(\w*)\(([^\)]*)\);/g);
+        if (!this.#namedSetters) { this.#namedSetters = new Array(); }
+        for (let m of matches) {
+          if (!m[1]) { continue; }
+          let namedSetter = {
+            key: `${this.interfaceName}.${m[1]}`,
+            name: m[1],
+            returnType: 'void',
+            arguments: m[2].split(',')
+          }
+          this.#namedSetters.push(namedSetter);
+        }
+      }
+    }
+    return this.#namedSetters
   }
 
   getProperties(forIdlFile = 'allFiles') {
