@@ -36,7 +36,35 @@ const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
 
 global.__Flags = FlagStatus();
 
-class SourceRecord {
+class _sourceRecord_Base {
+  constructor(name, type, options) {
+    this._sources = new Array();
+    this.add(options.path, options.sourceIdl);
+  }
+
+
+  add(path, sourceIdl) {
+    let source = {
+      path: path,
+      sourceIdl: sourceIdl
+    }
+    this._sources.push(source);
+  }
+}
+
+class CallbackSourceRecord extends _sourceRecord_Base {
+  #name;
+  // #sources = new Array();
+  #type;
+
+  constructor(name, type, options) {
+    super(name, type, options);
+    this.#name = name;
+    this.#type = 'callback';
+  }
+}
+
+class InterfaceSourceRecord extends _sourceRecord_Base {
   #constructors;
   #deleters;
   #events;
@@ -49,18 +77,18 @@ class SourceRecord {
   #propertySearch = false;
   #runtimeFlag;
   #searchSet;
-  #sources = new Array();
+  // #sources = new Array();
   #type;
 
   constructor(name, type, options) {
+    super(name, type, options);
     this.#name = name;
     this.#type = type;
-    this.add(options.path, options.sourceIdl);
   }
 
   get flag() {
     const RUNTIME_ENABLED_RE = /RuntimeEnabled\s*=\s*(\w*)/;
-    const matches = this.#sources[0].sourceIdl.match(RUNTIME_ENABLED_RE);
+    const matches = this._sources[0].sourceIdl.match(RUNTIME_ENABLED_RE);
     if (matches) {
       return matches[1].trim();
     }
@@ -78,12 +106,12 @@ class SourceRecord {
 
   get interfaceName() {
     if (this.#interfaceName) { return this.#interfaceName; }
-    let match = this.#sources[0].sourceIdl.match(INTERFACE_NAME_RE);
+    let match = this._sources[0].sourceIdl.match(INTERFACE_NAME_RE);
     if (match) {
       this.#interfaceName = match[1];
     } else {
-      const msg = `Malformed or unrecognized IDL in ${this.sources[0].path}.\n\n${this.sources[0].sourceIdl}`
-      throw new IDLError(msg, this.sources[0].path);
+      const msg = `Malformed or unrecognized IDL in ${this._sources[0].path}.\n\n${this._sources[0].sourceIdl}`
+      throw new IDLError(msg, this._sources[0].path);
     }
     return this.#interfaceName;
   }
@@ -108,19 +136,11 @@ class SourceRecord {
   }
 
   get sources() {
-    return this.#sources;
+    return this._sources;
   }
 
   get type() {
     return this.#type;
-  }
-
-  add(path, sourceIdl) {
-    let source = {
-      path: path,
-      sourceIdl: sourceIdl
-    }
-    this.#sources.push(source);
   }
 
   getAllMembers(forIdlFile = 'allFiles') {
@@ -419,7 +439,7 @@ class SourceRecord {
   }
 
   getSecureContext() {
-    return this.#sources.some((s) => {
+    return this._sources.some((s) => {
       return s.sourceIdl.includes('SecureContext');
     });
   };
@@ -485,9 +505,9 @@ class SourceRecord {
       this.#searchSet = new Array();
   
       if (forIdlFile === 'allFiles') {
-        this.#searchSet.push(...this.#sources);
+        this.#searchSet.push(...this._sources);
       } else {
-        let found = this.#sources.find((s) => {
+        let found = this._sources.find((s) => {
           return s.path === forIdlFile;
         });
         this.#searchSet.push(found);
@@ -529,4 +549,6 @@ class SourceRecord {
   }
 }
 
-module.exports.SourceRecord = SourceRecord;
+
+module.exports.InterfaceSourceRecord = InterfaceSourceRecord;
+module.exports.SourceRecord = InterfaceSourceRecord;
