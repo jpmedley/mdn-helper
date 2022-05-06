@@ -52,6 +52,22 @@ class _sourceRecord_Base {
     }
     this._sources.push(source);
   }
+
+  _buildRecord(member) {
+    let record = bcd.getRecordByKey(member.key, 'api');
+    record.flag = this.flagStatus;
+    record.name = member.name;
+    // record.origin_trial = this.origin_trial;
+    record.type = member.type;
+    const engines = bcd.getEngines(member.key, 'api');
+    record.engineCount = (engines? engines.length: 1);
+    const browserCount = bcd.getBrowsers(member.key, 'api');
+    record.browserCount = (browserCount? browserCount.length: 6);
+    const browsers = ['chrome', 'chrome_android', 'webview_android'];
+    const versions = bcd.getVersions(member.key, browsers, 'api');
+    record.versions = versions;
+    return record;
+  }
   
   get name() {
     return this._name;
@@ -76,6 +92,14 @@ class CallbackSourceRecord extends _sourceRecord_Base {
   constructor(name, type, options) {
     super(name, type, options);
     this._type = 'callback';
+  }
+
+  getBurnRecords(forIdlFile = 'allFiles') {
+    let records = new Array();
+    let cback = { name: this.name, key: this.name }
+    let newRecord = this._buildRecord(cback);
+    records.push(newRecord);
+    return records;
   }
 }
 
@@ -460,22 +484,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
       throw e;
     });
     return records;
-  }
-
-  _buildRecord(member) {
-    let record = bcd.getRecordByKey(member.key, 'api');
-    record.flag = this.flagStatus;
-    record.name = member.name;
-    // record.origin_trial = this.origin_trial;
-    record.type = member.type;
-    const engines = bcd.getEngines(member.key, 'api');
-    record.engineCount = (engines? engines.length: 1);
-    const browserCount = bcd.getBrowsers(member.key, 'api');
-    record.browserCount = (browserCount? browserCount.length: 6);
-    const browsers = ['chrome', 'chrome_android', 'webview_android'];
-    const versions = bcd.getVersions(member.key, browsers, 'api');
-    record.versions = versions;
-    return record;
   }
 
   _getArguments(argumentString) {

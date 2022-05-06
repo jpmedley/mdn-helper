@@ -144,6 +144,13 @@ describe('ChromeIDLSource', () => {
       assert.ok(sources.has('InterfaceMixin-mixin'));
     });
 
+    it('Confirms that the right interface name is returned for a mixin', () => {
+      const cis = new ChromeIDLSource(INTERFACE_MIXIN);
+      const sources = cis.getFeatureSources();
+      const source = sources.entries().next();
+      assert.strictEqual(source.value[1].name, 'InterfaceMixin');
+    })
+
     it('Confirms retrieval of interface from multi-structure file', () => {
       const cis = new ChromeIDLSource(INTERFACE_MULTISTRUCTURE);
       const sources = cis.getFeatureSources();
