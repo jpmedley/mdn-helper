@@ -18,7 +18,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { IDLError } = require('./errors.js');
-const { SourceRecord } = require('./rawsources.js');
+const { CallbackSourceRecord, SourceRecord } = require('./rawsources.js');
 const utils = require('./utils.js');
 
 const { initiateLogger } = require('./log.js');
@@ -112,6 +112,7 @@ class _SourceProcessor_Base {
         if (!type) {
           type = (() => {
             if (l.includes('callback interface')) { return 'callback-interface'; }
+            if (l.includes('callback')) { return 'callback'; }
             if (l.includes('interface mixin')) { return 'mixin'; }
             if (l.includes('partial interface')) { return 'partial'; }
             return KEYWORDS.find((e) => {
@@ -214,7 +215,15 @@ class _SourceProcessor_Base {
     if (sourceRecord) {
       sourceRecord.add(path, data);
     } else {
-      sourceRecord = new SourceRecord(name, type, { path: path, sourceIdl: data });
+      // let sourceRecord;
+      switch (type) {
+        case ('callback'):
+          sourceRecord = new CallbackSourceRecord(name, type, { path: path, sourceIdl: data });
+          break;
+        default:
+          sourceRecord = new SourceRecord(name, type, { path: path, sourceIdl: data });
+          break;
+      }
       this._sourceRecords.set(key, sourceRecord)
     }
   }

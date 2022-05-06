@@ -25,7 +25,7 @@ const utils = require('./utils.js');
 const fs = require('fs');
 const { util } = require('config');
 
-const DEFAULT_TYPES = ['interface', 'mixin', 'partial'];
+const DEFAULT_TYPES = ['callback', 'interface', 'mixin', 'partial'];
 
 global.__Flags = FlagStatus();
 

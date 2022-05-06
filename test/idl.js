@@ -92,13 +92,19 @@ describe('IDL Tests', () => {
         let expectedCount = countStructures(fileContents);
         const cis = new ChromeIDLSource(i);
         const sources = cis.getFeatureSources();
-        const foundCount = (() => {
-          let fc = 0;
-          for (let s of sources) {
-            fc += s[1].sources.length;
-          }
-          return fc;
-        })();
+        let foundCount = 0;
+        try {
+          foundCount = (() => {
+            let fc = 0;
+            for (let s of sources) {
+              fc += s[1].sources.length;
+            }
+            return fc;
+          })();
+        } catch (error) {
+          const msg = `Did not find sources in ${i}.`;
+          throw new IDLError(msg);
+        }
         if (foundCount !== expectedCount) {
           const msg = `Expected ${expectedCount} structures. Found ${sources.size} in:\n\n${i}\n`;
           foundErr = new IDLError(msg);

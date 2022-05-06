@@ -39,6 +39,8 @@ global.__Flags = FlagStatus();
 class _sourceRecord_Base {
   constructor(name, type, options) {
     this._sources = new Array();
+    this._name = name;
+    this._type = type;
     this.add(options.path, options.sourceIdl);
   }
 
@@ -50,17 +52,30 @@ class _sourceRecord_Base {
     }
     this._sources.push(source);
   }
+  
+  get name() {
+    return this._name;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  get key() {
+    // For the interface, the name and the key are identical.
+    return this._name;
+  }
+
+  get sources() {
+    return this._sources;
+  }
 }
 
 class CallbackSourceRecord extends _sourceRecord_Base {
-  #name;
-  // #sources = new Array();
-  #type;
 
   constructor(name, type, options) {
     super(name, type, options);
-    this.#name = name;
-    this.#type = 'callback';
+    this._type = 'callback';
   }
 }
 
@@ -70,20 +85,17 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   #events;
   #interfaceName;
   #methods;
-  #name;
   #namedGetters;
   #namedSetters;
   #properties;
   #propertySearch = false;
   #runtimeFlag;
   #searchSet;
-  // #sources = new Array();
-  #type;
 
   constructor(name, type, options) {
     super(name, type, options);
-    this.#name = name;
-    this.#type = type;
+    this._name = name;
+    this._type = type;
   }
 
   get flag() {
@@ -124,23 +136,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   get inDevTrial() {
     if (this.flagStatus === 'devtrial') { return true; }
     return false;
-  }
-
-  get key() {
-    // For the interface, the name and the key are identical.
-    return this.#name;
-  }
-
-  get name() {
-    return this.#name;
-  }
-
-  get sources() {
-    return this._sources;
-  }
-
-  get type() {
-    return this.#type;
   }
 
   getAllMembers(forIdlFile = 'allFiles') {
@@ -549,6 +544,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   }
 }
 
-
+module.exports.CallbackSourceRecord = CallbackSourceRecord;
 module.exports.InterfaceSourceRecord = InterfaceSourceRecord;
 module.exports.SourceRecord = InterfaceSourceRecord;

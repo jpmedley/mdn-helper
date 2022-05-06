@@ -1,0 +1,4 @@
+[
+  RuntimeEnabled=DocumentTransition
+] callback CallbackPromise = Promise<void>();
+

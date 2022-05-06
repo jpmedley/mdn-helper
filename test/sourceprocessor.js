@@ -24,6 +24,7 @@ const { ChromeIDLSource } = require('../sourceprocessor.js');
 const TEST_IDL_FILES = './test/files/';
 const CALLBACK = `${TEST_IDL_FILES}callback.idl`;
 const CALLBACK_COMPLEX = `${TEST_IDL_FILES}callback-complex.idl`;
+const CALLBACK_PROMISE = `${TEST_IDL_FILES}callback-promise.idl`;
 const DICTIONARY = `${TEST_IDL_FILES}dictionary.idl`;
 const DICTIONARY_ANCESTOR = `${TEST_IDL_FILES}dictionary-ancestor.idl`;
 const DICTIONARY_EXTENDED_ATTRIBS = `${TEST_IDL_FILES}dictionary-extended-attribs.idl`;
@@ -83,6 +84,13 @@ describe('ChromeIDLSource', () => {
       const source = sources.get('CallbackComplex-callback');
       assert.strictEqual(source.name, 'CallbackComplex');
     });
+
+    it('Confirms that a callback with a promise is processed correctly', () => {
+      const cis = new ChromeIDLSource(CALLBACK_PROMISE);
+      const sources = cis.getFeatureSources();
+      const source = sources.get(`CallbackPromise-callback`);
+      assert.strictEqual(source.name, 'CallbackPromise');
+    })
 
     it('Confirms that all dictionaries are counted', () => {
       const cis = new ChromeIDLSource(MULTIPLE_DICTIONARIES);
