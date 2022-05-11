@@ -44,7 +44,6 @@ const MULTIPLE_CALLBACKS = `${TEST_IDL_FILES}multiple-callbacks.idl`;
 const MULTIPLE_DICTIONARIES = `${TEST_IDL_FILES}multiple-dictionaries.idl`;
 const MULTIPLE_ENUMS = `${TEST_IDL_FILES}multiple-enums.idl`;
 const MULTIPLE_STRUCTURES = `${TEST_IDL_FILES}multiple-structures.idl`;
-const MULTIPLE_TYPEDEFS = `${TEST_IDL_FILES}multiple-typedefs.idl`;
 const NAMESPACE_SIMPLE = `${TEST_IDL_FILES}namespace.idl`;
 const NAMESPACE_PARTIAL = `${TEST_IDL_FILES}namespace-partial.idl`;
 const TYPEDEF_SIMPLE = `${TEST_IDL_FILES}typedef-simple.idl`;
@@ -141,7 +140,7 @@ describe('ChromeIDLSource', () => {
     it('Confirms that mixin interfaces are processed', () => {
       const cis = new ChromeIDLSource(INTERFACE_MIXIN);
       const sources = cis.getFeatureSources();
-      assert.ok(sources.has('InterfaceMixin-mixin'));
+      assert.ok(sources.has('InterfaceMixin-interface'));
     });
 
     it('Confirms that the right interface name is returned for a mixin', () => {
@@ -156,6 +155,44 @@ describe('ChromeIDLSource', () => {
       const sources = cis.getFeatureSources();
       const source = sources.entries().next();
       assert.strictEqual(source.value[1].key, 'InterfaceMixin');
+    });
+
+    it('Confirms that a mixin is recorded as its intended interface', () => {
+      const cis = new ChromeIDLSource(MIXIN_INCLUDES);
+      const sources = cis.getFeatureSources();
+      const mixedInterface = sources.get('Including-interface');
+      const properties = mixedInterface.getProperties();
+      const found = properties.some((i) => {
+        return i.name === 'includedProperty';
+      });
+      assert.ok(found);
+    });
+
+    it('Confirms that a mixin is recorded with multiple intended interfaces', () => {
+      const cis = new ChromeIDLSource(MIXIN_INCLUDES_MULTIPLE);
+      const sources = cis.getFeatureSources();
+
+      let mixedInterface = sources.get('Including-interface');
+      let properties = mixedInterface.getProperties();
+      const foundInIncluding = properties.some((i) => {
+        return i.name === 'includedProperty';
+      });
+
+      mixedInterface = sources.get('AlsoIncluding-interface');
+      properties = mixedInterface.getProperties();
+      const foundAlsoIncluding = properties.some((i) => {
+        return i.name === 'includedProperty';
+      });
+
+      assert.ok(foundInIncluding && foundAlsoIncluding);
+    });
+
+    it('Confirms that an interface returns its own properties and mixin properties', () => {
+      const cis = new ChromeIDLSource(TEST_IDL_FILES);
+      const sources = cis.getFeatureSources();
+      const source = sources.get('Destination-interface');
+      const members = source.getAllMembers();
+      assert.strictEqual(members.length, 7);
     });
 
     it('Confirms retrieval of interface from multi-structure file', () => {
@@ -195,7 +232,7 @@ describe('ChromeIDLSource', () => {
     it('Confirms that includes names are recorded correctly', () => {
       const cis = new ChromeIDLSource(MIXIN_INCLUDES);
       const sources = cis.getFeatureSources();
-      const source = sources.get('Including-includes');
+      const source = sources.get('Including-interface');
       assert.strictEqual(source.name, 'Including');
     });
 

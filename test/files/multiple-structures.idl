@@ -91,4 +91,4 @@ dictionary AnotherDictionary {
     attribute EventHandler onstatechange;
 };
 
-Destination includes MultipleStructures;
+SomeInterface includes MultipleStructures;

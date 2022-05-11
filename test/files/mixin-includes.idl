@@ -8,7 +8,7 @@
 [
     RuntimeEnabled=AOMAriaProperties
 ] interface mixin MixinIncludes {
-    [CEReactions, Reflect=aria_atomic] attribute DOMString? ariaAtomic;
+    [CEReactions, Reflect=aria_atomic] attribute DOMString? includedProperty;
     [CEReactions, Reflect=aria_autocomplete] attribute DOMString? ariaAutoComplete;
     [CEReactions, Reflect=aria_busy] attribute DOMString? ariaBusy;
     [CEReactions, Reflect=aria_checked] attribute DOMString? ariaChecked;

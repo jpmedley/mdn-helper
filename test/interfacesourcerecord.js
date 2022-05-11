@@ -477,8 +477,8 @@ describe('InterfaceSourceRecord', () => {
     });
     it('Confirms that a mixin returns the interface as its key name', () => {
       const source = loadSource(INTERFACE_MIXIN);
-      const sr = new InterfaceSourceRecord('Body', 'interface', { path: INTERFACE_MIXIN, sourceIdl: source });
-      assert.strictEqual(sr.key, 'Body');
+      const sr = new InterfaceSourceRecord('MixinBody', 'interface', { path: INTERFACE_MIXIN, sourceIdl: source });
+      assert.strictEqual(sr.key, 'MixinBody');
     })
   });
 

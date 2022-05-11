@@ -54,6 +54,7 @@ class _SourceProcessor_Base {
   }
 
   _processSource(sourceLocation) {
+    // TO DO: Relace with const glob = require('glob');
     if (fs.lstatSync(sourceLocation).isDirectory()) {
       this._getSourceList(sourceLocation);
     } else {
@@ -88,7 +89,7 @@ class _SourceProcessor_Base {
       let name = '';
       let type = '';
       for (const l of lines) {
-        let headerLine = (() => {
+        let firstLineOfStruct = (() => {
           if (l.trim().startsWith('[') && (!l.trim().endsWith(';'))) {
             return true;
           }
@@ -97,11 +98,10 @@ class _SourceProcessor_Base {
             // (Enums may contain these keywords in quotes.)
             return l.includes(`${e} `);
           });
-          if (found && (!l.trim().startsWith(']'))) { return true; }
-          return false;
+          return found;
         })();
 
-        if (headerLine) {
+        if (firstLineOfStruct) {
           if (name) {
             this._recordRecord(name, type, currentStructure, p);
           }
@@ -109,7 +109,7 @@ class _SourceProcessor_Base {
           type = '';
           name = '';
         }
-        if (!type) {
+        if (!type && firstLineOfStruct) {
           type = (() => {
             if (l.includes('callback interface')) { return 'callback-interface'; }
             if (l.includes('callback')) { return 'callback'; }
@@ -209,13 +209,31 @@ class _SourceProcessor_Base {
     return name;
   }
 
+  _getKey(name, type) {
+    if ('includes, mixin'.includes(type)) {
+      return `${name}-interface`;
+    } else {
+      return `${name}-${type}`;
+    }
+  }
+
   _recordRecord(name, type, data, path) {
-    let key = `${name}-${type}`;
+    let key
+    if (type === 'includes') {
+      const matches = data.match(/\w*\s*includes\s*(\w*)/);
+      const sourceInterface = matches[1];
+      const sourceKey = this._getKey(sourceInterface, 'interface');
+      const sourceData = this._sourceRecords.get(sourceKey);
+      if (sourceData) {
+        data = sourceData.sources[0].sourceIdl;
+        path = sourceData.sources[0].path;
+      }
+    }
+    key = this._getKey(name, type);
     let sourceRecord = this._sourceRecords.get(key);
     if (sourceRecord) {
       sourceRecord.add(path, data);
     } else {
-      // let sourceRecord;
       switch (type) {
         case ('callback'):
           sourceRecord = new CallbackSourceRecord(name, type, { path: path, sourceIdl: data });

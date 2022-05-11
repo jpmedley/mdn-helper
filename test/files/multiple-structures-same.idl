@@ -91,4 +91,4 @@ dictionary DifferentDictionary {
     attribute EventHandler onstatechange;
 };
 
-Destination includes SameName;
+SomeInterface includes SameName;

@@ -1,6 +1,6 @@
 [
     ActiveScriptWrappable
-] interface mixin Body {
+] interface mixin MixinBody {
     [RaisesException] readonly attribute boolean bodyUsed;
     [CallWith=ScriptState, NewObject, RaisesException] Promise<ArrayBuffer> arrayBuffer();
     [CallWith=ScriptState, NewObject, RaisesException] Promise<Blob> blob();
@@ -8,3 +8,5 @@
     [CallWith=ScriptState, NewObject, RaisesException] Promise<JSON> json();
     [CallWith=ScriptState, NewObject, RaisesException] Promise<USVString> text();
 };
+
+Destination includes MixinBody;
