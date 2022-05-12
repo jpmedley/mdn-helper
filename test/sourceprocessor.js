@@ -51,6 +51,18 @@ const TYPEDEF_SIMPLE = `${TEST_IDL_FILES}typedef-simple.idl`;
 global.__Flags = require('../flags.js').FlagStatus('./test/files/exp_flags.json5');
 
 describe('ChromeIDLSource', () => {
+  describe('findExact()', () => {
+    it('Confirms that mixins are not returned', () => {
+      const cis = new ChromeIDLSource(TEST_IDL_FILES);
+      const finds = cis.findExact("*");
+      let found = false;
+      for (let f of finds) {
+        if (f.type === 'mixin') { found = true }
+      }
+      assert.ok(!found);
+    });
+  });
+
   describe('getFeatureSources()', () => {
     it('Confirms that a complete directory can be processed', () => {
       const cis = new ChromeIDLSource('./idl/');
@@ -140,7 +152,7 @@ describe('ChromeIDLSource', () => {
     it('Confirms that mixin interfaces are processed', () => {
       const cis = new ChromeIDLSource(INTERFACE_MIXIN);
       const sources = cis.getFeatureSources();
-      assert.ok(sources.has('InterfaceMixin-interface'));
+      assert.ok(sources.has('InterfaceMixin-mixin'));
     });
 
     it('Confirms that the right interface name is returned for a mixin', () => {
@@ -224,7 +236,7 @@ describe('ChromeIDLSource', () => {
       const sources = cis.getFeatureSources();
       let includeCount = 0;
       sources.forEach((val, key, map) => {
-        if (val.type === 'includes') { includeCount++; }
+        if (val.type === 'interface') { includeCount++; }
       });
       assert.strictEqual(includeCount, 2);
     });

@@ -34,6 +34,7 @@ const CONSTRUCTOR_COMPLEX_ARG = `${TEST_IDL_FILES}constructor-complex-argument.i
 const CONSTRUCTOR_NO_ARGS = `${TEST_IDL_FILES}constructor-noarguments.idl`;
 const DELETERS = `${TEST_IDL_FILES}all-deleters.idl`;
 const EVENT_HANDLERS = `${TEST_IDL_FILES}event-handlers.idl`;
+const FLAG_INLINE_OT = `${TEST_IDL_FILES}flag-inline-ot.idl`;
 const FLAG_INTERFACE_OT = `${TEST_IDL_FILES}flag-interface-ot.idl`;
 const FLAG_INTERFACE_DT = `${TEST_IDL_FILES}flag-interface-dt.idl`;
 const FLAG_STATUS_SHARED = `${TEST_IDL_FILES}flag-status-shared.idl`;
@@ -57,6 +58,7 @@ const ITERABLE_ONE_ARG = `${TEST_IDL_FILES}iterable-one-arg.idl`;
 const ITERABLE_SEQUENCE_ARG = `${TEST_IDL_FILES}iterable-sequence-arg.idl`;
 const METHODS_BASIC  = `${TEST_IDL_FILES}methods-basic.idl`;
 const METHODS_SYNC_ARGUMENTS = `${TEST_IDL_FILES}methods-synchronous.idl`;
+const MIXIN_NO_INCLUDES = `${TEST_IDL_FILES}mixin-no-includes.idl`;
 const NAMESPACE_SIMPLE = `${TEST_IDL_FILES}namespace.idl`;
 const NAMESPACE_PARTIAL = `${TEST_IDL_FILES}namespace-partial.idl`;
 const NO_DELETERS = `${TEST_IDL_FILES}no-deleters.idl`;
@@ -141,11 +143,11 @@ describe('InterfaceSourceRecord', () => {
       assert.strictEqual(flagStatus, 'origintrial');
     });
     it('Confirms dev trial for simple flag', () => {
-      let source =loadSource(FLAG_INTERFACE_DT);
+      let source = loadSource(FLAG_INTERFACE_DT);
       const sr = new InterfaceSourceRecord('dtFlag', 'interface', { path: FLAG_INTERFACE_DT, sourceIdl: source });
       const flagStatus = sr.flagStatus;
       assert.strictEqual(flagStatus, 'devtrial');
-    })
+    });
   });
 
   describe('getAllMembers()', () => {
@@ -160,14 +162,20 @@ describe('InterfaceSourceRecord', () => {
   describe('getBurnRecords', () => {
     it('Confirms that burn records contain proper constructor keys', () => {
       const source = loadSource(CONSTRUCTOR_NO_ARGS);
-      const sr = new InterfaceSourceRecord('constructor', 'interface', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('ConstructorNoArgs', 'interface', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
       const records = sr.getBurnRecords();
       const found = records.find((r) => {
         return r.name === 'ConstructorNoArgs';
       });
       assert.ok(found);
     });
-  })
+    it('Confirms that burn records do not contain mixins', () => {
+      const source = loadSource(MIXIN_NO_INCLUDES);
+      const sr = new InterfaceSourceRecord('mixin', 'mixin', { path: MIXIN_NO_INCLUDES, sourceIdl: source });
+      const records = sr.getBurnRecords();
+      assert.ok(!records.size);
+    });
+  });
 
   describe('getConstructors', () => {
     it('Confirms that a constructor without arguments can be found', () => {
@@ -355,12 +363,24 @@ describe('InterfaceSourceRecord', () => {
       ];
 
       const source = loadSource(SIMPLE_SOURCE);
-      const sr = new InterfaceSourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('PropertiesBasic', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       const urls = sr.getUrls();
       const isComplete = URLS.every((u) => {
+        console.log(u);
         return urls.includes(u);
       });
       assert.ok(isComplete);
+    });
+    it('Confirms that interface urls have no trailing slash', () => {
+      const interfaceURL = 'https://developer.mozilla.org/en-US/docs/Web/API/PropertiesBasic';
+      const source = loadSource(SIMPLE_SOURCE);
+      const sr = new InterfaceSourceRecord('PropertiesBasic', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const urls = sr.getUrls();
+      const found = urls.find((u) => {
+        return u === interfaceURL;
+      });
+      
+      assert.strictEqual(`${found}`, interfaceURL);
     });
   });
 
@@ -385,22 +405,22 @@ describe('InterfaceSourceRecord', () => {
   describe('interfaceName', () => {
     it('Confirms that the structure name is returned from a simple IDL file', () => {
       const source = loadSource(SIMPLE_SOURCE);
-      const sr = new InterfaceSourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('PropertiesBasic', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
     });
     it('Confirms that the name of a child interface is returned', () => {
       const source = loadSource(INTERFACE_PARENT);
-      const sr = new InterfaceSourceRecord('parent-interface', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('InterfaceParent', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'InterfaceParent');
     });
     it('Confirms that structure name is returned from a simple namespace file', () => {
       const source = loadSource(NAMESPACE_SIMPLE);
-      const sr = new InterfaceSourceRecord('namespace', 'namespace', { path: NAMESPACE_SIMPLE, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('NamespaceName', 'namespace', { path: NAMESPACE_SIMPLE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'NamespaceName');
     });
     it('Confirms that structure name is returned from a simple namespace file', () => {
       const source = loadSource(NAMESPACE_PARTIAL);
-      const sr = new InterfaceSourceRecord('namespace', 'namespace', { path: NAMESPACE_PARTIAL, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('PartialNamespaceName', 'namespace', { path: NAMESPACE_PARTIAL, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'PartialNamespaceName');
     });
   });
@@ -472,7 +492,7 @@ describe('InterfaceSourceRecord', () => {
   describe('key', () => {
     it('Confirms that the key property returns a correct value', () => {
       const source = loadSource(SIMPLE_SOURCE);
-      const sr = new InterfaceSourceRecord('key', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('PropertiesBasic', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'PropertiesBasic');
     });
     it('Confirms that a mixin returns the interface as its key name', () => {

@@ -141,15 +141,7 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   }
 
   get interfaceName() {
-    if (this.#interfaceName) { return this.#interfaceName; }
-    let match = this._sources[0].sourceIdl.match(INTERFACE_NAME_RE);
-    if (match) {
-      this.#interfaceName = match[1];
-    } else {
-      const msg = `Malformed or unrecognized IDL in ${this._sources[0].path}.\n\n${this._sources[0].sourceIdl}`
-      throw new IDLError(msg, this._sources[0].path);
-    }
-    return this.#interfaceName;
+    return this.name;
   }
 
   get inOriginTrial() {
@@ -522,7 +514,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   _processProperties(forIdlFile = 'allFiles') {
     if (this.#propertySearch) { return; }
     const searchSet = this._getSearchSet(forIdlFile);
-    let matches;
     for (let s of searchSet) {
       let matches = s.sourceIdl.matchAll(PROPERTIES_RE);
       if (matches) {

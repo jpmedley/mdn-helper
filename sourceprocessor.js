@@ -209,40 +209,38 @@ class _SourceProcessor_Base {
     return name;
   }
 
-  _getKey(name, type) {
-    if ('includes, mixin'.includes(type)) {
-      return `${name}-interface`;
-    } else {
-      return `${name}-${type}`;
-    }
-  }
-
   _recordRecord(name, type, data, path) {
-    let key
+    let sourceRecord;
     if (type === 'includes') {
       const matches = data.match(/\w*\s*includes\s*(\w*)/);
-      const sourceInterface = matches[1];
-      const sourceKey = this._getKey(sourceInterface, 'interface');
-      const sourceData = this._sourceRecords.get(sourceKey);
-      if (sourceData) {
-        data = sourceData.sources[0].sourceIdl;
-        path = sourceData.sources[0].path;
+      const mixinSourceName = matches[1];
+      const mixinRecord = this._sourceRecords.get(`${mixinSourceName}-mixin`);
+      if (mixinRecord) {
+        path = mixinRecord.sources[0].path;
+        data = mixinRecord.sources[0].sourceIdl;
       }
-    }
-    key = this._getKey(name, type);
-    let sourceRecord = this._sourceRecords.get(key);
-    if (sourceRecord) {
-      sourceRecord.add(path, data);
+      sourceRecord = this._sourceRecords.get(`${name}-interface`);
+      if (sourceRecord) {
+        sourceRecord.add(path, data);
+      } else {
+        sourceRecord = new SourceRecord(name, 'interface', { path: path, sourceIdl: data });
+        this._sourceRecords.set(`${name}-interface`, sourceRecord);
+      }
     } else {
-      switch (type) {
-        case ('callback'):
-          sourceRecord = new CallbackSourceRecord(name, type, { path: path, sourceIdl: data });
-          break;
-        default:
-          sourceRecord = new SourceRecord(name, type, { path: path, sourceIdl: data });
-          break;
+      sourceRecord = this._sourceRecords.get(`${name}-${type}`);
+      if (sourceRecord) {
+        sourceRecord.add(path, data);
+      } else {
+        switch (type) {
+          case ('callback'):
+            sourceRecord = new CallbackSourceRecord(name, type, { path: path, sourceIdl: data });
+            break;
+          default:
+            sourceRecord = new SourceRecord(name, type, { path: path, sourceIdl: data });
+            break;
+        }
+        this._sourceRecords.set(`${name}-${type}`, sourceRecord)
       }
-      this._sourceRecords.set(key, sourceRecord)
     }
   }
 }
@@ -252,29 +250,35 @@ class IDLSource extends _SourceProcessor_Base {
     super(sourceLocation, options);
   }
 
-  findExact(searchValOrArray, includeFlags=false, includeOriginTrials=false) {
+  findExact(searchValOrArray, options = {}) {
+    if (!options.includeFlags) { options.includeFlags = false; }
+    if (!options.includeOriginTrials) { options.includeOriginTrials = false; }
+    if (!options.includeMixinSources) { options.includeMixinSources = false; }
     if (!this._sourceRecords.size) { this.getFeatureSources(); }
     let matches = new Map();
     if (searchValOrArray === '*') {
       for (let s of this._sourceRecords) {
-        if (!includeFlags && s[1].inDevTrial) { continue; }
-        if (!includeOriginTrials && s[1].inOriginTrial) { continue; }
+        if (!options.includeFlags && s[1].inDevTrial) { continue; }
+        if (!options.includeOriginTrials && s[1].inOriginTrial) { continue; }
+        if (!options.includeMixinSources && s[1].type === 'mixin') { continue; }
         matches.set(s[0], s[1]);
       }
     } else if (Array.isArray(searchValOrArray)) {
       for (let s of this._sourceRecords) {
         const possibleMatch = searchValOrArray.includes(s.name);
         if (possibleMatch) {
-          if (!includeFlags && s[1].inDevTrial) { continue; }
-          if (!includeOriginTrials && s[1].inOriginTrial) { continue; }
+          if (!options.includeFlags && s[1].inDevTrial) { continue; }
+          if (!options.includeOriginTrials && s[1].inOriginTrial) { continue; }
+          if (!options.includeMixinSources && s[1].type === 'mixin') { continue; }
           matches.set(s[0], s[1]);
         }
       }
     } else {
       for (let s of this._sourceRecords) {
         if (!s.name.includes(searchValOrArray)) { continue; }
-        if (!includeFlags && s.inDevTrial) { continue; }
-        if (!includeOriginTrials && s.inOriginTrial) { continue; }
+        if (!options.includeFlags && s.inDevTrial) { continue; }
+        if (!options.includeOriginTrials && s.inOriginTrial) { continue; }
+        if (!options.includeMixinSources && s[1].type === 'mixin') { continue; }
         matches.set(s[0], s[1]);
       }
     }
