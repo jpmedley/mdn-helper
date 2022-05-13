@@ -30,7 +30,7 @@ const INTERFACE_NAME_RE = /(?:interface|namespace)\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
 const CONSTRUCTORS_RE = /constructor\(([^;]*)\);/g;
-const METHODS_RE = /(?:\[[^\]]*\])?\s*([^\s]*)\s*(\w*)\(([^\)]*)\);/g
+const METHODS_RE = /(?:\[[^\]]*\])?\s*([^\s]*)\s*(\w*)\s*\(([^\)]*)\);/g
 const PROPERTIES_RE = /(?:\[[^\]]*\])?\s*(?:readonly)?\s*attribute\s*([^\s]*\??)\s(\w*);/g;
 const URL_BASE = 'https://developer.mozilla.org/en-US/docs/Web/API/';
 
@@ -107,7 +107,7 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   #constructors;
   #deleters;
   #events;
-  #interfaceName;
+  #flag;
   #methods;
   #namedGetters;
   #namedSetters;
@@ -122,11 +122,27 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
     this._type = type;
   }
 
+  _isFlagFirst(source) {
+    const STRUCTURES = ['callback', 'dictionary', 'enum', 'interface', 'namespace'];
+    const pieces = source.split('RuntimeEnabled');
+    const structureFirst = STRUCTURES.some(s => {
+      return pieces[0].includes(s);
+    });
+    return !structureFirst;
+  }
+
   get flag() {
-    const RUNTIME_ENABLED_RE = /RuntimeEnabled\s*=\s*(\w*)/;
-    const matches = this._sources[0].sourceIdl.match(RUNTIME_ENABLED_RE);
-    if (matches) {
-      return matches[1].trim();
+    if (!this.#flag) {
+      const interfaceLevelFlag = this._sources.find(s => {
+        return this._isFlagFirst(s.sourceIdl);
+      });
+      if (interfaceLevelFlag) {
+        const RUNTIME_ENABLED_RE = /RuntimeEnabled\s*=\s*(\w*)/;
+        const matches = this._sources[0].sourceIdl.match(RUNTIME_ENABLED_RE);
+        if (matches) {
+          return matches[1].trim();
+        }
+      }
     }
   }
 

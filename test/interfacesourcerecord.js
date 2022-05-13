@@ -50,6 +50,7 @@ const INTERFACE_MIXIN = `${TEST_IDL_FILES}mixin.idl`;
 const INTERFACE_PARENT = `${TEST_IDL_FILES}interface-parent.idl`;
 const INTERFACE_PARTIAL = `${TEST_IDL_FILES}interface-partial.idl`;
 const INTERFACE_SECURE_CONTEXT = `${TEST_IDL_FILES}interface-securecontext.idl`;
+const INTERFACE_SPACED_METHOD = `${TEST_IDL_FILES}interface-spaced-method.idl`;
 const INTERFACE_STABLE = `${TEST_IDL_FILES}interface-rte-stable.idl`;
 const INTERFACE_STANDARD = `${TEST_IDL_FILES}burnable.idl`;
 const ITERABLE_MULTI_ARG_SEQ = `${TEST_IDL_FILES}iterable-multi-arg-sequence.idl`;
@@ -148,6 +149,12 @@ describe('InterfaceSourceRecord', () => {
       const flagStatus = sr.flagStatus;
       assert.strictEqual(flagStatus, 'devtrial');
     });
+    it('Confirms that RuntimeEnabled is read from correct location in IDL', () => {
+      let source = loadSource(FLAG_INLINE_OT);
+      const sr = new InterfaceSourceRecord('InlineFlagTest', 'interface', { path: FLAG_INLINE_OT, sourceIdl: source });
+      const flagStatus = sr.flagStatus;
+      assert.strictEqual(flagStatus, undefined);
+    });
   });
 
   describe('getAllMembers()', () => {
@@ -172,6 +179,12 @@ describe('InterfaceSourceRecord', () => {
     it('Confirms that burn records do not contain mixins', () => {
       const source = loadSource(MIXIN_NO_INCLUDES);
       const sr = new InterfaceSourceRecord('mixin', 'mixin', { path: MIXIN_NO_INCLUDES, sourceIdl: source });
+      const records = sr.getBurnRecords();
+      assert.ok(!records.size);
+    });
+    it('Confirms that burn records are not returned for includes', () => {
+      const source = loadSource(INTERFACE_MIXIN);
+      const sr = new InterfaceSourceRecord('MixinBody', 'mixin', { path: INTERFACE_MIXIN, sourceIdl: source });
       const records = sr.getBurnRecords();
       assert.ok(!records.size);
     });
@@ -239,6 +252,12 @@ describe('InterfaceSourceRecord', () => {
         if (method.arguments && method.arguments.length > 0) { methodsWithArguments++; }
       });
       assert.strictEqual(methodsWithArguments, 1);
+    });
+    it('Confirms that correct processing when there\'s a space between name and parens', () => {
+      const source = loadSource(INTERFACE_SPACED_METHOD);
+      const sr = new InterfaceSourceRecord('methods-sync', 'interface', { path: INTERFACE_SPACED_METHOD, sourceIdl: source });
+      const methods = sr.getMethods();
+      assert.strictEqual(methods[0].name, 'setPointerCapture');
     });
     //     it('Confirms that the correct number of promise-based methods are returned', () => {
     //       const source = loadSource(METHOD_PROMISES);

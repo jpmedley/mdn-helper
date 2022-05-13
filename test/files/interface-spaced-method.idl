@@ -1,0 +1,3 @@
+interface SpacedMethod {
+  [RaisesException] void setPointerCapture (long pointerId);
+};

@@ -1,0 +1,3 @@
+interface InlineFlagTest {
+    [RuntimeEnabled=InOriginTrial] readonly attribute FontFaceSetLoadStatus status;
+};
