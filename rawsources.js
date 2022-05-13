@@ -390,6 +390,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
         if (matches) {
           if(!this.#methods) { this.#methods = new Array(); }
           for (let m of matches) {
+            if (m[1] === 'constructor') { continue; }
+            if (m[2] == '') { continue; }
             method = {
               key: `${this.interfaceName}.${m[2]}`,
               name: m[2],

@@ -259,6 +259,12 @@ describe('InterfaceSourceRecord', () => {
       const methods = sr.getMethods();
       assert.strictEqual(methods[0].name, 'setPointerCapture');
     });
+    it('Confirms that unnamed getters do not produce false positives', () => {
+      const source = loadSource(INTERFACE_SPACED_METHOD);
+      const sr = new InterfaceSourceRecord('methods-sync', 'interface', { path: INTERFACE_SPACED_METHOD, sourceIdl: source });
+      const methods = sr.getMethods();
+      assert.strictEqual(methods.length, 0);
+    })
     //     it('Confirms that the correct number of promise-based methods are returned', () => {
     //       const source = loadSource(METHOD_PROMISES);
     //       const id = new InterfaceData(source);
