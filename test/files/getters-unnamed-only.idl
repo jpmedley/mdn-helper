@@ -1,5 +1,5 @@
 interface GettersUnnamedOnly {
   [Affects=Nothing] getter DOMString (DOMString name);
-
+  getter (RadioNodeList or Element) (DOMString name);
   attribute octet notDeleter;
 };
