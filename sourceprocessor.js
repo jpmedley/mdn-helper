@@ -102,6 +102,8 @@ class _SourceProcessor_Base {
         })();
 
         if (firstLineOfStruct) {
+          // Means that if this isn't the first struct in file, whatever the
+          // previous one was should be recorded.
           if (name) {
             this._recordRecord(name, type, currentStructure, p);
           }

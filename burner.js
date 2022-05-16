@@ -473,15 +473,16 @@ class ChromeBurner extends Burner {
     this._startBurnLogFile();
     this._loadReportTemplate();
     this._openResultsFile();
-    // const burnTypes = ["interface", "includes"];
-    // const dm = new DirectoryManager('idl/', { types: burnTypes });
-    // const interfaceSet = dm.interfaceSet;
     const idlLocation = utils.getConfig('idlDirectory');
     const cis = new ChromeIDLSource(`.${idlLocation}/`);
-    // const interfaceSet = cis.getFeatureSources();
+    const options = {
+      includeFlags: this._includeFlags,
+      includeMixinSources: false,
+      includeOriginTrials: this._includeOriginTrials
+    }
     let interfaces;
     if (this._reportingList) {
-      interfaces = cis.findExact(this._reportingList, this._includeFlags, this._includeOriginTrials);
+      interfaces = cis.findExact(this._reportingList, options);
       for (let w of this._reportingList) {
         let key = w.split(".")[0];
         let interface_ = interfaces.get(key);
@@ -492,22 +493,21 @@ class ChromeBurner extends Burner {
         this._record(burnRecords);
       }
     } else if (this._interfacesOnly) {
-      interfaces = cis.findExact("*", this._includeFlags, this._includeOriginTrials);
+      interfaces = cis.findExact("*", options);
       for (const [key, val] of interfaces) {
         let burnRecords = val.getInterfaceBurnRecords();
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
       }
     } else if (this._childrenOnly) {
-      interfaces = cis.findExact("*", this._includeFlags, this._includeOriginTrials);
+      interfaces = cis.findExact("*", options);
       for (const [key, val] of interfaces) {
         let burnRecords = val.getBurnRecords();
         burnRecords = await this._ping(burnRecords);
         this._recordChildren(burnRecords);
       }
     } else {
-      interfaces = cis.findExact("*", this._includeFlags, this._includeOriginTrials);
-      // START HERE: See if pinging pages and burning records actually works.
+      interfaces = cis.findExact("*", options);
       for (const [key, val] of interfaces) {
         let burnRecords = val.getBurnRecords();
         burnRecords = await this._ping(burnRecords);

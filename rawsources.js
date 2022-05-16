@@ -55,9 +55,9 @@ class _sourceRecord_Base {
 
   _buildRecord(member) {
     let record = bcd.getRecordByKey(member.key, 'api');
-    record.flag = this.flagStatus;
+    record.flag = (this.flag? true: false);
     record.name = member.name;
-    // record.origin_trial = this.origin_trial;
+    record.origin_trial = (this.origin_trial? true: false);
     record.type = member.type;
     const engines = bcd.getEngines(member.key, 'api');
     record.engineCount = (engines? engines.length: 1);
