@@ -13,6 +13,7 @@ burn-log.txt
 burn-list.csv
 config/local.json
 .vscode
+package-lock.json
 
 # Logs
 logs
