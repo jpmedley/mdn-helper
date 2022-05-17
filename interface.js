@@ -117,16 +117,16 @@ class _InterfaceBase {
     let answer = await prompt.run();
     if (answer === CANCEL) { process.exit(); }
     const pieces = answer.split(' ');
-    const key = pieces[3].slice(0, -1).trim();
+    const aPath = pieces[3].slice(0, -1).trim();
 
     
     const match = possibleMatches.find((p) => {
       return p.sources.some((s) => {
-        return s.path.includes(key);
+        return s.path.includes(aPath);
       });
     });
     const source = match.sources.find((s) => {
-      return s.path.includes(key);
+      return s.path.includes(aPath);
     })
     const answerData = new SourceRecord(match.name, match.type, source);
     return answerData;

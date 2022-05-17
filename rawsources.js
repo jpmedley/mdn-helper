@@ -188,7 +188,7 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
 
   getBurnRecords(forIdlFile = 'allFiles') {
     let records = new Array();
-    let iface = { name: this.name, key: this.name }
+    let iface = { name: this.name, key: this.name, type: this.type }
     let newRecord = this._buildRecord(iface);
     records.push(newRecord)
     let members = this.getAllMembers(forIdlFile);
@@ -213,7 +213,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
               key: `${this.interfaceName}.${this.interfaceName}`,
               name: this.interfaceName,
               returnType: this.interfaceName,
-              arguments: this._getArguments(m[1])
+              arguments: this._getArguments(m[1]),
+              type: 'constructor'
             }
             this.#constructors.push(conststructor);
           }
@@ -237,7 +238,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
               key: `${this.interfaceName}.${m[1]}`,
               name: m[1],
               returnType: 'void',
-              arguments: m[2].split(',')
+              arguments: m[2].split(','),
+              type: 'method'
             }
             this.#deleters.push(deleter);
           }
@@ -293,7 +295,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
         key: `${this.interfaceName}${ITERABLE_METHODS[im]}`,
         name: ITERABLE_METHODS[im],
         returnType: ITERABLE_RETURN_TYPES[im],
-        arguments: ''
+        arguments: '',
+        type: 'method'
       }
       methods.push(method);
     }
@@ -315,7 +318,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
         key: `${this.interfaceName}.${MAPLIKE_METHODS[mm]}`,
         name: MAPLIKE_METHODS[mm],
         returnType: MAPLIKE_METHOD_RETURNS[mm],
-        arguments: ''
+        arguments: '',
+        type: 'method'
       }
       methods.push(method);
     }
@@ -337,7 +341,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
         key: `${this.interfaceName}.${SETLIKE_METHODS[sm]}`,
         name: SETLIKE_METHODS[sm],
         returnType: SETLIKE_METHOD_RETURNS[sm],
-        arguments: ''
+        arguments: '',
+        type: 'method'
       }
       methods.push(method);
     }
@@ -355,7 +360,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
             key: `${this.interfaceName}.toString`,
             name: 'toString',
             returnType: 'string',
-            arguments: ''
+            arguments: '',
+            type: 'method'
           }
           this.#methods = new Array();
           this.#methods.push(method);
@@ -390,13 +396,14 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
         if (matches) {
           if(!this.#methods) { this.#methods = new Array(); }
           for (let m of matches) {
-            if (m[1] === 'constructor') { continue; }
+            if (m.includes('constructor')) { continue; }
             if (m[2] == '') { continue; }
             method = {
               key: `${this.interfaceName}.${m[2]}`,
               name: m[2],
               returnType: m[1],
-              arguments: this._getArguments(m[3])
+              arguments: this._getArguments(m[3]),
+              type: 'method'
             }
             this.#methods.push(method);
           }
@@ -418,7 +425,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
             key: `${this.interfaceName}.${m[2]}`,
             name: m[2],
             returnType: m[1],
-            arguments: ''
+            arguments: '',
+            type: 'method'
           }
           this.#namedGetters.push(namedGetter);
         }
@@ -430,7 +438,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
             key: `${this.interfaceName}.${m[3]}`,
             name: m[3],
             returnType: m[1],
-            arguments: ''
+            arguments: '',
+            type: 'method'
           }
           this.#namedGetters.push(namedGetter);
         }
@@ -451,7 +460,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
             key: `${this.interfaceName}.${m[1]}`,
             name: m[1],
             returnType: 'void',
-            arguments: m[2].split(',')
+            arguments: m[2].split(','),
+            type: 'method'
           }
           this.#namedSetters.push(namedSetter);
         }
@@ -542,7 +552,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
             property = {
               key: `${this.interfaceName}.${m[2].trim().slice(2)}_event`,
               name: m[2],
-              returnType: m[1]
+              returnType: m[1],
+              type: 'event'
             }
             this.#events.push(property);
           } else {
@@ -550,7 +561,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
             property = {
               key: `${this.interfaceName}.${m[2]}`,
               name: m[2],
-              returnType: m[1]
+              returnType: m[1],
+              type: 'property'
             }
             this.#properties.push(property);
           }

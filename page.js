@@ -24,6 +24,7 @@ const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 
 function pageFactory(name, type, sharedQuestions, options) {
   if (type === 'includes') { type = 'interface'; }
+  console.log(type);
   if (!utils.haveTemplate(type)) {
     const apiName = `${sharedQuestions.questions.interface.answer}.${name}`;
     const msg = `Cannot find a template for page named ${apiName} with type ${type}.`;
@@ -192,10 +193,19 @@ class _InterfacePage extends _PageBase {
 
   _addMembers() {
 
-    let template = utils.getFile(`templates/_frag_events.md`);
-    this._processQuestions(template);
-    const eventHandlers = this._interfaceData.eventHandlers;
-    if (eventHandlers.length) {
+    const constructors = this._interfaceData.getConstructors();
+    if (constructors) {
+      let template = utils.getFile(`templates/_frag_constructor.md`);
+      this._processQuestions(template);
+      let constructorString = `## Constructor`;
+      constructorString += `${template}\n`;
+      this.questions.answer('constructor', constructorString);
+    }
+
+    const eventHandlers = this._interfaceData.getEvents();
+    if (eventHandlers) {
+      let template = utils.getFile(`templates/_frag_events.md`);
+      this._processQuestions(template);
       let handlersString = '### Event handlers\n\n';
       eventHandlers.forEach(eh => {
         let templateCopy = (' ' + template).slice(1);
@@ -206,10 +216,10 @@ class _InterfacePage extends _PageBase {
       this.questions.answer('events', handlersString.trim());
     }
 
-    template = utils.getFile(`templates/_frag_methods.md`);
-    this._processQuestions(template);
-    const methods = this._interfaceData.methods;
-    if (methods.length) {
+    const methods = this._interfaceData.getMethods();
+    if (methods) {
+      let template = utils.getFile(`templates/_frag_methods.md`);
+      this._processQuestions(template);
       let methodString = '## Methods\n\n';
       methods.forEach(m => {
         let templateCopy = (' ' + template).slice(1);
@@ -219,10 +229,10 @@ class _InterfacePage extends _PageBase {
       this.questions.answer('methods', methodString.trim());
     }
 
-    template = utils.getFile(`templates/_frag_properties.md`);
-    this._processQuestions(template);
-    const properties = this._interfaceData.properties;
-    if (properties.length) {
+    const properties = this._interfaceData.getProperties();
+    if (properties) {
+      let template = utils.getFile(`templates/_frag_properties.md`);
+      this._processQuestions(template);
       let propertyString = '## Properties\n\n';
       properties.forEach(p => {
         let templateCopy = (' ' + template).slice(1);
