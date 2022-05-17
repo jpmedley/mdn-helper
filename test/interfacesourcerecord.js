@@ -176,13 +176,13 @@ describe('InterfaceSourceRecord', () => {
       });
       assert.ok(found);
     });
-    it('Confirms that burn records do not contain mixins', () => {
+    it('Confirms that burn records do not contain raw mixins', () => {
       const source = loadSource(MIXIN_NO_INCLUDES);
       const sr = new InterfaceSourceRecord('mixin', 'mixin', { path: MIXIN_NO_INCLUDES, sourceIdl: source });
       const records = sr.getBurnRecords();
       assert.ok(!records.size);
     });
-    it('Confirms that burn records are not returned for includes', () => {
+    it('Confirms that burn records are not returned for raw includes', () => {
       const source = loadSource(INTERFACE_MIXIN);
       const sr = new InterfaceSourceRecord('MixinBody', 'mixin', { path: INTERFACE_MIXIN, sourceIdl: source });
       const records = sr.getBurnRecords();
