@@ -435,9 +435,14 @@ describe('InterfaceSourceRecord', () => {
     });
     it('Confirms that the name of a child interface is returned', () => {
       const source = loadSource(INTERFACE_PARENT);
-      const sr = new InterfaceSourceRecord('InterfaceParent', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('InterfaceParent', 'interface', { path: INTERFACE_PARENT, sourceIdl: source });
       assert.strictEqual(sr.interfaceName, 'InterfaceParent');
     });
+    it('Confirms that the correct interface name is returned for a partial', () => {
+      const source = loadSource(INTERFACE_PARTIAL);
+      const sr = new InterfaceSourceRecord('InterfacePartial', 'interface', { path: INTERFACE_PARTIAL, sourceIdl: source });
+      assert.strictEqual(sr.interfaceName, 'InterfacePartial');
+    })
     it('Confirms that structure name is returned from a simple namespace file', () => {
       const source = loadSource(NAMESPACE_SIMPLE);
       const sr = new InterfaceSourceRecord('NamespaceName', 'namespace', { path: NAMESPACE_SIMPLE, sourceIdl: source });
