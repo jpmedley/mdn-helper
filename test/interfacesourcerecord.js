@@ -193,22 +193,21 @@ describe('InterfaceSourceRecord', () => {
   describe('getConstructors', () => {
     it('Confirms that a constructor without arguments can be found', () => {
       const source = loadSource(CONSTRUCTOR_NO_ARGS);
-      const sr = new InterfaceSourceRecord('constructor', 'interface', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('constructor', 'constructor', { path: CONSTRUCTOR_NO_ARGS, sourceIdl: source });
       const record = sr.getConstructors();
       assert.strictEqual(record.length, 1);
     });
     it('Confirms that constructors with multiple arguments are processed', () => {
       const source = loadSource(CONSTRUCTOR_ARGS);
-      const sr = new InterfaceSourceRecord('constructor', 'interface', { path: CONSTRUCTOR_ARGS, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('constructor', 'constructor', { path: CONSTRUCTOR_ARGS, sourceIdl: source });
       const record = sr.getConstructors();
       assert.strictEqual(record[0].arguments.length, 3);
     });
     it('Confirms that constructors with complex arguemnts are returned', () => {
       const source = loadSource(CONSTRUCTOR_COMPLEX_ARG);
-      const sr = new InterfaceSourceRecord('constructor', 'interface', { path: CONSTRUCTOR_COMPLEX_ARG, sourceIdl: source });
+      const sr = new InterfaceSourceRecord('constructor', 'constructor', { path: CONSTRUCTOR_COMPLEX_ARG, sourceIdl: source });
       const record = sr.getConstructors();
       const found = record.find((r) => {
-        // return arg === 'sequence<CSSTransformComponent>';
         const arg = r.arguments.find((a) => {
           return a === 'sequence<CSSTransformComponent> transforms';
         });
