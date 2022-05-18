@@ -30,8 +30,32 @@ global.__Flags = FlagStatus(`${TEST_IDL_FILES}exp_flags.json5`);
 initiateLogger();
 
 const CALLBACK = `${TEST_IDL_FILES}callback.idl`;
-const CALLBACK_COMPLEX = `${TEST_IDL_FILES}callback-complext.idl`;
+const CALLBACK_COMPLEX = `${TEST_IDL_FILES}callback-complex.idl`;
 const CALLBACK_PROMISE = `${TEST_IDL_FILES}callback-promise.idl`;
+
+const CALLBACK_MEMBER = JSON.stringify({
+  key: 'DecodeErrorCallback',
+  name: 'DecodeErrorCallback',
+  returnType: 'void',
+  arguments: ['DOMException error'],
+  type: 'callback'
+});
+
+const CALLBACK_COMPLEX_MEMBER = JSON.stringify({
+  key: 'CallbackComplex',
+  name: 'CallbackComplex',
+  returnType: 'any',
+  arguments: ['(Event or DOMString) event', 'optional DOMString source', 'optional unsigned long lineno', 'optional unsigned long colno', 'optional any error'],
+  type: 'callback'
+});
+
+const CALLBACK_PROMISE_MEMBER = JSON.stringify({
+  key: 'CallbackPromise',
+  name: 'CallbackPromise',
+  returnType: 'Promise<void>',
+  arguments: [""],
+  type: 'callback'
+});
 
 function loadSource(sourcePath) {
   return utils.getIDLFile(sourcePath);
@@ -60,14 +84,29 @@ describe('CallbackSourceRecord', () => {
   // //   })
   // // });
 
-  // describe('getAllMembers()', () => {
-  //   it('Confirms that all records for a source IDL are returned', () => {
-  //     const source = loadSource(SIMPLE_SOURCE);
-  //     const sr = new CallbackSourceRecord('urls', 'interface', { path: SIMPLE_SOURCE, sourceIdl: source });
-  //     const record = sr.getAllMembers();
-  //     assert.strictEqual(record.length, 2);
-  //   })
-  // });
+  describe('getAllMembers()', () => {
+    it('Confirms that a simple callback is processed', () => {
+      const source = loadSource(CALLBACK);
+      const sr = new CallbackSourceRecord('DecodeErrorCallback', 'callback', { path: CALLBACK, sourceIdl: source });
+      const record = sr.getAllMembers();
+      const jsonString = JSON.stringify(record[0]);
+      assert.equal(jsonString, CALLBACK_MEMBER);
+    });
+    it('Confirms that a complex callback is processed', () => {
+      const source = loadSource(CALLBACK_COMPLEX);
+      const sr = new CallbackSourceRecord('CallbackComplex', 'callback', { path: CALLBACK_COMPLEX, sourceIdl: source });
+      const record = sr.getAllMembers();
+      const jsonString = JSON.stringify(record[0]);
+      assert.equal(jsonString, CALLBACK_COMPLEX_MEMBER);
+    });
+    it('Confirms that a complex callback is processed', () => {
+      const source = loadSource(CALLBACK_PROMISE);
+      const sr = new CallbackSourceRecord('CallbackPromise', 'callback', { path: CALLBACK_PROMISE, sourceIdl: source });
+      const record = sr.getAllMembers();
+      const jsonString = JSON.stringify(record[0]);
+      assert.equal(jsonString, CALLBACK_PROMISE_MEMBER);
+    });
+  });
 
   // describe('getBurnRecords', () => {
   //   it('Confirms that burn records contain proper constructor keys', () => {

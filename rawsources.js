@@ -26,6 +26,7 @@ const utils = require('./utils.js');
 initiateLogger(global.__commandName);
 
 // For ue with string.match();
+const CALLBACK_RE = /callback\s*(\w*)\s*=\s*([^\(]*)([^;]*);/;
 const INTERFACE_NAME_RE = /(?:interface|namespace)\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
@@ -38,6 +39,7 @@ global.__Flags = FlagStatus();
 
 class _sourceRecord_Base {
   constructor(name, type, options) {
+    this._searchSet;
     this._sources = new Array();
     this._name = name;
     this._type = type;
@@ -69,6 +71,26 @@ class _sourceRecord_Base {
     return record;
   }
   
+  _getSearchSet(forIdlFile = 'allFiles') {
+    if (!this._searchSet) {
+      this._searchSet = new Array();
+  
+      if (forIdlFile === 'allFiles') {
+        this._searchSet.push(...this._sources);
+      } else {
+        let found = this._sources.find((s) => {
+          return s.path === forIdlFile;
+        });
+        this._searchSet.push(found);
+      }
+    }
+    return this._searchSet;
+  }
+
+  get interfaceName() {
+    return this.name;
+  }
+
   get name() {
     return this._name;
   }
@@ -88,6 +110,7 @@ class _sourceRecord_Base {
 }
 
 class CallbackSourceRecord extends _sourceRecord_Base {
+  #callback;
 
   constructor(name, type, options) {
     super(name, type, options);
@@ -100,6 +123,37 @@ class CallbackSourceRecord extends _sourceRecord_Base {
     let newRecord = this._buildRecord(cback);
     records.push(newRecord);
     return records;
+  }
+
+  getAllMembers(forIdlFile = 'allFiles') {
+    if (!this.#callback) {
+      const searchSet = this._getSearchSet(forIdlFile);
+      let matches;
+      for (let s of searchSet) {
+        matches = s.sourceIdl.match(CALLBACK_RE);
+        if (matches) {
+          this.#callback = new Array();
+          let callback;
+          callback = {
+            key: this.interfaceName,
+            name: this.interfaceName,
+            returnType: matches[2].trim(),
+            arguments: this._getArguments(matches[3]),
+            type: 'callback'
+          }
+            this.#callback.push(callback);
+          }
+        }
+      }
+    return this.#callback;
+  }
+
+  _getArguments(argumentString) {
+    let argumentArray = argumentString.trim().slice(1,-1).split(',');
+    for (let a in argumentArray) {
+      argumentArray[a] = argumentArray[a].trim();
+    }
+    return argumentArray
   }
 }
 
@@ -114,7 +168,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   #properties;
   #propertySearch = false;
   #runtimeFlag;
-  #searchSet;
 
   constructor(name, type, options) {
     super(name, type, options);
@@ -154,10 +207,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
       }
     }
     return this.#runtimeFlag;
-  }
-
-  get interfaceName() {
-    return this.name;
   }
 
   get inOriginTrial() {
@@ -522,23 +571,7 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
     }
     return returns;
   }
-
-  _getSearchSet(forIdlFile = 'allFiles') {
-    if (!this.#searchSet) {
-      this.#searchSet = new Array();
   
-      if (forIdlFile === 'allFiles') {
-        this.#searchSet.push(...this._sources);
-      } else {
-        let found = this._sources.find((s) => {
-          return s.path === forIdlFile;
-        });
-        this.#searchSet.push(found);
-      }
-    }
-    return this.#searchSet;
-  }
-
   _processProperties(forIdlFile = 'allFiles') {
     if (this.#propertySearch) { return; }
     const searchSet = this._getSearchSet(forIdlFile);
