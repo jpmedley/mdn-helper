@@ -55,6 +55,25 @@ class _sourceRecord_Base {
     this._sources.push(source);
   }
 
+  getSecureContext() {
+    return this._sources.some((s) => {
+      return s.sourceIdl.includes('SecureContext');
+    });
+  };
+
+  async ping(verboseOutput = true) {
+    let pingRecords = this.getBurnRecords();
+    const pinger = new Pinger(pingRecords)
+    if (verboseOutput) {
+      utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.');
+    }
+    let records = await pinger.pingRecords()
+    .catch((e) => {
+      throw e;
+    });
+    return records;
+  }
+
   _buildRecord(member) {
     let record = bcd.getRecordByKey(member.key, 'api');
     record.flag = (this.flag? true: false);
@@ -526,12 +545,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
     return this.#properties;
   }
 
-  getSecureContext() {
-    return this._sources.some((s) => {
-      return s.sourceIdl.includes('SecureContext');
-    });
-  };
-
   getUrls(forIdlFile = 'allFiles') {
     let keys = this.getKeys(forIdlFile);
     let urls = new Array();
@@ -540,19 +553,6 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
       urls.push(`${URL_BASE}${newK}`);
     }
     return urls;
-  }
-
-  async ping(verboseOutput = true) {
-    let pingRecords = this.getBurnRecords();
-    const pinger = new Pinger(pingRecords)
-    if (verboseOutput) {
-      utils.sendUserOutput('\nChecking for existing MDN pages. This may take a few minutes.');
-    }
-    let records = await pinger.pingRecords()
-    .catch((e) => {
-      throw e;
-    });
-    return records;
   }
 
   _getArguments(argumentString) {

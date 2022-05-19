@@ -16,19 +16,20 @@
 
 const { IDLBuilder } = require('./builder.js');
 const { initiateLogger } = require('./log.js');
-const { DirectoryManager } = require('./directorymanager.js');
+// const { DirectoryManager } = require('./directorymanager.js');
 const path = require('path');
 const utils = require('./utils.js');
 const config = require('config');
+const { ChromeIDLSource } = require('./sourceprocessor.js');
 
 initiateLogger(global.__commandName);
 
 class _BoilerplateBuilder {
   constructor(options = { mode: "Stable" }) {
     this.build = this._resolveBuildMode(options.mode);
-    const burnTypes = ["interface", "includes"];
-    const dm = new DirectoryManager('idl/', { types: burnTypes });
-    this._interfaces = dm.interfaceSet.interfaces;
+    const idlDirectory = utils.getConfig('idlDirectory');
+    const cis = new ChromeIDLSource(`.${idlDirectory}/`);
+    this._interfaces = cis.getFeatureSources();
     const projectFiles = ['.git', 'LICENSE', 'README.md'];
     utils.deleteFolderContents(utils.getOutputDirectory(), projectFiles);
   }
@@ -51,18 +52,16 @@ class _BoilerplateBuilder {
     let msg = `Now building interface boilerplates for all found Chrome origin trials.\n`;
     msg += `This may take a minute or two.`;
     let outPath = utils.resolveHome(config.get('Application.otDraftsDirectory'));
-    console.log(msg);
     let builderOptions = {
       interfaceOnly: true,
       mode: 'batch',
       withholdBCD: true,
       outPath: outPath,
     }
-    for (let i = 0; i < this._interfaces.length; i++) {
-      if (!this._interfaces[i].originTrial) { continue; }
-      builderOptions.interfaceData = this._interfaces[i];
+    for (const [key, value] of this._interfaces) {
+      if (value.originTrial) { continue; }
+      builderOptions.interfaceData = value;
       const builder = new IDLBuilder(builderOptions);
-      await builder.build('never');
     }
     msg = `\nBoilerplates written to ${builderOptions.outPath}.`
     console.log(msg);
@@ -76,11 +75,11 @@ class _BoilerplateBuilder {
       mode: 'batch',
       outPath: utils.resolveHome(config.get('Application.boilerplatesDirectory'))
     }
-    for (let i = 0; i < this._interfaces.length; i++) {
-      if (this._interfaces[i].flagged) { continue; }
-      if (this._interfaces[i].originTrial) { continue; }
-      if (this._interfaces[i].mixin) { continue; }
-      builderOptions.interfaceData = this._interfaces[i];
+    for (const [key, value] of this._interfaces) {
+      if (value.flagged) { continue; }
+      if (value.originTrial) { continue; }
+      if (value.mixin) { continue; }
+      builderOptions.interfaceData = value;
       const builder = new IDLBuilder(builderOptions);
       await builder.build('never');
     }

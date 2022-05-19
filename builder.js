@@ -344,8 +344,10 @@ class _IDLBuilder extends Builder {
           interfaceData: this._interfaceData,
           root: this._outPath
         }
-        const newPage = pageFactory(page.name, page.type, sharedQuestions, pageOptions);
-        this._pages.push(newPage);
+        if (page.type === 'interface' || page.type === 'callback') {
+          const newPage = pageFactory(page.name, page.type, sharedQuestions, pageOptions);
+          this._pages.push(newPage);
+        }
       }
     });
     if (skippingPages.length > 0) {

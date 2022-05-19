@@ -24,7 +24,6 @@ const TOKEN_RE = /\[\[(?:shared:)?([\w\-]+)\]\]/;
 
 function pageFactory(name, type, sharedQuestions, options) {
   if (type === 'includes') { type = 'interface'; }
-  console.log(type);
   if (!utils.haveTemplate(type)) {
     const apiName = `${sharedQuestions.questions.interface.answer}.${name}`;
     const msg = `Cannot find a template for page named ${apiName} with type ${type}.`;
@@ -193,6 +192,7 @@ class _InterfacePage extends _PageBase {
 
   _addMembers() {
 
+    console.log(this._interfaceData.name);
     const constructors = this._interfaceData.getConstructors();
     if (constructors) {
       let template = utils.getFile(`templates/_frag_constructor.md`);
