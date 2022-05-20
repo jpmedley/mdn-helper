@@ -1,0 +1,2 @@
+- {{domxref('[[shared:interface]].[[argument]]')}}
+  - : TBD
