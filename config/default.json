@@ -1,13 +1,16 @@
 {
   "Application": {
     "bcdCommitDirectory": "$HOME/Desktop/out/",
+    "bcdTemplates": "templates/bcd",
     "boilerplatesDirectory": "$HOME/Documents/content/mdn-boilerplates/api",
+    "experimentalStageTemplates": "templates/experimental",
     "flagPath": "./idl/platform/runtime_enabled_features.json5",
     "help": "VERBOSE",
     "idlDirectory": "/idl",
     "logLevel": "error",
     "logOutput": ["file"],
     "loggingDirectory": "logs/",
+    "mdnTemplates": "templates/mdn",
     "otDraftsDirectory": "$HOME/Documents/content/ot-drafts/api",
     "outputDirectory": "$HOME/Desktop/out/",
     "questionsFile": "standard-questions.json",

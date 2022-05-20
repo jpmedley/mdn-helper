@@ -50,4 +50,65 @@ describe('Utils', () => {
       assert.strictEqual(cleanedFile, ExpectedResult);
     });
   });
+
+  describe('getTemplate()', () => {
+    it('Verifies that the default path is used', () => {
+      let foundErr;
+      try {
+        const wireframes = utils.getTemplate('interface.md');
+      } catch (error) {
+        foundErr = error;
+        console.log(error);
+      }
+      assert.ok(!(foundErr instanceof Error));
+    });
+    it('Verifies that a specified path may be used', () => {
+      let foundErr;
+      try {
+        const templatePath = `${__dirname}/templates/experimental`;
+        const wireframes = utils.getTemplate('interface.md');
+      } catch (error) {
+        foundErr = error;
+        console.log(error);
+      }
+      assert.ok(!(foundErr instanceof Error));
+    });
+  });
+
+  describe('getWireframes()', () => {
+    it('Verifies that the correct path is used', () => {
+      let foundErr;
+      try {
+        const wireframes = utils.getWireframes();
+      } catch (error) {
+        foundErr = error;
+        console.log(error);
+      }
+      assert.ok(!(foundErr instanceof Error));
+    });
+  });
+
+  describe('haveTemplate()', () => {
+    it('Verifies that the default path is used', () => {
+      let foundErr;
+      try {
+        const wireframes = utils.haveTemplate('interface');
+      } catch (error) {
+        foundErr = error;
+        console.log(error);
+      }
+      assert.ok(!(foundErr instanceof Error));
+    });
+    it('Verifies that a specified path may be used', () => {
+      let foundErr;
+      try {
+        const templatePath = `${__dirname}/templates/experimental`;
+        const wireframes = utils.haveTemplate('interface');
+      } catch (error) {
+        foundErr = error;
+        console.log(error);
+      }
+      assert.ok(!(foundErr instanceof Error));
+    });
+  });
 });

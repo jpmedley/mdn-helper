@@ -195,7 +195,8 @@ class _InterfacePage extends _PageBase {
     console.log(this._interfaceData.name);
     const constructors = this._interfaceData.getConstructors();
     if (constructors) {
-      let template = utils.getFile(`templates/_frag_constructor.md`);
+      // let template = utils.getFile(`templates/_frag_constructor.md`);
+      let template = utils.getTemplate('_frag_constructor.md');
       this._processQuestions(template);
       let constructorString = `## Constructor`;
       constructorString += `${template}\n`;
@@ -204,7 +205,8 @@ class _InterfacePage extends _PageBase {
 
     const eventHandlers = this._interfaceData.getEvents();
     if (eventHandlers) {
-      let template = utils.getFile(`templates/_frag_events.md`);
+      // let template = utils.getFile(`templates/_frag_events.md`);
+      let template = utils.getTemplate('_frag_events.md');
       this._processQuestions(template);
       let handlersString = '### Event handlers\n\n';
       eventHandlers.forEach(eh => {
@@ -218,7 +220,8 @@ class _InterfacePage extends _PageBase {
 
     const methods = this._interfaceData.getMethods();
     if (methods) {
-      let template = utils.getFile(`templates/_frag_methods.md`);
+      // let template = utils.getFile(`templates/_frag_methods.md`);
+      let template = utils.getTemplate('_frag_methods.md');
       this._processQuestions(template);
       let methodString = '## Methods\n\n';
       methods.forEach(m => {
@@ -231,7 +234,8 @@ class _InterfacePage extends _PageBase {
 
     const properties = this._interfaceData.getProperties();
     if (properties) {
-      let template = utils.getFile(`templates/_frag_properties.md`);
+      // let template = utils.getFile(`templates/_frag_properties.md`);
+      let template = utils.getTemplate('_frag_methods.md');
       this._processQuestions(template);
       let propertyString = '## Properties\n\n';
       properties.forEach(p => {

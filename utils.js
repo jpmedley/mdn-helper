@@ -31,7 +31,7 @@ EXCLUSIONS.push(...config.get('Application.muted'));
 EXCLUSIONS.push(...OT_FALSENEGATIVES);
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
-const TEMPLATES = `${__dirname}/templates/`;
+const DEFAULT_TEMPLATES = `${__dirname}/templates/mdn`;
 const APP_ROOT = path.resolve(__dirname);
 
 const KEY_FILE_PATH = 'config/alternate-keys.json';
@@ -45,7 +45,7 @@ const URL_RE = /https:\/\/(.(?!\*))*/g;
 let AlternateKeys;
 
 function loadWireFrames() {
-  const wireframePath = TEMPLATES + QUESTIONS_FILE;
+  const wireframePath = `${__dirname}/templates/${QUESTIONS_FILE}`;
   const wireframeBuffer = fs.readFileSync(wireframePath);
   const wireframes =  JSON.parse(wireframeBuffer.toString()).templates;
   return wireframes;
@@ -222,16 +222,16 @@ function _getJSON(path) {
   return parser.parse(fileContents);
 }
 
-function _getTemplate(name) {
+function _getTemplate(name, location = DEFAULT_TEMPLATES) {
   if (!name.endsWith(".md")) { name += ".md"; }
-  let templatePath = TEMPLATES + name;
+  let templatePath = path.join(location, name);
   let buffer = fs.readFileSync(templatePath);
   return buffer.toString();
 }
 
-function _haveTemplate(name) {
+function _haveTemplate(name, location = DEFAULT_TEMPLATES) {
   if (!name.endsWith(".md")) { name += ".md"; }
-  let templatePath = TEMPLATES + name;
+  let templatePath = path.join(location, name);
   return fs.existsSync(templatePath);
 }
 
@@ -250,7 +250,7 @@ function _isOTFalseNegative(apiName){
 }
 
 function _getWireframes() {
-  const json = this._getJSON(TEMPLATES + QUESTIONS_FILE);
+  const json = _getJSON(`/templates/${QUESTIONS_FILE}`);
   return json.templates;
 }
 

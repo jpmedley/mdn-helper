@@ -15,11 +15,13 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const utils = require('./utils.js');
 
-const API_TEMPLATE = 'templates/bcd-api.txt';
-const CONSTR_TEMPLATE = 'templates/bcd-constructor.txt';
-const MEMBER_TEMPLATE = 'templates/bcd-member.txt';
+const BCD_TEMPLATES = utils.getConfig('bcdTemplates');
+const API_TEMPLATE = path.join(BCD_TEMPLATES, 'bcd-api.txt');
+const CONSTR_TEMPLATE = path.join(BCD_TEMPLATES, 'bcd-constructor.txt');
+const MEMBER_TEMPLATE = path.join(BCD_TEMPLATES, 'bcd-member.txt');
 const NEST_LEVEL = 2;
 
 function getTemplate(templateName) {
