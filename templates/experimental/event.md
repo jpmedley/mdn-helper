@@ -1,20 +1,21 @@
 ---
-title: [[shared:interface]].[[EventHandler]]
-slug: Web/API/[[shared:interface]]/[[EventHandler]]
-tags:
-  - API
-  - Event
-  - Reference
-  - [[shared:interface]]
-browser-compat: api.[[shared:interface]].[[eventNameShort]]
+layout: 'layouts/doc-post.njk'
+title: [[eventNameShort]]_event
+description: >
+  The **`[[eventNameShort]]`** of the `[[shared:interface]]` is fired when //describe when it is fired.
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[eventNameShort]]`** of the {{domxref("[[shared:interface]]")}} is fired when //describe when it is fired.
+The **`[[eventNameShort]]`** of the `[[shared:interface]]` is fired when //describe when it is fired.
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 
-Use the event name in methods like {{domxref("EventTarget.addEventListener", "addEventListener()")}}, or set an event handler property.
+Use the event name in methods like [`addEventListener()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener), or set an event handler property.
 
 ```js
 addEventListener('[[eventNameShort]]', (event) => { });
@@ -24,13 +25,13 @@ addEventListener('[[eventNameShort]]', (event) => { });
 
 ## Event type
 
-A {{domxref("[[EventType]]")}}. Inherits from {{domxref("[[ParentEventType]]")}}.
+A `[[EventType]]`. Inherits from `[[ParentEventType]]`.
 
-{{InheritanceDiagram(500, 70, 50, "[[EventType]]")}}
+
 
 ## Event properties
 
-_In addition to the properties listed below, properties from the parent interface, {{domxref("[[ParentEventType]]")}}, are available._
+_In addition to the properties listed below, properties from the parent interface, `[[ParentEventType]]`, are available._
 
 [[properties]]
 
@@ -39,13 +40,5 @@ _In addition to the properties listed below, properties from the parent interfac
 ```js
 my code block
 ```
-
-## Specifications
-
-{{Specifications}}
-
-## Browser compatibility
-
-{{Compat}}
 
 [[see-also]]

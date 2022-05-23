@@ -1,0 +1,40 @@
+{
+  "templates": {
+    "date": {
+      "question": "What What is the publication date?",
+      "type": "Input",
+      "help": "Generally, provide a date two or three days after the PR is submitted to allow for editing and approval.",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": "",
+      "action": ""
+    },
+    "subHead": {
+      "question": "Do you want a subheading?",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "false",
+      "required": true,
+      "before": "",
+      "action": {"name": "add_block", "args": ["_frag_subhead.md"]}
+    },
+    "subHeadText": {
+      "question": "What should the subhead say?",
+      "type": "Input",
+      "help": "TBD",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": false,
+      "before": "",
+      "action": ""
+    }
+  }
+}
