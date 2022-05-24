@@ -1,14 +1,17 @@
 ---
+layout: 'layouts/doc-post.njk'
 title: [[shared:formalAPIName]]
-slug: Web/API/[[slug]]
-tags:
-  - Overview
-  - Reference
-browser-compat: api.[[shared:interface]]
+description: >
+  [[abstract]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 [[abstract]]
+
+[[status]]
+
+[[tryIt]]
 
 ## Concepts and Usage
 
