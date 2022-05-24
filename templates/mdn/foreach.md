@@ -7,9 +7,9 @@ tags:
   - Reference
 browser-compat: api.[[shared:interface]].forEach
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].forEach()`** method executes a provided function once for each element of {{domxref('[[shared:interface]]')}}.
+The **`forEach()`** method of the [[shared:interface]] interface executes a provided function once for each element of {{domxref('[[shared:interface]]')}}.
 
 ## Syntax
 

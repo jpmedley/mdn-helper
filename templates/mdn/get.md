@@ -7,9 +7,9 @@ tags:
   - Reference
 browser-compat: api.[[shared:interface]].get
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].get()`** method returns the element with the given key from the [[shared:interface]] object.
+The **`get()`** method of the [[shared:interface]] interface returns the element with the given key from the [[shared:interface]] object.
 
 ## Syntax
 

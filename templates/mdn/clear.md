@@ -3,13 +3,15 @@ title: [[shared:interface]].clear()
 slug: Web/API/[[shared:interface]]/clear
 tags:
   - clear
+  - API
   - Method
   - Reference
+  - [[shared:interface]]
 browser-compat: api.[[shared:interface]].clear
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].clear()`** method removes all elements of the [[shared:interface]] object.
+The **`clear()`** method of the [[shared:interface]] interface removes all elements of the [[shared:interface]] object.
 
 ## Syntax
 

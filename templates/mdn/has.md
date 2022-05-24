@@ -7,9 +7,9 @@ tags:
   - Reference
 browser-compat: api.[[shared:interface]].has
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].has()`** method returns a boolean indicating whether the [[shared:interface]] object has an element with the specified key.
+The **`has()`** method of the [[shared:interface]] interface returns a boolean indicating whether the [[shared:interface]] object has an element with the specified key.
 
 ## Syntax
 

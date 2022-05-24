@@ -7,9 +7,9 @@ tags:
   - Reference
 browser-compat: api.[[shared:interface]].set
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].set()`** method adds the provided key/value pair to the [[shared:interface]] object.
+The **`set()`** method of the [[shared:interface]] interface adds the provided key/value pair to the [[shared:interface]] object.
 
 ## Syntax
 

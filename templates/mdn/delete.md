@@ -6,9 +6,9 @@ tags:
   - Reference
 browser-compat: api.[[shared:interface]].delete
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].delete()`** method removes the element with the given key from the [[shared:interface]] object.
+The **`delete()`** method of the [[shared:interface]] interface removes the element with the given key from the [[shared:interface]] object.
 
 ## Syntax
 

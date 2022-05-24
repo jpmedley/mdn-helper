@@ -7,9 +7,9 @@ tags:
   - Reference
 browser-compat: api.[[shared:interface]].keys
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].keys()`** method returns a new `**Array Iterator**` object that contains the keys for each index in the array.
+The **`keys()`** method of the [[shared:interface]] interface returns a new `**Array Iterator**` object that contains the keys for each index in the array.
 
 ## Syntax
 
