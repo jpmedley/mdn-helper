@@ -483,12 +483,12 @@ class ChromeBurner extends Burner {
     let interfaces;
     if (this._reportingList) {
       interfaces = cis.findExact(this._reportingList, options);
-      for (let w of this._reportingList) {
-        let key = w.split(".")[0];
+      for (let r of this._reportingList) {
+        let key = r.split(".")[0];
         let interface_ = interfaces.get(key);
         if (!interface_) { continue; }
         if (!BURNABLE_TYPES.includes(interface_.type)) { continue; }
-        let burnRecords = interface_.getMembersBurnRecords(w, this._includeFlags, this._includeOriginTrials);
+        let burnRecords = interface_.getMembersBurnRecords(r);
         burnRecords = await this._ping(burnRecords);
         this._record(burnRecords);
       }

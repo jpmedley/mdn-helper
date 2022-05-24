@@ -55,6 +55,26 @@ class _sourceRecord_Base {
     this._sources.push(source);
   }
 
+  // COPIED PREMATURELY
+  // getMembersBurnRecords(key, forIdlFile = 'allFiles') {
+  //   let steps = key.split(".");
+  //   if (steps.length > 1) {
+  //     let records = this.getBurnRecords();
+  //     steps.shift();
+  //     let members = this.getAllMembers(forIdlFile);
+  //     for (let m of members) {
+  //       if (!steps.includes(m.name)) { continue; }
+  //       if (!this.flag && m._flagged) { continue; }
+  //       if (!this.inOriginTrial && m._originTrial) { continue; }
+  //       let record = this._buildRecord(m);
+  //       records.push(record);
+  //     }
+  //     return records;
+  //   } else {
+  //     return this.getBurnRecords();
+  //   }
+  // }
+
   getSecureContext() {
     return this._sources.some((s) => {
       return s.sourceIdl.includes('SecureContext');
@@ -167,6 +187,11 @@ class CallbackSourceRecord extends _sourceRecord_Base {
     return this.#callback;
   }
 
+  getInterfaceBurnRecords(forIdlFile = 'allFiles') {
+    let iface = { name: this.name, key: this.name, type: this.type }
+    return [this._buildRecord(iface)];
+  }
+
   _getArguments(argumentString) {
     let argumentArray = argumentString.trim().slice(1,-1).split(',');
     for (let a in argumentArray) {
@@ -256,15 +281,20 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
 
   getBurnRecords(forIdlFile = 'allFiles') {
     let records = new Array();
-    let iface = { name: this.name, key: this.name, type: this.type }
-    let newRecord = this._buildRecord(iface);
-    records.push(newRecord)
+    let newRecord;
+    let newRecords = this.getInterfaceBurnRecords(forIdlFile);
+    records.push(...newRecords)
     let members = this.getAllMembers(forIdlFile);
     for (let m of members) {
       newRecord = this._buildRecord(m);
       records.push(newRecord);
     }
     return records;
+  }
+
+  getInterfaceBurnRecords(forIdlFile = 'allFiles') {
+    let iface = { name: this.name, key: this.name, type: this.type }
+    return [this._buildRecord(iface)];
   }
 
   getConstructors(forIdlFile = 'allFiles') {
