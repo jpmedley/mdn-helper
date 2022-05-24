@@ -1,12 +1,13 @@
 ---
-title: [[shared:interface]].[[shared:interface]]()
+title: [[shared:interface]]()
 slug: Web/API/[[shared:interface]]/[[shared:interface]]
 tags:
+  - API
   - Constructor
   - Reference
 browser-compat: api.[[shared:interface]].[[shared:interface]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
+{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`[[shared:interface]]()`** constructor creates a new {{domxref("[[shared:interface]]")}} object which [[description]]
 
@@ -14,11 +15,21 @@ The **`[[shared:interface]]()`** constructor creates a new {{domxref("[[shared:i
 
 ```js
 new [[shared:interface]]();
+**Manually update this section following the [instructions on MDN](https://developer.mozilla.org/en-US/docs/MDN/Structures/Syntax_sections), then delete this paragraph.** 
 ```
 
 ### Parameters
 
 [[arguments]]
+
+### Return value
+
+An instance of the [[shared:interface]] object.
+
+### Exceptions
+
+[[exceptions]]
+**If there are no listed suggestions, then delete this section.**
 
 ## Examples
 
