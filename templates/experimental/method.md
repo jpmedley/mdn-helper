@@ -1,12 +1,11 @@
 ---
+layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[method]]()
-slug: Web/API/[[shared:interface]]/[[method]]
-tags:
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].[[method]]
+description: >
+  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
 
@@ -14,6 +13,7 @@ The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interfa
 
 ```js
 [[method]]();
+**Manually update this section following the [instructions on MDN](https://developer.mozilla.org/en-US/docs/MDN/Structures/Syntax_sections), then delete this paragraph.** 
 ```
 
 ### Parameters
@@ -23,6 +23,11 @@ The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interfa
 ### Return Value
 
 [[return]]
+
+### Exceptions
+
+[[exceptions]]
+**If there are no listed suggestions, then delete this section.**
 
 ## Examples
 

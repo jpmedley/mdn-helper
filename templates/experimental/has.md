@@ -1,15 +1,17 @@
 ---
-title: [[shared:interface]].has()
-slug: Web/API/[[shared:interface]]/has
-tags:
-  - has
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].has
+layout: 'layouts/doc-post.njk'
+title: [[shared:interface]].[[method]]()
+description: >
+  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].has()`** method returns a boolean indicating whether the [[shared:interface]] object has an element with the specified key.
+The **`has()`** method of the [[shared:interface]] interface returns a boolean indicating whether the [[shared:interface]] object has an element with the specified key.
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 

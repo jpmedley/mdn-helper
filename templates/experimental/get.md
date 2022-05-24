@@ -1,15 +1,17 @@
 ---
-title: [[shared:interface]].get()
-slug: Web/API/[[shared:interface]]/get
-tags:
-  - get
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].get
+layout: 'layouts/doc-post.njk'
+title: [[shared:interface]].[[method]]()
+description: >
+  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].get()`** method returns the element with the given key from the [[shared:interface]] object.
+The **`get()`** method of the [[shared:interface]] interface returns the element with the given key from the [[shared:interface]] object.
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 

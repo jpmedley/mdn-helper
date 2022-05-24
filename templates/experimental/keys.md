@@ -1,15 +1,17 @@
 ---
+layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].keys()
-slug: Web/API/[[shared:interface]]/keys
-tags:
-  - keys
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].keys
+description: >
+  The **`keys()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].keys()`** method returns a new `**Array Iterator**` object that contains the keys for each index in the array.
+The **`keys()`** method of the [[shared:interface]] interface returns a new `**Array Iterator**` object that contains the keys for each index in the array.
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 

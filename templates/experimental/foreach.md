@@ -1,15 +1,17 @@
 ---
-title: [[shared:interface]].forEach()
-slug: Web/API/[[shared:interface]]/forEach
-tags:
-  - forEach
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].forEach
+layout: 'layouts/doc-post.njk'
+title: [[shared:interface]].[[method]]()
+description: >
+  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].forEach()`** method executes a provided function once for each element of {{domxref('[[shared:interface]]')}}.
+The **`forEach()`** method of the [[shared:interface]] interface executes a provided function once for each element of {{domxref('[[shared:interface]]')}}.
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 

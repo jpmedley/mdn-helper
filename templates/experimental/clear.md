@@ -1,15 +1,17 @@
 ---
-title: [[shared:interface]].clear()
-slug: Web/API/[[shared:interface]]/clear
-tags:
-  - clear
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].clear
+layout: 'layouts/doc-post.njk'
+title: [[shared:interface]].[[method]]()
+description: >
+  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].clear()`** method removes all elements of the [[shared:interface]] object.
+The **`clear()`** method of the [[shared:interface]] interface removes all elements of the [[shared:interface]] object.
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 

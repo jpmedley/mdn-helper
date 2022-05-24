@@ -1,14 +1,17 @@
 ---
-title: [[shared:interface]].delete()
-slug: Web/API/[[shared:interface]]/delete
-tags:
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].delete
+layout: 'layouts/doc-post.njk'
+title: [[shared:interface]].[[method]]()
+description: >
+  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].delete()`** method removes the element with the given key from the [[shared:interface]] object.
+The **`delete()`** method of the [[shared:interface]] interface removes the element with the given key from the [[shared:interface]] object.
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 

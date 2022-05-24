@@ -1,14 +1,17 @@
 ---
-title: [[shared:interface]].entries()
-slug: Web/API/[[shared:interface]]/entries
-tags:
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].entries
+layout: 'layouts/doc-post.njk'
+title: [[shared:interface]].[[method]]()
+description: >
+  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[shared:interface]].entries()`** method returns an array of a given object's own enumerable property `[key, value]` pairs, in the same order as that provided by a {{jsxref("Statements/for...in", "for...in")}} loop (the difference being that a for-in loop enumerates properties in the prototype chain as well).
+The **`entries()`** method of the [[shared:interface]] interface returns an array of a given object's own enumerable property `[key, value]` pairs, in the same order as that provided by a {{jsxref("Statements/for...in", "for...in")}} loop (the difference being that a for-in loop enumerates properties in the prototype chain as well).
+
+[[status]]
+
+[[tryIt]]
 
 ## Syntax
 
