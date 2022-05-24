@@ -1,16 +1,17 @@
 ---
+layout: 'layouts/doc-post.njk'
 title: [[shared:interface]]
-slug: Web/API/[[shared:interface]]
-tags:
-  - Interface
-  - Reference
-browser-compat: api.[[shared:interface]]
+description: >
+  The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPIName]]','','','true')}} [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPIName]]','','','true')}} [[description]]
 
-## Description
+[[status]]
+
+[[tryIt]]
 
 [[child-interfaces]] [[constructor]]
 

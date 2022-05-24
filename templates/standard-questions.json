@@ -386,6 +386,18 @@
       "before": "",
       "action": null
     },
+    "parents": {
+      "question": "Is this interface a child of any other interface",
+      "type": "Confirm",
+      "pattern": "^(true|false)",
+      "message": "",
+      "hidden": false,
+      "replace": "*",
+      "default": "",
+      "required": true,
+      "before": "",
+      "action": {"name": "add_string", "args": ["{{InheritanceDiagram}}"]}
+    },
     "properties": {
       "question": "Does this item have any properties? Please enter all arguments with commas\n between each.",
       "type": "Input",
