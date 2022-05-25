@@ -229,11 +229,24 @@ class IDLFinder {
   //   utils.sendUserOutput();
   // }
 
+  _getFlagStatus(source) {
+    let flagStatus = global.__Flags.getHighestResolvedStatus(source.flag);
+    if (flagStatus === 'stable') {
+      // Double-check that it's not one of the flags noted in configuration
+      const recordedOT = utils.getConfig('origintrial');
+      const found = recordedOT.some(r => {
+        return r === source.name;
+      });
+      if (found) { flagStatus = 'origintrial' }
+    }
+    return flagStatus;
+  }
+
   async find(searchString, types = DEFAULT_TYPES, options) {
     let matches = new Array();
     this._sources.forEach((s) => {
       if (s.name.toLowerCase().includes(searchString.toLowerCase()) && types.includes(s.type)) {
-        const flagStatus = global.__Flags.getHighestResolvedStatus(s.flag);
+        const flagStatus = this._getFlagStatus(s);
         switch (flagStatus) {
           // Could cover status 'test' which is earlier than DevTrial,
           //  but 'test' items should never be documented.
