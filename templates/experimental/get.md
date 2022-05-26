@@ -2,7 +2,7 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[method]]()
 description: >
-  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+  The **`get()`** method of the [[shared:interface]] interface returns the element with the given key from the [[shared:interface]] object.
 [[subHead]]
 date: [[date]]
 ---
@@ -52,6 +52,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].get' %}
 
 [[see-also]]

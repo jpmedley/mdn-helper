@@ -46,6 +46,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'css.selectors.[[selector]]' %}
 
 [[see-also]]

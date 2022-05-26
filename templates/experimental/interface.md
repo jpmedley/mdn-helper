@@ -2,12 +2,12 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]]
 description: >
-  The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPIName]]','','','true')}} [[description]]
+  The **`[[shared:interface]]`** interface of the [[shared:formalAPIName]] [[description]]
 [[subHead]]
 date: [[date]]
 ---
 
-The **`[[shared:interface]]`** interface of the {{domxref('[[shared:formalAPIName]]','','','true')}} [[description]]
+The **`[[shared:interface]]`** interface of the [[shared:formalAPIName]] [[description]]
 
 [[status]]
 
@@ -43,6 +43,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]]' %}
 
 [[see-also]]

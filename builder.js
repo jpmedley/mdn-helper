@@ -80,6 +80,7 @@ function pageExists(arg, pageData) {
 
 class Builder {
   constructor(options) {
+    this._templatePath = options.templatePath || utils.DEFAULT_TEMPLATES;
   }
 
   _normalizeArguments(args) {
@@ -248,7 +249,8 @@ class _CLIBuilder extends Builder {
       let members = arg.split(',');
       const pageOptions = {
         interfaceData: this._interfaceData,
-        root: this._outPath
+        root: this._outPath,
+        templatePath: this._templatePath
       }
       const aPage = pageFactory(members[1], members[0], sharedQuestions, pageOptions);
       this._pages.push(aPage);
@@ -325,7 +327,8 @@ class _IDLBuilder extends Builder {
     if (this._includeLandingPage()) {
       const pageOptions = {
         interfaceData: this._interfaceData,
-        root: this._outPath
+        root: this._outPath,
+        templatePath: this._templatePath
       }
       const aPage = pageFactory('landing', 'landing', sharedQuestions, pageOptions);
       this._pages.push(aPage);
@@ -342,7 +345,8 @@ class _IDLBuilder extends Builder {
       } else {
         const pageOptions = {
           interfaceData: this._interfaceData,
-          root: this._outPath
+          root: this._outPath,
+          templatePath: this._templatePath
         }
         if (page.type === 'interface' || page.type === 'callback') {
           const newPage = pageFactory(page.name, page.type, sharedQuestions, pageOptions);

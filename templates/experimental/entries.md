@@ -2,12 +2,12 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[method]]()
 description: >
-  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+  The **`entries()`** method of the [[shared:interface]] interface returns an array of a given object's own enumerable property `[key, value]` pairs, in the same order as that provided by a `for...in` loop (the difference being that a for-in loop enumerates properties in the prototype chain as well).
 [[subHead]]
 date: [[date]]
 ---
 
-The **`entries()`** method of the [[shared:interface]] interface returns an array of a given object's own enumerable property `[key, value]` pairs, in the same order as that provided by a {{jsxref("Statements/for...in", "for...in")}} loop (the difference being that a for-in loop enumerates properties in the prototype chain as well).
+The **`entries()`** method of the [[shared:interface]] interface returns an array of a given object's own enumerable property `[key, value]` pairs, in the same order as that provided by a `for...in` loop (the difference being that a for-in loop enumerates properties in the prototype chain as well).
 
 [[status]]
 
@@ -22,7 +22,7 @@ The **`entries()`** method of the [[shared:interface]] interface returns an arra
 ### Parameters
 
 - `obj`
-  - : The {{domxref('[[shared:interface]]')}} whose enumerable own property `[key, value]` pairs are to be returned.
+  - : The [[shared:interface]] whose enumerable own property `[key, value]` pairs are to be returned.
 
 ### Return value
 
@@ -50,6 +50,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].entries()' %}
 
 [[see-also]]

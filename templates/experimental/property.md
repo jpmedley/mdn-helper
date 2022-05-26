@@ -1,14 +1,13 @@
 ---
+layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[property]]
-slug: Web/API/[[shared:interface]]/[[property]]
-tags:
-  - Property
-  - Reference
-browser-compat: api.[[shared:interface]].[[property]]
+description: >
+  The **`[[property]]`**[[readOnly]] property of the [[shared:interface]] interface [[description]]
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
-The **`[[property]]`**[[readOnly]] property of the {{domxref("[[shared:interface]]")}} interface [[description]]
+The **`[[property]]`**[[readOnly]] property of the [[shared:interface]] interface [[description]]
 
 ## Value
 
@@ -36,6 +35,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].[[property]]' %}
 
 [[see-also]]

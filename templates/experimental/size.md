@@ -1,13 +1,11 @@
 ---
+layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].size()
-slug: Web/API/[[shared:interface]]/size
-tags:
-  - size
-  - Method
-  - Reference
-browser-compat: api.[[shared:interface]].size
+description: >
+  The **`[[shared:interface]].size()`** method returns the number of elements in the [[shared:interface]] object.
+[[subHead]]
+date: [[date]]
 ---
-{{draft}}[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`[[shared:interface]].size()`** method returns the number of elements in the [[shared:interface]] object.
 
@@ -49,6 +47,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].size' %}
 
 [[see-also]]

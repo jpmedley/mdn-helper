@@ -2,7 +2,7 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].keys()
 description: >
-  The **`keys()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+  The **`keys()`** method of the [[shared:interface]] interface returns a new `**Array Iterator**` object that contains the keys for each index in the array.
 [[subHead]]
 date: [[date]]
 ---
@@ -25,7 +25,7 @@ None.
 
 ### Return value
 
-A new {{jsxref("Array")}}.
+A new Array.
 
 ## Examples
 
@@ -49,6 +49,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].keys' %}
 
 [[see-also]]

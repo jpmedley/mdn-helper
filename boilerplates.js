@@ -26,6 +26,10 @@ initiateLogger(global.__commandName);
 
 class _BoilerplateBuilder {
   constructor(options = { mode: "Stable" }) {
+    if (!['stable', 'origintrials'].includes(options.mode)) {
+      const msg = "Second argument must be either 'stable' or 'origintrials'."
+      throw new Error(msg);
+    }
     this.build = this._resolveBuildMode(options.mode);
     const idlDirectory = utils.getConfig('idlDirectory');
     const cis = new ChromeIDLSource(`.${idlDirectory}/`);
@@ -51,17 +55,20 @@ class _BoilerplateBuilder {
   async _buildOriginTrials() {
     let msg = `Now building interface boilerplates for all found Chrome origin trials.\n`;
     msg += `This may take a minute or two.`;
+    utils.sendUserOutput(msg);
     let outPath = utils.resolveHome(config.get('Application.otDraftsDirectory'));
     let builderOptions = {
       interfaceOnly: true,
       mode: 'batch',
       withholdBCD: true,
       outPath: outPath,
+      templatePath: utils.getConfig('experimentalStageTemplates')
     }
     for (const [key, value] of this._interfaces) {
-      if (value.originTrial) { continue; }
+      if (!value.inOriginTrial) { continue; }
       builderOptions.interfaceData = value;
       const builder = new IDLBuilder(builderOptions);
+      await builder.build('never');
     }
     msg = `\nBoilerplates written to ${builderOptions.outPath}.`
     console.log(msg);
@@ -70,7 +77,7 @@ class _BoilerplateBuilder {
   async _buildStable() {
     let msg = `\nNow building boilerplates for all outstanding Chrome platform APIs.\n`;
     msg += `This may take a few minutes.`;
-    console.log(msg);
+    utils.sendUserOutput(msg);
     let builderOptions = {
       mode: 'batch',
       outPath: utils.resolveHome(config.get('Application.boilerplatesDirectory'))

@@ -2,12 +2,12 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[method]]()
 description: >
-  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+  The **`forEach()`** method of the [[shared:interface]] interface executes a provided function once for each element of [[shared:interface]].
 [[subHead]]
 date: [[date]]
 ---
 
-The **`forEach()`** method of the [[shared:interface]] interface executes a provided function once for each element of {{domxref('[[shared:interface]]')}}.
+The **`forEach()`** method of the [[shared:interface]] interface executes a provided function once for each element of [[shared:interface]].
 
 [[status]]
 
@@ -37,7 +37,7 @@ forEach(callback, thisArg);
 
 ### Return value
 
-{{jsxref("undefined")}}.
+undefined.
 
 ## Examples
 
@@ -61,6 +61,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].forEach' %}
 
 [[see-also]]

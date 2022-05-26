@@ -41,4 +41,12 @@ _In addition to the properties listed below, properties from the parent interfac
 my code block
 ```
 
+## Specifications
+
+{{Specifications}}
+
+## Browser compatibility
+
+{% BrowserCompat 'api.[[shared:interface]].[[eventNameShort]]_event' %}
+
 [[see-also]]

@@ -2,7 +2,7 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[method]]()
 description: >
-  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+  The **`[[method]]()`** method of the [[shared:interface]] interface [[description]]
 [[subHead]]
 date: [[date]]
 ---
@@ -26,7 +26,7 @@ has(key);
 
 ### Return value
 
-A {{jsxref('Boolean')}} indicating whether the specifed key was found.
+A Boolean indicating whether the specifed key was found.
 
 ## Examples
 
@@ -52,6 +52,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].has' %}
 
 [[see-also]]

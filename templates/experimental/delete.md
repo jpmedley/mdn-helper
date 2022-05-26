@@ -2,7 +2,7 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[method]]()
 description: >
-  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+  The **`delete()`** method of the [[shared:interface]] interface removes the element with the given key from the [[shared:interface]] object.
 [[subHead]]
 date: [[date]]
 ---
@@ -52,6 +52,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].delete' %}
 
 [[see-also]]

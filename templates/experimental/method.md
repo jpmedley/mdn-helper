@@ -2,12 +2,11 @@
 layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].[[method]]()
 description: >
-  The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
-[[subHead]]
+  The **`[[method]]()`** method of the [[shared:interface]] interface [[description]]
 date: [[date]]
 ---
 
-The **`[[method]]()`** method of the {{domxref("[[shared:interface]]")}} interface [[description]]
+The **`[[method]]()`** method of the [[shared:interface]] interface [[description]]
 
 ## Syntax
 
@@ -51,6 +50,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].[[method]]' %}
 
 [[see-also]]

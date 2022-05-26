@@ -22,10 +22,6 @@ const { MultiSelect } = require('enquirer');
 const path = require('path');
 const { Pinger } = require('./pinger.js');
 const utils = require('./utils.js');
-const {
-  EMPTY_BURN_DATA,
-  InterfaceData
-} = require('./interfacedata.js');
 const { ChromeIDLSource } = require('./sourceprocessor.js');
 
 const ALL_STRING = '(all)';
@@ -59,6 +55,16 @@ const BROWSERS = [
   'webview_android',
 ];
 
+const EMPTY_BURN_DATA = {
+  bcd: false,
+  flag: false,
+  key: undefined,
+  mdn_exists: false,
+  mdn_url: undefined,
+  origin_trial: false,
+  type: undefined
+}
+
 //To Do: Every burner class should use some form of isBurnable(). It would
 //       confine reportList testing to a better place.
 
@@ -75,8 +81,8 @@ function getBurnRecords(key, reportingList) {
       } else {
         if (!data[d].__compat.mdn_url) { continue; }
         let record = Object.assign({}, EMPTY_BURN_DATA);
-        record.key = d;
         record.bcd = true;
+        record.key = d;
         record.mdn_exists = false;
         record.mdn_url = data[d].__compat.mdn_url;
         records.push(record);
@@ -515,25 +521,6 @@ class ChromeBurner extends Burner {
       }
     }
     this._closeOutputFile();
-  }
-
-  _getIDLFile(fileObject) {
-    try {
-      let idlFile = new InterfaceData(fileObject, {
-        experimental: this._includeFlags,
-        originTrials: this._includeOriginTrials
-      });
-      return idlFile;
-    } catch(e) {
-      switch (e.constructor.name) {
-        case 'IDLError':
-        case 'WebIDLParseError':
-          this._logError(fileObject, e);
-          return;
-        default:
-          throw e;
-      }s
-    }
   }
 
   _logError(fileObject, error) {

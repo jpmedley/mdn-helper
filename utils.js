@@ -31,7 +31,7 @@ EXCLUSIONS.push(...config.get('Application.muted'));
 EXCLUSIONS.push(...OT_FALSENEGATIVES);
 const USE_EXCLUSIONS = config.get('Application.useExclusions');
 const QUESTIONS_FILE = _getConfig('questionsFile');
-const DEFAULT_TEMPLATES = `${__dirname}/templates/mdn`;
+const DEFAULT_TEMPLATES = `${__dirname}/${config.get('Application.mdnTemplates')}`;
 const APP_ROOT = path.resolve(__dirname);
 
 const KEY_FILE_PATH = 'config/alternate-keys.json';
@@ -332,6 +332,7 @@ function _today() {
 }
 
 module.exports.APP_ROOT = APP_ROOT;
+module.exports.DEFAULT_TEMPLATES = DEFAULT_TEMPLATES;
 module.exports.WIREFRAMES = WIREFRAMES;
 module.exports.confirm = _confirm;
 module.exports.confirmPath = _confirmPath;

@@ -96,9 +96,9 @@ class _sourceRecord_Base {
 
   _buildRecord(member) {
     let record = bcd.getRecordByKey(member.key, 'api');
-    record.flag = (this.flag? true: false);
+    record.flag = (this.inDevTrial? true: false);
     record.name = member.name;
-    record.origin_trial = (this.origin_trial? true: false);
+    record.origin_trial = (this.inOriginTrial? true: false);
     record.type = member.type;
     const engines = bcd.getEngines(member.key, 'api');
     record.engineCount = (engines? engines.length: 1);
@@ -255,6 +255,8 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
 
   get inOriginTrial() {
     if (this.flagStatus === 'origintrial') { return true; }
+    const recordedOTs = utils.getConfig('origintrial');
+    if (recordedOTs.includes(this.name)) { return true; }
     return false;
   }
 

@@ -1,13 +1,11 @@
 ---
+layout: 'layouts/doc-post.njk'
 title: [[shared:interface]].values()
-slug: Web/API/[[shared:interface]]/values
-tags:
-  - values
-  - Method
-  - Reference
-browser-compat: [[shared:interface]].values
+description: >
+  The **`[[shared:interface]].values()`** method returns a new **`Array Iterator`** object that contains the values for each index in the [[shared:interface]] object.
+[[subHead]]
+date: [[date]]
 ---
-[[shared:isSecureContext]]{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`[[shared:interface]].values()`** method returns a new **`Array Iterator`** object that contains the values for each index in the [[shared:interface]] object.
 
@@ -23,7 +21,7 @@ None.
 
 ### Return value
 
-A new {{jsxref("Array")}}.
+A new Array
 
 ## Examples
 
@@ -47,6 +45,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]]' %}
 
 [[see-also]]

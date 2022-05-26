@@ -7,7 +7,6 @@ tags:
   - Reference
 browser-compat: api.[[shared:interface]].set
 ---
-{{DefaultAPISidebar("[[shared:sidebarMacro]]")}}
 
 The **`set()`** method of the [[shared:interface]] interface adds the provided key/value pair to the [[shared:interface]] object.
 
@@ -50,6 +49,6 @@ And/or include a list of links to useful code samples that live elsewhere:
 
 ## Browser compatibility
 
-{{Compat}}
+{% BrowserCompat 'api.[[shared:interface]].set' %}
 
 [[see-also]]
