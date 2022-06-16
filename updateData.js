@@ -31,11 +31,6 @@ const ONE_DAY = 86400000;
 const ONE_WEEK = 604800000;
 const UPDATE_FILE = `${__dirname}/.update`;
 
-function downloadPopularities() {
-  console.log('\nDownloading latest popularities.json.\n');
-  shell.exec('curl https://raw.githubusercontent.com/mdn/content/main/files/popularities.json > popularities.json');
-}
-
 function isUpdateNeeded() {
   const now = new Date();
   const lastUpdate = _getLastUpdate();
@@ -93,7 +88,6 @@ function update(args, source = IDL_ZIP, destination = IDL_DIR) {
 
 function updateForAdmin(args, source = IDL_ZIP, destination = IDL_DIR) {
   updateNow(args, source, destination);
-  downloadPopularities();
 }
 
 function updateNow(args, source = IDL_ZIP, destination = IDL_DIR) {
@@ -154,7 +148,6 @@ function _getLastUpdate() {
   return new Date(lu);
 }
 
-module.exports.downloadPopularities = downloadPopularities;
 module.exports.isUpdateNeeded = isUpdateNeeded;
 module.exports.showVersions = showVersions;
 module.exports.update = update;
