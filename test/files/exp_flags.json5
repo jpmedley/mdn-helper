@@ -90,6 +90,11 @@
 
   data: [
     {
+      name: "DefaultValue",
+      origin_trial_feature_name: "DefaultValue",
+      status: {"Android": "", "default": "experimental"},
+    },
+    {
       name: "InDevTrial",
       status: "experimental"
     },

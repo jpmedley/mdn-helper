@@ -29,6 +29,7 @@ const DICTIONARY = `${TEST_IDL_FILES}dictionary.idl`;
 const DICTIONARY_ANCESTOR = `${TEST_IDL_FILES}dictionary-ancestor.idl`;
 const DICTIONARY_EXTENDED_ATTRIBS = `${TEST_IDL_FILES}dictionary-extended-attribs.idl`;
 const ENUM = `${TEST_IDL_FILES}enum.idl`;
+const EXTENDED_ATTRIBUTES_MULTILEVEL = `${TEST_IDL_FILES}extended-attributes-multilevel.idl`;
 const INCLUDES_FLASE_POSITIVE = `${TEST_IDL_FILES}includes-false-positive.idl`;
 const INTERFACE_CALLBACK = `${TEST_IDL_FILES}interface-callback.idl`;
 const INTERFACE_COMPLETE = `${TEST_IDL_FILES}interface-complete.idl`;
@@ -70,7 +71,16 @@ describe('ChromeIDLSource', () => {
       assert.ok(sources.size > 0);
     });
 
-    it ('Confirms that files with multiple structures are processed', () => {
+    it('Confirms that files with multiple extended attributes are processed', () => {
+      const extendedAttributes = '[\n    Exposed = Window,\n    RuntimeEnabled = ConditionalFocus\n]'
+      const cis = new ChromeIDLSource(EXTENDED_ATTRIBUTES_MULTILEVEL);
+      const sourceRecords = cis.getFeatureSources();
+      const sourceRecord = sourceRecords.get('ExtendedAttribMultiLevel-interface');
+      const sourceIDL = sourceRecord.sources[0].sourceIdl.trim();
+      assert.ok(sourceIDL.startsWith(extendedAttributes));
+    });
+
+    it('Confirms that files with multiple structures are processed', () => {
       const cis = new ChromeIDLSource(MULTIPLE_STRUCTURES);
       const sources = cis.getFeatureSources();
       assert.strictEqual(sources?.size, 8);

@@ -34,6 +34,7 @@ const CONSTRUCTOR_COMPLEX_ARG = `${TEST_IDL_FILES}constructor-complex-argument.i
 const CONSTRUCTOR_NO_ARGS = `${TEST_IDL_FILES}constructor-noarguments.idl`;
 const DELETERS = `${TEST_IDL_FILES}all-deleters.idl`;
 const EVENT_HANDLERS = `${TEST_IDL_FILES}event-handlers.idl`;
+const EXTENDED_ATTRIBUTES = `${TEST_IDL_FILES}extended-attributes.idl`;
 const FLAG_INLINE_OT = `${TEST_IDL_FILES}flag-inline-ot.idl`;
 const FLAG_INTERFACE_OT = `${TEST_IDL_FILES}flag-interface-ot.idl`;
 const FLAG_INTERFACE_DT = `${TEST_IDL_FILES}flag-interface-dt.idl`;
@@ -217,14 +218,23 @@ describe('InterfaceSourceRecord', () => {
     });
   });
 
-  describe('getEvents', () => {
+  describe('getEvents()', () => {
     it('Confirms that event callbacks are processed', () => {
       const source = loadSource(EVENT_HANDLERS);
       const sr = new InterfaceSourceRecord('events', 'interface', { path: EVENT_HANDLERS, sourceIdl: source });
       const record = sr.getEvents();
       assert.strictEqual(record.length, 3);
     });
-  })
+  });
+
+  describe('getExtendedAttributes()', () => {
+    it('Confirms that extended attributes are processed', () => {
+      const source = loadSource(EXTENDED_ATTRIBUTES);
+      const sr = new InterfaceSourceRecord('attributes', 'interface', { path: EXTENDED_ATTRIBUTES, sourceIdl: source });
+      const extendedAttributes = sr.getExtendedAttributes();
+      assert.ok(extendedAttributes?.length > 0);
+    });
+  });
 
   describe('getKeys()', () => {
     it('Confirms that all keys for a source IDL are returned', () => {

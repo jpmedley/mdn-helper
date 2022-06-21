@@ -79,7 +79,7 @@ class _FlagStatus {
 
       // If stable isn't found, check if any part is experimental then
       if (Object.values(actualStatus).includes('experimental')) {
-        if (Object.values(actualStatus).includes('origin_trial_feature_name')) {
+        if (this[key]['origin_trial_feature_name']) {
           return 'origintrial'
         } else {
           return 'devtrial';

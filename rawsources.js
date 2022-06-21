@@ -27,6 +27,7 @@ initiateLogger(global.__commandName);
 
 // For ue with string.match();
 const CALLBACK_RE = /callback\s*(\w*)\s*=\s*([^\(]*)([^;]*);/;
+const EXTENDED_ATTRIBUTES_RE = /\[[^\]]*\]/;
 const INTERFACE_NAME_RE = /(?:interface|namespace)\s*(\w*)\s*:?\s*(\w*)\s*\{/;
 
 // For use with string.matchAll();
@@ -45,7 +46,6 @@ class _sourceRecord_Base {
     this._type = type;
     this.add(options.path, options.sourceIdl);
   }
-
 
   add(path, sourceIdl) {
     let source = {
@@ -74,6 +74,19 @@ class _sourceRecord_Base {
   //     return this.getBurnRecords();
   //   }
   // }
+
+  getExtendedAttributes() {
+    const eaRegEx = new RegExp(EXTENDED_ATTRIBUTES_RE);
+    const source = this._sources.find((s) => {
+      return eaRegEx.test(s.sourceIdl);
+    });
+    if (source) {
+      const match = source.sourceIdl.match(EXTENDED_ATTRIBUTES_RE);
+      if (match) {
+        return match[0];
+      }
+    }
+  }
 
   getSecureContext() {
     return this._sources.some((s) => {

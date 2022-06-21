@@ -1,0 +1,12 @@
+[
+    Exposed = Window,
+    RuntimeEnabled = ConditionalFocus
+]
+interface ExtendedAttribMultiLevel {
+  [
+    CallWith = ExecutionContext,
+    RaisesException,
+    MeasureAs = ConditionalFocus,
+    RuntimeEnabled = ConditionalFocus  // Gate exposure in sub-classes.
+  ] void focus(CaptureStartFocusBehavior focus_behavior);
+};

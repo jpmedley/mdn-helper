@@ -45,6 +45,7 @@ const TYPEDEF_SEQUENCE = /typedef\ssequence[^>]*>\s(\w*);/;
 
 const EXCLUSIONS = ['inspector','testing','typed_arrays'];
 const KEYWORDS = ['callback', 'dictionary', 'enum', 'includes', 'interface', 'mixin', 'namespace', 'typedef'];
+const START_MARKERS = ['[', 'callback ', 'dictionary ', 'enum ', 'includes ', 'interface ', 'mixin ', 'namespace ', 'typedef '];
 
 class _SourceProcessor_Base {
   constructor(sourceLocation, options = {}) {
@@ -77,6 +78,163 @@ class _SourceProcessor_Base {
   }
 
   getFeatureSources() {
+    for (const s of this._sourcePaths) {
+      let rawData = utils.getIDLFile(s, {clean: true});
+      if (!rawData) {
+        const msg = `Cannot process ${s}.`;
+        global.__logger.info(`Cannot process ${s}.`);
+        throw new IDLError(msg);
+      }
+      const lines = rawData.split('\n');
+
+      // Find the starts of structures.
+      const signitureIndices = new Array();
+      for (const l in lines) {
+        let found = KEYWORDS.some((k) => {
+          // Spaces are needed to prvent false positives.
+          // (Enums may contain these keywords in quotes.)
+          return lines[l].includes(`${k} `);
+        });
+        if (found) {
+          signitureIndices.push(l);
+        }
+        if (l.trim().at.startsWith('[')) {
+          signitureIndices.push(l);
+        }
+      }
+
+      // Move start indices to account for extended attributes
+      for (const s of signitureIndices) {
+        if (lines[s].trim().startsWith("]")) {
+          let i = s;
+          while (!lines[i].trim().startsWith("[")) {
+            i--;
+          }
+          s = i;
+        }
+      }
+    }
+  }
+
+  getFeatureSources__() {
+    for (const s of this._sourcePaths) {
+      let rawData = utils.getIDLFile(s, {clean: true});
+      if (!rawData) {
+        const msg = `Cannot process ${s}.`;
+        global.__logger.info(`Cannot process ${s}.`);
+        throw new IDLError(msg);
+      }
+      const lines = rawData.split('\n');
+      let started = false;
+      let ended = false;
+      let extendedAttributes = false;
+      let currentStructure = '';
+      let name = '';
+      let type = '';
+      for (const l of lines) {
+        currentStructure += `${l}\n`;
+        if (l.trim().startsWith('callback') && (l.trim().endsWith(');'))) {
+          ended = true;
+          [type, name] = this._getNameAndType(l, s);
+        }
+        if (l.trim().startsWith('] callback') && (l.trim().endsWith(');'))) {
+          ended = true;
+          [type, name] = this._getNameAndType(l, s);
+        }
+        if (l.includes('includes')) {
+          ended = true;
+          [type, name] = this._getNameAndType(l, s);
+        }
+        if (l.trim().endsWith('};') && (!l.trim().endsWith('{};'))) { ended = true; }
+        if (ended) {
+          this._recordRecord(name, type, currentStructure, s);
+          started = false;
+          ended = false;
+          extendedAttributes = false;
+          currentStructure = '';
+          name = '';
+          type = '';
+          continue;
+        }
+        // let found = START_MARKERS.some((sm) => {
+        //   return l.includes(`${sm}`);
+        // });
+        let found = START_MARKERS.find((sm) => {
+          return l.includes(sm)
+        });
+        if (found === '[') {
+          extendedAttributes = true;
+        } else if (found) {
+          extendedAttributes = false;
+        }
+        if (found && !started) {
+          started = true;
+        }
+        if (started && !type && !extendedAttributes) {
+          [type, name] = this._getNameAndType(l, s);
+        }
+        // if (started && !type) {
+        //   type = (() => {
+        //     if (l.includes('callback interface')) { return 'callback-interface'; }
+        //     if (l.includes('callback')) { return 'callback'; }
+        //     if (l.includes('interface mixin')) { return 'mixin'; }
+        //     if (l.includes('partial interface')) { return 'partial'; }
+        //     return KEYWORDS.find((e) => {
+        //      var rx = new RegExp(`\\b${e} `);
+        //      let index = l.search(rx);
+        //      if (index >= 0) { return true } else { return false; }
+        //     });
+        //   })();}
+        // if (type && !name) {
+        //   try {
+        //     name = this._getName(l, type);
+        //   } catch (error) {
+        //     if (error instanceof IDLError) {
+        //       const msg = `Could not extract name for ${type} from ${s} in line:\n\n${l}`;
+        //       error.message = msg;
+        //       throw error;
+        //     }
+        //     // Punting because of multiline typedef
+        //     if (!type==='typedef') {
+        //       throw error;
+        //     }
+        //   }
+        // }
+      }
+    }
+    return this._sourceRecords;
+  }
+
+  _getNameAndType(line, fileName) {
+    let name;
+    const type = (() => {
+      if (line.includes('callback interface')) { return 'callback-interface'; }
+      if (line.includes('callback')) { return 'callback'; }
+      if (line.includes('interface mixin')) { return 'mixin'; }
+      if (line.includes('partial interface')) { return 'partial'; }
+      return KEYWORDS.find((e) => {
+       var rx = new RegExp(`\\b${e} `);
+       let index = line.search(rx);
+       if (index >= 0) { return true } else { return false; }
+      });
+    })();
+    try {
+      name = this._getName(line, type);
+    } catch (error) {
+      if (error instanceof IDLError) {
+        const msg = `Could not extract name for ${type} from ${fileName} in line:\n\n${line}`;
+        error.message = msg;
+        throw error;
+      }
+      // Punting because of multiline typedef
+      if (!type==='typedef') {
+        throw error;
+      }
+    }
+    return [type, name];
+  }
+
+  getFeatureSources_() {
     for (let p of this._sourcePaths) {
       let rawData = utils.getIDLFile(p, {clean: true});
       if (!rawData) {
