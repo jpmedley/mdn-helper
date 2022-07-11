@@ -86,34 +86,118 @@ class _SourceProcessor_Base {
         throw new IDLError(msg);
       }
       const lines = rawData.split('\n');
-
-      // Find the starts of structures.
-      const signitureIndices = new Array();
+      const signitureIndices = this._getMarkers(lines);
+      let currentStructure = '';
+      let started = false;
       for (const l in lines) {
-        let found = KEYWORDS.some((k) => {
-          // Spaces are needed to prvent false positives.
-          // (Enums may contain these keywords in quotes.)
-          return lines[l].includes(`${k} `);
-        });
-        if (found) {
-          signitureIndices.push(l);
-        }
-        if (l.trim().at.startsWith('[')) {
-          signitureIndices.push(l);
+        if (signitureIndices.includes[l]) {
+          this._recordRecord(currentStructure, s);
+          currentStructure = l;
+          started = true;
+        } else {
+          currentStructure += `${l}\n`;
         }
       }
 
-      // Move start indices to account for extended attributes
-      for (const s of signitureIndices) {
-        if (lines[s].trim().startsWith("]")) {
-          let i = s;
-          while (!lines[i].trim().startsWith("[")) {
-            i--;
-          }
-          s = i;
+    }
+    return this._sourceRecords;
+  }
+
+  _recordRecord(data, path) {
+    if (!data) { return; }
+    let type, name;
+    [type, name] = this._getNameAndType(data, path);
+    let sourceRecord;
+    if (type === 'includes') {
+      const matches = data.match(/\w*\s*includes\s*(\w*)/);
+      const mixinSourceName = matches[1];
+      const mixinRecord = this._sourceRecords.get(`${mixinSourceName}-mixin`);
+      if (mixinRecord) {
+        path = mixinRecord.sources[0].path;
+        data = mixinRecord.sources[0].sourceIdl;
+      }
+      sourceRecord = this._sourceRecords.get(`${name}-interface`);
+      if (sourceRecord) {
+        sourceRecord.add(path, data);
+      } else {
+        sourceRecord = new SourceRecord(name, 'interface', { path: path, sourceIdl: data});
+        this._sourceRecords.set(`${name}-interface`, sourceRecord);
+      }
+    } else {
+      sourceRecord = this._sourceRecords.get(`${name}-${type}`);
+      if (sourceRecord) {
+        sourceRecord.add(path, data);
+      } else {
+        switch (type) {
+          case 'callback':
+            sourceRecord = new CallbackSourceRecord(name, type, { path: path, sourceIdl: data});
+            break;
+          default:
+            sourceRecord = new SourceRecord(name, type, { path: path, sourceIdl: data });
+            break;
         }
+        this._sourceRecords.set(`${name}-${type}`, sourceRecord);
       }
     }
+  }
+
+  _getNameAndType(data, fileName) {
+    let firstLine = data.split('\n')[0].trim();
+    let name;
+    const type = (() => {
+      if (firstLine.includes('callback interface')) { return 'callback-interface'; }
+      if (firstLine.includes('callback')) { return 'callback'; }
+      if (firstLine.includes('interface mixin')) { return 'mixin'; }
+      if (firstLine.includes('partial interface')) { return 'partial'; }
+      return KEYWORDS.find((e) => {
+       var rx = new RegExp(`\\b${e} `);
+       let index = firstLine.search(rx);
+       if (index >= 0) { return true } else { return false; }
+      });
+    })();
+    try {
+      name = this._getName(firstLine, type);
+    } catch (error) {
+      if (error instanceof IDLError) {
+        const msg = `Could not extract name for ${type} from ${fileName} in line:\n\n${firstLine}`;
+        error.message = msg;
+        throw error;
+      }
+      // Punting because of multiline typedef
+      if (!type==='typedef') {
+        throw error;
+      }
+    }
+    return [type, name];
+  }
+
+  _getMarkers(lines) {
+    // Find the starts of structures.
+    const startLocations = new Array();
+    const signitureIndices = new Array();
+    for (const l in lines) {
+      let found = KEYWORDS.some((k) => {
+        // Spaces are needed to prvent false positives.
+        // (Enums may contain these keywords in quotes.)
+        return lines[l].includes(`${k} `);
+      });
+      if (found) {
+        startLocations.push(l);
+      }
+      if (lines[l].trim().startsWith('[')) {
+        startLocations.push(l);
+      }
+    }
+
+    // Move start indices to account for extended attributes
+    for (const s in startLocations) {
+      if (lines[startLocations[s]].trim().startsWith(']')) {
+        signitureIndices.push(startLocations[s-1]);
+      } else {
+        signitureIndices.push(startLocations[s]);
+      }
+    }
+    return signitureIndices;
   }
 
   getFeatureSources__() {
@@ -205,7 +289,7 @@ class _SourceProcessor_Base {
     return this._sourceRecords;
   }
 
-  _getNameAndType(line, fileName) {
+  _getNameAndType_(line, fileName) {
     let name;
     const type = (() => {
       if (line.includes('callback interface')) { return 'callback-interface'; }
@@ -369,7 +453,7 @@ class _SourceProcessor_Base {
     return name;
   }
 
-  _recordRecord(name, type, data, path) {
+  _recordRecord_(name, type, data, path) {
     let sourceRecord;
     if (type === 'includes') {
       const matches = data.match(/\w*\s*includes\s*(\w*)/);
