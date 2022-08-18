@@ -1,5 +1,5 @@
 [
     RuntimeEnabled=RTEExperimental
-] partial interface InterfaceComplete : Parent {
+] partial interface InterfaceComplete {
     readonly attribute FontFaceSetLoadStatus status;
 };
