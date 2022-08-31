@@ -31,7 +31,8 @@
       "FontManager",
       "FontMetadata",
       "FontTableMap",
-      "LaunchQueue"
+      "LaunchQueue",
+      "NativeIOFileManager"
     ],
     "origintrial": [
       "GPU",
@@ -70,8 +71,7 @@
       "GPUTextureUsage",
       "GPUTextureView",
       "GPUUncapturedErrorEvent",
-      "GPUValidationError",
-      "NativeIOFileManager"
+      "GPUValidationError"
     ],
     "deprecated": [
       "AnimationEffectTiming",
@@ -129,6 +129,11 @@
       "WebGLMultiDrawInstancedBaseVertexBaseInstance",
       "WebGLTimerQueryEXT",
       "WebGLVertexArrayObjectOES"
+    ],
+    "malFormedFiles": [
+      "./idl/core/frame/directive.idl",
+      "./idl/core/frame/location.idl",
+      "./idl/core/testing/garbage_collected_script_wrappable.idl"
     ]
   }
 }

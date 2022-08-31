@@ -25,6 +25,7 @@ const { homedir } = require('os');
 const JSON5 = require('json5');
 const path = require('path');
 
+const MALFORMED_FILES = config.get('Application.malFormedFiles')
 let OT_FALSENEGATIVES = config.get('Application.origintrial');
 let EXCLUSIONS = config.get('Application.deprecated');
 EXCLUSIONS.push(...config.get('Application.muted'));
@@ -242,6 +243,11 @@ function _isExcluded(apiName) {
   return false;
 }
 
+function _isKnownMalformed(fileName) {
+  // TODO: Add retest of file and alert if passing.
+  return MALFORMED_FILES.includes(fileName)
+}
+
 function _isOTFalseNegative(apiName){
   if (OT_FALSENEGATIVES) {
     return OT_FALSENEGATIVES.includes(apiName)
@@ -353,6 +359,7 @@ module.exports.getTemplate = _getTemplate;
 module.exports.getWireframes = _getWireframes;
 module.exports.haveTemplate = _haveTemplate;
 module.exports.isExcluded = _isExcluded;
+module.exports.isKnownMalformed = _isKnownMalformed;
 module.exports.isOTFalseNegative = _isOTFalseNegative;
 module.exports.makeFolder = _makeFolder;
 module.exports.makeOutputFolder = _makeOutputFolder;
