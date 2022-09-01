@@ -76,8 +76,9 @@ describe('ChromeIDLSource', () => {
       const cis = new ChromeIDLSource(EXTENDED_ATTRIBUTES_MULTILEVEL);
       const sourceRecords = cis.getFeatureSources();
       const sourceRecord = sourceRecords.get('ExtendedAttribMultiLevel-interface');
-      const sourceIDL = sourceRecord.sources[0].sourceIdl.trim();
-      assert.ok(sourceIDL.startsWith(extendedAttributes));
+      const sourceIDL = sourceRecord.sources[0].sourceIdl;
+      // assert.ok(sourceIDL.startsWith(extendedAttributes));
+      assert.strictEqual(sourceIDL.extAttrs.length, 2);
     });
 
     it('Confirms that files with multiple structures are processed', () => {
@@ -162,7 +163,7 @@ describe('ChromeIDLSource', () => {
     it('Confirms that mixin interfaces are processed', () => {
       const cis = new ChromeIDLSource(INTERFACE_MIXIN);
       const sources = cis.getFeatureSources();
-      assert.ok(sources.has('InterfaceMixin-mixin'));
+      assert.ok(sources.has('InterfaceMixin-interface-mixin'));
     });
 
     it('Confirms that the right interface name is returned for a mixin', () => {
@@ -182,7 +183,7 @@ describe('ChromeIDLSource', () => {
     it('Confirms that a mixin is recorded as its intended interface', () => {
       const cis = new ChromeIDLSource(MIXIN_INCLUDES);
       const sources = cis.getFeatureSources();
-      const mixedInterface = sources.get('Including-interface');
+      const mixedInterface = sources.get('MixinIncludes-interface-mixin');
       const properties = mixedInterface.getProperties();
       const found = properties.some((i) => {
         return i.name === 'includedProperty';
@@ -194,13 +195,14 @@ describe('ChromeIDLSource', () => {
       const cis = new ChromeIDLSource(MIXIN_INCLUDES_MULTIPLE);
       const sources = cis.getFeatureSources();
 
-      let mixedInterface = sources.get('Including-interface');
+      let mixedInterface = sources.get('Including-includes');
+      // TODO: An 'includes' structure doesn't have access to the target source.
       let properties = mixedInterface.getProperties();
       const foundInIncluding = properties.some((i) => {
         return i.name === 'includedProperty';
       });
 
-      mixedInterface = sources.get('AlsoIncluding-interface');
+      mixedInterface = sources.get('AlsoIncluding-includes');
       properties = mixedInterface.getProperties();
       const foundAlsoIncluding = properties.some((i) => {
         return i.name === 'includedProperty';

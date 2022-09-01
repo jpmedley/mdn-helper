@@ -620,32 +620,38 @@ class InterfaceSourceRecord extends _sourceRecord_Base {
   _processProperties(forIdlFile = 'allFiles') {
     if (this.#propertySearch) { return; }
     const searchSet = this._getSearchSet(forIdlFile);
+    if (searchSet) { this.#properties = new Array(); }
     for (let s of searchSet) {
-      let matches = s.sourceIdl.matchAll(PROPERTIES_RE);
-      if (matches) {
-        let property;
-        for (let m of matches) {
-          if (m[1] === 'EventHandler') {
-            if (!this.#events) { this.#events = new Array(); }
-            property = {
-              key: `${this.interfaceName}.${m[2].trim().slice(2)}_event`,
-              name: m[2],
-              returnType: m[1],
-              type: 'event'
-            }
-            this.#events.push(property);
-          } else {
-            if (!this.#properties) { this.#properties = new Array(); }
-            property = {
-              key: `${this.interfaceName}.${m[2]}`,
-              name: m[2],
-              returnType: m[1],
-              type: 'property'
-            }
-            this.#properties.push(property);
-          }
+      for (let m of s.sourceIdl.members) {
+        if (m.type === 'attribute') {
+          this.#properties.push(m);
         }
       }
+      // let matches = s.sourceIdl.matchAll(PROPERTIES_RE);
+      // if (matches) {
+      //   let property;
+      //   for (let m of matches) {
+      //     if (m[1] === 'EventHandler') {
+      //       if (!this.#events) { this.#events = new Array(); }
+      //       property = {
+      //         key: `${this.interfaceName}.${m[2].trim().slice(2)}_event`,
+      //         name: m[2],
+      //         returnType: m[1],
+      //         type: 'event'
+      //       }
+      //       this.#events.push(property);
+      //     } else {
+      //       if (!this.#properties) { this.#properties = new Array(); }
+      //       property = {
+      //         key: `${this.interfaceName}.${m[2]}`,
+      //         name: m[2],
+      //         returnType: m[1],
+      //         type: 'property'
+      //       }
+      //       this.#properties.push(property);
+      //     }
+      //   }
+      // }
     }
     this.#propertySearch = true;
   }

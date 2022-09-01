@@ -109,20 +109,24 @@ class IDLSource {
 
   getFeatureSources() {
     for (const s of this._sourcePaths) {
-      let rawData = utils.getIDLFile(s, {clean: true});
       let msg;
+      if (utils.isKnownMalformed(s)) { 
+        msg = `Cannot process known malformed file ${s}`;
+        global.__logger.info(msg);
+        continue;
+      }
+      let rawData = utils.getIDLFile(s, {clean: true});
       if (!rawData) {
         msg = `Cannot process ${s}.`;
-        global.__logger.info(`Cannot process ${s}.`);
+        global.__logger.info(msg);
         throw new IDLError(msg);
       }
       let tree;
       try {
         tree = parse(rawData, { sourceName: s });
       } catch (error) {
-        // TO DO: Make sure this is being logged.
-        msg = `Cannot process ${s}.`;
-        global.__logger.info(`Cannot process ${s}.`);
+        msg = `Cannot process ${s}.\n${error.message}`;
+        global.__logger.info(msg);
         throw new IDLError(msg);
       }
       const validations = validate(tree);
@@ -130,7 +134,8 @@ class IDLSource {
         for (const v of validations) {
           if (v.autofix) { v.autofix(); }
           else {
-            console.log(v);
+            // console.log(v);
+            global.__logger.info(v);
             // throw new IDLError(v)
           }
         }
@@ -145,19 +150,26 @@ class IDLSource {
 
   _recordRecord(data, sourcePath) {
     let sourceRecord;
-    sourceRecord = this._sourceRecords.get(`${data.name}-${data.type}`);
+    let dataType = data.type;
+    if (data.partial===true && data.type==='interface') { dataType = 'partial'; }
+    if (data.type==='callback interface') { dataType = 'callback-interface'; }
+    if (data.type==='interface mixin') { dataType = 'interface-mixin'; }
+    let name = data.name;
+    if (data.type==='includes') { name = data.target; }
+
+    sourceRecord = this._sourceRecords.get(`${name}-${dataType}`);
     if (sourceRecord) {
       sourceRecord.add(sourcePath, data);
     } else {
-      switch (data.type) {
+      switch (dataType) {
         case 'callback':
-          sourceRecord = new CallbackSourceRecord(data.name, data.type, { path: sourcePath, sourceIdl: data});
+          sourceRecord = new CallbackSourceRecord(name, dataType, { path: sourcePath, sourceIdl: data});
           break;
         default:
-          sourceRecord = new SourceRecord(data.name, data.type, { path: sourcePath, sourceIdl: data})
+          sourceRecord = new SourceRecord(name, dataType, { path: sourcePath, sourceIdl: data})
           break;
       }
-      this._sourceRecords.set(`${data.name}-${data.type}`, sourceRecord);
+      this._sourceRecords.set(`${name}-${dataType}`, sourceRecord);
     }
   }
 
