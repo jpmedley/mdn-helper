@@ -82,7 +82,8 @@ const SETTERS_UNNAMED_ONLY = `${TEST_IDL_FILES}setters-unnamed-only.idl`;
 const STRINGIFIER = `${TEST_IDL_FILES}stringifier.idl`;
 
 function loadSource(sourcePath) {
-  return utils.getIDLFile(sourcePath);
+  // return utils.getIDLFile(sourcePath);
+  return utils.getIDL(sourcePath, true);
 }
 
 function countIterableMethods(methods) {

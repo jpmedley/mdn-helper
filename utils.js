@@ -23,7 +23,10 @@ const { Confirm, Input } = require('enquirer');
 const fs = require('fs');
 const { homedir } = require('os');
 const JSON5 = require('json5');
+const { parse, validate } = require('webidl2');
 const path = require('path');
+const { IDLError } = require('./errors');
+const { cat } = require('shelljs');
 
 const MALFORMED_FILES = config.get('Application.malFormedFiles')
 let OT_FALSENEGATIVES = config.get('Application.origintrial');
@@ -175,6 +178,39 @@ function _getOutputFile(filePath, reuse = false) {
     }
   }
   return fs.openSync(filePath, 'w');
+}
+
+function _getIDL(filePath, clean) {
+  let msg;
+  if (this.isKnownMalformed(filePath)) {
+    msg = `${filePath} is known to be malformed. Cannot process.`
+    global.__logger.info(msg);
+    return;
+  }
+  let rawData = this.getIDLFile(filePath, {clean: clean});
+  if (!rawData) {
+    msg = `Cannot process ${filePath}.`;
+    global.__logger.info(msg);
+    throw new IDLError(msg);
+  }
+  let tree;
+  try {
+    tree = parse(rawData, { sourceName: filePath });
+  } catch (error) {
+    msg = `Cannot process ${filePath}.\n${error.message}`;
+    global.__logger.info(msg);
+    throw new IDLError(msg);
+  }
+  const validations = validate(tree);
+  if (validations) {
+    for (const v of validations) {
+      if (v.autofix) { v.autofix(); }
+      else {
+        global.__logger.info(v);
+      }
+    }
+  }
+  return tree;
 }
 
 function _getIDLFile(filePath, options = { clean: false }) {
@@ -351,6 +387,7 @@ module.exports.getBCDPath = _getBCDPath
 module.exports.getConfig = _getConfig;
 module.exports.getConfigs = _getConfigs;
 module.exports.getFile = _getFile;
+module.exports.getIDL = _getIDL;
 module.exports.getIDLFile = _getIDLFile;
 module.exports.getJSON = _getJSON;
 module.exports.getOutputDirectory = _getOutputDirectory;

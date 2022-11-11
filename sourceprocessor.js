@@ -16,7 +16,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { parse, validate } = require('webidl2');
 
 const { IDLError } = require('./errors.js');
 const { CallbackSourceRecord, SourceRecord } = require('./rawsources.js');
@@ -109,37 +108,7 @@ class IDLSource {
 
   getFeatureSources() {
     for (const s of this._sourcePaths) {
-      let msg;
-      if (utils.isKnownMalformed(s)) { 
-        msg = `Cannot process known malformed file ${s}`;
-        global.__logger.info(msg);
-        continue;
-      }
-      let rawData = utils.getIDLFile(s, {clean: true});
-      if (!rawData) {
-        msg = `Cannot process ${s}.`;
-        global.__logger.info(msg);
-        throw new IDLError(msg);
-      }
-      let tree;
-      try {
-        tree = parse(rawData, { sourceName: s });
-      } catch (error) {
-        msg = `Cannot process ${s}.\n${error.message}`;
-        global.__logger.info(msg);
-        throw new IDLError(msg);
-      }
-      const validations = validate(tree);
-      if (validations) {
-        for (const v of validations) {
-          if (v.autofix) { v.autofix(); }
-          else {
-            // console.log(v);
-            global.__logger.info(v);
-            // throw new IDLError(v)
-          }
-        }
-      }
+      let tree = utils.getIDL(s, true);
 
       for (let i = 0; i < tree.length; i++) {
         this._recordRecord(tree[i], s);
