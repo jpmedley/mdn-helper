@@ -248,7 +248,7 @@ describe('ChromeIDLSource', () => {
       const sources = cis.getFeatureSources();
       let includeCount = 0;
       sources.forEach((val, key, map) => {
-        if (val.type === 'interface') { includeCount++; }
+        if (val.type === 'includes') { includeCount++; }
       });
       assert.strictEqual(includeCount, 2);
     });
@@ -256,7 +256,7 @@ describe('ChromeIDLSource', () => {
     it('Confirms that includes names are recorded correctly', () => {
       const cis = new ChromeIDLSource(MIXIN_INCLUDES);
       const sources = cis.getFeatureSources();
-      const source = sources.get('Including-interface');
+      const source = sources.get('Including-includes');
       assert.strictEqual(source.name, 'Including');
     });
 
